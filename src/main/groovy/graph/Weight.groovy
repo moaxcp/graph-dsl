@@ -1,3 +1,15 @@
+package graph
+
 trait Weight {
-    abstract int getWeight()
+
+    private Closure weight
+
+    def getWeight() {
+        weight.delegate = this
+        weight.call()
+    }
+
+    def weight(Closure c) {
+        weight = c
+    }
 }
