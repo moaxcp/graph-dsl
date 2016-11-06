@@ -1,4 +1,4 @@
-package graph
+package graph.traits
 
 trait Value {
     def value

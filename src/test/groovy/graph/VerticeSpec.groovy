@@ -1,5 +1,7 @@
 package graph
 
+import graph.traits.Value
+import graph.traits.Weight
 import spock.lang.Specification
 
 class VerticeSpec extends Specification {
@@ -30,5 +32,17 @@ class VerticeSpec extends Specification {
 
         then:
         valuedVertice.value == ['work1', 'work2']
+    }
+
+    def 'can get weight from value'() {
+        when:
+        def traitVertice = vertice.withTraits(Weight, Value)
+        traitVertice.value = ['work1', 'work2']
+        traitVertice.weight {
+            value.size()
+        }
+
+        then:
+        traitVertice.weight == 2
     }
 }
