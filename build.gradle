@@ -1,6 +1,9 @@
 
 apply plugin: 'groovy'
 
+version = '1.0-SNAPSHOT'
+group = 'com.github.moaxcp'
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
