@@ -16,31 +16,31 @@ class VertexSpec extends Specification {
 
     def 'can add weight to vertex'() {
         when:
-        def weightedVertice = vertex.withTraits(Weight)
-        weightedVertice.weight { -> 5 }
+        def weightedVertex = vertex.withTraits(Weight)
+        weightedVertex.weight { -> 5 }
 
         then:
-        weightedVertice.weight == 5
+        weightedVertex.weight == 5
     }
 
     def 'can add value to vertex'() {
         when:
-        def valuedVertice = vertex.withTraits(Value)
-        valuedVertice.value = ['work1', 'work2']
+        def valuedVertex = vertex.withTraits(Value)
+        valuedVertex.value = ['work1', 'work2']
 
         then:
-        valuedVertice.value == ['work1', 'work2']
+        valuedVertex.value == ['work1', 'work2']
     }
 
     def 'can get weight from value'() {
         when:
-        def traitVertice = vertex.withTraits(Weight, Value)
-        traitVertice.value = ['work1', 'work2']
-        traitVertice.weight {
+        def traitVertex = vertex.withTraits(Weight, Value)
+        traitVertex.value = ['work1', 'work2']
+        traitVertex.weight {
             value.size()
         }
 
         then:
-        traitVertice.weight == 2
+        traitVertex.weight == 2
     }
 }

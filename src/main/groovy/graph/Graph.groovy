@@ -4,15 +4,15 @@ class Graph {
     def vertices = [:]
     def edges = [] as Set
 
-    def vertice(name) {
+    def vertex(name) {
         vertices[name] = new Vertex(name: name)
     }
 
-    def vertice(name, closure) {
-        def vertice = new Vertex(name: name)
-        closure.delegate = vertice
+    def vertex(name, closure) {
+        def vertex = new Vertex(name: name)
+        closure.delegate = vertex
         closure.call()
-        vertices[name] = vertice
+        vertices[name] = vertex
     }
 
     def edge(one, two) {

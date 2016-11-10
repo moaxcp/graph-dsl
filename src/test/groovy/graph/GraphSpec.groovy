@@ -6,25 +6,25 @@ class GraphSpec extends Specification {
 
     def graph = new Graph()
 
-    def 'can add vertice to graph'() {
+    def 'can add vertex to graph'() {
         when:
-        graph.vertice 'step1'
+        graph.vertex 'step1'
 
         then:
         graph.vertices.step1
     }
 
-    def 'can add vertice with closure to graph'() {
+    def 'can add vertex with closure to graph'() {
         setup:
-        def verticeName
+        def vertexName
 
         when:
-        graph.vertice 'step1', {
-            verticeName = name
+        graph.vertex 'step1', {
+            vertexName = name
         }
 
         then:
-        verticeName == 'step1'
+        vertexName == 'step1'
     }
 
     def 'can add edge to graph'() {
