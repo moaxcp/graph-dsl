@@ -2,12 +2,12 @@ package graph
 
 import spock.lang.Specification
 
-class EdgeSpec extends Specification {
-    def edge = new Edge(one: 'step1', two: 'step2')
+public class DirectedEdgeSpec extends Specification {
+    def edge = new Edge(one: 'step1', two: 'step2') as DirectedEdge
 
     def 'equals with null'() {
         when:
-        def edge2 = new Edge()
+        def edge2 = new Edge(one: 'step1', two: 'step2') as DirectedEdge
 
         then:
         edge2 != null
@@ -15,7 +15,7 @@ class EdgeSpec extends Specification {
 
     def 'equals with both different'() {
         when:
-        def edge2 = new Edge(one: 'step4', two: 'step3')
+        def edge2 = new Edge(one: 'step4', two: 'step3') as DirectedEdge
 
         then:
         edge != edge2
@@ -23,7 +23,7 @@ class EdgeSpec extends Specification {
 
     def 'equals with first different'() {
         when:
-        def edge2 = new Edge(one: 'step3', two: 'step2')
+        def edge2 = new Edge(one: 'step3', two: 'step2') as DirectedEdge
 
         then:
         edge != edge2
@@ -31,7 +31,7 @@ class EdgeSpec extends Specification {
 
     def 'equals with second different'() {
         when:
-        def edge2 = new Edge(one: 'step1', two: 'step3')
+        def edge2 = new Edge(one: 'step1', two: 'step3') as DirectedEdge
 
         then:
         edge != edge2
