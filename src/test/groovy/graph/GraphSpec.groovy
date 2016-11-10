@@ -51,4 +51,28 @@ class GraphSpec extends Specification {
         edgeOne == 'step1'
         edgeTwo == 'step2'
     }
+
+    def 'cannot add duplicate edge with the same order'() {
+        setup:
+        graph.edge 'step1', 'step2'
+
+        when:
+        graph.edge 'step1', 'step2'
+
+        then:
+        thrown(IllegalArgumentException)
+        graph.edges.size() == 1
+    }
+
+    def 'cannot add duplicate edge with different order'() {
+        setup:
+        graph.edge 'step1', 'step2'
+
+        when:
+        graph.edge 'step2', 'step1'
+
+        then:
+        thrown(IllegalArgumentException)
+        graph.edges.size() == 1
+    }
 }

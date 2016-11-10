@@ -1,7 +1,5 @@
 package graph
 
-import graph.traits.Value
-import graph.traits.Weight
 import spock.lang.Specification
 
 class VerticeSpec extends Specification {
