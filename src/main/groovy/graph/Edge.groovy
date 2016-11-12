@@ -1,8 +1,8 @@
 package graph
 
 class Edge {
-    def one
-    def two
+    String one
+    String two
 
     @Override
     public boolean equals(Object o) {
@@ -13,7 +13,7 @@ class Edge {
             return true
         }
         Edge rhs = (Edge) o;
-        return (one == rhs.one || one == rhs.two) && (two == rhs.one || two == rhs.two)
+        return (one == rhs.one || one == rhs.two) && (two == rhs.two || two == rhs.one)
     }
 
     @Override

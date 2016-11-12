@@ -4,7 +4,7 @@ trait Weight {
 
     private Closure weight
 
-    def getWeight() {
+    int getWeight() {
         weight.delegate = this
         weight.call()
     }
