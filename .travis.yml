@@ -1,6 +1,6 @@
 language: groovy
 jdk:
   - oraclejdk8
-scrit:
+script:
   - gradle build
   - gradle sonarqube
