@@ -2,5 +2,5 @@ language: groovy
 jdk:
   - oraclejdk8
 script:
-  - gradle build
-  - gradle sonarqube
+  - ./gradlew check
+  - ./gradlew sonarqube
