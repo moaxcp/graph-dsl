@@ -24,12 +24,27 @@ class GraphSpec extends Specification {
         def visited = []
 
         when:
-        graph.visitVertex 'step1', results, visited, {
+        graph.visitVertex 'step1', visited, results, {
             name
         }
 
         then:
         results == ['step1']
+        visited == ['step1']
+    }
+
+    def 'does not visit vertex twice'() {
+        setup:
+        def results = []
+        def visited = ['step1']
+
+        when:
+        graph.visitVertex 'step1', visited, results, {
+            name
+        }
+
+        then:
+        results == []
         visited == ['step1']
     }
 
