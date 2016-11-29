@@ -9,6 +9,7 @@ buildscript {
     }
 }
 
+apply plugin: 'idea'
 apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'groovy'
