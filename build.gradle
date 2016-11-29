@@ -31,7 +31,7 @@ jacocoTestReport {
 }
 
 gradle.taskGraph.whenReady { graph ->
-    if (graph.hasTask(':jacocoTestReport')) {
+    if (graph.hasTask(':jacocoTestReport') || graph.hasTask(':sonarqube')) {
         compileGroovy.groovyOptions.optimizationOptions.all = false
     }
 }
