@@ -30,6 +30,12 @@ jacocoTestReport {
     }
 }
 
+gradle.taskGraph.whenReady { graph ->
+    if (graph.hasTask(':jacocoTestReport')) {
+        compileGroovy.groovyOptions.optimizationOptions.all = false
+    }
+}
+
 repositories {
     jcenter()
 }
