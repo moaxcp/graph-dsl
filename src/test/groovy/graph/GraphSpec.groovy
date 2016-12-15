@@ -24,7 +24,7 @@ class GraphSpec extends Specification {
         def visited = []
 
         when:
-        graph.visitVertex 'step1', visited, results, {
+        graph.visitVertexDFSCollect 'step1', visited, results, {
             name
         }
 
@@ -39,7 +39,7 @@ class GraphSpec extends Specification {
         def visited = ['step1']
 
         when:
-        graph.visitVertex 'step1', visited, results, {
+        graph.visitVertexDFSCollect 'step1', visited, results, {
             name
         }
 
@@ -119,5 +119,43 @@ class GraphSpec extends Specification {
 
         then:
         results == [false, false, false, false, true]
+    }
+
+    def 'dfs by name'() {
+        when:
+        def result = graph.dfsOld { it.name == 'step4' }
+
+        then:
+        result == graph.vertices.step4
+    }
+
+    def 'depthFirstTraversalConnected previsit STOP'() {
+        setup:
+        def visited = []
+
+        when:
+        def traversal = graph.depthFirstTraversalConnected 'step1', visited, {
+            Graph.Traversal.STOP
+        }
+
+        then:
+        traversal == Graph.Traversal.STOP
+        visited == []
+    }
+
+    def 'depthFirstTraversalConnected visit with no recursion'() {
+        setup:
+        def visited = ['step1', 'step3', 'step4']
+        def called = 0
+
+        when:
+        def traversal = graph.depthFirstTraversalConnected 'step2', visited, {
+            called++
+        }
+
+        then:
+        traversal == null
+        visited == ['step1', 'step3', 'step4', 'step2']
+        called == 1
     }
 }
