@@ -5,16 +5,17 @@ buildscript {
         }
     }
     dependencies {
+        classpath 'com.github.amkay:gradle-gitflow:0.2.0'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2'
     }
 }
 
 apply plugin: 'idea'
+apply plugin: 'com.github.amkay.gitflow'
 apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'groovy'
 
-version = '1.0-SNAPSHOT'
 group = 'com.github.moaxcp'
 
 sourceCompatibility = 1.8
