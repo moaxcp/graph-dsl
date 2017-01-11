@@ -7,28 +7,80 @@ package graph
  */
 class Graph {
     final def vertices = [:]
-    final def edges = [] as Set
+    final def edges = [] as LinkedHashSet
+
+    /**
+     * An enum defining traversal status. A value from this enum can be returned
+     * from one of the closures passed to search methods changing the behavior of a traversal.
+     */
     def enum Traversal {
+        /**
+         * stops the current traversal. Useful in search when a vertex is found to end the traversal early.
+         */
         STOP
     }
 
+    /**
+     * Defines the color for a vertex when traversing.
+     */
+    def enum DepthFirstTraversalColor {
+        /**
+         * an undiscovered vertex
+         */
+        WHITE,
+        /**
+         * a discovered vertex that still needs work
+         */
+        GREY,
+        /**
+         * a vertex that the algorithm is done with
+         */
+        BLACK
+    }
+
+    /**
+     * returns the vertices as an unmodifiableMap
+     * @return
+     */
     def getVertices() {
         Collections.unmodifiableMap(vertices)
     }
 
+    /**
+     * returns the edges as an unmodifiable set
+     * @return
+     */
     def getEdges() {
         Collections.unmodifiableSet(edges)
     }
 
-    def vertex(String name, closure = null) {
-        if (closure) {
-            vertex(name: name, closure)
-        } else {
-            vertex(name: name)
-        }
+    /**
+     * Creates a map with the name key set to the name param. The map
+     * and closure are passed to vertex(Map, Clousre)
+     * @param name
+     * @param closure
+     * @return the resulting vertex
+     */
+    def vertex(String name, Closure closure = null) {
+        vertex(name: name, closure)
     }
 
-    def vertex(map, closure = null) {
+    /**
+     * Adds a Vertex using the provided map to set its properties. The Vertex
+     * is then added to vertices overwriting any previous Vertex with the given
+     * name entry in the map.
+     *
+     * The provided closure is called with the vertex as the delegate.
+     *
+     * If the map contains a traits entry the value should contain a list of traits or classes
+     * to apply to the Vertex as traits. The resulting Vertex has all of those traits
+     * applied in the order of the list.
+     *
+     * @param map a map with a name entry. There can be an optional traits entry with a list of classes as a value.
+     * @param closure
+     * @return the resulting vertex
+     */
+    def vertex(map, Closure closure = null) {
         def vertex = new Vertex(name: map.name)
 
         vertex = map.traits?.inject(vertex) { val, it ->
@@ -37,20 +89,40 @@ class Graph {
 
         if (closure != null) {
             closure.delegate = vertex
-            closure.call()
+            closure()
         }
 
         vertices[map.name] = vertex
+        vertex
     }
 
+    /**
+     * Creates a map with the entries one and two set to the params one and two.
+     * This map is then passed to edge(map, closure = null).
+     * @param one
+     * @param two
+     * @param closure
+     * @return the resulting edge
+     */
     def edge(String one, String two, closure = null) {
-        if (closure) {
-            edge(one: one, two: two, closure)
-        } else {
-            edge(one: one, two: two)
-        }
+        edge(one: one, two: two, closure)
     }
 
+    /**
+     * Uses map to create an Edge object. And adds it to edges. If an edge already
+     * exists between the to vertices it cannot be added and an IllegalArgumentException is thrown.
+     *
+     * The provided closure is called with the edge as the delegate.
+     *
+     * If the map contains a traits entry its value should contain a list of traits
+     * or classes to apply to the Edge as traits. The resulting Edge as all of those traits
+     * applied in the order of the list.
+     *
+     * @param map
+     * @param closure
+     * @throws IllegalArgumentException
+     * @return the resulting edge
+     */
     def edge(map, closure = null) {
         def edge = new Edge(one: map.one, two: map.two)
 
@@ -60,74 +132,48 @@ class Graph {
 
         if (closure) {
             closure.delegate = edge
-            closure.call()
+            closure()
         }
 
         if (!edges.add(edge)) {
             throw new IllegalArgumentException("Edge already exists between $edge.one and $edge.two")
         }
+
+        edge
     }
 
-    def visitVertexDFSCollect(name, visited, results, closure) {
-        if (!visited.contains(name)) {
-            closure.delegate = vertices[name]
-            def result = closure.call()
-            visited << name
-            results << result
-        }
-    }
-
-    def visitVertexDFS(name, visited, closure) {
-        if (!visited.contains(name)) {
-            closure.delegate = vertices[name]
-            def result = closure(vertices[name])
-            visited << name
-            result ? vertices[name] : null
-        }
-    }
-
-    def getUnvisitedVertex(visited) {
+    /**
+     * Returns the first unvisited vertex name in vertices.
+     *
+     * @param colors a map of vertex name entries with the value of the DepthFirstTraversalColor
+     * @return the first unvisited vertex name in the vertices.
+     */
+    def getUnvisitedVertexName(colors) {
         vertices.find { k, v ->
-            !visited.contains(k)
+            colors[(k)] != DepthFirstTraversalColor.BLACK && colors[k] != DepthFirstTraversalColor.GREY
         }?.key
     }
 
-    def getUnvisitedChildName(visited, parentName) {
-        def edge = edges.find {
-            if (it.one != it.two && (parentName == it.one || parentName == it.two)) {
-                def childName = parentName == it.one ? it.two : it.one
-                return !(childName in visited)
-            }
+    /**
+     * returns the name of first unvisited child vertex with a parent matching parentName.
+     *
+     * @param colors a map of vertex name entries with the value of the DepthFirstTraversalColor
+     * @param parentName the name of the parent vertex to start searching from
+     * @return the name of the first unvisited child vertex
+     */
+    def getUnvisitedChildName(colors, parentName) {
+        def edge = adjacentEdges(parentName).findAll {
+            it.one != it.two
+        }.find {
+            def childName = parentName == it.one ? it.two : it.one
+            def color = colors[childName]
+            return !(color == DepthFirstTraversalColor.GREY || color == DepthFirstTraversalColor.BLACK)
         }
+
         if (!edge) {
             return null
         }
         parentName == edge.one ? edge.two : edge.one
-    }
-
-    //TODO add methods for find, findAll, inject
-    def dfsVerticesCollect(closure) {
-        def results = []
-        def visited = []
-        def stack = [] as LinkedList
-
-        def root = getUnvisitedVertex(visited)
-        while (root) {
-            visitVertexDFSCollect(root, visited, results, closure)
-            stack.push(root)
-            while (!stack.isEmpty()) {
-                def parent = stack.peek()
-                def child = getUnvisitedChildName(visited, parent)
-                if (child) {
-                    visitVertexDFSCollect(child, visited, results, closure)
-                    stack.push(child)
-                } else {
-                    stack.pop()
-                }
-            }
-            root = getUnvisitedVertex(visited)
-        }
-        results
     }
 
     def adjacentEdges(name) {
@@ -136,70 +182,51 @@ class Graph {
         }
     }
 
-    def depthFirstTraversal(previsit, postvisit = null) {
-        def visited = []
-        def root = getUnvisitedVertex(visited)
-        while (root) {
-            def traversal = depthFirstTraversalConnected(root, visited, previsit, postvisit)
-            if(traversal == Traversal.STOP) {
-                return Traversal.STOP
-            }
-            root = getUnvisitedVertex(visited)
+    def makeColorMap() {
+        vertices.collectEntries { name, vertex ->
+            [(name) : DepthFirstTraversalColor.WHITE]
         }
     }
 
-    def depthFirstTraversalConnected(name, visited, previsit, postvisit = null) {
-        previsit.delegate = vertices[name]
-        if (previsit() == Traversal.STOP) {
+    def depthFirstTraversal(Closure specClosure) {
+        def spec = new DepthFirstSearchSpec()
+        specClosure.delegate = spec
+        specClosure()
+        depthFirstTraversal(spec.preorder, spec.postorder)
+    }
+
+    def depthFirstTraversal(Closure preorder, Closure postorder) {
+        def colors = makeColorMap()
+        def name = getUnvisitedVertexName(colors)
+        while (name) {
+            def traversal = depthFirstTraversalConnected(name, colors, preorder, postorder)
+            if(traversal == Traversal.STOP) {
+                return Traversal.STOP
+            }
+            root = getUnvisitedVertexName(colors)
+        }
+    }
+
+    def depthFirstTraversalConnected(name, colors, preorder, postorder) {
+        if (preorder && preorder(vertices[name]) == Traversal.STOP) {
             return Traversal.STOP
         }
-        visited << name
-        adjacentEdges(name).each { edge ->
+
+        colors[(name)] = DepthFirstTraversalColor.GREY
+
+        def adjacentEdges = adjacentEdges(name)
+        adjacentEdges.eachWithIndex { edge, index ->
             def connectedName = name == edge.one ? edge.two : edge.one
-            if (!visited.contains(connectedName)) {
-                def traversal = depthFirstTraversal(connectedName, visited, previsit, postvisit)
-                if (traversal == Traversal.STOP) {
+            if (colors[(connectedName)] == DepthFirstTraversalColor.WHITE) {
+                if (Traversal.STOP == depthFirstTraversalConnected(connectedName, colors, preorder, postorder)) {
                     return Traversal.STOP
                 }
             }
         }
-        if(!postvisit) {
-            return
-        }
-        postvisit.delegate = vertices[name]
-        if (postvisit() == Traversal.STOP) {
+
+        if (postorder && postorder(vertices[name]) == Traversal.STOP) {
             return Traversal.STOP
         }
-
+        colors[(name)] = DepthFirstTraversalColor.BLACK
     }
-
-
-    def dfsOld(closure) {
-        def visited = []
-        def stack = [] as LinkedList
-
-        def root = getUnvisitedVertex(visited)
-        while (root) {
-            def result = visitVertexDFS(root, visited, closure)
-            if (result) {
-                return result
-            }
-            stack.push(root)
-            while (!stack.isEmpty()) {
-                def parent = stack.peek()
-                def child = getUnvisitedChildName(visited, parent)
-                if (child) {
-                    result = visitVertexDFS(child, visited, closure)
-                    if (result) {
-                        return result
-                    }
-                    stack.push(child)
-                } else {
-                    stack.pop()
-                }
-            }
-            root = getUnvisitedVertex(visited)
-        }
-    }
-
 }
