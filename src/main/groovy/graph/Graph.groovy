@@ -203,7 +203,7 @@ class Graph {
             if(traversal == Traversal.STOP) {
                 return Traversal.STOP
             }
-            root = getUnvisitedVertexName(colors)
+            name = getUnvisitedVertexName(colors)
         }
     }
 
@@ -212,12 +212,12 @@ class Graph {
             return Traversal.STOP
         }
 
-        colors[(name)] = DepthFirstTraversalColor.GREY
+        colors[name] = DepthFirstTraversalColor.GREY
 
         def adjacentEdges = adjacentEdges(name)
         adjacentEdges.eachWithIndex { edge, index ->
             def connectedName = name == edge.one ? edge.two : edge.one
-            if (colors[(connectedName)] == DepthFirstTraversalColor.WHITE) {
+            if (colors[connectedName] == DepthFirstTraversalColor.WHITE) {
                 if (Traversal.STOP == depthFirstTraversalConnected(connectedName, colors, preorder, postorder)) {
                     return Traversal.STOP
                 }
@@ -227,6 +227,6 @@ class Graph {
         if (postorder && postorder(vertices[name]) == Traversal.STOP) {
             return Traversal.STOP
         }
-        colors[(name)] = DepthFirstTraversalColor.BLACK
+        colors[name] = DepthFirstTraversalColor.BLACK
     }
 }
