@@ -4,21 +4,6 @@ import spock.lang.Specification
 
 public class GraphDepthFirstSearchSpec extends Specification {
 
-    def graph = new Graph()
-
-    def setup() {
-        graph.with {
-            vertex 'step1'
-            vertex 'step2'
-            vertex 'step3'
-            vertex 'step4'
-            edge 'step1', 'step2'
-            edge 'step1', 'step3'
-            edge 'step4', 'step1'
-            edge 'step1', 'step1'
-        }
-    }
-
     def 'can get correct first unvisited vertex'() {
         setup:
         def graph = new Graph()
