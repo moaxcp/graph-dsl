@@ -276,22 +276,25 @@ class Graph {
      */
     def depthFirstTraversalConnected(String name, DepthFirstTraversalSpec spec) {
         if (spec.preorder && spec.preorder(vertices[name]) == Traversal.STOP) {
+            spec.colors[name] = DepthFirstTraversalColor.GREY
             return Traversal.STOP
         }
-
         spec.colors[name] = DepthFirstTraversalColor.GREY
 
         def adjacentEdges = adjacentEdges(name)
-        adjacentEdges.eachWithIndex { edge, index ->
+        for(int index = 0; index < adjacentEdges.size(); index++) {
+            def edge = adjacentEdges[index]
             def connectedName = name == edge.one ? edge.two : edge.one
             if (spec.colors[connectedName] == DepthFirstTraversalColor.WHITE) {
                 if (Traversal.STOP == depthFirstTraversalConnected(connectedName, spec)) {
                     return Traversal.STOP
                 }
             }
+
         }
 
         if (spec.postorder && spec.postorder(vertices[name]) == Traversal.STOP) {
+            spec.colors[name] = DepthFirstTraversalColor.BLACK
             return Traversal.STOP
         }
         spec.colors[name] = DepthFirstTraversalColor.BLACK

@@ -224,7 +224,7 @@ public class GraphDepthFirstSearchSpec extends Specification {
         then:
         traversal == Graph.Traversal.STOP
         spec.colors == [
-                'step1': Graph.DepthFirstTraversalColor.WHITE,
+                'step1': Graph.DepthFirstTraversalColor.GREY,
                 'step2': Graph.DepthFirstTraversalColor.WHITE
         ]
         preorderList == ['step1']
@@ -316,12 +316,16 @@ public class GraphDepthFirstSearchSpec extends Specification {
         graph.edge 'step1', 'step2'
 
         def postorderList = []
+        def preorderList = []
 
         def spec = new DepthFirstTraversalSpec()
         spec.colors = graph.makeColorMap()
         spec.postorder { vertex ->
             postorderList << vertex.name
             Graph.Traversal.STOP
+        }
+        spec.preorder { vertex ->
+            preorderList << vertex.name
         }
 
         when:
@@ -330,9 +334,10 @@ public class GraphDepthFirstSearchSpec extends Specification {
         then:
         traversal == Graph.Traversal.STOP
         spec.colors == [
-                'step1': Graph.DepthFirstTraversalColor.WHITE,
-                'step2': Graph.DepthFirstTraversalColor.WHITE
+                'step1': Graph.DepthFirstTraversalColor.GREY,
+                'step2': Graph.DepthFirstTraversalColor.BLACK
         ]
-        postorderList == ['step1']
+        postorderList == ['step2']
+        preorderList == ['step1', 'step2']
     }
 }
