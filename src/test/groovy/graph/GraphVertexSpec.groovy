@@ -30,32 +30,22 @@ class GraphVertexSpec extends Specification {
         vertexName == 'step1'
     }
 
-    def 'can add vertex with traits to graph'() {
-        setup:
-        def vertexName
+    def 'can add vertex with map to graph'() {
 
         when:
-        graph.vertex name: 'step1', traits: [Weight, Value], {
-            vertexName = name
-        }
+        graph.vertex name: 'step1'
 
         then:
-        vertexName == 'step1'
-        graph.vertices.step1 instanceof Weight
-        graph.vertices.step1 instanceof Value
+        graph.vertices.step1 != null
     }
 
-    def 'can add vertex with map no traits to graph'() {
-        setup:
-        def vertexName
-
+    def 'can add vertex with traits to graph'() {
         when:
-        graph.vertex name: 'step1', {
-            vertexName = name
-        }
+        graph.vertex name: 'step1', traits: [Weight, Value]
 
         then:
-        vertexName == 'step1'
+        graph.vertices.step1 instanceof Weight
+        graph.vertices.step1 instanceof Value
     }
 
     def 'vertices is unmodifiable'() {

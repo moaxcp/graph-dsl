@@ -43,4 +43,47 @@ class VertexSpec extends Specification {
         then:
         traitVertex.weight == 2
     }
+
+    def 'vertex equals null is false'() {
+        when:
+        def equals = vertex.equals(null)
+
+        then:
+        !equals
+    }
+
+    def 'vertex equals non-equal vertex is false'() {
+        setup:
+        vertex.name = 'step1'
+        def compare = new Vertex(name: 'step2')
+
+        when:
+        def equals = vertex == compare
+
+        then:
+        !equals
+    }
+
+    def 'vertex equals self'() {
+        setup:
+        vertex.name = 'step1'
+
+        when:
+        def equals = vertex == vertex
+
+        then:
+        equals
+    }
+
+    def 'vertex equals equal vertex is true'() {
+        setup:
+        vertex.name = 'step1'
+        def compare = new Vertex(name: 'step1')
+
+        when:
+        def equals = vertex == compare
+
+        then:
+        equals
+    }
 }

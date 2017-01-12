@@ -4,9 +4,10 @@ package graph
  * Specification for a DepthFirstSearch. Contains actions that are called when and
  * even happens during the search.
  */
-class DepthFirstSearchSpec {
+class DepthFirstTraversalSpec {
+    String root
+    Map colors
     private Closure preorder
-    private Closure inorder
     private Closure postorder
 
     /**
@@ -15,14 +16,6 @@ class DepthFirstSearchSpec {
      */
     def getPreorder() {
         return preorder
-    }
-
-    /**
-     * returns the inorder event.
-     * @return
-     */
-    def getInorder() {
-        return inorder
     }
 
     /**
@@ -40,17 +33,6 @@ class DepthFirstSearchSpec {
      */
     def preorder(Closure preorder) {
         this.preorder = preorder
-        this
-    }
-
-    /**
-     * method to set the inorder event
-     * @param inorder
-     * @return
-     */
-    def inorder(Closure inorder) {
-        this.inorder = inorder
-        this
     }
 
     /**
@@ -60,6 +42,5 @@ class DepthFirstSearchSpec {
      */
     def postorder(Closure postorder) {
         this.postorder = postorder
-        this
     }
 }
