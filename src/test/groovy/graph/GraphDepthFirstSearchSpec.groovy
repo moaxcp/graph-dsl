@@ -206,6 +206,8 @@ public class GraphDepthFirstSearchSpec extends Specification {
         setup:
         def graph = new Graph()
         graph.vertex 'step1'
+        graph.vertex 'step2'
+        graph.edge 'step1', 'step2'
 
         def preorderList = []
 
@@ -221,7 +223,10 @@ public class GraphDepthFirstSearchSpec extends Specification {
 
         then:
         traversal == Graph.Traversal.STOP
-        spec.colors == ['step1': Graph.DepthFirstTraversalColor.WHITE]
+        spec.colors == [
+                'step1': Graph.DepthFirstTraversalColor.WHITE,
+                'step2': Graph.DepthFirstTraversalColor.WHITE
+        ]
         preorderList == ['step1']
     }
 
@@ -301,5 +306,33 @@ public class GraphDepthFirstSearchSpec extends Specification {
                 'step3': Graph.DepthFirstTraversalColor.BLACK
         ]
         postorderList == ['step2', 'step3', 'step1']
+    }
+
+    def 'depthFirstTraversalConnected postorder STOP'() {
+        setup:
+        def graph = new Graph()
+        graph.vertex 'step1'
+        graph.vertex 'step2'
+        graph.edge 'step1', 'step2'
+
+        def postorderList = []
+
+        def spec = new DepthFirstTraversalSpec()
+        spec.colors = graph.makeColorMap()
+        spec.postorder { vertex ->
+            postorderList << vertex.name
+            Graph.Traversal.STOP
+        }
+
+        when:
+        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+
+        then:
+        traversal == Graph.Traversal.STOP
+        spec.colors == [
+                'step1': Graph.DepthFirstTraversalColor.WHITE,
+                'step2': Graph.DepthFirstTraversalColor.WHITE
+        ]
+        postorderList == ['step1']
     }
 }
