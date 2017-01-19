@@ -176,57 +176,127 @@ class Graph {
         parentName == edge.one ? edge.two : edge.one
     }
 
+    /**
+     * Finds adjacent edges for vertex with name.
+     * @param name
+     * @return list of adjacent edges.
+     */
     def adjacentEdges(name) {
         edges.findAll {
             name == it.one || name == it.two
         }
     }
 
+    /**
+     * creates and returns a color map in the form of
+     * name : color. name is the vertex
+     * name and DepthFirstTraversalColor.WHITE is the
+     * color.
+     * @return
+     */
     def makeColorMap() {
         vertices.collectEntries { name, vertex ->
             [(name) : DepthFirstTraversalColor.WHITE]
         }
     }
 
+    /**
+     * configures a depth first traversal with the given closure using
+     * depthFirstTraversalSpec().
+     *
+     * Once the spec is configured depthFirstTraversal(spec) is called.
+     *
+     * @param specClosure
+     * @return
+     */
     def depthFirstTraversal(Closure specClosure) {
-        def spec = new DepthFirstSearchSpec()
-        specClosure.delegate = spec
-        specClosure()
-        depthFirstTraversal(spec.preorder, spec.postorder)
+        def spec = depthFirstTraversalSpec(specClosure)
+        depthFirstTraversal(spec)
     }
 
-    def depthFirstTraversal(Closure preorder, Closure postorder) {
-        def colors = makeColorMap()
-        def name = getUnvisitedVertexName(colors)
+    /**
+     * creates a DepthFirstTraversalSpec from the provided closure.
+     *
+     * specClosure is a closure that has a new DepthFirstTraversalSpec
+     * as a delegate. Modify the DepthFirstTraversalSpec to change
+     * the behavior of the depth first traversal.
+     *
+     * if colors is not defined in the spec it defaults to the result of
+     * makeColorMap()
+     *
+     * if root is not defined in the spec it defaults to the result of
+     * getUnvisitedVertexName(spec.colors)
+     *
+     * @param specClosure
+     * @return
+     */
+    def depthFirstTraversalSpec(Closure specClosure) {
+        def spec = new DepthFirstTraversalSpec()
+        specClosure.delegate = spec
+        specClosure()
+        if(!spec.colors) {
+            spec.colors = makeColorMap()
+        }
+        if(!spec.root) {
+            spec.root = getUnvisitedVertexName(spec.colors)
+        }
+        spec
+    }
+
+    /**
+     * Performs a depth first traversal with the given DepthFirstTraversalSpec on all
+     * components of the graph. This method calls depthFirstTraversalConnected on spec.root
+     * and continues to call depthFirstTraversalConnected until all vertices are colored black.
+     * To stop the traversal early the spec can return Traversal.STOP in any of the
+     * traversal closures.
+     * @param spec
+     * @return null or a Traversal value
+     */
+    def depthFirstTraversal(DepthFirstTraversalSpec spec) {
+        String name = spec.root
         while (name) {
-            def traversal = depthFirstTraversalConnected(name, colors, preorder, postorder)
+            def traversal = depthFirstTraversalConnected(name, spec)
             if(traversal == Traversal.STOP) {
                 return Traversal.STOP
             }
-            name = getUnvisitedVertexName(colors)
+            name = getUnvisitedVertexName(spec.colors)
         }
     }
 
-    def depthFirstTraversalConnected(name, colors, preorder, postorder) {
-        if (preorder && preorder(vertices[name]) == Traversal.STOP) {
+    /**
+     * Performs a depth first traversal on a connected component of the graph starting
+     * at the vertex identified by name. The behavior of the traversal is determined by
+     * spec.colors, spec.preorder, and spec.postorder.
+     *
+     * Traversal.STOP - It is possible to stop the traversal early by returning this value
+     * in preorder and postorder.
+     * @param name the name of the vertex to start at
+     * @param spec the DepthFirstTraversalSpec
+     * @return null or a Traversal value
+     */
+    def depthFirstTraversalConnected(String name, DepthFirstTraversalSpec spec) {
+        if (spec.preorder && spec.preorder(vertices[name]) == Traversal.STOP) {
+            spec.colors[name] = DepthFirstTraversalColor.GREY
             return Traversal.STOP
         }
-
-        colors[name] = DepthFirstTraversalColor.GREY
+        spec.colors[name] = DepthFirstTraversalColor.GREY
 
         def adjacentEdges = adjacentEdges(name)
-        adjacentEdges.eachWithIndex { edge, index ->
+        for(int index = 0; index < adjacentEdges.size(); index++) {
+            def edge = adjacentEdges[index]
             def connectedName = name == edge.one ? edge.two : edge.one
-            if (colors[connectedName] == DepthFirstTraversalColor.WHITE) {
-                if (Traversal.STOP == depthFirstTraversalConnected(connectedName, colors, preorder, postorder)) {
+            if (spec.colors[connectedName] == DepthFirstTraversalColor.WHITE) {
+                if (Traversal.STOP == depthFirstTraversalConnected(connectedName, spec)) {
                     return Traversal.STOP
                 }
             }
+
         }
 
-        if (postorder && postorder(vertices[name]) == Traversal.STOP) {
+        if (spec.postorder && spec.postorder(vertices[name]) == Traversal.STOP) {
+            spec.colors[name] = DepthFirstTraversalColor.BLACK
             return Traversal.STOP
         }
-        colors[name] = DepthFirstTraversalColor.BLACK
+        spec.colors[name] = DepthFirstTraversalColor.BLACK
     }
 }

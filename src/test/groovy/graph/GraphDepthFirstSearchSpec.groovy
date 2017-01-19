@@ -151,24 +151,96 @@ public class GraphDepthFirstSearchSpec extends Specification {
         ]
     }
 
+    def 'can depthFirstTraversalSpec custom'() {
+        setup:
+        def graph = new Graph()
+        graph.with {
+            vertex 'step1'
+        }
+        Closure c = {
+            root = 'step1'
+            colors = ['step1' : Graph.DepthFirstTraversalColor.WHITE]
+            preorder {
+                //do nothing
+            }
+            postorder {
+                //do nothing
+            }
+        }
+
+        when:
+        def spec = graph.depthFirstTraversalSpec(c)
+
+        then:
+        spec.root == 'step1'
+        spec.colors == ['step1' : Graph.DepthFirstTraversalColor.WHITE]
+        spec.preorder != null
+        spec.postorder != null
+    }
+
+    def 'can depthFirstTraversalSpec'() {
+        setup:
+        def graph = new Graph()
+        graph.with {
+            vertex 'step1'
+        }
+
+        when:
+        def spec = graph.depthFirstTraversalSpec {
+            preorder {
+                //do nothing
+            }
+            postorder {
+                //do nothing
+            }
+        }
+
+        then:
+        spec.root == 'step1'
+        spec.colors == ['step1' : Graph.DepthFirstTraversalColor.WHITE]
+        spec.preorder != null
+        spec.postorder != null
+    }
+
     def 'depthFirstTraversalConnected preorder STOP'() {
         setup:
         def graph = new Graph()
         graph.vertex 'step1'
+        graph.vertex 'step2'
+        graph.vertex 'step3'
+        graph.vertex 'step4'
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step4'
+        graph.edge 'step2', 'step3'
 
-        def colors = graph.makeColorMap()
         def preorderList = []
+        def postorderList = []
+
+        def spec = new DepthFirstTraversalSpec()
+        spec.colors = graph.makeColorMap()
+        spec.preorder { vertex ->
+            preorderList << vertex.name
+            if(vertex.name == 'step2') {
+                Graph.Traversal.STOP
+            }
+        }
+        spec.postorder { vertex ->
+            postorderList << vertex.name
+        }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', colors, { vertex ->
-            preorderList << vertex.name
-            Graph.Traversal.STOP
-        }, null
+        def traversal = graph.depthFirstTraversalConnected 'step1', spec
 
         then:
         traversal == Graph.Traversal.STOP
-        colors == ['step1': Graph.DepthFirstTraversalColor.WHITE]
-        preorderList == ['step1']
+        spec.colors == [
+                'step1': Graph.DepthFirstTraversalColor.GREY,
+                'step2': Graph.DepthFirstTraversalColor.GREY,
+                'step3': Graph.DepthFirstTraversalColor.WHITE,
+                'step4': Graph.DepthFirstTraversalColor.WHITE
+        ]
+        preorderList == ['step1', 'step2']
+        postorderList == []
     }
 
     def 'depthFirstTraversalConnected preorder'() {
@@ -178,26 +250,43 @@ public class GraphDepthFirstSearchSpec extends Specification {
             vertex 'step1'
             vertex 'step2'
             vertex 'step3'
+            vertex 'step4'
+            vertex 'step5'
+            vertex 'step6'
             edge 'step1', 'step2'
             edge 'step1', 'step3'
+            edge 'step1', 'step4'
+            edge 'step2', 'step3'
+            edge 'step4', 'step3'
+            edge 'step3', 'step5'
+            edge 'step4', 'step6'
+            edge 'step6', 'step5'
+
+
         }
 
-        def colors = graph.makeColorMap()
         def preorderList = []
 
-        when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', colors, { vertex ->
+        def spec = new DepthFirstTraversalSpec()
+        spec.colors = graph.makeColorMap()
+        spec.preorder { vertex ->
             preorderList << vertex.name
-        }, null
+        }
+
+        when:
+        def traversal = graph.depthFirstTraversalConnected 'step1', spec
 
         then:
         traversal != Graph.Traversal.STOP
-        colors == [
+        spec.colors == [
                 'step1': Graph.DepthFirstTraversalColor.BLACK,
                 'step2': Graph.DepthFirstTraversalColor.BLACK,
-                'step3': Graph.DepthFirstTraversalColor.BLACK
+                'step3': Graph.DepthFirstTraversalColor.BLACK,
+                'step4': Graph.DepthFirstTraversalColor.BLACK,
+                'step5': Graph.DepthFirstTraversalColor.BLACK,
+                'step6': Graph.DepthFirstTraversalColor.BLACK
         ]
-        preorderList == ['step1', 'step2', 'step3']
+        preorderList == ['step1', 'step2', 'step3', 'step4', 'step6', 'step5']
     }
 
     def 'depthFirstTraversalConnected postorder'() {
@@ -211,21 +300,65 @@ public class GraphDepthFirstSearchSpec extends Specification {
             edge 'step1', 'step3'
         }
 
-        def colors = graph.makeColorMap()
         def postorderList = []
 
-        when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', colors, null, { vertex ->
+        def spec = new DepthFirstTraversalSpec()
+        spec.colors = graph.makeColorMap()
+        spec.postorder { vertex ->
             postorderList << vertex.name
         }
 
+        when:
+        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+
         then:
         traversal != Graph.Traversal.STOP
-        colors == [
+        spec.colors == [
                 'step1': Graph.DepthFirstTraversalColor.BLACK,
                 'step2': Graph.DepthFirstTraversalColor.BLACK,
                 'step3': Graph.DepthFirstTraversalColor.BLACK
         ]
         postorderList == ['step2', 'step3', 'step1']
+    }
+
+    def 'depthFirstTraversalConnected postorder STOP'() {
+        setup:
+        def graph = new Graph()
+        graph.vertex 'step1'
+        graph.vertex 'step2'
+        graph.vertex 'step3'
+        graph.vertex 'step4'
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step4'
+        graph.edge 'step2', 'step3'
+
+        def postorderList = []
+        def preorderList = []
+
+        def spec = new DepthFirstTraversalSpec()
+        spec.colors = graph.makeColorMap()
+        spec.postorder { vertex ->
+            postorderList << vertex.name
+            if(vertex.name == 'step2') {
+                Graph.Traversal.STOP
+            }
+        }
+        spec.preorder { vertex ->
+            preorderList << vertex.name
+        }
+
+        when:
+        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+
+        then:
+        traversal == Graph.Traversal.STOP
+        spec.colors == [
+                'step1': Graph.DepthFirstTraversalColor.GREY,
+                'step2': Graph.DepthFirstTraversalColor.BLACK,
+                'step3': Graph.DepthFirstTraversalColor.BLACK,
+                'step4': Graph.DepthFirstTraversalColor.WHITE
+        ]
+        postorderList == ['step3', 'step2']
+        preorderList == ['step1', 'step2', 'step3']
     }
 }
