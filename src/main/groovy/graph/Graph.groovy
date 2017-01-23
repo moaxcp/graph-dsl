@@ -7,7 +7,7 @@ package graph
  */
 class Graph {
     final def vertices = [:]
-    final def edges = [] as LinkedHashSet
+    def edges = [] as LinkedHashSet
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -52,6 +52,11 @@ class Graph {
      */
     def getEdges() {
         Collections.unmodifiableSet(edges)
+    }
+
+    def apply(Class pluginClass) {
+        def plugin = pluginClass.newInstance()
+        plugin.apply(this)
     }
 
     /**
@@ -124,7 +129,7 @@ class Graph {
      * @return the resulting edge
      */
     def edge(map, closure = null) {
-        def edge = new Edge(one: map.one, two: map.two)
+        def edge = newEdge(map.one, map.two)
 
         edge = map.traits?.inject(edge) { val, it ->
             val.withTraits(it)
@@ -140,6 +145,16 @@ class Graph {
         }
 
         edge
+    }
+
+    /**
+     * creates a new edge with the provided one and two values.
+     * @param one
+     * @param two
+     * @return
+     */
+    def newEdge(one, two) {
+        new Edge(one: one, two: two)
     }
 
     /**
@@ -234,13 +249,17 @@ class Graph {
         def spec = new DepthFirstTraversalSpec()
         specClosure.delegate = spec
         specClosure()
+        setupSpec(spec)
+        spec
+    }
+
+    def setupSpec(DepthFirstTraversalSpec spec) {
         if(!spec.colors) {
             spec.colors = makeColorMap()
         }
         if(!spec.root) {
             spec.root = getUnvisitedVertexName(spec.colors)
         }
-        spec
     }
 
     /**
@@ -253,6 +272,7 @@ class Graph {
      * @return null or a Traversal value
      */
     def depthFirstTraversal(DepthFirstTraversalSpec spec) {
+        setupSpec(spec)
         String name = spec.root
         while (name) {
             def traversal = depthFirstTraversalConnected(name, spec)
@@ -275,6 +295,7 @@ class Graph {
      * @return null or a Traversal value
      */
     def depthFirstTraversalConnected(String name, DepthFirstTraversalSpec spec) {
+        setupSpec(spec)
         if (spec.preorder && spec.preorder(vertices[name]) == Traversal.STOP) {
             spec.colors[name] = DepthFirstTraversalColor.GREY
             return Traversal.STOP

@@ -361,4 +361,75 @@ public class GraphDepthFirstSearchSpec extends Specification {
         postorderList == ['step3', 'step2']
         preorderList == ['step1', 'step2', 'step3']
     }
+
+    def 'can depthFirstTraversal with spec'() {
+        setup:
+        def graph = new Graph()
+
+        graph.with {
+            vertex 'step1'
+            vertex 'step2'
+            vertex 'step3'
+            vertex 'step4'
+            edge 'step1', 'step2'
+            edge 'step3', 'step4'
+        }
+
+        def spec = graph.depthFirstTraversalSpec {
+            preorder {
+
+            }
+            postorder {
+
+            }
+        }
+
+        when:
+        graph.depthFirstTraversal spec
+
+        then:
+        spec.colors == [
+                'step1': Graph.DepthFirstTraversalColor.BLACK,
+                'step2': Graph.DepthFirstTraversalColor.BLACK,
+                'step3': Graph.DepthFirstTraversalColor.BLACK,
+                'step4': Graph.DepthFirstTraversalColor.BLACK
+        ]
+    }
+
+    def 'can depthFirstTraversal STOP with spec'() {
+        setup:
+        def graph = new Graph()
+
+        graph.with {
+            vertex 'step1'
+            vertex 'step2'
+            vertex 'step3'
+            vertex 'step4'
+            edge 'step1', 'step2'
+            edge 'step3', 'step4'
+        }
+
+        def spec = graph.depthFirstTraversalSpec {
+            preorder { vertex ->
+                if(vertex.name == 'step2') {
+                    return Graph.Traversal.STOP
+                }
+            }
+            postorder { vertex ->
+
+            }
+        }
+
+        when:
+        def traversal = graph.depthFirstTraversal spec
+
+        then:
+        traversal == Graph.Traversal.STOP
+        spec.colors == [
+                'step1': Graph.DepthFirstTraversalColor.GREY,
+                'step2': Graph.DepthFirstTraversalColor.GREY,
+                'step3': Graph.DepthFirstTraversalColor.WHITE,
+                'step4': Graph.DepthFirstTraversalColor.WHITE
+        ]
+    }
 }
