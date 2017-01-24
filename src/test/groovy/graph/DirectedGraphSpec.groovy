@@ -28,16 +28,15 @@ class DirectedGraphSpec extends Specification {
         def preorderList = []
         def postorderList = []
 
-        def spec = new DepthFirstTraversalSpec()
-        spec.postorder { vertex ->
-            postorderList << vertex.name
-        }
-        spec.preorder { vertex ->
-            preorderList << vertex.name
-        }
-
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+        def traversal = graph.depthFirstTraversal {
+            preorder { vertex ->
+                preorderList << vertex.name
+            }
+            postorder { vertex ->
+                postorderList << vertex.name
+            }
+        }
 
         then:
         preorderList == ['step1', 'step3', 'step5', 'step2', 'step4']
