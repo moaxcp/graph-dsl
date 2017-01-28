@@ -3,13 +3,13 @@ package graph
 trait DirectedEdge {
 
     public boolean equals(Object o) {
-        if (!(o instanceof Edge)) {
+        if (!(o instanceof DirectedEdge)) {
             return false
         }
         if (this.is(o)) {
             return true
         }
-        Edge rhs = (Edge) o;
+        DirectedEdge rhs = (DirectedEdge) o;
         return one == rhs.one && two == rhs.two
     }
 }
