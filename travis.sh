@@ -11,8 +11,8 @@ elif [ "$TRAVIS_BRANCH" == "develop" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ];
 
     #run tests but continue so sonar gets failed info
     ./gradlew test --continue sonarqube \
-    -Psonar.host.url= \
-    -Psonar.login=
+    -Psonar.host.url=$SONAR_HOST_URL \
+    -Psonar.login=$SONAR_TOKEN
 
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "Build for internal pull request"
