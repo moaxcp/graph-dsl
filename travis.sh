@@ -1,10 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ "$TRAVIS_BRANCH" == "master" && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "build for publishing to maven central *NOT IMPLEMENTED*"
 
-elif [ "$TRAVIS_BRANCH" == "develop" && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+elif [ "$TRAVIS_BRANCH" == "develop" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "Build for develop"
 
     git fetch --unshallow || true #allows sonar to get all commit history for exact blame info
