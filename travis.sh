@@ -25,6 +25,6 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.login=$SONAR_TOKEN
 
 else
-    echo "Build for feature or external pull request"
+    echo "Build for feature, release, or external pull request"
     ./gradlew build
 fi

@@ -21,14 +21,8 @@ group = 'com.github.moaxcp'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-tasks.check.dependsOn 'jacocoTestReport'
-
 jacocoTestReport {
-    reports {
-        xml.enabled false
-        csv.enabled false
-        html.destination "${buildDir}/jacocoHtml"
-    }
+    dependsOn test
 }
 
 gradle.taskGraph.whenReady { graph ->
