@@ -11,7 +11,9 @@
     <ruleset-ref path='rulesets/convention.xml'/>
     <ruleset-ref path='rulesets/design.xml'/>
     <ruleset-ref path='rulesets/dry.xml'/>
+    <!--
     <ruleset-ref path='rulesets/enhanced.xml'/>
+    -->
     <ruleset-ref path='rulesets/exceptions.xml'/>
     <ruleset-ref path='rulesets/formatting.xml'/>
     <ruleset-ref path='rulesets/generic.xml'/>
