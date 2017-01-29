@@ -32,6 +32,10 @@ gradle.taskGraph.whenReady { graph ->
     }
 }
 
+codenarc {
+    ignoreFailures = true
+}
+
 repositories {
     jcenter()
 }
