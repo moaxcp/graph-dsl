@@ -2,10 +2,7 @@
 set -euo pipefail
 
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-    echo "build for publishing to maven central *NOT IMPLEMENTED*"
-
-elif [ "$TRAVIS_BRANCH" == "develop" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-    echo "Build for develop"
+    echo "Build for master"
 
     git fetch --unshallow || true #allows sonar to get all commit history for exact blame info
 
@@ -25,6 +22,6 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.login=$SONAR_TOKEN
 
 else
-    echo "Build for feature, release, or external pull request"
+    echo "Build for develop, feature, release, or external pull request"
     ./gradlew build
 fi

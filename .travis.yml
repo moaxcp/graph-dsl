@@ -1,8 +1,16 @@
 language: groovy
 jdk: oraclejdk8
-script: "./travis.sh"
 env:
   global:
   - SONAR_HOST_URL=https://sonarqube.com/
   - secure: iuG9LfqDv0DHauFCsSRf6WKvWLwQ0AaEIByypdNPuLrhs87Quhqn/ZapHnU6czY0taldVMefkusu1oBBooXvxMh0FllKXrk0PEFWEn3KtzKbfIsB693vHvYoZQGrdQrOz+1dPixJ7NOMFMHeZYtYvm6ss4MosE2b5uHM8uc1tiS8pNuqHrbxkQSZfWtqe2efFQBiiQUBtV+DWV5He+3nvLjgH3Rr+nKN9hPOOPZZcl/ek4UtjWGKFLSeV85gWekD33WVd1xKOCqS+oTNe5Qu40hrWbqlTke2FGlAEEz4Ub8tjrWqE7+S3yLqzrCHAfnyXA9lUNzieVXrAgIcrZAHcRxkBH2weZIsC6tuwis9lPYI9DvfQsyk3OP0qm4CcIApwXTzwr+NS5ZbpUnLkdjNR9aDtR+r+w9oFrceEJB7ioEskCANfruMLrm0Kv5Wv4QHjENnVNQL9pB7x8NgNw8A06JtO1Y50DSdi+YkiYzgKn4YPaMxTGuVwjCRxBIeD9z50+Ea+oCfBdoubpRM8CYqacDB02wWCzKi1EnvLXdo4Eec+952nmDyMvM5LY6XxveOjiUhsHx3Kl8TlLhPK0VoMMI2PNAh6iTNCAWWlcGmQQf0y+33dmnMJO/k8z3uHiDmT6qK3MOuA3bL1sE3e2BIwfay7tPhqZDo9ELN6LFvNtk=
   - secure: vODNTymDcVUjzi0qTDpBRb+nE2obzAA+wafh5RXPk/5ezuUfV7RX8kanW+2ijqI8Zcf83xmBCIWoo1KMQp8rB7HGzIZdcNuTAkM1XaJ64mL7Cg4JEWPXsmVfaN9jXK4bVS/1nzSEfzU4cgd9xdeaoOyx/eVSWEnGdCio7eW/l/CAta12ZjJIUEAnkhkspTHp0paj1dWK8ZbTUNXifXwZr3sSsIvFGvs3eQtC/SP48vTD3rY8Mfp5yulHL3K09meWfnqStHFQjMLS6dUWp3RB9S2/yvQEpwRHswCICgNyFfDmRqvq7itDm1a9Xf9H0LhEPNVKvkg0Mh7R6kRPoug7afBRv1h2NiHyj2vrr5zxAKt5EHpDi0Y1xDcSW+7GycqBJyrlivcm7C87tCnbdboUes2sKeC+mSBcqzqu+VAC1s4+vUBFJIbnjMev/iqEsXj8361hd2HIhaltOnzi6oShF4YNILUoE99+/66bHadN7NsQ7QYJs25+gwl9z5dwHiISKQX9LJa/HmAtSh4yhzNrSkyj0YqxXIEPhprvlwy7ccI9gdZPTVIaBEoQ+HgEpd3BiGBKKmf3k2A7RgQIBsSq7xHvgcxQzgUAEQ/748AbDI6cuOIDHHshBwvMMgrFVU7PY0lidGGI8oSIk54AGmsTlVYQ/9VODacRZqxP0eOKFLk=
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+install: true
+script: "./travis.sh"
