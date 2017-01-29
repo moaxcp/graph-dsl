@@ -15,6 +15,7 @@ apply plugin: 'com.github.amkay.gitflow'
 apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'groovy'
+apply plugin: 'codenarc'
 
 group = 'com.github.moaxcp'
 
