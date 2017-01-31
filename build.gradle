@@ -34,10 +34,17 @@ gradle.taskGraph.whenReady { graph ->
 
 codenarc {
     ignoreFailures = true
+    configFile = file 'config/codenarc/codenarc.groovy'
 }
 
 repositories {
     jcenter()
+}
+
+configurations {
+    codnarc {
+        extendsFrom compile
+    }
 }
 
 dependencies {
