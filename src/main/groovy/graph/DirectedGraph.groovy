@@ -1,6 +1,6 @@
 package graph
 
-class DirectedGraph {
+class DirectedGraph implements Plugin {
 
     def apply(Graph graph) {
         graph.@edges = graph.edges.inject([] as LinkedHashSet) { edges, edge ->
