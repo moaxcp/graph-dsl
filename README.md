@@ -84,12 +84,20 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
-0.1.0
+## 0.1.2
+
+sonarqube.com doesn't seem to show any issues for groovy projects. This release adds codenarc support for local development. This allows developers to view issues right away without worrying about sonar.
+
+## 0.1.1
+
+* Changed travis.sh so master gets published to sonar instead of develop.
+
+## 0.1.0
 
 * initial plugin support
 * DirectedGraph plugin
 
-0.0.0
+## 0.0.0
 
 * Support for vertices, edges, and depth first traversal
 
