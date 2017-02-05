@@ -6,8 +6,9 @@ package graph
  * a graph as string vertices with edges that connect strings.
  */
 class Graph {
-    final def vertices = [:]
-    def edges = [] as LinkedHashSet
+    final def vertices = [:] as LinkedHashMap<String, Edge>
+    def edges = [] as LinkedHashSet<Edge>
+    def plugins = [] as LinkedHashSet<Plugin>
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -31,11 +32,11 @@ class Graph {
         /**
          * a discovered vertex that still needs work
          */
-        GREY,
+                GREY,
         /**
          * a vertex that the algorithm is done with
          */
-        BLACK
+                BLACK
     }
 
     /**
@@ -54,7 +55,27 @@ class Graph {
         Collections.unmodifiableSet(edges)
     }
 
+    /**
+     * returns plugins as an unmodifiable set
+     * @return
+     */
+    def getPlugins() {
+        Collections.unmodifiableSet(plugins)
+    }
+
+    /**
+     * applies a plugin to this graph.
+     * @param pluginClass
+     * @return
+     */
     def apply(Class pluginClass) {
+        if (plugins.contains(pluginClass)) {
+            throw new IllegalArgumentException("$pluginClass.name is already applied.")
+        }
+        if(!pluginClass.interfaces.contains(Plugin)) {
+            throw new IllegalArgumentException("$pluginClass.name does not implement Plugin")
+        }
+        plugins << pluginClass
         def plugin = pluginClass.newInstance()
         plugin.apply(this)
     }
@@ -211,7 +232,7 @@ class Graph {
      */
     def makeColorMap() {
         vertices.collectEntries { name, vertex ->
-            [(name) : DepthFirstTraversalColor.WHITE]
+            [(name): DepthFirstTraversalColor.WHITE]
         }
     }
 
@@ -254,10 +275,10 @@ class Graph {
     }
 
     def setupSpec(DepthFirstTraversalSpec spec) {
-        if(!spec.colors) {
+        if (!spec.colors) {
             spec.colors = makeColorMap()
         }
-        if(!spec.root) {
+        if (!spec.root) {
             spec.root = getUnvisitedVertexName(spec.colors)
         }
     }
@@ -276,7 +297,7 @@ class Graph {
         String name = spec.root
         while (name) {
             def traversal = depthFirstTraversalConnected(name, spec)
-            if(traversal == Traversal.STOP) {
+            if (traversal == Traversal.STOP) {
                 return Traversal.STOP
             }
             name = getUnvisitedVertexName(spec.colors)
@@ -303,7 +324,7 @@ class Graph {
         spec.colors[name] = DepthFirstTraversalColor.GREY
 
         def adjacentEdges = adjacentEdges(name)
-        for(int index = 0; index < adjacentEdges.size(); index++) {
+        for (int index = 0; index < adjacentEdges.size(); index++) {
             def edge = adjacentEdges[index]
             def connectedName = name == edge.one ? edge.two : edge.one
             if (spec.colors[connectedName] == DepthFirstTraversalColor.WHITE) {
