@@ -84,6 +84,14 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.2.0
+
+* Optimized codenarc configuration using the ruleset method.
+* Updated gradle to version 3.3.
+* Added Plugin interface for all Plugins to implement.
+* Added plugins property to Graph which contains all plugins applied to the Graph.
+* Adde DirectedGraph plugin which converts a Graph into a DirectedGraph.
+
 ## 0.1.2
 
 sonarqube.com doesn't seem to show any issues for groovy projects. This release adds codenarc support for local development. This allows developers to view issues right away without worrying about sonar.
