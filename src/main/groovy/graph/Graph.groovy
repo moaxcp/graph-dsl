@@ -72,6 +72,9 @@ class Graph {
         if (plugins.contains(pluginClass)) {
             throw new IllegalArgumentException("$pluginClass.name is already applied.")
         }
+        if(!pluginClass.interfaces.contains(Plugin)) {
+            throw new IllegalArgumentException("$pluginClass.name does not implement Plugin")
+        }
         plugins << pluginClass
         def plugin = pluginClass.newInstance()
         plugin.apply(this)
