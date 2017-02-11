@@ -6,8 +6,8 @@ package graph
  * a graph as string vertices with edges that connect strings.
  */
 class Graph {
-    final def vertices = [:] as LinkedHashMap<String, Edge>
-    def edges = [] as LinkedHashSet<Edge>
+    final def vertices = [:] as LinkedHashMap<String, Vertex>
+    def edges = [] as LinkedHashSet
     def plugins = [] as LinkedHashSet<Plugin>
 
     /**
