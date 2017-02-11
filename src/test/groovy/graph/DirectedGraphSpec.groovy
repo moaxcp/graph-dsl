@@ -6,7 +6,7 @@ class DirectedGraphSpec extends Specification {
     def graph = new Graph()
 
     def setup() {
-        graph.apply DirectedGraph
+        graph.apply DirectedGraphPlugin
     }
 
     def 'traverse is directed'() {

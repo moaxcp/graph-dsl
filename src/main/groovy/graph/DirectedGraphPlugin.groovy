@@ -1,9 +1,9 @@
 package graph
 
-class DirectedGraph implements Plugin {
+class DirectedGraphPlugin implements Plugin {
 
     def apply(Graph graph) {
-        graph.@edges = graph.edges.inject([] as LinkedHashSet) { edges, edge ->
+        graph.@edges = graph.@edges.inject([] as LinkedHashSet) { edges, edge ->
             edges.add(edge as DirectedEdge)
             edges
         }

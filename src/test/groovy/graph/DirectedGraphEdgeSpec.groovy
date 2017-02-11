@@ -7,7 +7,7 @@ class DirectedGraphEdgeSpec extends Specification {
     def graph = new Graph()
 
     def setup() {
-        graph.apply DirectedGraph
+        graph.apply DirectedGraphPlugin
     }
 
     def 'can get DirectedEdge from newEdge'() {
@@ -32,11 +32,28 @@ class DirectedGraphEdgeSpec extends Specification {
         graph.edge 'step1', 'step2'
 
         when:
-        graph.apply DirectedGraph
+        graph.apply DirectedGraphPlugin
 
         then:
         graph.edges.every {
             it instanceof DirectedEdge
+        }
+    }
+
+    def 'can add edges after apply'() {
+        setup:
+        def graph = new Graph()
+        graph.edge 'step1', 'step2'
+
+        when:
+        graph.apply DirectedGraphPlugin
+
+        and:
+        graph.edge 'step2', 'step3'
+
+        then:
+        graph.edges.any {
+            it.one == 'step2' && it.two == 'step3'
         }
     }
 }
