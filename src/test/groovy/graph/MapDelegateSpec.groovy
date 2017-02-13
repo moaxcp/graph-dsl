@@ -2,9 +2,6 @@ package graph
 
 import spock.lang.Specification
 
-/**
- * Created by john on 2/12/17.
- */
 class MapDelegateSpec extends Specification {
     def edge = new Edge()
 
