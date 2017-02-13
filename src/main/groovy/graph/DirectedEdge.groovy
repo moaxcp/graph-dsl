@@ -1,6 +1,6 @@
 package graph
 
-trait DirectedEdge {
+class DirectedEdge extends Edge {
 
     public boolean equals(Object o) {
         if (!(o instanceof DirectedEdge)) {

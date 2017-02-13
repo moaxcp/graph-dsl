@@ -3,14 +3,11 @@ package graph
 class DirectedGraphPlugin implements Plugin {
 
     def apply(Graph graph) {
-        graph.@edges = graph.@edges.inject([] as LinkedHashSet) { edges, edge ->
-            edges.add(edge as DirectedEdge)
-            edges
-        }
+        graph.@edges = graph.@edges.collect { edge ->
+            new DirectedEdge(one: edge.one, two: edge.two)
+        } as LinkedHashSet
 
-        graph.metaClass.newEdge = { one, two ->
-            return graph.&newEdge(one, two) as DirectedEdge
-        }
+        graph.edgeFactory = new DirectedEdgeFactory()
 
         graph.metaClass.outEdges = { name ->
             graph.@edges.findAll {

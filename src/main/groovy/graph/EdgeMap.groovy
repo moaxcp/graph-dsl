@@ -1,4 +1,0 @@
-package graph
-
-trait EdgeMap {
-}

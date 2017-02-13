@@ -22,12 +22,13 @@ class EdgeMapPluginSpec extends Specification  {
         graph.apply EdgeMapPlugin
 
         then:
+        graph.edges.size() == 1
         graph.edges.every {
-            it instanceof LinkedHashMap
+            it.delegate instanceof MapDelegate
         }
     }
 
-    def 'new edges are maps'() {
+    def 'new edges are also maps'() {
         setup:
         graph.edge 'step1', 'step2'
 
@@ -38,8 +39,9 @@ class EdgeMapPluginSpec extends Specification  {
         graph.edge 'step2', 'step3'
 
         then:
+        graph.edges.size() == 2
         graph.edges.every {
-            it instanceof LinkedHashMap
+            it.delegate instanceof MapDelegate
         }
     }
 }

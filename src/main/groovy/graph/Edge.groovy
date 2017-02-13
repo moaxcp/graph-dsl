@@ -3,6 +3,11 @@ package graph
 class Edge {
     String one
     String two
+    def delegate = new Object()
+
+    def delegateAs(Class<?>... traits) {
+        delegate = delegate.withTraits(traits)
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -19,5 +24,17 @@ class Edge {
     @Override
     public int hashCode() {
         one.hashCode() + two.hashCode()
+    }
+
+    def methodMissing(String name, def args) {
+        delegate.invokeMethod(name, args)
+    }
+
+    def propertyMissing(String name) {
+        delegate.getAt(name)
+    }
+
+    def propertyMissing(String name, value) {
+        delegate[name] = value
     }
 }

@@ -8,7 +8,8 @@ package graph
 class Graph {
     final def vertices = [:] as LinkedHashMap<String, Vertex>
     def edges = [] as LinkedHashSet
-    def plugins = [] as LinkedHashSet<Plugin>
+    def plugins = [] as LinkedHashSet
+    def EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -150,7 +151,7 @@ class Graph {
      * @return the resulting edge
      */
     def edge(map, closure = null) {
-        def edge = newEdge(map.one, map.two)
+        def edge = edgeFactory.newEdge(map.one, map.two)
 
         edge = map.traits?.inject(edge) { val, it ->
             val.withTraits(it)
@@ -166,16 +167,6 @@ class Graph {
         }
 
         edge
-    }
-
-    /**
-     * creates a new edge with the provided one and two values.
-     * @param one
-     * @param two
-     * @return
-     */
-    def newEdge(one, two) {
-        new Edge(one: one, two: two)
     }
 
     /**
