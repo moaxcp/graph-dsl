@@ -4,7 +4,7 @@ class EdgeMapPlugin implements Plugin {
     @Override
     def apply(Graph graph) {
         graph.@edges.each { edge ->
-            edge.delegateAs(MapDelegate)
+            edge.delegateAs(Mapping)
         }
 
         graph.edgeFactory = new EdgeFactory() {
@@ -12,7 +12,7 @@ class EdgeMapPlugin implements Plugin {
             @Override
             Edge newEdge(String one, String two) {
                 def edge = oldFactory.newEdge(one, two)
-                edge.delegateAs(MapDelegate)
+                edge.delegateAs(Mapping)
                 return edge
             }
         }

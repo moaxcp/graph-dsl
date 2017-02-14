@@ -1,6 +1,6 @@
 package graph
 
-trait MapDelegate {
+trait Mapping {
     @Delegate
     Map map = new LinkedHashMap()
 }

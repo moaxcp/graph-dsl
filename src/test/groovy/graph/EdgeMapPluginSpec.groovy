@@ -24,7 +24,7 @@ class EdgeMapPluginSpec extends Specification  {
         then:
         graph.edges.size() == 1
         graph.edges.every {
-            it.delegate instanceof MapDelegate
+            it.delegate instanceof Mapping
         }
     }
 
@@ -41,7 +41,7 @@ class EdgeMapPluginSpec extends Specification  {
         then:
         graph.edges.size() == 2
         graph.edges.every {
-            it.delegate instanceof MapDelegate
+            it.delegate instanceof Mapping
         }
     }
 }
