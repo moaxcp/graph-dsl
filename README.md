@@ -84,6 +84,11 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.3.0
+
+* Added delegate support for Edges and Vertices
+* Added VertexMapPlugin and EdgeMapPlugin
+
 ## 0.2.0
 
 * Optimized codenarc configuration using the ruleset method.
