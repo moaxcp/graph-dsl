@@ -13,7 +13,6 @@ class EdgeMapPlugin implements Plugin {
             Edge newEdge(String one, String two) {
                 def edge = oldFactory.newEdge(one, two)
                 edge.delegateAs(Mapping)
-                return edge
             }
         }
     }

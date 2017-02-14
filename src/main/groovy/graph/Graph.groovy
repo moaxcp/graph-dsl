@@ -10,6 +10,7 @@ class Graph {
     def edges = [] as LinkedHashSet
     def plugins = [] as LinkedHashSet
     def EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
+    def VertexFactory vertexFactory = new DefaultVertexFactory()
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -108,7 +109,7 @@ class Graph {
      * @return the resulting vertex
      */
     def vertex(map, Closure closure = null) {
-        def vertex = new Vertex(name: map.name)
+        def vertex = vertexFactory.newVertex(map.name)
 
         vertex = map.traits?.inject(vertex) { val, it ->
             val.withTraits(it)

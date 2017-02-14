@@ -7,6 +7,7 @@ class Edge {
 
     def delegateAs(Class<?>... traits) {
         delegate = delegate.withTraits(traits)
+        this
     }
 
     @Override
@@ -31,7 +32,7 @@ class Edge {
     }
 
     def propertyMissing(String name) {
-        delegate.getAt(name)
+        delegate[name]
     }
 
     def propertyMissing(String name, value) {

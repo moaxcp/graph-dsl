@@ -8,10 +8,11 @@ class Vertex {
 
     def delegateAs(Class<?>... traits) {
         delegate = delegate.withTraits(traits)
+        this
     }
 
     def propertyMissing(String name) {
-        delegate.getAt(name)
+        delegate[name]
     }
 
     def propertyMissing(String name, value) {
