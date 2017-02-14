@@ -6,10 +6,10 @@ class GraphSpec extends Specification {
     def 'can only apply Plugin once'() {
         setup:
         def graph = new Graph()
-        graph.apply DirectedGraph
+        graph.apply DirectedGraphPlugin
 
         when:
-        graph.apply DirectedGraph
+        graph.apply DirectedGraphPlugin
 
         then:
         thrown IllegalArgumentException
