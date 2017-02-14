@@ -6,9 +6,11 @@ package graph
  * a graph as string vertices with edges that connect strings.
  */
 class Graph {
-    final def vertices = [:] as LinkedHashMap<String, Edge>
-    def edges = [] as LinkedHashSet<Edge>
-    def plugins = [] as LinkedHashSet<Plugin>
+    final def vertices = [:] as LinkedHashMap<String, Vertex>
+    def edges = [] as LinkedHashSet
+    def plugins = [] as LinkedHashSet
+    def EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
+    def VertexFactory vertexFactory = new DefaultVertexFactory()
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -107,7 +109,7 @@ class Graph {
      * @return the resulting vertex
      */
     def vertex(map, Closure closure = null) {
-        def vertex = new Vertex(name: map.name)
+        def vertex = vertexFactory.newVertex(map.name)
 
         vertex = map.traits?.inject(vertex) { val, it ->
             val.withTraits(it)
@@ -150,7 +152,7 @@ class Graph {
      * @return the resulting edge
      */
     def edge(map, closure = null) {
-        def edge = newEdge(map.one, map.two)
+        def edge = edgeFactory.newEdge(map.one, map.two)
 
         edge = map.traits?.inject(edge) { val, it ->
             val.withTraits(it)
@@ -166,16 +168,6 @@ class Graph {
         }
 
         edge
-    }
-
-    /**
-     * creates a new edge with the provided one and two values.
-     * @param one
-     * @param two
-     * @return
-     */
-    def newEdge(one, two) {
-        new Edge(one: one, two: two)
     }
 
     /**

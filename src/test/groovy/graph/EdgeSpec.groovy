@@ -63,4 +63,40 @@ class EdgeSpec extends Specification {
         then:
         edge == edge2
     }
+
+    def 'method is missing on delegate'() {
+        when:
+        edge.methodThatDoesNotExistOnEdge()
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def 'property is missing on delegate'() {
+        when:
+        edge.length = 10
+
+        then:
+        thrown MissingPropertyException
+    }
+
+    def 'can add traits to delegate'() {
+        when:
+        edge.delegateAs(Weight)
+
+        then:
+        edge.delegate instanceof Weight
+    }
+
+    def 'can use method from delegate'() {
+        when:
+        edge.delegateAs(Weight)
+        edge.delegate.weight {
+            10
+        }
+
+        then:
+        notThrown MissingMethodException
+        edge.delegate.weight == 10
+    }
 }

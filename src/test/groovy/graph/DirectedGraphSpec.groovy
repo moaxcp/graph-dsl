@@ -6,10 +6,30 @@ class DirectedGraphSpec extends Specification {
     def graph = new Graph()
 
     def setup() {
-        graph.apply DirectedGraph
+        graph.apply DirectedGraphPlugin
+    }
+
+    def 'can get outedges and adjacent edges'() {
+        setup:
+        def expected = [] as LinkedHashSet
+        graph.with {
+            vertex 'step1'
+            expected << edge('step1', 'step2')
+            expected << edge('step1', 'step3')
+            edge 'step4', 'step1'
+            edge 'step4', 'step3'
+        }
+        when:
+        def out = graph.outEdges 'step1'
+        def adjacent = graph.adjacentEdges 'step1'
+
+        then:
+        out == expected
+        adjacent == expected
     }
 
     def 'traverse is directed'() {
+        setup:
         graph.with {
             vertex 'step1'
             vertex 'step2'
