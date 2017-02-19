@@ -16,6 +16,7 @@ apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
+apply plugin: 'maven-publish'
 
 group = 'com.github.moaxcp'
 
@@ -44,6 +45,35 @@ repositories {
 configurations {
     codnarc {
         extendsFrom compile
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allGroovy
+    classifier = 'sources'
+}
+
+task groovyDocJar(type: Jar, dependsOn: groovydoc) {
+    from groovydoc.destinationDir
+    classifier = 'groovydoc'
+}
+
+publishing {
+    repositories {
+        maven {
+            url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+        }
+    }
+
+    publications {
+        graphDsl(MavenPublication) {
+            from components.java
+            artifact sourceJar
+            artifact groovyDocJar
+            pom.withXml {
+                asNode().appendNode('description', 'A groovy dsl for creating and traversing graphs.')
+            }
+        }
     }
 }
 
