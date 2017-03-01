@@ -66,6 +66,7 @@ artifacts {
 }
 
 signing {
+    required = true
     sign configurations.archives
 }
 
@@ -83,6 +84,16 @@ publishing {
     publications {
         graphDsl(MavenPublication) {
             from components.java
+            project.tasks.signArchives.signatureFiles.each {
+                artifact(it) {
+                    if(it.file.getName().contains('-sources')) {
+                        classifier = 'sources'
+                    } else if(it.file.getName().contains('-groovydoc')) {
+                        classifier = 'groovydoc'
+                    }
+                    extension = 'jar.asc'
+                }
+            }
             artifact sourceJar
             artifact groovyDocJar
             pom.withXml {
@@ -112,6 +123,12 @@ publishing {
                 }
             }
         }
+    }
+}
+
+model {
+    tasks.publishGraphDslPublicationToMavenLocal {
+        dependsOn(project.tasks.signArchives)
     }
 }
 
