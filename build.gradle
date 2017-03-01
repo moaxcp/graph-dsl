@@ -17,6 +17,7 @@ apply plugin: 'jacoco'
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 group = 'com.github.moaxcp'
 
@@ -58,10 +59,24 @@ task groovyDocJar(type: Jar, dependsOn: groovydoc) {
     classifier = 'groovydoc'
 }
 
+artifacts {
+    archives jar
+    archives sourceJar
+    archives groovyDocJar
+}
+
+signing {
+    sign configurations.archives
+}
+
 publishing {
     repositories {
         maven {
             url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            credentials {
+                username = System.getProperty('nexus.username')
+                password = System.getProperty('nexus.password')
+            }
         }
     }
 
@@ -71,7 +86,30 @@ publishing {
             artifact sourceJar
             artifact groovyDocJar
             pom.withXml {
-                asNode().appendNode('description', 'A groovy dsl for creating and traversing graphs.')
+                asNode().with {
+                    appendNode('name', 'graph-dsl')
+                    appendNode('description', 'A groovy dsl for creating and traversing graphs.')
+                    appendNode('url', 'https://github.com/moaxcp/graph-dsl')
+                    appendNode('licenses').with {
+                        appendNode('license').with {
+                            appendNode('name', 'MIT License')
+                            appendNode('url', 'http://www.opensource.org/licenses/mit-license.php')
+                            appendNode('distribution', 'repo')
+                        }
+                    }
+                    appendNode('scm').with {
+                        appendNode('url', 'https://github.com/moaxcp/graph-dsl')
+                        appendNode('connection', 'scm:git:git://github.com/moaxcp/graph-dsl.git')
+                        appendNode('developerConnection', 'scm:git:git@github.com:moaxcp/graph-dsl.git')
+                    }
+                    appendNode('developers').with {
+                        appendNode('developer').with {
+                            appendNode('id', 'moaxcp')
+                            appendNode('name', 'John Mercier')
+                            appendNode('email', 'moaxcp@gmail.com')
+                        }
+                    }
+                }
             }
         }
     }
