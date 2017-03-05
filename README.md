@@ -72,7 +72,7 @@ git clone https://github.com/moaxcp/graph-dsl.git
 
 Contributions are welcome. Please submit a pull request to the develop branch in github. If there are any issues contact me moaxcp@gmail.com.
 
-## Technology
+# Technology
 
 * [github](https://github.com/)
 * [git](https://git-scm.com/)
@@ -86,6 +86,8 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 * [travis-ci.org](https://travis-ci.org/moaxcp/graph-dsl)
 
 # Releases
+
+## 0.4.1
 
 ## 0.4.0
 

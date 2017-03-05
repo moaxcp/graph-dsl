@@ -141,6 +141,9 @@ model {
     tasks.publishGraphDslPublicationToMavenLocal {
         dependsOn(project.tasks.signArchives)
     }
+    tasks.publishGraphDslPublicationToMavenRepository {
+        dependsOn(project.tasks.signArchives)
+    }
 }
 
 nexusStaging {
