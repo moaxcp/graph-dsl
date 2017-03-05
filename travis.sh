@@ -3,6 +3,7 @@ set -euo pipefail
 
 pwd
 ls
+echo "fake password is $FAKE_PASSWORD"
 
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "Build for master"
