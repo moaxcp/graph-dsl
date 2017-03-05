@@ -11,6 +11,15 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     -Dsonar.host.url=$SONAR_HOST_URL \
     -Dsonar.login=$SONAR_TOKEN
 
+    ./gradlew publish \
+    -Dnexus.username=moaxcp \
+    -Dnexus.password=$NEXUS_PASSWORD \
+    -Psigning.keyId=A9A4043B \
+    -Psigning.secretKeyRingFile=signingkey.gpg \
+    -Psigning.password=$SIGNING_PASSWORD
+
+    ./gradlew closeAndPromoteRepository
+
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "Build for internal pull request"
     ./gradlew test --continue sonarqube \
@@ -23,5 +32,8 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
 
 else
     echo "Build for develop, feature, release, or external pull request"
-    ./gradlew build
+    ./gradlew build \
+    -Psigning.keyId=A9A4043B \
+    -Psigning.secretKeyRingFile=signingkey.gpg \
+    -Psigning.password=$SIGNING_PASSWORD
 fi
