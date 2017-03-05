@@ -18,6 +18,8 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     -Psigning.secretKeyRingFile=signingkey.gpg \
     -Psigning.password=$SIGNING_PASSWORD
 
+    ./gradlew closeAndPromoteRepository
+
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "Build for internal pull request"
     ./gradlew test --continue sonarqube \
