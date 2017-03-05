@@ -40,23 +40,26 @@ This plugin makes the graph into a directed graph.
 Depth first traversal supports preorder and postorder traversal.
 
 ```groovy
-def preorderList = []
 
 graph.depthFirstTraversal {
     preorder { vertex ->
-        preorderList << vertex.name
+        println vertex.name
     }
 }
-
-println preorderList
 ```
 
-The closure is used to build a DepthFirstTraversalSpec. The spec defines the behavoir of the traversal.
+The closure is used to build a DepthFirstTraversalSpec. The spec defines the behavoir of the traversal which is to print the name of each vertex on preorder visits.
 
 # Getting Started
 
 ## install git
+
+https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+
 ## install gitflow-avh
+
+https://github.com/petervanderdoes/gitflow-avh/wiki/Installation
+
 ## clone the project
 
 git clone https://github.com/moaxcp/graph-dsl.git
@@ -83,6 +86,10 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 * [travis-ci.org](https://travis-ci.org/moaxcp/graph-dsl)
 
 # Releases
+
+## 0.4.0
+
+* Artifacts publish to nexus automatically
 
 ## 0.3.0
 
