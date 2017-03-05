@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+pwd
+ls
+
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "Build for master"
 
