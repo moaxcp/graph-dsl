@@ -1,3 +1,5 @@
+import static com.github.amkay.gradle.gitflow.version.VersionType.*
+
 buildscript {
     repositories {
         maven {
@@ -7,6 +9,7 @@ buildscript {
     dependencies {
         classpath 'com.github.amkay:gradle-gitflow:0.2.0'
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.2'
+        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
     }
 }
 
@@ -16,6 +19,9 @@ apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'io.codearte.nexus-staging'
 
 group = 'com.github.moaxcp'
 
@@ -45,6 +51,101 @@ configurations {
     codnarc {
         extendsFrom compile
     }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allGroovy
+    classifier = 'sources'
+}
+
+task groovyDocJar(type: Jar, dependsOn: groovydoc) {
+    from groovydoc.destinationDir
+    classifier = 'groovydoc'
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives groovyDocJar
+}
+
+signing {
+    required = true
+    sign configurations.archives
+}
+
+publishing {
+    repositories {
+        maven {
+            if(project.version.type == RELEASE) {
+                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            } else {
+                url 'https://oss.sonatype.org/content/repositories/snapshots'
+            }
+            credentials {
+                username = System.getProperty('nexus.username')
+                password = System.getProperty('nexus.password')
+            }
+        }
+    }
+
+    publications {
+        graphDsl(MavenPublication) {
+            if(project.version.type != RELEASE) {
+                version "$project.version-SNAPSHOT"
+            }
+            from components.java
+            project.tasks.signArchives.signatureFiles.each {
+                artifact it, {
+                    if(it.file.getName().contains('-sources')) {
+                        classifier = 'sources'
+                    } else if(it.file.getName().contains('-groovydoc')) {
+                        classifier = 'groovydoc'
+                    }
+                    extension = 'asc'
+                }
+            }
+            artifact sourceJar
+            artifact groovyDocJar
+            pom.withXml {
+                asNode().with {
+                    appendNode('name', 'graph-dsl')
+                    appendNode('description', 'A groovy dsl for creating and traversing graphs.')
+                    appendNode('url', 'https://github.com/moaxcp/graph-dsl')
+                    appendNode('licenses').with {
+                        appendNode('license').with {
+                            appendNode('name', 'MIT License')
+                            appendNode('url', 'http://www.opensource.org/licenses/mit-license.php')
+                            appendNode('distribution', 'repo')
+                        }
+                    }
+                    appendNode('scm').with {
+                        appendNode('url', 'https://github.com/moaxcp/graph-dsl')
+                        appendNode('connection', 'scm:git:git://github.com/moaxcp/graph-dsl.git')
+                        appendNode('developerConnection', 'scm:git:git@github.com:moaxcp/graph-dsl.git')
+                    }
+                    appendNode('developers').with {
+                        appendNode('developer').with {
+                            appendNode('id', 'moaxcp')
+                            appendNode('name', 'John Mercier')
+                            appendNode('email', 'moaxcp@gmail.com')
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+model {
+    tasks.publishGraphDslPublicationToMavenLocal {
+        dependsOn(project.tasks.signArchives)
+    }
+}
+
+nexusStaging {
+    username = System.getProperty('nexus.username')
+    password = System.getProperty('nexus.password')
 }
 
 dependencies {
