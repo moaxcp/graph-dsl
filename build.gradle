@@ -1,3 +1,5 @@
+import static com.github.amkay.gradle.gitflow.version.VersionType.*
+
 buildscript {
     repositories {
         maven {
@@ -73,7 +75,11 @@ signing {
 publishing {
     repositories {
         maven {
-            url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            if(project.version.type == RELEASE) {
+                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            } else {
+                url 'https://oss.sonatype.org/content/repositories/snapshots'
+            }
             credentials {
                 username = System.getProperty('nexus.username')
                 password = System.getProperty('nexus.password')
@@ -83,15 +89,18 @@ publishing {
 
     publications {
         graphDsl(MavenPublication) {
+            if(project.version.type != RELEASE) {
+                version "$project.version-SNAPSHOT"
+            }
             from components.java
             project.tasks.signArchives.signatureFiles.each {
-                artifact(it) {
+                artifact it, {
                     if(it.file.getName().contains('-sources')) {
                         classifier = 'sources'
                     } else if(it.file.getName().contains('-groovydoc')) {
                         classifier = 'groovydoc'
                     }
-                    extension = 'jar.asc'
+                    extension = 'asc'
                 }
             }
             artifact sourceJar
