@@ -32,7 +32,7 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
 
 else
     echo "Build for develop, feature, release, or external pull request"
-    ./gradlew build --debug --stachtrace \
+    ./gradlew build --debug --stacktrace \
     -Psigning.keyId=A9A4043B \
     -Psigning.secretKeyRingFile=signingkey.gpg \
     -Psigning.password=$SIGNING_PASSWORD
