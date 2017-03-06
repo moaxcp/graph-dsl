@@ -74,12 +74,16 @@ signing {
     sign configurations.archives
 }
 
+if(!project.hasProperty('releaseType')) {
+    ext.releaseType = 'RELEASE'
+}
+
 publishing {
     repositories {
         maven {
-            if(project.version.type == RELEASE) {
+            if(releaseType == 'RELEASE') {
                 url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
-            } else {
+            } else if(releaseType == 'SNAPSHOT') {
                 url 'https://oss.sonatype.org/content/repositories/snapshots'
             }
             credentials {
@@ -91,7 +95,7 @@ publishing {
 
     publications {
         graphDsl(MavenPublication) {
-            if(project.version.type != RELEASE) {
+            if(releaseType == 'SNAPSHOT') {
                 version "$project.version-SNAPSHOT"
             }
             from components.java
@@ -102,11 +106,13 @@ publishing {
                     } else if(it.file.getName().contains('-groovydoc')) {
                         classifier = 'groovydoc'
                     }
-                    extension = 'asc'
+                    extension = 'jar.asc'
                 }
             }
+
             artifact sourceJar
             artifact groovyDocJar
+
             pom.withXml {
                 asNode().with {
                     appendNode('name', 'graph-dsl')
@@ -133,16 +139,26 @@ publishing {
                     }
                 }
             }
+
+            pom.withXml {
+                def generatedPomFile = "$project.buildDir/generated-pom.xml"
+                writeTo(generatedPomFile)
+                def pomAscFile = signing.sign(generatedPomFile).signatureFiles[0]
+
+                artifact pomAscFile, {
+                    extension = 'pom.asc'
+                }
+            }
         }
     }
 }
 
 model {
     tasks.publishGraphDslPublicationToMavenLocal {
-        dependsOn(project.tasks.signArchives)
+        dependsOn tasks.signArchives
     }
     tasks.publishGraphDslPublicationToMavenRepository {
-        dependsOn(project.tasks.signArchives)
+        dependsOn tasks.signArchives
     }
 }
 
