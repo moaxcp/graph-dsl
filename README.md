@@ -87,6 +87,10 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.4.4
+
+Following suggestions from [#5](https://github.com/Codearte/gradle-nexus-staging-plugin/issues/5) to fix nexus release issue
+
 ## 0.4.3
 
 Adding fix for closeAndPromoteRepository
