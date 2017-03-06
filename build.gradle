@@ -19,11 +19,12 @@ apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'io.codearte.nexus-staging'
 
 group = 'com.github.moaxcp'
+description = 'A groovy dsl for creating and traversing graphs.'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -63,10 +64,16 @@ task groovyDocJar(type: Jar, dependsOn: groovydoc) {
     classifier = 'groovydoc'
 }
 
+task javaDocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+
 artifacts {
     archives jar
     archives sourceJar
     archives groovyDocJar
+    archives javaDocJar
 }
 
 signing {
@@ -78,87 +85,50 @@ if(!project.hasProperty('releaseType')) {
     ext.releaseType = 'RELEASE'
 }
 
-publishing {
+uploadArchives {
     repositories {
-        maven {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment ->
+                signing.signPom(deployment)
+            }
+
+            def publishUrl = ''
             if(releaseType == 'RELEASE') {
-                url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+                publishUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
             } else if(releaseType == 'SNAPSHOT') {
-                url 'https://oss.sonatype.org/content/repositories/snapshots'
+                publishUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
             }
-            credentials {
-                username = System.getProperty('nexus.username')
-                password = System.getProperty('nexus.password')
-            }
-        }
-    }
 
-    publications {
-        graphDsl(MavenPublication) {
-            if(releaseType == 'SNAPSHOT') {
-                version "$project.version-SNAPSHOT"
+            repository(url: publishUrl) {
+                authentication(userName: System.getProperty('nexus.username'), password: System.getProperty('nexus.password'))
             }
-            from components.java
-            project.tasks.signArchives.signatureFiles.each {
-                artifact it, {
-                    if(it.file.getName().contains('-sources')) {
-                        classifier = 'sources'
-                    } else if(it.file.getName().contains('-groovydoc')) {
-                        classifier = 'groovydoc'
-                    }
-                    extension = 'jar.asc'
+
+            pom.project {
+                name project.name
+                description project.description
+                packaging 'jar'
+                url 'https://github.com/moaxcp/graph-dsl'
+                scm {
+                    connection 'scm:git:git://github.com/moaxcp/graph-dsl.git'
+                    developerConnection 'scm:git:git@github.com:moaxcp/graph-dsl.git'
+                    url 'https://github.com/moaxcp/graph-dsl'
                 }
-            }
-
-            artifact sourceJar
-            artifact groovyDocJar
-
-            pom.withXml {
-                asNode().with {
-                    appendNode('name', 'graph-dsl')
-                    appendNode('description', 'A groovy dsl for creating and traversing graphs.')
-                    appendNode('url', 'https://github.com/moaxcp/graph-dsl')
-                    appendNode('licenses').with {
-                        appendNode('license').with {
-                            appendNode('name', 'MIT License')
-                            appendNode('url', 'http://www.opensource.org/licenses/mit-license.php')
-                            appendNode('distribution', 'repo')
-                        }
-                    }
-                    appendNode('scm').with {
-                        appendNode('url', 'https://github.com/moaxcp/graph-dsl')
-                        appendNode('connection', 'scm:git:git://github.com/moaxcp/graph-dsl.git')
-                        appendNode('developerConnection', 'scm:git:git@github.com:moaxcp/graph-dsl.git')
-                    }
-                    appendNode('developers').with {
-                        appendNode('developer').with {
-                            appendNode('id', 'moaxcp')
-                            appendNode('name', 'John Mercier')
-                            appendNode('email', 'moaxcp@gmail.com')
-                        }
+                licenses {
+                    license {
+                        name 'The MIT License (MIT)'
+                        url 'http://opensource.org/licenses/MIT'
+                        distribution 'repo'
                     }
                 }
-            }
-
-            pom.withXml {
-                def generatedPomFile = "$project.buildDir/generated-pom.xml"
-                writeTo(generatedPomFile)
-                def pomAscFile = signing.sign(generatedPomFile).signatureFiles[0]
-
-                artifact pomAscFile, {
-                    extension = 'pom.asc'
+                developers {
+                    developer {
+                        id = 'moaxcp'
+                        name = 'John Mercier'
+                        email = 'moaxcp@gmail.com'
+                    }
                 }
             }
         }
-    }
-}
-
-model {
-    tasks.publishGraphDslPublicationToMavenLocal {
-        dependsOn tasks.signArchives
-    }
-    tasks.publishGraphDslPublicationToMavenRepository {
-        dependsOn tasks.signArchives
     }
 }
 
