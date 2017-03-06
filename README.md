@@ -87,7 +87,13 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.4.2
+
+Switched from maven-publish to maven plugin
+
 ## 0.4.1
+
+Fixes for maven-publish plugin.
 
 ## 0.4.0
 

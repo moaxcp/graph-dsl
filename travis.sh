@@ -11,7 +11,7 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     -Dsonar.host.url=$SONAR_HOST_URL \
     -Dsonar.login=$SONAR_TOKEN
 
-    ./gradlew publish \
+    ./gradlew uploadArchives \
     -Dnexus.username=moaxcp \
     -Dnexus.password=$NEXUS_PASSWORD \
     -Psigning.keyId=A9A4043B \
