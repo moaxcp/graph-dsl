@@ -18,7 +18,9 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     -Psigning.secretKeyRingFile=signingkey.gpg \
     -Psigning.password=$SIGNING_PASSWORD
 
-    ./gradlew closeAndPromoteRepository --stacktrace
+    ./gradlew closeAndPromoteRepository --stacktrace \
+    -Dnexus.username=moaxcp \
+    -Dnexus.password=$NEXUS_PASSWORD
 
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "Build for internal pull request"
