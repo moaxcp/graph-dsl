@@ -135,6 +135,8 @@ uploadArchives {
 nexusStaging {
     username = System.getProperty('nexus.username')
     password = System.getProperty('nexus.password')
+    numberOfRetries = 10
+    delayBetweenRetriesInMillis = 30000
 }
 
 dependencies {
