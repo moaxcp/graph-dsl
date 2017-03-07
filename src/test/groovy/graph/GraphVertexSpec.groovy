@@ -39,13 +39,21 @@ class GraphVertexSpec extends Specification {
         graph.vertices.step1 != null
     }
 
+    def 'can add vertex with single trait to graph'() {
+        when:
+        graph.vertex name: 'step1', trait: Weight
+
+        then:
+        graph.vertices.step1.delegate instanceof Weight
+    }
+
     def 'can add vertex with traits to graph'() {
         when:
         graph.vertex name: 'step1', traits: [Weight, Value]
 
         then:
-        graph.vertices.step1 instanceof Weight
-        graph.vertices.step1 instanceof Value
+        graph.vertices.step1.delegate instanceof Weight
+        graph.vertices.step1.delegate instanceof Value
     }
 
     def 'vertices is unmodifiable'() {
@@ -57,5 +65,20 @@ class GraphVertexSpec extends Specification {
 
         then:
         thrown(UnsupportedOperationException)
+    }
+
+    def 'can modify existing vertex'() {
+        setup:
+        def vertex = graph.vertex 'step1'
+
+        when:
+        def testValue = false
+        def testVertex = graph.vertex 'step1', {
+            testValue = delegate == vertex
+        }
+
+        then:
+        testValue
+        vertex == testVertex
     }
 }

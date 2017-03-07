@@ -25,4 +25,17 @@ class GraphSpec extends Specification {
         then:
         thrown IllegalArgumentException
     }
+
+    def 'can use graph method as expected'() {
+        setup:
+        def c = {
+            vertex 'step1'
+        }
+
+        when:
+        def graph = Graph.graph(c)
+
+        then:
+        graph.vertices.size() == 1
+    }
 }
