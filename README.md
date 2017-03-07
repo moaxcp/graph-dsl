@@ -13,9 +13,11 @@ NOTE: This project is not currently in a repository for use.
 ## Building a graph
 
 ```groovy
-def graph = new Graph()
+#!/usr/bin/env groovy
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.5.0')
+import static graph.Graph.graph
 
-graph.with {
+graph {
     vertex 'step1'
     vertex 'step2'
     vertex 'step3'
@@ -40,7 +42,6 @@ This plugin makes the graph into a directed graph.
 Depth first traversal supports preorder and postorder traversal.
 
 ```groovy
-
 graph.depthFirstTraversal {
     preorder { vertex ->
         println vertex.name
