@@ -8,8 +8,6 @@ For project build status check the [wiki](https://github.com/moaxcp/graph-dsl/wi
 graph-dsl is used to create graphs and algorithms for graphs.
 It is designed to be groovy, using closures and metaprogramming for minimal setup.
 
-NOTE: This project is not currently in a repository for use.
-
 ## Building a graph
 
 ```groovy
