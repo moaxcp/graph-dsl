@@ -42,6 +42,17 @@ class Graph {
     }
 
     /**
+     * static entry point for creating a graph within a groovy script.
+     * @param c
+     * @return
+     */
+    def static graph(Closure c) {
+        def graph = new Graph()
+        graph.with(c)
+        graph
+    }
+
+    /**
      * returns the vertices as an unmodifiableMap
      * @return
      */
@@ -109,11 +120,15 @@ class Graph {
      * @return the resulting vertex
      */
     def vertex(map, Closure closure = null) {
-        def vertex = vertexFactory.newVertex(map.name)
+        def vertex = vertices[map.name] ?: vertexFactory.newVertex(map.name)
 
         vertex = map.traits?.inject(vertex) { val, it ->
-            val.withTraits(it)
+            val.delegateAs(it)
         } ?: vertex
+
+        if(map.trait) {
+            vertex.delegateAs(map.trait)
+        }
 
         if (closure != null) {
             closure.delegate = vertex
@@ -152,20 +167,23 @@ class Graph {
      * @return the resulting edge
      */
     def edge(map, closure = null) {
-        def edge = edgeFactory.newEdge(map.one, map.two)
+        def e = edgeFactory.newEdge(map.one, map.two)
+        def edge = edges.find { it == e } ?: e
 
         edge = map.traits?.inject(edge) { val, it ->
-            val.withTraits(it)
+            val.delegateAs(it)
         } ?: edge
+
+        if(map.trait) {
+            edge.delegateAs(map.trait)
+        }
 
         if (closure) {
             closure.delegate = edge
             closure()
         }
 
-        if (!edges.add(edge)) {
-            throw new IllegalArgumentException("Edge already exists between $edge.one and $edge.two")
-        }
+        edges.add(edge)
 
         edge
     }
