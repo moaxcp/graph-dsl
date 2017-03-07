@@ -8,14 +8,14 @@ For project build status check the [wiki](https://github.com/moaxcp/graph-dsl/wi
 graph-dsl is used to create graphs and algorithms for graphs.
 It is designed to be groovy, using closures and metaprogramming for minimal setup.
 
-NOTE: This project is not currently in a repository for use.
-
 ## Building a graph
 
 ```groovy
-def graph = new Graph()
+#!/usr/bin/env groovy
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.5.0')
+import static graph.Graph.graph
 
-graph.with {
+graph {
     vertex 'step1'
     vertex 'step2'
     vertex 'step3'
@@ -40,7 +40,6 @@ This plugin makes the graph into a directed graph.
 Depth first traversal supports preorder and postorder traversal.
 
 ```groovy
-
 graph.depthFirstTraversal {
     preorder { vertex ->
         println vertex.name
@@ -87,21 +86,27 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.5.0
+
+* Fixed vertex and edge methods so they can modify existing objects
+* Added entry point to dsl though graph method
+* Added trait key to vertex and edge map. This makes it easier to add a single trait.
+
 ## 0.4.4
 
-Following suggestions from [#5](https://github.com/Codearte/gradle-nexus-staging-plugin/issues/5) to fix nexus release issue
+* Following suggestions from [#5](https://github.com/Codearte/gradle-nexus-staging-plugin/issues/5) to fix nexus release issue
 
 ## 0.4.3
 
-Adding fix for closeAndPromoteRepository
+* Adding fix for closeAndPromoteRepository
 
 ## 0.4.2
 
-Switched from maven-publish to maven plugin
+* Switched from maven-publish to maven plugin
 
 ## 0.4.1
 
-Fixes for maven-publish plugin.
+* Fixes for maven-publish plugin.
 
 ## 0.4.0
 

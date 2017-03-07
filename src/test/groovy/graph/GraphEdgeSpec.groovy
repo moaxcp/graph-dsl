@@ -56,13 +56,21 @@ class GraphEdgeSpec extends Specification {
         edgeTwo == 'step2'
     }
 
+    def 'can add edge with single trait'() {
+        when:
+        graph.edge one: 'step1', two: 'step2', trait: Weight
+
+        then:
+        graph.edges[0].delegate instanceof Weight
+    }
+
     def 'can add edge with map and traits to graph'() {
         when:
         graph.edge one: 'step1', two: 'step2', traits: [Weight, Value]
 
         then:
-        graph.edges.find { it.one == 'step1' } instanceof Weight
-        graph.edges.find { it.one == 'step1' } instanceof Value
+        graph.edges[0].delegate instanceof Weight
+        graph.edges[0].delegate instanceof Value
     }
 
     def 'cannot add duplicate edge with the same order'() {
@@ -73,7 +81,6 @@ class GraphEdgeSpec extends Specification {
         graph.edge 'step1', 'step2'
 
         then:
-        thrown(IllegalArgumentException)
         graph.edges.size() == 1
     }
 
@@ -85,7 +92,21 @@ class GraphEdgeSpec extends Specification {
         graph.edge 'step2', 'step1'
 
         then:
-        thrown(IllegalArgumentException)
         graph.edges.size() == 1
+    }
+
+    def 'can modify existing edge'() {
+        setup:
+        def edge = graph.edge 'step1', 'step2'
+
+        when:
+        def testValue = false
+        def testEdge = graph.edge 'step1', 'step2', {
+            testValue = delegate == edge
+        }
+
+        then:
+        testValue
+        edge == testEdge
     }
 }
