@@ -86,21 +86,27 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.5.0
+
+* Fixed vertex and edge methods so they can modify existing objects
+* Added entry point to dsl though graph method
+* Added trait key to vertex and edge map. This makes it easier to add a single trait.
+
 ## 0.4.4
 
-Following suggestions from [#5](https://github.com/Codearte/gradle-nexus-staging-plugin/issues/5) to fix nexus release issue
+* Following suggestions from [#5](https://github.com/Codearte/gradle-nexus-staging-plugin/issues/5) to fix nexus release issue
 
 ## 0.4.3
 
-Adding fix for closeAndPromoteRepository
+* Adding fix for closeAndPromoteRepository
 
 ## 0.4.2
 
-Switched from maven-publish to maven plugin
+* Switched from maven-publish to maven plugin
 
 ## 0.4.1
 
-Fixes for maven-publish plugin.
+* Fixes for maven-publish plugin.
 
 ## 0.4.0
 
