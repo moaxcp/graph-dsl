@@ -89,6 +89,7 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 ## x.x.x
 
 * fixed issue with logging when optimizations are turned off
+* updating gradle to 3.4.1
 
 ## 0.5.1
 
