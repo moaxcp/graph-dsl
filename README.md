@@ -86,6 +86,11 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## x.x.x
+
+* Added warning when optimizations are turned off
+* Adjusting retry time for nexus-staging-plugin
+
 ## 0.5.0
 
 * Fixed vertex and edge methods so they can modify existing objects
