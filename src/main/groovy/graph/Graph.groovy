@@ -276,7 +276,7 @@ class Graph {
      * @param specClosure
      * @return
      */
-    def depthFirstTraversalSpec(Closure specClosure) {
+    DepthFirstTraversalSpec depthFirstTraversalSpec(Closure specClosure) {
         def spec = new DepthFirstTraversalSpec()
         specClosure.delegate = spec
         specClosure()
@@ -284,13 +284,21 @@ class Graph {
         spec
     }
 
-    def setupSpec(DepthFirstTraversalSpec spec) {
+    void setupSpec(TraversalSpec spec) {
         if (!spec.colors) {
             spec.colors = makeColorMap()
         }
         if (!spec.root) {
             spec.root = getUnvisitedVertexName(spec.colors)
         }
+    }
+
+    BreadthFirstTraversalSpec breadthFirstTraversalSpec(Closure specClosure) {
+        def spec = new BreadthFirstTraversalSpec()
+        specClosure.delegate = spec
+        specClosure()
+        setupSpec(spec)
+        spec
     }
 
     /**
