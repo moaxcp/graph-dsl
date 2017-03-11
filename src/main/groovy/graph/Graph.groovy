@@ -263,17 +263,11 @@ class Graph {
     /**
      * creates a DepthFirstTraversalSpec from the provided closure.
      *
-     * specClosure is a closure that has a new DepthFirstTraversalSpec
-     * as a delegate. Modify the DepthFirstTraversalSpec to change
-     * the behavior of the depth first traversal.
+     * defaults will be configured with the setupSpec method.
      *
-     * if colors is not defined in the spec it defaults to the result of
-     * makeColorMap()
-     *
-     * if root is not defined in the spec it defaults to the result of
-     * getUnvisitedVertexName(spec.colors)
-     *
-     * @param specClosure
+     * @param specClosure is a closure that has a new DepthFirstTraversalSpec
+     * as a delegate. Modify the DepthFirstTraversalSpec in this closure to
+     * change the behavior of the depth first traversal.
      * @return
      */
     DepthFirstTraversalSpec depthFirstTraversalSpec(Closure specClosure) {
@@ -284,6 +278,17 @@ class Graph {
         spec
     }
 
+    /**
+     * Configures defaults for a TraversalSpec. When colors and root are not set
+     * This method will generate defaults.
+     *
+     * if colors is not defined in the spec it defaults to the result of
+     * makeColorMap()
+     *
+     * if root is not defined in the spec it defaults to the result of
+     * getUnvisitedVertexName(spec.colors)
+     * @param spec the traversal spec to configure with defaults.
+     */
     void setupSpec(TraversalSpec spec) {
         if (!spec.colors) {
             spec.colors = makeColorMap()
@@ -293,6 +298,16 @@ class Graph {
         }
     }
 
+    /**
+     * Creates a BreadthFirstTraversalSpec with the given closure.
+     *
+     * defaults will be configured with the setupSpec method.
+     *
+     * @param specClosure is a closure that has a new BreadthFirstTraversalSpec
+     * as a delegate. Modify the BreadthFirstTraversalSpec in this closure to
+     * change the behavior of the breadth first traversal.
+     * @return
+     */
     BreadthFirstTraversalSpec breadthFirstTraversalSpec(Closure specClosure) {
         def spec = new BreadthFirstTraversalSpec()
         specClosure.delegate = spec
