@@ -86,7 +86,7 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
-## x.x.x
+## 0.5.1
 
 * Added warning when optimizations are turned off
 * Adjusting retry time for nexus-staging-plugin
