@@ -36,6 +36,7 @@ jacocoTestReport {
 gradle.taskGraph.whenReady { graph ->
     if (graph.hasTask(':jacocoTestReport') || graph.hasTask(':sonarqube')) {
         compileGroovy.groovyOptions.optimizationOptions.all = false
+        log.warn 'all groovy optimizations are turned off for jacoco'
     }
 }
 
