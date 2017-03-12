@@ -26,7 +26,7 @@ class Graph {
     /**
      * Defines the color for a vertex when traversing.
      */
-    def enum DepthFirstTraversalColor {
+    def enum TraversalColor {
         /**
          * an undiscovered vertex
          */
@@ -191,19 +191,19 @@ class Graph {
     /**
      * Returns the first unvisited vertex name in vertices.
      *
-     * @param colors a map of vertex name entries with the value of the DepthFirstTraversalColor
+     * @param colors a map of vertex name entries with the value of the TraversalColor
      * @return the first unvisited vertex name in the vertices.
      */
     def getUnvisitedVertexName(colors) {
         vertices.find { k, v ->
-            colors[(k)] != DepthFirstTraversalColor.BLACK && colors[k] != DepthFirstTraversalColor.GREY
+            colors[(k)] != TraversalColor.BLACK && colors[k] != TraversalColor.GREY
         }?.key
     }
 
     /**
      * returns the name of first unvisited child vertex with a parent matching parentName.
      *
-     * @param colors a map of vertex name entries with the value of the DepthFirstTraversalColor
+     * @param colors a map of vertex name entries with the value of the TraversalColor
      * @param parentName the name of the parent vertex to start searching from
      * @return the name of the first unvisited child vertex
      */
@@ -213,7 +213,7 @@ class Graph {
         }.find {
             def childName = parentName == it.one ? it.two : it.one
             def color = colors[childName]
-            return !(color == DepthFirstTraversalColor.GREY || color == DepthFirstTraversalColor.BLACK)
+            return !(color == TraversalColor.GREY || color == TraversalColor.BLACK)
         }
 
         if (!edge) {
@@ -236,13 +236,13 @@ class Graph {
     /**
      * creates and returns a color map in the form of
      * name : color. name is the vertex
-     * name and DepthFirstTraversalColor.WHITE is the
+     * name and TraversalColor.WHITE is the
      * color.
      * @return
      */
     def makeColorMap() {
         vertices.collectEntries { name, vertex ->
-            [(name): DepthFirstTraversalColor.WHITE]
+            [(name): TraversalColor.WHITE]
         }
     }
 
@@ -326,7 +326,6 @@ class Graph {
      * @return null or a Traversal value
      */
     def depthFirstTraversal(DepthFirstTraversalSpec spec) {
-        setupSpec(spec)
         String name = spec.root
         while (name) {
             def traversal = depthFirstTraversalConnected(name, spec)
@@ -349,18 +348,17 @@ class Graph {
      * @return null or a Traversal value
      */
     def depthFirstTraversalConnected(String name, DepthFirstTraversalSpec spec) {
-        setupSpec(spec)
         if (spec.preorder && spec.preorder(vertices[name]) == Traversal.STOP) {
-            spec.colors[name] = DepthFirstTraversalColor.GREY
+            spec.colors[name] = TraversalColor.GREY
             return Traversal.STOP
         }
-        spec.colors[name] = DepthFirstTraversalColor.GREY
+        spec.colors[name] = TraversalColor.GREY
 
         def adjacentEdges = adjacentEdges(name)
-        for (int index = 0; index < adjacentEdges.size(); index++) {
+        for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
             def edge = adjacentEdges[index]
             def connectedName = name == edge.one ? edge.two : edge.one
-            if (spec.colors[connectedName] == DepthFirstTraversalColor.WHITE) {
+            if (spec.colors[connectedName] == TraversalColor.WHITE) {
                 if (Traversal.STOP == depthFirstTraversalConnected(connectedName, spec)) {
                     return Traversal.STOP
                 }
@@ -369,9 +367,36 @@ class Graph {
         }
 
         if (spec.postorder && spec.postorder(vertices[name]) == Traversal.STOP) {
-            spec.colors[name] = DepthFirstTraversalColor.BLACK
+            spec.colors[name] = TraversalColor.BLACK
             return Traversal.STOP
         }
-        spec.colors[name] = DepthFirstTraversalColor.BLACK
+        spec.colors[name] = TraversalColor.BLACK
+    }
+
+    def breadthFirstTraversalConnected(String name, BreadthFirstTraversalSpec spec) {
+        def traversal = spec.visit(vertices[name])
+        spec.colors[name] = TraversalColor.GREY
+        if(traversal == Traversal.STOP) {
+            return traversal
+        }
+        Queue<String> queue = new LinkedList<>()
+        queue << name
+        while(queue.size() != 0) {
+            name = queue.poll()
+            def adjacentEdges = adjacentEdges(name)
+            for(int i = 0; i < adjacentEdges.size(); i++) {
+                def edge = adjacentEdges[i]
+                def connectedName = name == edge.one ? edge.two : edge.one
+                if(spec.colors[connectedName] == TraversalColor.WHITE) {
+                    traversal = spec.visit(vertices[connectedName])
+                    spec.colors[name] = TraversalColor.GREY
+                    if(traversal == Traversal.STOP) {
+                        return traversal
+                    }
+                    queue << connectedName
+                }
+            }
+            spec.colors[name] = TraversalColor.BLACK
+        }
     }
 }

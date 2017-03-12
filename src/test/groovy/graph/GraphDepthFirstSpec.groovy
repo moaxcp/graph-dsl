@@ -2,7 +2,7 @@ package graph
 
 import spock.lang.Specification
 
-public class GraphDepthFirstSearchSpec extends Specification {
+public class GraphDepthFirstSpec extends Specification {
 
     def 'can get correct first unvisited vertex'() {
         setup:
@@ -21,7 +21,7 @@ public class GraphDepthFirstSearchSpec extends Specification {
         setup:
         def graph = new Graph()
         graph.vertex 'step1'
-        def colors = ['step1': Graph.DepthFirstTraversalColor.WHITE]
+        def colors = ['step1': graph.Graph.TraversalColor.WHITE]
 
         when:
         def name = graph.getUnvisitedVertexName(colors)
@@ -37,7 +37,7 @@ public class GraphDepthFirstSearchSpec extends Specification {
             vertex 'step1'
             vertex 'step2'
         }
-        def colors = ['step1': Graph.DepthFirstTraversalColor.GREY]
+        def colors = ['step1': graph.Graph.TraversalColor.GREY]
 
         when:
         def name = graph.getUnvisitedVertexName(colors)
@@ -57,8 +57,8 @@ public class GraphDepthFirstSearchSpec extends Specification {
             edge 'step1', 'step3'
         }
         def colors = [
-                'step1': Graph.DepthFirstTraversalColor.GREY,
-                'step2': Graph.DepthFirstTraversalColor.GREY
+                'step1': graph.Graph.TraversalColor.GREY,
+                'step2': graph.Graph.TraversalColor.GREY
         ]
 
         when:
@@ -79,8 +79,8 @@ public class GraphDepthFirstSearchSpec extends Specification {
             edge 'step1', 'step3'
         }
         def colors = [
-                'step1': Graph.DepthFirstTraversalColor.GREY,
-                'step3': Graph.DepthFirstTraversalColor.GREY
+                'step1': graph.Graph.TraversalColor.GREY,
+                'step3': graph.Graph.TraversalColor.GREY
         ]
 
         when:
@@ -99,8 +99,8 @@ public class GraphDepthFirstSearchSpec extends Specification {
             edge 'step1', 'step2'
         }
         def colors = [
-                'step1': Graph.DepthFirstTraversalColor.GREY,
-                'step2': Graph.DepthFirstTraversalColor.GREY
+                'step1': graph.Graph.TraversalColor.GREY,
+                'step2': graph.Graph.TraversalColor.GREY
         ]
 
         when:
@@ -145,9 +145,9 @@ public class GraphDepthFirstSearchSpec extends Specification {
 
         then:
         colors == [
-                'step1': Graph.DepthFirstTraversalColor.WHITE,
-                'step2': Graph.DepthFirstTraversalColor.WHITE,
-                'step3': Graph.DepthFirstTraversalColor.WHITE
+                'step1': graph.Graph.TraversalColor.WHITE,
+                'step2': graph.Graph.TraversalColor.WHITE,
+                'step3': graph.Graph.TraversalColor.WHITE
         ]
     }
 
@@ -159,7 +159,7 @@ public class GraphDepthFirstSearchSpec extends Specification {
         }
         Closure c = {
             root = 'step1'
-            colors = ['step1' : Graph.DepthFirstTraversalColor.WHITE]
+            colors = ['step1' : graph.Graph.TraversalColor.WHITE]
             preorder {
                 //do nothing
             }
@@ -173,7 +173,7 @@ public class GraphDepthFirstSearchSpec extends Specification {
 
         then:
         spec.root == 'step1'
-        spec.colors == ['step1' : Graph.DepthFirstTraversalColor.WHITE]
+        spec.colors == ['step1' : graph.Graph.TraversalColor.WHITE]
         spec.preorder != null
         spec.postorder != null
     }
@@ -197,7 +197,7 @@ public class GraphDepthFirstSearchSpec extends Specification {
 
         then:
         spec.root == 'step1'
-        spec.colors == ['step1' : Graph.DepthFirstTraversalColor.WHITE]
+        spec.colors == ['step1' : graph.Graph.TraversalColor.WHITE]
         spec.preorder != null
         spec.postorder != null
     }
@@ -234,10 +234,10 @@ public class GraphDepthFirstSearchSpec extends Specification {
         then:
         traversal == Graph.Traversal.STOP
         spec.colors == [
-                'step1': Graph.DepthFirstTraversalColor.GREY,
-                'step2': Graph.DepthFirstTraversalColor.GREY,
-                'step3': Graph.DepthFirstTraversalColor.WHITE,
-                'step4': Graph.DepthFirstTraversalColor.WHITE
+                'step1': graph.Graph.TraversalColor.GREY,
+                'step2': graph.Graph.TraversalColor.GREY,
+                'step3': graph.Graph.TraversalColor.WHITE,
+                'step4': graph.Graph.TraversalColor.WHITE
         ]
         preorderList == ['step1', 'step2']
         postorderList == []
@@ -279,12 +279,12 @@ public class GraphDepthFirstSearchSpec extends Specification {
         then:
         traversal != Graph.Traversal.STOP
         spec.colors == [
-                'step1': Graph.DepthFirstTraversalColor.BLACK,
-                'step2': Graph.DepthFirstTraversalColor.BLACK,
-                'step3': Graph.DepthFirstTraversalColor.BLACK,
-                'step4': Graph.DepthFirstTraversalColor.BLACK,
-                'step5': Graph.DepthFirstTraversalColor.BLACK,
-                'step6': Graph.DepthFirstTraversalColor.BLACK
+                'step1': graph.Graph.TraversalColor.BLACK,
+                'step2': graph.Graph.TraversalColor.BLACK,
+                'step3': graph.Graph.TraversalColor.BLACK,
+                'step4': graph.Graph.TraversalColor.BLACK,
+                'step5': graph.Graph.TraversalColor.BLACK,
+                'step6': graph.Graph.TraversalColor.BLACK
         ]
         preorderList == ['step1', 'step2', 'step3', 'step4', 'step6', 'step5']
     }
@@ -314,9 +314,9 @@ public class GraphDepthFirstSearchSpec extends Specification {
         then:
         traversal != Graph.Traversal.STOP
         spec.colors == [
-                'step1': Graph.DepthFirstTraversalColor.BLACK,
-                'step2': Graph.DepthFirstTraversalColor.BLACK,
-                'step3': Graph.DepthFirstTraversalColor.BLACK
+                'step1': graph.Graph.TraversalColor.BLACK,
+                'step2': graph.Graph.TraversalColor.BLACK,
+                'step3': graph.Graph.TraversalColor.BLACK
         ]
         postorderList == ['step2', 'step3', 'step1']
     }
@@ -353,10 +353,10 @@ public class GraphDepthFirstSearchSpec extends Specification {
         then:
         traversal == Graph.Traversal.STOP
         spec.colors == [
-                'step1': Graph.DepthFirstTraversalColor.GREY,
-                'step2': Graph.DepthFirstTraversalColor.BLACK,
-                'step3': Graph.DepthFirstTraversalColor.BLACK,
-                'step4': Graph.DepthFirstTraversalColor.WHITE
+                'step1': graph.Graph.TraversalColor.GREY,
+                'step2': graph.Graph.TraversalColor.BLACK,
+                'step3': graph.Graph.TraversalColor.BLACK,
+                'step4': graph.Graph.TraversalColor.WHITE
         ]
         postorderList == ['step3', 'step2']
         preorderList == ['step1', 'step2', 'step3']
@@ -389,10 +389,10 @@ public class GraphDepthFirstSearchSpec extends Specification {
 
         then:
         spec.colors == [
-                'step1': Graph.DepthFirstTraversalColor.BLACK,
-                'step2': Graph.DepthFirstTraversalColor.BLACK,
-                'step3': Graph.DepthFirstTraversalColor.BLACK,
-                'step4': Graph.DepthFirstTraversalColor.BLACK
+                'step1': graph.Graph.TraversalColor.BLACK,
+                'step2': graph.Graph.TraversalColor.BLACK,
+                'step3': graph.Graph.TraversalColor.BLACK,
+                'step4': graph.Graph.TraversalColor.BLACK
         ]
     }
 
@@ -426,10 +426,10 @@ public class GraphDepthFirstSearchSpec extends Specification {
         then:
         traversal == Graph.Traversal.STOP
         spec.colors == [
-                'step1': Graph.DepthFirstTraversalColor.GREY,
-                'step2': Graph.DepthFirstTraversalColor.GREY,
-                'step3': Graph.DepthFirstTraversalColor.WHITE,
-                'step4': Graph.DepthFirstTraversalColor.WHITE
+                'step1': graph.Graph.TraversalColor.GREY,
+                'step2': graph.Graph.TraversalColor.GREY,
+                'step3': graph.Graph.TraversalColor.WHITE,
+                'step4': graph.Graph.TraversalColor.WHITE
         ]
     }
 }
