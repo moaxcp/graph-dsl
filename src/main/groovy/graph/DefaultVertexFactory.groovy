@@ -1,8 +1,11 @@
 package graph
 
+/**
+ * Factory for creating vertices.
+ */
 class DefaultVertexFactory implements VertexFactory {
     @Override
     Vertex newVertex(String name) {
-        return new Vertex(name: name)
+        new Vertex(name:name)
     }
 }
