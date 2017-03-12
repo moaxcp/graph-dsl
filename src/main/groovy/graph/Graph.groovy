@@ -85,7 +85,7 @@ class Graph {
         if (plugins.contains(pluginClass)) {
             throw new IllegalArgumentException("$pluginClass.name is already applied.")
         }
-        if(!pluginClass.interfaces.contains(Plugin)) {
+        if (!pluginClass.interfaces.contains(Plugin)) {
             throw new IllegalArgumentException("$pluginClass.name does not implement Plugin")
         }
         plugins << pluginClass
@@ -126,7 +126,7 @@ class Graph {
             val.delegateAs(it)
         } ?: vertex
 
-        if(map.trait) {
+        if (map.trait) {
             vertex.delegateAs(map.trait)
         }
 
@@ -174,7 +174,7 @@ class Graph {
             val.delegateAs(it)
         } ?: edge
 
-        if(map.trait) {
+        if (map.trait) {
             edge.delegateAs(map.trait)
         }
 
@@ -225,9 +225,9 @@ class Graph {
     /**
      * Finds adjacent edges for vertex with name.
      * @param name
-     * @return list of adjacent edges.
+     * @return set of adjacent edges.
      */
-    def adjacentEdges(name) {
+    Set<Edge> adjacentEdges(name) {
         edges.findAll {
             name == it.one || name == it.two
         }
@@ -338,26 +338,26 @@ class Graph {
 
     /**
      * Performs a depth first traversal on a connected component of the graph starting
-     * at the vertex identified by name. The behavior of the traversal is determined by
+     * at the vertex identified by root. The behavior of the traversal is determined by
      * spec.colors, spec.preorder, and spec.postorder.
      *
      * Traversal.STOP - It is possible to stop the traversal early by returning this value
      * in preorder and postorder.
-     * @param name the name of the vertex to start at
+     * @param root the root of the vertex to start at
      * @param spec the DepthFirstTraversalSpec
      * @return null or a Traversal value
      */
-    def depthFirstTraversalConnected(String name, DepthFirstTraversalSpec spec) {
-        if (spec.preorder && spec.preorder(vertices[name]) == Traversal.STOP) {
-            spec.colors[name] = TraversalColor.GREY
+    Traversal depthFirstTraversalConnected(String root, DepthFirstTraversalSpec spec) {
+        if (spec.preorder && spec.preorder(vertices[root]) == Traversal.STOP) {
+            spec.colors[root] = TraversalColor.GREY
             return Traversal.STOP
         }
-        spec.colors[name] = TraversalColor.GREY
+        spec.colors[root] = TraversalColor.GREY
 
-        def adjacentEdges = adjacentEdges(name)
+        Set<Edge> adjacentEdges = adjacentEdges(root)
         for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
-            def edge = adjacentEdges[index]
-            def connectedName = name == edge.one ? edge.two : edge.one
+            Edge edge = adjacentEdges[index]
+            String connectedName = root == edge.one ? edge.two : edge.one
             if (spec.colors[connectedName] == TraversalColor.WHITE) {
                 if (Traversal.STOP == depthFirstTraversalConnected(connectedName, spec)) {
                     return Traversal.STOP
@@ -366,37 +366,42 @@ class Graph {
 
         }
 
-        if (spec.postorder && spec.postorder(vertices[name]) == Traversal.STOP) {
-            spec.colors[name] = TraversalColor.BLACK
+        if (spec.postorder && spec.postorder(vertices[root]) == Traversal.STOP) {
+            spec.colors[root] = TraversalColor.BLACK
             return Traversal.STOP
         }
-        spec.colors[name] = TraversalColor.BLACK
+        spec.colors[root] = TraversalColor.BLACK
+        null
     }
 
-    def breadthFirstTraversalConnected(String name, BreadthFirstTraversalSpec spec) {
-        def traversal = spec.visit(vertices[name])
-        spec.colors[name] = TraversalColor.GREY
-        if(traversal == Traversal.STOP) {
+    Traversal breadthFirstTraversalConnected(String root, BreadthFirstTraversalSpec spec) {
+        if (!vertices[root]) {
+            throw new IllegalArgumentException("Could not find $root in graph")
+        }
+        def traversal = spec.visit(vertices[root])
+        if (traversal == Traversal.STOP) {
             return traversal
         }
+        spec.colors[root] = TraversalColor.GREY
         Queue<String> queue = new LinkedList<>()
-        queue << name
-        while(queue.size() != 0) {
-            name = queue.poll()
-            def adjacentEdges = adjacentEdges(name)
-            for(int i = 0; i < adjacentEdges.size(); i++) {
-                def edge = adjacentEdges[i]
-                def connectedName = name == edge.one ? edge.two : edge.one
-                if(spec.colors[connectedName] == TraversalColor.WHITE) {
-                    traversal = spec.visit(vertices[connectedName])
-                    spec.colors[name] = TraversalColor.GREY
-                    if(traversal == Traversal.STOP) {
+        queue << root
+        while (queue.size() != 0) {
+            String current = queue.poll()
+            Set<Edge> adjacentEdges = adjacentEdges(current)
+            for (int i = 0; i < adjacentEdges.size(); i++) {
+                Edge edge = adjacentEdges[i]
+                String connected = current == edge.one ? edge.two : edge.one
+                if (spec.colors[connected] == TraversalColor.WHITE) {
+                    traversal = spec.visit(vertices[connected])
+                    if (traversal == Traversal.STOP) {
                         return traversal
                     }
-                    queue << connectedName
+                    spec.colors[connected] = TraversalColor.GREY
+                    queue << connected
                 }
             }
-            spec.colors[name] = TraversalColor.BLACK
+            spec.colors[current] = TraversalColor.BLACK
         }
+        null
     }
 }

@@ -4,11 +4,32 @@ import spock.lang.Specification
 import static graph.Graph.TraversalColor.*
 
 class GraphBreadthFirstSpec extends Specification {
+
+    def graph = new Graph()
+
+    def setup() {
+        graph.with {
+            vertex 'A'
+            vertex 'B'
+            vertex 'C'
+            vertex 'D'
+            vertex 'E'
+            edge 'A', 'B'
+            edge 'A', 'D'
+            edge 'A', 'E'
+            edge 'B', 'D'
+            edge 'B', 'C'
+            edge 'D', 'C'
+            edge 'D', 'E'
+            edge 'D', 'A'
+        }
+    }
+
     def 'can breadthFirstTraversalSpec'() {
         setup:
         def graph = new Graph()
         graph.with {
-            vertex 'step1'
+            vertex 'A'
         }
 
         when:
@@ -19,22 +40,13 @@ class GraphBreadthFirstSpec extends Specification {
         }
 
         then:
-        spec.root == 'step1'
-        spec.colors == ['step1' : graph.Graph.TraversalColor.WHITE]
+        spec.root == 'A'
+        spec.colors == ['A' : graph.Graph.TraversalColor.WHITE]
         spec.visit != null
     }
 
     def 'breadthFirstTraversalConnected visit'() {
         setup:
-        def graph = new Graph()
-        graph.vertex 'step1'
-        graph.vertex 'step2'
-        graph.vertex 'step3'
-        graph.vertex 'step4'
-        graph.edge 'step1', 'step2'
-        graph.edge 'step1', 'step4'
-        graph.edge 'step2', 'step3'
-
         def visitList = []
 
         def spec = new BreadthFirstTraversalSpec()
@@ -44,13 +56,48 @@ class GraphBreadthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.breadthFirstTraversalConnected 'step1', spec
+        def traversal = graph.breadthFirstTraversalConnected 'A', spec
 
         then:
         traversal != Graph.Traversal.STOP
         spec.colors == [
-            step1: BLACK, step2: BLACK, step3: BLACK, step4: BLACK
+            A: BLACK, B: BLACK, C: BLACK, D: BLACK, E: BLACK
         ]
-        visitList == ['step1', 'step2', 'step4', 'step3']
+        visitList == ['A', 'B', 'D', 'E', 'C']
+    }
+
+    def 'root does not exist'() {
+        setup:
+        def spec = new BreadthFirstTraversalSpec()
+        spec.colors = graph.makeColorMap()
+
+        when:
+        graph.breadthFirstTraversalConnected 'step1', spec
+
+        then:
+        thrown IllegalArgumentException
+    }
+
+    def 'can stop traversal'() {
+        setup:
+        def spec = new BreadthFirstTraversalSpec()
+        spec.colors = graph.makeColorMap()
+        def visitList = []
+        spec.visit { vertex ->
+            if(vertex.name == 'E') {
+                return Graph.Traversal.STOP
+            }
+            visitList << vertex.name
+        }
+
+        when:
+        def traversal = graph.breadthFirstTraversalConnected 'A', spec
+
+        then:
+        traversal == Graph.Traversal.STOP
+        spec.colors == [
+                A: GREY, B: GREY, C: WHITE, D: GREY, E: WHITE
+        ]
+        visitList == ['A', 'B', 'D']
     }
 }
