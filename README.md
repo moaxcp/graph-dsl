@@ -12,7 +12,7 @@ It is designed to be groovy, using closures and metaprogramming for minimal setu
 
 ```groovy
 #!/usr/bin/env groovy
-@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.5.0')
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.6.0')
 import static graph.Graph.graph
 
 graph {
@@ -85,6 +85,13 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 * [travis-ci.org](https://travis-ci.org/moaxcp/graph-dsl)
 
 # Releases
+
+## 0.6.0
+
+* fixed issue with logging when optimizations are turned off
+* updating gradle to 3.4.1
+* fixed many codenarc issues
+* added support for breadth first traversal
 
 ## 0.5.1
 
