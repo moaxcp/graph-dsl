@@ -1,46 +1,44 @@
 package graph
 
 /**
- * Specification for a DepthFirstSearch. Contains actions that are called when and
- * even happens during the search.
+ * Specification for a DepthFirstTraversal. Contains actions that are called when an
+ * event happens during the traversal.
  */
-class DepthFirstTraversalSpec {
-    String root
-    Map colors
-    private Closure preorder
-    private Closure postorder
+class DepthFirstTraversalSpec extends TraversalSpec {
+    private Closure preorderClosure
+    private Closure postorderClosure
 
     /**
      * returns the preorder event.
      * @return
      */
-    def getPreorder() {
-        return preorder
+    Closure getPreorder() {
+        preorderClosure
     }
 
     /**
      * returns the postorder event.
      * @return
      */
-    def getPostorder() {
-        return postorder
+    Closure getPostorder() {
+        postorderClosure
     }
 
     /**
      * method to set the preorder event
-     * @param preorder
+     * @param preorderClosure
      * @return
      */
-    def preorder(Closure preorder) {
-        this.preorder = preorder
+    void preorder(Closure preorderClosure) {
+        this.preorderClosure = preorderClosure
     }
 
     /**
      * method to set the postorder event
-     * @param postorder
+     * @param postorderClosure
      * @return
      */
-    def postorder(Closure postorder) {
-        this.postorder = postorder
+    void postorder(Closure postorderClosure) {
+        this.postorderClosure = postorderClosure
     }
 }

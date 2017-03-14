@@ -86,6 +86,13 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## x.x.x
+
+* fixed issue with logging when optimizations are turned off
+* updating gradle to 3.4.1
+* fixed many codenarc issues
+* added support for breadth first traversal
+
 ## 0.5.1
 
 * Added warning when optimizations are turned off

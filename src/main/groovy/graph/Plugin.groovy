@@ -1,5 +1,5 @@
 package graph
 
 interface Plugin {
-    def apply(Graph graph)
+    void apply(Graph graph)
 }

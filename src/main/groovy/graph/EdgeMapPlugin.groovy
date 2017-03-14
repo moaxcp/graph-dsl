@@ -2,7 +2,7 @@ package graph
 
 class EdgeMapPlugin implements Plugin {
     @Override
-    def apply(Graph graph) {
+    void apply(Graph graph) {
         graph.@edges.each { edge ->
             edge.delegateAs(Mapping)
         }

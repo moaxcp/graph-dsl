@@ -2,7 +2,7 @@ package graph
 
 class VertexMapPlugin implements Plugin {
     @Override
-    def apply(Graph graph) {
+    void apply(Graph graph) {
         graph.@vertices.each { name, vertex ->
             vertex.delegateAs(Mapping)
         }
