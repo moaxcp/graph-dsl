@@ -12,7 +12,7 @@ It is designed to be groovy, using closures and metaprogramming for minimal setu
 
 ```groovy
 #!/usr/bin/env groovy
-@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.5.0')
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.6.0')
 import static graph.Graph.graph
 
 graph {
@@ -86,7 +86,7 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
-## x.x.x
+## 0.6.0
 
 * fixed issue with logging when optimizations are turned off
 * updating gradle to 3.4.1
