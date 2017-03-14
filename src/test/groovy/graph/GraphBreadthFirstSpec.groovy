@@ -100,4 +100,19 @@ class GraphBreadthFirstSpec extends Specification {
         ]
         visitList == ['A', 'B', 'D']
     }
+
+    def 'breadthFirstTraversal with closure'() {
+        setup:
+        def visitList = []
+
+        when:
+        def traversal = graph.breadthFirstTraversal {
+            visit { vertex ->
+                visitList << vertex.name
+            }
+        }
+
+        then:
+        visitList == ['A', 'B', 'D', 'E', 'C']
+    }
 }

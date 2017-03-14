@@ -385,7 +385,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        graph.depthFirstTraversal spec
+        graph.traversal(graph.&depthFirstTraversalConnected, spec)
 
         then:
         spec.colors == [
@@ -421,7 +421,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.depthFirstTraversal spec
+        def traversal = graph.traversal(graph.&depthFirstTraversalConnected, spec)
 
         then:
         traversal == Graph.Traversal.STOP

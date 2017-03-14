@@ -250,14 +250,14 @@ class Graph {
      * configures a depth first traversal with the given closure using
      * depthFirstTraversalSpec().
      *
-     * Once the spec is configured depthFirstTraversal(spec) is called.
+     * Once the spec is configured traversal(graph.&depthFirstTraversalConnected, spec) is called.
      *
      * @param specClosure
      * @return
      */
-    def depthFirstTraversal(Closure specClosure) {
+    Traversal depthFirstTraversal(Closure specClosure) {
         def spec = depthFirstTraversalSpec(specClosure)
-        depthFirstTraversal(spec)
+        traversal(this.&depthFirstTraversalConnected, spec)
     }
 
     /**
@@ -317,23 +317,25 @@ class Graph {
     }
 
     /**
-     * Performs a depth first traversal with the given DepthFirstTraversalSpec on all
-     * components of the graph. This method calls depthFirstTraversalConnected on spec.root
-     * and continues to call depthFirstTraversalConnected until all vertices are colored black.
+     * Performs a traversal with the given traversalConnected method and TraversalSpec on all
+     * components of the graph. This method calls traversalConnected on spec.root
+     * and continues to call traversalConnected until all vertices are colored black.
      * To stop the traversal early the spec can return Traversal.STOP in any of the
      * traversal closures.
+     * @param traversalConnected - one of the traversalConnected methods in this graph
      * @param spec
      * @return null or a Traversal value
      */
-    def depthFirstTraversal(DepthFirstTraversalSpec spec) {
+    Traversal traversal(traversalConnected, spec) {
         String name = spec.root
         while (name) {
-            def traversal = depthFirstTraversalConnected(name, spec)
+            def traversal = traversalConnected(name, spec)
             if (traversal == Traversal.STOP) {
                 return Traversal.STOP
             }
             name = getUnvisitedVertexName(spec.colors)
         }
+        null
     }
 
     /**
@@ -374,6 +376,32 @@ class Graph {
         null
     }
 
+    /**
+     * configures a breadth first traversal with the given closure using
+     * breadthFirstTraversalSpec().
+     *
+     * Once the spec is configured traversal(this.&breadthFirstTraversalConnected, spec) is called.
+     *
+     * @param specClosure
+     * @return
+     */
+    Traversal breadthFirstTraversal(Closure specClosure) {
+        def spec = breadthFirstTraversalSpec(specClosure)
+        traversal(this.&breadthFirstTraversalConnected, spec)
+    }
+
+
+    /**
+     * Performs a breadth first traversal on a connected component of the graph starting
+     * at the vertex identified by root. The behavior of the traversal is determined by
+     * spec.colors and spec.visit.
+     *
+     * Traversal.STOP - It is possible to stop the traversal early by returning this value
+     * in visit.
+     * @param root the root of the vertex to start at
+     * @param spec the BreadthFirstTraversalSpec
+     * @return null or a Traversal value
+     */
     Traversal breadthFirstTraversalConnected(String root, BreadthFirstTraversalSpec spec) {
         if (!vertices[root]) {
             throw new IllegalArgumentException("Could not find $root in graph")
