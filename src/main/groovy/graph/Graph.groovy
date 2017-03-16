@@ -360,6 +360,12 @@ class Graph {
         for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
             Edge edge = adjacentEdges[index]
             String connectedName = root == edge.one ? edge.two : edge.one
+            //if white tree edge
+            //if grey back edge
+            //if black forward or cross edge. must keep track of trees to say cross edge.
+            if(spec.classifyEdge && spec.classifyEdge(root, connectedName, spec.colors[connectedName]) == Traversal.STOP) {
+                return Traversal.STOP
+            }
             if (spec.colors[connectedName] == TraversalColor.WHITE) {
                 if (Traversal.STOP == depthFirstTraversalConnected(connectedName, spec)) {
                     return Traversal.STOP

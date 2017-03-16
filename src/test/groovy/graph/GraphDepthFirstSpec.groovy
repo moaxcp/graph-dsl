@@ -432,4 +432,38 @@ public class GraphDepthFirstSpec extends Specification {
                 'step4': graph.Graph.TraversalColor.WHITE
         ]
     }
+
+    def 'edgeClassification'() {
+        setup:
+        def graph = new Graph()
+        graph.with {
+            vertex 'A'
+            vertex 'B'
+            edge 'A', 'B'
+        }
+
+        def fromNames = []
+        def toNames = []
+        def colors = []
+
+        def spec = graph.depthFirstTraversalSpec {
+            classifyEdge { from, to, toColor ->
+                fromNames << from
+                toNames << to
+                colors << toColor
+            }
+        }
+
+        when:
+        graph.depthFirstTraversalConnected 'A', spec
+
+        then:
+        fromNames[0] == 'A'
+        toNames[0] == 'B'
+        colors[0] == Graph.TraversalColor.WHITE
+
+        fromNames[1] == 'B'
+        toNames[1] == 'A'
+        colors[1] == Graph.TraversalColor.GREY
+    }
 }
