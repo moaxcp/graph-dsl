@@ -28,7 +28,7 @@ class Graph {
     /**
      * Defines the color for a vertex when traversing.
      */
-    def enum TraversalColor {
+    enum TraversalColor {
         /**
          * an undiscovered vertex
          */
@@ -96,9 +96,8 @@ class Graph {
     }
 
     @PackageScope
-    Vertex addVertex(Vertex vertex) {
+    boolean addVertex(Vertex vertex) {
         vertices[vertex.name] = vertex
-        vertex
     }
 
     /**
@@ -148,9 +147,8 @@ class Graph {
     }
 
     @PackageScope
-    Edge addEdge(Edge edge) {
+    boolean addEdge(Edge edge) {
         edges << edge
-        edge
     }
 
     /**
@@ -457,21 +455,7 @@ class Graph {
         EdgeClassification ec = new EdgeClassification()
         depthFirstTraversal {
             classifyEdge { Edge edge, String from, String to, TraversalColor toColor ->
-                switch(toColor) {
-                    case TraversalColor.WHITE:
-                        ec.forrest.addVertex(vertex(from))
-                        ec.forrest.addVertex(vertex(to))
-                        ec.forrest.addEdge(edge)
-                        ec.treeEdges << edge
-                        break
-                    case TraversalColor.GREY:
-                        ec.backEdges << edge
-                        break
-
-                    case TraversalColor.BLACK:
-
-                        break
-                }
+                ec.addEdge(this, edge, from, to, toColor, action)
             }
         }
         ec
