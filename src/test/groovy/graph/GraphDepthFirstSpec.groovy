@@ -445,12 +445,14 @@ public class GraphDepthFirstSpec extends Specification {
         def fromNames = []
         def toNames = []
         def colors = []
+        def edges = []
 
         def spec = graph.depthFirstTraversalSpec {
-            classifyEdge { from, to, toColor ->
+            classifyEdge { edge, from, to, toColor ->
                 fromNames << from
                 toNames << to
                 colors << toColor
+                edges << edge
             }
         }
 
@@ -461,9 +463,11 @@ public class GraphDepthFirstSpec extends Specification {
         fromNames[0] == 'A'
         toNames[0] == 'B'
         colors[0] == Graph.TraversalColor.WHITE
+        edges[0] == graph.edge('A', 'B')
 
         fromNames[1] == 'B'
         toNames[1] == 'A'
         colors[1] == Graph.TraversalColor.GREY
+        edges[1] == graph.edge('A', 'B')
     }
 }

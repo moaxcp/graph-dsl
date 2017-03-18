@@ -1,5 +1,7 @@
 package graph
 
+import groovy.transform.PackageScope
+
 /**
  * Implementation of a Graph. Vertices are represented as key/value pairs in a map. The edges connect the keys in
  * the map to form a graph. The values in the map are the contents of the vertices. This makes it easy to represent
@@ -93,6 +95,12 @@ class Graph {
         plugin.apply(this)
     }
 
+    @PackageScope
+    Vertex addVertex(Vertex vertex) {
+        vertices[vertex.name] = vertex
+        vertex
+    }
+
     /**
      * Creates a map with the name key set to the name param. The map
      * and closure are passed to vertex(Map, Clousre)
@@ -137,6 +145,12 @@ class Graph {
 
         vertices[map.name] = vertex
         vertex
+    }
+
+    @PackageScope
+    Edge addEdge(Edge edge) {
+        edges << edge
+        edge
     }
 
     /**
@@ -363,7 +377,7 @@ class Graph {
             //if white tree edge
             //if grey back edge
             //if black forward or cross edge. must keep track of trees to say cross edge.
-            if(spec.classifyEdge && spec.classifyEdge(root, connectedName, spec.colors[connectedName]) == Traversal.STOP) {
+            if(spec.classifyEdge && spec.classifyEdge(edge, root, connectedName, spec.colors[connectedName]) == Traversal.STOP) {
                 return Traversal.STOP
             }
             if (spec.colors[connectedName] == TraversalColor.WHITE) {
@@ -437,5 +451,29 @@ class Graph {
             spec.colors[current] = TraversalColor.BLACK
         }
         null
+    }
+
+    EdgeClassification classifyEdges(Closure action) {
+        EdgeClassification ec = new EdgeClassification()
+        depthFirstTraversal {
+            classifyEdge { Edge edge, String from, String to, TraversalColor toColor ->
+                switch(toColor) {
+                    case TraversalColor.WHITE:
+                        ec.forrest.addVertex(vertex(from))
+                        ec.forrest.addVertex(vertex(to))
+                        ec.forrest.addEdge(edge)
+                        ec.treeEdges << edge
+                        break
+                    case TraversalColor.GREY:
+                        ec.backEdges << edge
+                        break
+
+                    case TraversalColor.BLACK:
+
+                        break
+                }
+            }
+        }
+        ec
     }
 }
