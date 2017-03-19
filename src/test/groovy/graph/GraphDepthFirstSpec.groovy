@@ -470,4 +470,30 @@ public class GraphDepthFirstSpec extends Specification {
         colors[1] == Graph.TraversalColor.GREY
         edges[1] == graph.edge('A', 'B')
     }
+
+    def 'can STOP classifyEdge'() {
+        setup:
+        def graph = new Graph()
+        graph.with {
+            vertex 'A'
+            vertex 'B'
+            vertex 'C'
+            edge 'A', 'B'
+            edge 'B', 'C'
+        }
+
+        def spec = graph.depthFirstTraversalSpec {
+            classifyEdge { edge, from, to, toColor ->
+                if(from == 'B' && to == 'C') {
+                    return Graph.Traversal.STOP
+                }
+            }
+        }
+
+        when:
+        def traversal = graph.depthFirstTraversalConnected 'A', spec
+
+        then:
+        traversal == Graph.Traversal.STOP
+    }
 }

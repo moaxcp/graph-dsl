@@ -95,6 +95,11 @@ class Graph {
         plugin.apply(this)
     }
 
+    /**
+     * Adds a vertex object directly.
+     * @param vertex
+     * @return true if add was successful.
+     */
     @PackageScope
     boolean addVertex(Vertex vertex) {
         vertices[vertex.name] = vertex
@@ -146,6 +151,11 @@ class Graph {
         vertex
     }
 
+    /**
+     * Adds an edge object directly.
+     * @param edge
+     * @return true if add was successful.
+     */
     @PackageScope
     boolean addEdge(Edge edge) {
         edges << edge
@@ -426,6 +436,7 @@ class Graph {
         }
         def traversal = spec.visit(vertices[root])
         if (traversal == Traversal.STOP) {
+            spec.colors[root] = TraversalColor.GREY
             return traversal
         }
         spec.colors[root] = TraversalColor.GREY
@@ -440,6 +451,7 @@ class Graph {
                 if (spec.colors[connected] == TraversalColor.WHITE) {
                     traversal = spec.visit(vertices[connected])
                     if (traversal == Traversal.STOP) {
+                        spec.colors[connected] = TraversalColor.GREY
                         return traversal
                     }
                     spec.colors[connected] = TraversalColor.GREY
@@ -451,6 +463,11 @@ class Graph {
         null
     }
 
+    /**
+     * Classifies edges in a depthFirstTraversal returning the results.
+     * @param action passed into EdgeClassification.addEdge
+     * @return the resulting EdgeClassification
+     */
     EdgeClassification classifyEdges(Closure action) {
         EdgeClassification ec = new EdgeClassification()
         depthFirstTraversal {

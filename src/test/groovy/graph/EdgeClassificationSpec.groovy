@@ -33,7 +33,7 @@ class EdgeClassificationSpec extends Specification {
         toCheck == 'B'
     }
 
-    def 'test WHITE edge'() {
+    def 'test WHITE edge in addEdge'() {
         setup:
         def typeCheck
 
@@ -52,7 +52,7 @@ class EdgeClassificationSpec extends Specification {
         edgeClassification.treeEdges.contains(graph.edge('A', 'B'))
     }
 
-    def 'test GREY toEdge'() {
+    def 'test GREY edge in addEdge'() {
         setup:
         def fromCheck
         def toCheck
@@ -72,7 +72,7 @@ class EdgeClassificationSpec extends Specification {
         edgeClassification.backEdges.contains(graph.edge('A', 'B'))
     }
 
-    def 'test BLACK forward toEdge'() {
+    def 'test BLACK forward edge in addEdge'() {
         setup:
         def fromCheck
         def toCheck
@@ -92,7 +92,7 @@ class EdgeClassificationSpec extends Specification {
         edgeClassification.forwardEdges.contains(graph.edge('A', 'B'))
     }
 
-    def 'test BLACK chross toEdge'() {
+    def 'test BLACK cross edge in addEdge'() {
         setup:
         def fromCheck
         def toCheck

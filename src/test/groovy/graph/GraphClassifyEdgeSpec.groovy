@@ -41,6 +41,5 @@ class GraphClassifyEdgeSpec extends Specification {
         ec.treeEdges.size() == 1
         ec.forwardEdges.size() == 0
         ec.crossEdges.size() == 0
-
     }
 }
