@@ -24,6 +24,10 @@ class DepthFirstTraversalSpec extends TraversalSpec {
         postorderClosure
     }
 
+    /**
+     * returns the classifyEdge event.
+     * @return
+     */
     Closure getClassifyEdge() {
         classifyEdgeClosure
     }
@@ -46,6 +50,10 @@ class DepthFirstTraversalSpec extends TraversalSpec {
         this.postorderClosure = postorderClosure
     }
 
+    /**
+     * method to set the classifyEdge event
+     * @param classifyEdgeClosure
+     */
     void classifyEdge(Closure classifyEdgeClosure) {
         this.classifyEdgeClosure = classifyEdgeClosure
     }
