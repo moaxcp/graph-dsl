@@ -96,9 +96,32 @@ class GraphBreadthFirstSpec extends Specification {
         then:
         traversal == Graph.Traversal.STOP
         spec.colors == [
-                A: GREY, B: GREY, C: WHITE, D: GREY, E: WHITE
+                A: GREY, B: GREY, C: WHITE, D: GREY, E: GREY
         ]
         visitList == ['A', 'B', 'D']
+    }
+
+    def 'can stop traversal at root'() {
+        setup:
+        def spec = new BreadthFirstTraversalSpec()
+        spec.colors = graph.makeColorMap()
+        def visitList = []
+        spec.visit { vertex ->
+            visitList << vertex.name
+            if(vertex.name == 'A') {
+                return Graph.Traversal.STOP
+            }
+        }
+
+        when:
+        def traversal = graph.breadthFirstTraversalConnected 'A', spec
+
+        then:
+        traversal == Graph.Traversal.STOP
+        spec.colors == [
+                A: GREY, B: WHITE, C: WHITE, D: WHITE, E: WHITE
+        ]
+        visitList == ['A']
     }
 
     def 'breadthFirstTraversal with closure'() {

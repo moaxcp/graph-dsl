@@ -56,19 +56,4 @@ class DirectedGraphEdgeSpec extends Specification {
             it.one == 'step2' && it.two == 'step3'
         }
     }
-
-    def 'can modify existing edge'() {
-        setup:
-        def edge = graph.edge 'step1', 'step2'
-
-        when:
-        def testValue = false
-        def testEdge = graph.edge 'step1', 'step2', {
-            testValue = delegate == edge
-        }
-
-        then:
-        testValue
-        edge == testEdge
-    }
 }

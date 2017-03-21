@@ -86,6 +86,12 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.7.0
+
+* Added support for classifying edges. This can be used to detect cycles in a graph.
+* Added test coverage.
+* Added javadoc.
+
 ## 0.6.0
 
 * fixed issue with logging when optimizations are turned off
