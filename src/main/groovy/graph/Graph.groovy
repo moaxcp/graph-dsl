@@ -131,23 +131,29 @@ class Graph {
      * @param closure
      * @return the resulting vertex
      */
-    def vertex(map, Closure closure = null) {
-        def vertex = vertices[map.name] ?: vertexFactory.newVertex(map.name)
-
-        vertex = map.traits?.inject(vertex) { val, it ->
-            val.delegateAs(it)
-        } ?: vertex
-
-        if (map.trait) {
-            vertex.delegateAs(map.trait)
+    Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure = null) {
+        Vertex vertex = vertices[map.name] ?: vertexFactory.newVertex(map.name)
+        VertexSpec spec = new VertexSpec()
+        if (map.traits) {
+            spec.traits(map.traits as Class[])
+        }
+        if (map.connectsTo) {
+            spec.connectsTo(map.connectsTo as String[])
         }
 
-        if (closure != null) {
-            closure.delegate = vertex
-            closure()
+        if (closure) {
+            Closure code = closure.rehydrate(spec, this, this)
+            code()
         }
 
-        vertices[map.name] = vertex
+        if (spec.traits) {
+            vertex.delegateAs(spec.traits as Class[])
+        }
+        spec.connectsTo.each {
+            edge vertex.name, it
+        }
+
+        vertices[vertex.name] = vertex
         vertex
     }
 
@@ -382,9 +388,6 @@ class Graph {
         for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
             Edge edge = adjacentEdges[index]
             String connectedName = root == edge.one ? edge.two : edge.one
-            //if white tree edge
-            //if grey back edge
-            //if black forward or cross edge. must keep track of trees to say cross edge.
             if(spec.classifyEdge && spec.classifyEdge(edge, root, connectedName, spec.colors[connectedName]) == Traversal.STOP) {
                 return Traversal.STOP
             }
