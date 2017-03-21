@@ -41,7 +41,7 @@ class GraphVertexSpec extends Specification {
 
     def 'can add vertex with single trait to graph'() {
         when:
-        graph.vertex name: 'step1', trait: Weight
+        graph.vertex name: 'step1', traits: Weight
 
         then:
         graph.vertices.step1.delegate instanceof Weight
@@ -69,16 +69,16 @@ class GraphVertexSpec extends Specification {
 
     def 'can modify existing vertex'() {
         setup:
-        def vertex = graph.vertex 'step1'
+        def from = graph.vertex 'step1'
 
         when:
         def testValue = false
         def testVertex = graph.vertex 'step1', {
-            testValue = delegate == vertex
+            testValue = vertex == from
         }
 
         then:
         testValue
-        vertex == testVertex
+        from == testVertex
     }
 }

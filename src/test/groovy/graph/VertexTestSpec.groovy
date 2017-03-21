@@ -2,7 +2,7 @@ package graph
 
 import spock.lang.Specification
 
-class VertexSpec extends Specification {
+class VertexTestSpec extends Specification {
 
     def vertex = new Vertex()
 

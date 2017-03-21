@@ -133,7 +133,7 @@ class Graph {
      */
     Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure = null) {
         Vertex vertex = vertices[map.name] ?: vertexFactory.newVertex(map.name)
-        VertexSpec spec = new VertexSpec()
+        VertexSpec spec = new VertexSpec(name:vertex.name, vertex:vertex)
         if (map.traits) {
             spec.traits(map.traits as Class[])
         }
