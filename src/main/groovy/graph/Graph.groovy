@@ -1,5 +1,7 @@
 package graph
 
+import groovy.transform.PackageScope
+
 /**
  * Implementation of a Graph. Vertices are represented as key/value pairs in a map. The edges connect the keys in
  * the map to form a graph. The values in the map are the contents of the vertices. This makes it easy to represent
@@ -26,7 +28,7 @@ class Graph {
     /**
      * Defines the color for a vertex when traversing.
      */
-    def enum TraversalColor {
+    enum TraversalColor {
         /**
          * an undiscovered vertex
          */
@@ -94,6 +96,16 @@ class Graph {
     }
 
     /**
+     * Adds a vertex object directly.
+     * @param vertex
+     * @return true if add was successful.
+     */
+    @PackageScope
+    boolean addVertex(Vertex vertex) {
+        vertices[vertex.name] = vertex
+    }
+
+    /**
      * Creates a map with the name key set to the name param. The map
      * and closure are passed to vertex(Map, Clousre)
      * @param name
@@ -137,6 +149,16 @@ class Graph {
 
         vertices[map.name] = vertex
         vertex
+    }
+
+    /**
+     * Adds an edge object directly.
+     * @param edge
+     * @return true if add was successful.
+     */
+    @PackageScope
+    boolean addEdge(Edge edge) {
+        edges << edge
     }
 
     /**
@@ -360,6 +382,12 @@ class Graph {
         for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
             Edge edge = adjacentEdges[index]
             String connectedName = root == edge.one ? edge.two : edge.one
+            //if white tree edge
+            //if grey back edge
+            //if black forward or cross edge. must keep track of trees to say cross edge.
+            if(spec.classifyEdge && spec.classifyEdge(edge, root, connectedName, spec.colors[connectedName]) == Traversal.STOP) {
+                return Traversal.STOP
+            }
             if (spec.colors[connectedName] == TraversalColor.WHITE) {
                 if (Traversal.STOP == depthFirstTraversalConnected(connectedName, spec)) {
                     return Traversal.STOP
@@ -408,6 +436,7 @@ class Graph {
         }
         def traversal = spec.visit(vertices[root])
         if (traversal == Traversal.STOP) {
+            spec.colors[root] = TraversalColor.GREY
             return traversal
         }
         spec.colors[root] = TraversalColor.GREY
@@ -422,6 +451,7 @@ class Graph {
                 if (spec.colors[connected] == TraversalColor.WHITE) {
                     traversal = spec.visit(vertices[connected])
                     if (traversal == Traversal.STOP) {
+                        spec.colors[connected] = TraversalColor.GREY
                         return traversal
                     }
                     spec.colors[connected] = TraversalColor.GREY
@@ -431,5 +461,20 @@ class Graph {
             spec.colors[current] = TraversalColor.BLACK
         }
         null
+    }
+
+    /**
+     * Classifies edges in a depthFirstTraversal returning the results.
+     * @param action passed into EdgeClassification.addEdge
+     * @return the resulting EdgeClassification
+     */
+    EdgeClassification classifyEdges(Closure action) {
+        EdgeClassification ec = new EdgeClassification()
+        depthFirstTraversal {
+            classifyEdge { Edge edge, String from, String to, TraversalColor toColor ->
+                ec.addEdge(this, edge, from, to, toColor, action)
+            }
+        }
+        ec
     }
 }

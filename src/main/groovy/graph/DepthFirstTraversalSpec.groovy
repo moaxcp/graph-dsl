@@ -1,5 +1,4 @@
 package graph
-
 /**
  * Specification for a DepthFirstTraversal. Contains actions that are called when an
  * event happens during the traversal.
@@ -7,6 +6,7 @@ package graph
 class DepthFirstTraversalSpec extends TraversalSpec {
     private Closure preorderClosure
     private Closure postorderClosure
+    private Closure classifyEdgeClosure
 
     /**
      * returns the preorder event.
@@ -25,6 +25,14 @@ class DepthFirstTraversalSpec extends TraversalSpec {
     }
 
     /**
+     * returns the classifyEdge event.
+     * @return
+     */
+    Closure getClassifyEdge() {
+        classifyEdgeClosure
+    }
+
+    /**
      * method to set the preorder event
      * @param preorderClosure
      * @return
@@ -40,5 +48,13 @@ class DepthFirstTraversalSpec extends TraversalSpec {
      */
     void postorder(Closure postorderClosure) {
         this.postorderClosure = postorderClosure
+    }
+
+    /**
+     * method to set the classifyEdge event
+     * @param classifyEdgeClosure
+     */
+    void classifyEdge(Closure classifyEdgeClosure) {
+        this.classifyEdgeClosure = classifyEdgeClosure
     }
 }
