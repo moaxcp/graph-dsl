@@ -69,18 +69,64 @@ class GraphVertexSpec extends Specification {
         result.name == 'step1'
     }
 
+    def 'can add traits with vertex(Closure)'() {
+        when:
+        def vertex = graph.vertex {
+            name = 'step1'
+            traits Weight, Mapping
+        }
+
+        then:
+        vertex.name == 'step1'
+        vertex.delegate instanceof Mapping
+        vertex.delegate instanceof Weight
+    }
+
+    def 'can add edges using connectsTo with vertex(Closure)'() {
+        when:
+        graph.vertex {
+            name = 'step1'
+            connectsTo 'step2', 'step3'
+        }
+
+        then:
+        graph.edges.size() == 2
+        graph.edges.contains(new Edge(one:'step1', two:'step2'))
+        graph.edges.contains(new Edge(one:'step1', two:'step2'))
+    }
+
+    def 'can configure vertex traits with VertexSpec.config(Closure) in vertex(Closure)'() {
+        when:
+        Vertex vertex = graph.vertex {
+            name = 'step1'
+            traits Mapping
+            config {
+                label = 'the first step'
+            }
+        }
+
+        then:
+        vertex.label == 'the first step'
+    }
+
     def 'can make VertexSpec with makeVertexSpec(Closure)'() {
         when:
         VertexSpec spec = graph.makeVertexSpec {
             name = 'step1'
             traits Mapping, Weight
             connectsTo 'step2', 'step3'
+            config {
+                label = 'the first step'
+                weight 100
+            }
         }
 
         then:
         spec.name == 'step1'
         spec.traits == [Mapping, Weight] as Set<Class>
         spec.connectsTo == ['step2', 'step3'] as Set<String>
+        spec.config != null
+        spec.config instanceof Closure
     }
 
     def 'can add traits with applySpecToVertex(VertexSpec, Vertex)'() {
@@ -109,32 +155,6 @@ class GraphVertexSpec extends Specification {
         then:
         graph.edges.find { new Edge(one:'step1', two:'step2') }
         graph.edges.find { new Edge(one:'step1', two:'step3') }
-    }
-
-    def 'can add traits with vertex(Closure)'() {
-        when:
-        def vertex = graph.vertex {
-            name = 'step1'
-            traits Weight, Mapping
-        }
-
-        then:
-        vertex.name == 'step1'
-        vertex.delegate instanceof Mapping
-        vertex.delegate instanceof Weight
-    }
-
-    def 'can add edges using connectsTo with vertex(Closure)'() {
-        when:
-        graph.vertex {
-            name = 'step1'
-            connectsTo 'step2', 'step3'
-        }
-
-        then:
-        graph.edges.size() == 2
-        graph.edges.contains(new Edge(one:'step1', two:'step2'))
-        graph.edges.contains(new Edge(one:'step1', two:'step2'))
     }
 
     def 'can add/get vertex with vertex(String, Closure)'() {

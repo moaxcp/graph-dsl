@@ -91,12 +91,11 @@ class EdgeSpec extends Specification {
     def 'can use method from delegate'() {
         when:
         edge.delegateAs(Weight)
-        edge.delegate.weight {
+        edge.weight {
             10
         }
 
         then:
-        notThrown MissingMethodException
-        edge.delegate.weight == 10
+        edge.weight == 10
     }
 }
