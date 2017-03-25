@@ -123,11 +123,6 @@ class Graph {
         VertexSpec spec = makeVertexSpec(closure)
         Vertex vertex = vertex(spec.name)
         applySpecToVertexAndGraph(spec, vertex)
-        if(spec.config) {
-            vertex << spec.config
-        }
-
-        vertices[vertex.name] = vertex
         vertex
     }
 
@@ -149,10 +144,34 @@ class Graph {
         spec.connectsTo.each {
             edge vertex.name, it
         }
+        if(spec.config) {
+            vertex << spec.config
+        }
+
+        vertices[vertex.name] = vertex
     }
 
     Vertex vertex(Map<String, ?> map) {
+        VertexSpec spec = makeVertexSpec(map)
+        Vertex vertex = vertex(spec.name)
+        applySpecToVertexAndGraph(spec, vertex)
+        vertex
+    }
 
+    @PackageScope
+    VertexSpec makeVertexSpec(Map<String, ?> map) {
+        VertexSpec spec = new VertexSpec(name:map.name)
+        if (map.traits) {
+            spec.traits(map.traits as Class[])
+        }
+        if (map.connectsTo) {
+            spec.connectsTo(map.connectsTo as String[])
+        }
+        if(map.config) {
+            spec.config(map.config)
+        }
+
+        spec
     }
 
     Vertex vertex(String name, Closure closure) {

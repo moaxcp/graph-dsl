@@ -27,6 +27,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
+        graph.vertices.step1 == vertex
         vertex.name == 'step1'
     }
 
@@ -50,6 +51,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
+        graph.vertices.step1 == vertex
         vertex.name == 'step1'
     }
 
@@ -158,12 +160,23 @@ class GraphVertexSpec extends Specification {
         graph.edges.find { new Edge(one:'step1', two:'step3') }
     }
 
+    def 'can add/get vertex with vertex(Map)'() {
+        when:
+        def vertex = graph.vertex name:'step1'
+
+        then:
+        graph.vertices.size() == 1
+        graph.vertices.step1 == vertex
+        vertex.name == 'step1'
+    }
+
     def 'can add/get vertex with vertex(String, Closure)'() {
         when:
         def vertex = graph.vertex 'step1', {}
 
         then:
         graph.vertices.size() == 1
+        graph.vertices.step1 == vertex
         vertex.name == 'step1'
     }
 
