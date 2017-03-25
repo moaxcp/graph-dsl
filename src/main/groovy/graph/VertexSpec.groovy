@@ -1,29 +1,25 @@
 package graph
 
-import groovy.transform.PackageScope
-
 class VertexSpec {
-    private String name
-    private Vertex vertex
+    String name
     private Set<Class> traits = [] as Set<Class>
     private Set<String> connectsTo = [] as Set<String>
+    private Closure config
 
-    @PackageScope
     Set<Class> getTraits() {
         traits
     }
 
-    @PackageScope
     Set<String> getConnectsTo() {
         connectsTo
     }
 
-    void getName() {
+    String getName() {
         name
     }
 
-    void getVertex() {
-        vertex
+    Closure getConfig() {
+        config
     }
 
     void traits(Class... classes) {
@@ -32,5 +28,13 @@ class VertexSpec {
 
     void connectsTo(String... names) {
         connectsTo.addAll(names)
+    }
+
+    void config(@DelegatesTo(Vertex) Closure config) {
+        if(this.config) {
+            this.config << config
+        } else {
+            this.config = config
+        }
     }
 }

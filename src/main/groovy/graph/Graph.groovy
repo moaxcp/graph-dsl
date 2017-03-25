@@ -106,14 +106,54 @@ class Graph {
     }
 
     /**
-     * Creates a map with the name key set to the name param. The map
-     * and closure are passed to vertex(Map, Clousre)
+     * Finds the vertex with the given name or creates a new one.
      * @param name
-     * @param closure
      * @return the resulting vertex
      */
-    def vertex(String name, Closure closure = null) {
-        vertex(name: name, closure)
+    Vertex vertex(String name) {
+        if(!name) {
+            throw new IllegalArgumentException("!name failed. Name must be groovy truth.")
+        }
+        Vertex vertex = vertices[name] ?: vertexFactory.newVertex(name)
+        vertices[name] = vertex
+        vertex
+    }
+
+    Vertex vertex(@DelegatesTo(VertexSpec) Closure closure) {
+        VertexSpec spec = makeVertexSpec(closure)
+        Vertex vertex = vertex(spec.name)
+        applySpecToVertexAndGraph(spec, vertex)
+
+        vertices[vertex.name] = vertex
+        vertex
+    }
+
+    @PackageScope
+    VertexSpec makeVertexSpec(@DelegatesTo(VertexSpec) Closure closure) {
+        VertexSpec spec = new VertexSpec()
+
+        Closure code = closure.rehydrate(spec, this, this)
+        code()
+
+        spec
+    }
+
+    @PackageScope
+    void applySpecToVertexAndGraph(VertexSpec spec, Vertex vertex) {
+        if (spec.traits) {
+            vertex.delegateAs(spec.traits as Class[])
+        }
+        spec.connectsTo.each {
+            edge vertex.name, it
+        }
+    }
+
+    Vertex vertex(String name, Closure closure) {
+        //TODO if vertex is renamed in closure must rename across all edges.
+        VertexSpec spec = makeVertexSpec(closure)
+        Vertex vertex = vertex(name)
+        applySpecToVertexAndGraph(spec, vertex)
+        vertex
     }
 
     /**
@@ -131,14 +171,18 @@ class Graph {
      * @param closure
      * @return the resulting vertex
      */
-    Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure = null) {
-        Vertex vertex = vertices[map.name] ?: vertexFactory.newVertex(map.name)
-        VertexSpec spec = new VertexSpec(name:vertex.name, vertex:vertex)
+    Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
+        def vertex = vertex(map.name)
+        VertexSpec spec = new VertexSpec(name:vertex.name)
         if (map.traits) {
             spec.traits(map.traits as Class[])
         }
         if (map.connectsTo) {
             spec.connectsTo(map.connectsTo as String[])
+        }
+
+        if(map.config) {
+            spec.config(map.config)
         }
 
         if (closure) {
