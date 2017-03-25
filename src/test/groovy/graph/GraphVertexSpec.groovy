@@ -99,9 +99,10 @@ class GraphVertexSpec extends Specification {
         when:
         Vertex vertex = graph.vertex {
             name = 'step1'
-            traits Mapping
+            traits Mapping, Weight
             config {
                 label = 'the first step'
+                weight { 100 }
             }
         }
 

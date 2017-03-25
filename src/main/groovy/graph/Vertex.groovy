@@ -11,6 +11,16 @@ class Vertex {
         this
     }
 
+    /**
+     * calls method on delegate.
+     * @param name
+     * @param args
+     * @return
+     */
+    def methodMissing(String name, args) {
+        delegate.invokeMethod(name, args)
+    }
+
     def propertyMissing(String name) {
         delegate[name]
     }
