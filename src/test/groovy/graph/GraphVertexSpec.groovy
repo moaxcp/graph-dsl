@@ -260,6 +260,50 @@ class GraphVertexSpec extends Specification {
         result.name == 'step1'
     }
 
+    def 'can add/get vertex with vertex(Map, Closure)'() {
+        when:
+        def vertex = graph.vertex(name:'step1') {}
+
+        then:
+        graph.vertices.size() == 1
+        graph.vertices.step1 == vertex
+        vertex.name == 'step1'
+    }
+
+    def 'can get with second call to vertex(Map, Closure)'() {
+        setup:
+        def expected = graph.vertex(name:'step1') {}
+
+        when:
+        def result = graph.vertex(name:'step1') {}
+
+        then:
+        result == expected
+        result.name == 'step1'
+    }
+
+    def 'can add/get vertex with vertex(String, Map, Closure)'() {
+        when:
+        def vertex = graph.vertex('step1', [:]) {}
+
+        then:
+        graph.vertices.size() == 1
+        graph.vertices.step1 == vertex
+        vertex.name == 'step1'
+    }
+
+    def 'can get with second call to vertex(String, Map, Closure)'() {
+        setup:
+        def expected = graph.vertex('step1', [:]) {}
+
+        when:
+        def result = graph.vertex('step1', [:]) {}
+
+        then:
+        result == expected
+        result.name == 'step1'
+    }
+
     def 'vertices is unmodifiable'() {
         setup:
         graph.vertex 'step1'
