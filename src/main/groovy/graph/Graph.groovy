@@ -182,6 +182,13 @@ class Graph {
         vertex
     }
 
+    Vertex vertex(String name, Map<String, ?> map) {
+        VertexSpec spec = makeVertexSpec(map)
+        Vertex vertex = vertex(name)
+        applySpecToVertexAndGraph(spec, vertex)
+        vertex
+    }
+
     /**
      * Adds a Vertex using the provided map to set its properties. The Vertex
      * is then added to vertices overwriting any previous Vertex with the given
@@ -198,32 +205,20 @@ class Graph {
      * @return the resulting vertex
      */
     Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
-        def vertex = vertex(map.name)
-        VertexSpec spec = new VertexSpec(name:vertex.name)
-        if (map.traits) {
-            spec.traits(map.traits as Class[])
-        }
-        if (map.connectsTo) {
-            spec.connectsTo(map.connectsTo as String[])
-        }
+        VertexSpec mapSpec = makeVertexSpec(map)
+        VertexSpec closureSpec = makeVertexSpec(closure)
+        Vertex vertex = vertex(map.name)
+        applySpecToVertexAndGraph(mapSpec, vertex)
+        applySpecToVertexAndGraph(closureSpec, vertex)
+        vertex
+    }
 
-        if(map.config) {
-            spec.config(map.config)
-        }
-
-        if (closure) {
-            Closure code = closure.rehydrate(spec, this, this)
-            code()
-        }
-
-        if (spec.traits) {
-            vertex.delegateAs(spec.traits as Class[])
-        }
-        spec.connectsTo.each {
-            edge vertex.name, it
-        }
-
-        vertices[vertex.name] = vertex
+    Vertex vertex(String name, Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
+        VertexSpec mapSpec = makeVertexSpec(map)
+        VertexSpec closureSpec = makeVertexSpec(closure)
+        Vertex vertex = vertex(name)
+        applySpecToVertexAndGraph(mapSpec, vertex)
+        applySpecToVertexAndGraph(closureSpec, vertex)
         vertex
     }
 

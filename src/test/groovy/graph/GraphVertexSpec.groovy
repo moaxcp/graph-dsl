@@ -110,6 +110,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         vertex.label == 'the first step'
+        vertex.getWeight() == 100
     }
 
     def 'can make VertexSpec with makeVertexSpec(Closure)'() {
@@ -170,6 +171,51 @@ class GraphVertexSpec extends Specification {
         vertex.name == 'step1'
     }
 
+    def 'can get with second call to vertex(Map)'() {
+        setup:
+        def expected = graph.vertex name:'step1'
+
+        when:
+        def result = graph.vertex name:'step1'
+
+        then:
+        result == expected
+        result.name == 'step1'
+    }
+
+    def 'can add traits with vertex(Map)'() {
+        when:
+        def vertex = graph.vertex name:'step1', traits: [Mapping, Weight]
+
+        then:
+        vertex.name == 'step1'
+        vertex.delegate instanceof Mapping
+        vertex.delegate instanceof Weight
+    }
+
+    def 'can add edges using connectsTo with vertex(Map)'() {
+        when:
+        graph.vertex name:'step1', connectsTo:['step2', 'step3']
+
+        then:
+        graph.edges.size() == 2
+        graph.edges.contains(new Edge(one:'step1', two:'step2'))
+        graph.edges.contains(new Edge(one:'step1', two:'step2'))
+    }
+
+    def 'can configure vertex traits with VertexSpec.config(Closure) in vertex(Map)'() {
+        when:
+        Vertex vertex = graph.vertex name:'step1', traits:[Mapping, Weight],
+            config:{
+                label = 'the first step'
+                weight { 100 }
+            }
+
+        then:
+        vertex.label == 'the first step'
+        vertex.getWeight() == 100
+    }
+
     def 'can add/get vertex with vertex(String, Closure)'() {
         when:
         def vertex = graph.vertex 'step1', {}
@@ -192,30 +238,26 @@ class GraphVertexSpec extends Specification {
         result.name == 'step1'
     }
 
-    def 'can add vertex with map to graph'() {
-
+    def 'can add/get vertex with vertex(String, Map)'() {
         when:
-        graph.vertex name: 'step1'
+        def vertex = graph.vertex 'step1', [:]
 
         then:
-        graph.vertices.step1 != null
+        graph.vertices.size() == 1
+        graph.vertices.step1 == vertex
+        vertex.name == 'step1'
     }
 
-    def 'can add vertex with single trait to graph'() {
+    def 'can get with second call to vertex(String, Map)'() {
+        setup:
+        def expected = graph.vertex 'step1', [:]
+
         when:
-        graph.vertex name: 'step1', traits: Weight
+        def result = graph.vertex 'step1', [:]
 
         then:
-        graph.vertices.step1.delegate instanceof Weight
-    }
-
-    def 'can add vertex with traits to graph'() {
-        when:
-        graph.vertex name: 'step1', traits: [Weight, Value]
-
-        then:
-        graph.vertices.step1.delegate instanceof Weight
-        graph.vertices.step1.delegate instanceof Value
+        result == expected
+        result.name == 'step1'
     }
 
     def 'vertices is unmodifiable'() {
@@ -227,20 +269,5 @@ class GraphVertexSpec extends Specification {
 
         then:
         thrown(UnsupportedOperationException)
-    }
-
-    def 'can modify existing vertex'() {
-        setup:
-        def from = graph.vertex 'step1'
-
-        when:
-        def testValue = false
-        def testVertex = graph.vertex 'step1', {
-            testValue = vertex == from
-        }
-
-        then:
-        testValue
-        from == testVertex
     }
 }

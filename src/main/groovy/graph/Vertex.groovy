@@ -22,7 +22,7 @@ class Vertex {
     }
 
     def propertyMissing(String name) {
-        delegate[name]
+        delegate."$name"
     }
 
     def propertyMissing(String name, value) {
