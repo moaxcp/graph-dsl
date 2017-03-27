@@ -3,22 +3,33 @@ package graph
 import groovy.transform.PackageScope
 
 /**
- * Implementation of a Graph. Vertices are represented as key/value pairs in a map. The edges connect the keys in
- * the map to form a graph. The values in the map are the contents of the vertices. This makes it easy to represent
- * a graph as string vertices with edges that connect strings.
+ * An implementation of a Graph. A {@link Vertex} is identified in this Graph using the vertex name property. A
+ * {@link Edge} is identified by the names of the to vertices it connects.
+ * <p>
+ * {@link Vertex} and {@link Edge} objects are added using the vertex and edge methods. These methods will always create
+ * objects if not present to reduce the code needed to express a graph and to ensure the integrity of the graph. There
+ * are a few styles that may be used to express vertices and edges in this Graph. See the edge and vertex methods for
+ * more details.
+ * <p>
+ * The default behavior is that of an undirected graph. There can only be one {@link Edge} between any two vertices.
+ * When traversing a graph an {@link Edge} is adjacent to a {@link Vertex} if it's one or two property equals the name
+ * of the {@link Vertex}.
+ * <p>
+ * Plugins may be applied to this graph to change its behavior and the behavior of the vertices and edges within this
+ * graph. For more information on plugins see {@link Plugin}.
  */
 class Graph {
-    final def vertices = [:] as LinkedHashMap<String, Vertex>
-    def edges = [] as LinkedHashSet
-    def plugins = [] as LinkedHashSet
-    def EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
-    def VertexFactory vertexFactory = new DefaultVertexFactory()
+    private Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
+    private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
+    private Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
+    private EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
+    private VertexFactory vertexFactory = new DefaultVertexFactory()
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
      * from one of the closures passed to search methods changing the behavior of a traversal.
      */
-    def enum Traversal {
+    enum Traversal {
         /**
          * stops the current traversal. Useful in search when a vertex is found to end the traversal early.
          */
@@ -48,7 +59,7 @@ class Graph {
      * @param c
      * @return
      */
-    def static graph(Closure c) {
+    static Graph graph(Closure c) {
         def graph = new Graph()
         graph.with(c)
         graph
@@ -58,7 +69,7 @@ class Graph {
      * returns the vertices as an unmodifiableMap
      * @return
      */
-    def getVertices() {
+    Map<String, ? extends Vertex> getVertices() {
         Collections.unmodifiableMap(vertices)
     }
 
@@ -66,7 +77,7 @@ class Graph {
      * returns the edges as an unmodifiable set
      * @return
      */
-    def getEdges() {
+    Set<? extends Edge> getEdges() {
         Collections.unmodifiableSet(edges)
     }
 
@@ -74,16 +85,16 @@ class Graph {
      * returns plugins as an unmodifiable set
      * @return
      */
-    def getPlugins() {
+    Set<? extends Plugin> getPlugins() {
         Collections.unmodifiableSet(plugins)
     }
 
     /**
-     * applies a plugin to this graph.
-     * @param pluginClass
+     * Creates and applies a {@link Plugin} to this graph.
+     * @param pluginClass - the {@link Plugin} to create and apply to this graph.
      * @return
      */
-    def apply(Class pluginClass) {
+    void apply(Class pluginClass) {
         if (plugins.contains(pluginClass)) {
             throw new IllegalArgumentException("$pluginClass.name is already applied.")
         }
@@ -91,12 +102,12 @@ class Graph {
             throw new IllegalArgumentException("$pluginClass.name does not implement Plugin")
         }
         plugins << pluginClass
-        def plugin = pluginClass.newInstance()
+        Plugin plugin = pluginClass.newInstance()
         plugin.apply(this)
     }
 
     /**
-     * Adds a vertex object directly.
+     * Adds a vertex object directly. For internal use to create copies of a Graph.
      * @param vertex
      * @return true if add was successful.
      */
@@ -106,9 +117,10 @@ class Graph {
     }
 
     /**
-     * Finds the vertex with the given name or creates a new one.
-     * @param name
-     * @return the resulting vertex
+     * Finds the {@link Vertex} with the given name or creates a new one.
+     * @param name - the name of the {@link Vertex} to find or create.
+     * @return the resulting {@link Vertex}
+     * @throws {@link IllegalArgumentException} When name is null or empty.
      */
     Vertex vertex(String name) {
         if(!name) {
@@ -119,73 +131,40 @@ class Graph {
         vertex
     }
 
+    /**
+     * Creates or updates a {@link Vertex} in the graph. The configuration given by the closure is delegated to a
+     * {@link VertexSpec}. See {@link VertexSpec} for details on how it modifies this graph and the {@link Vertex}. If
+     * config is present the closure is applied to the {@link Vertex} using {@link Vertex#leftShift(Closure)}. This can
+     * be used to configure traits applied to the vertex in the closure.
+     * @param closure - delegates to {@link VertexSpec}
+     * @return the resulting {@link Vertex}
+     */
     Vertex vertex(@DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec spec = makeVertexSpec(closure)
+        VertexSpec spec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(spec.name)
-        applySpecToVertexAndGraph(spec, vertex)
+        spec.applyToGraphAndVertex(this, vertex)
         vertex
-    }
-
-    @PackageScope
-    VertexSpec makeVertexSpec(@DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec spec = new VertexSpec()
-
-        Closure code = closure.rehydrate(spec, this, this)
-        code()
-
-        spec
-    }
-
-    @PackageScope
-    void applySpecToVertexAndGraph(VertexSpec spec, Vertex vertex) {
-        if (spec.traits) {
-            vertex.delegateAs(spec.traits as Class[])
-        }
-        spec.connectsTo.each {
-            edge vertex.name, it
-        }
-        if(spec.config) {
-            vertex << spec.config
-        }
-
-        vertices[vertex.name] = vertex
     }
 
     Vertex vertex(Map<String, ?> map) {
-        VertexSpec spec = makeVertexSpec(map)
+        VertexSpec spec = VertexSpec.newInstance(map)
         Vertex vertex = vertex(spec.name)
-        applySpecToVertexAndGraph(spec, vertex)
+        spec.applyToGraphAndVertex(this, vertex)
         vertex
-    }
-
-    @PackageScope
-    VertexSpec makeVertexSpec(Map<String, ?> map) {
-        VertexSpec spec = new VertexSpec(name:map.name)
-        if (map.traits) {
-            spec.traits(map.traits as Class[])
-        }
-        if (map.connectsTo) {
-            spec.connectsTo(map.connectsTo as String[])
-        }
-        if(map.config) {
-            spec.config(map.config)
-        }
-
-        spec
     }
 
     Vertex vertex(String name, Closure closure) {
         //TODO if vertex is renamed in closure must rename across all edges.
-        VertexSpec spec = makeVertexSpec(closure)
+        VertexSpec spec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(name)
-        applySpecToVertexAndGraph(spec, vertex)
+        spec.applyToGraphAndVertex(this, vertex)
         vertex
     }
 
     Vertex vertex(String name, Map<String, ?> map) {
-        VertexSpec spec = makeVertexSpec(map)
+        VertexSpec spec = VertexSpec.newInstance(map)
         Vertex vertex = vertex(name)
-        applySpecToVertexAndGraph(spec, vertex)
+        spec.applyToGraphAndVertex(this, vertex)
         vertex
     }
 
@@ -205,20 +184,20 @@ class Graph {
      * @return the resulting vertex
      */
     Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec mapSpec = makeVertexSpec(map)
-        VertexSpec closureSpec = makeVertexSpec(closure)
+        VertexSpec mapSpec = VertexSpec.newInstance(map)
+        VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(map.name)
-        applySpecToVertexAndGraph(mapSpec, vertex)
-        applySpecToVertexAndGraph(closureSpec, vertex)
+        mapSpec.applyToGraphAndVertex(this, vertex)
+        closureSpec.applyToGraphAndVertex(this, vertex)
         vertex
     }
 
     Vertex vertex(String name, Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec mapSpec = makeVertexSpec(map)
-        VertexSpec closureSpec = makeVertexSpec(closure)
+        VertexSpec mapSpec = VertexSpec.newInstance(map)
+        VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(name)
-        applySpecToVertexAndGraph(mapSpec, vertex)
-        applySpecToVertexAndGraph(closureSpec, vertex)
+        mapSpec.applyToGraphAndVertex(this, vertex)
+        closureSpec.applyToGraphAndVertex(this, vertex)
         vertex
     }
 

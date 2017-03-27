@@ -37,4 +37,40 @@ class VertexSpec {
             this.config = config
         }
     }
+
+    void applyToGraphAndVertex(Graph graph, Vertex vertex) {
+        if (traits) {
+            vertex.delegateAs(traits as Class[])
+        }
+        connectsTo.each {
+            graph.edge vertex.name, it
+        }
+        if(config) {
+            vertex << config
+        }
+    }
+
+    static VertexSpec newInstance(Graph graph, @DelegatesTo(VertexSpec) Closure closure) {
+        VertexSpec spec = new VertexSpec()
+
+        Closure code = closure.rehydrate(spec, graph, graph)
+        code()
+
+        spec
+    }
+
+    static VertexSpec newInstance(Map<String, ?> map) {
+        VertexSpec spec = new VertexSpec(name:map.name)
+        if (map.traits) {
+            spec.traits(map.traits as Class[])
+        }
+        if (map.connectsTo) {
+            spec.connectsTo(map.connectsTo as String[])
+        }
+        if(map.config) {
+            spec.config(map.config)
+        }
+
+        spec
+    }
 }
