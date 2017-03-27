@@ -55,6 +55,10 @@ configurations {
     }
 }
 
+groovydoc {
+    link 'https://docs.oracle.com/javase/8/docs/api/', 'java', 'javax', 'org'
+}
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allGroovy
     classifier = 'sources'
