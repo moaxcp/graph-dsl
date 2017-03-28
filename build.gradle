@@ -57,6 +57,7 @@ configurations {
 }
 
 groovydoc {
+    includePrivate = true
     link 'https://docs.oracle.com/javase/8/docs/api/', 'java', 'javax', 'org'
     link "http://docs.groovy-lang.org/docs/groovy-$groovyVersion/html/api/", 'groovy', 'org'
 }
