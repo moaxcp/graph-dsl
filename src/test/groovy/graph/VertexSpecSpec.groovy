@@ -29,7 +29,7 @@ class VertexSpecSpec extends Specification {
         spec.connectsTo 'step2', 'step3'
 
         when:
-        graph.applySpecToVertexAndGraph(spec, vertex)
+        spec.applyToGraphAndVertex(graph, vertex)
 
         then:
         graph.edges.find { new Edge(one:'step1', two:'step2') }
