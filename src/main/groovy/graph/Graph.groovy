@@ -165,11 +165,22 @@ class Graph {
      * @return
      */
     Vertex vertex(String name, @DelegatesTo(VertexSpec) Closure closure) {
-        //TODO if vertex is renamed in closure must rename across all edges.
         VertexSpec spec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(name)
         spec.applyToGraphAndVertex(this, vertex)
         vertex
+    }
+
+    boolean rename(String name, String newName) {
+        adjacentEdges(name).each {
+            if(it.one == name) {
+                it.one = newName
+            }
+            if(it.two == name) {
+                it.two = newName
+            }
+            vertex(name).name = newName
+        }
     }
 
     /**
@@ -180,7 +191,6 @@ class Graph {
      * @return
      */
     Vertex vertex(String name, Map<String, ?> map) {
-        //TODO if vertex is renamed in closure must rename across all edges.
         VertexSpec spec = VertexSpec.newInstance(map)
         Vertex vertex = vertex(name)
         spec.applyToGraphAndVertex(this, vertex)
@@ -195,7 +205,6 @@ class Graph {
      * @return the resulting vertex
      */
     Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
-        //TODO if vertex is renamed in closure must rename across all edges.
         VertexSpec mapSpec = VertexSpec.newInstance(map)
         VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(map.name)

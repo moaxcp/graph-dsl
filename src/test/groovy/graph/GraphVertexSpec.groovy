@@ -250,4 +250,22 @@ class GraphVertexSpec extends Specification {
         then:
         thrown(UnsupportedOperationException)
     }
+
+    def 'can rename vertex'() {
+        setup:
+        graph.vertex 'step1'
+        graph.vertex 'step2'
+        graph.vertex 'step3'
+        graph.vertex 'step4'
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step3'
+        graph.edge 'step4', 'step1'
+
+        when:
+        graph.rename 'step1', 'step5'
+
+        then:
+        graph.adjacentEdges('step1').size() == 0
+        graph.adjacentEdges('step5').size() == 3
+    }
 }

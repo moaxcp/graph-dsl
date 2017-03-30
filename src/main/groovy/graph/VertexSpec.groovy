@@ -75,6 +75,7 @@ class VertexSpec {
      * @param vertex
      */
     void applyToGraphAndVertex(Graph graph, Vertex vertex) {
+        graph.rename(vertex.name, name)
         if (traits) {
             vertex.delegateAs(traits as Class[])
         }
