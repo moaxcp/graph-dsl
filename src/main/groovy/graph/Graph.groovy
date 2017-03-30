@@ -171,7 +171,10 @@ class Graph {
         vertex
     }
 
-    boolean rename(String name, String newName) {
+    void rename(String name, String newName) {
+        if(!newName) {
+            throw new IllegalArgumentException("newName is null or empty.")
+        }
         adjacentEdges(name).each {
             if(it.one == name) {
                 it.one = newName

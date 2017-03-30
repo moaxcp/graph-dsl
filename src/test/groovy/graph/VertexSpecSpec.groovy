@@ -69,4 +69,44 @@ class VertexSpecSpec extends Specification {
         spec.config != null
         spec.config instanceof Closure
     }
+
+    def 'can rename with applyToGraphAndVertex(Graph, Vertex)'() {
+        setup:
+        graph.vertex 'step1'
+        graph.vertex 'step2'
+        graph.vertex 'step3'
+        graph.vertex 'step4'
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step3'
+        graph.edge 'step4', 'step1'
+        VertexSpec spec = new VertexSpec()
+        spec.name = 'step5'
+
+        when:
+        spec.applyToGraphAndVertex(graph, graph.vertex('step1'))
+
+        then:
+        graph.adjacentEdges('step1').size() == 0
+        graph.adjacentEdges('step5').size() == 3
+    }
+
+    def 'does not rename to false name applyToGraphAndVertex(Graph, Vertex)'() {
+        setup:
+        graph.vertex 'step1'
+        graph.vertex 'step2'
+        graph.vertex 'step3'
+        graph.vertex 'step4'
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step3'
+        graph.edge 'step4', 'step1'
+        VertexSpec spec = new VertexSpec()
+        spec.name = ''
+
+        when:
+        spec.applyToGraphAndVertex(graph, graph.vertex('step1'))
+
+        then:
+        graph.adjacentEdges('step1').size() == 3
+        graph.adjacentEdges('').size() == 0
+    }
 }
