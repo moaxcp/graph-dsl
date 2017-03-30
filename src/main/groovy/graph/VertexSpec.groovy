@@ -9,7 +9,7 @@ import groovy.transform.PackageScope
 @PackageScope
 class VertexSpec {
     /**
-     * Used to set the name of the {@link Vertex}.
+     * The name of the {@link Vertex} to create or update.
      */
     String name
     private Set<Class> traits = [] as Set<Class>
@@ -87,8 +87,8 @@ class VertexSpec {
     }
 
     /**
-     * Creates a new instance of a VertexSpec using the provided closure. This object will be the delegate while the
-     * {@link Graph} will be the owner and this.
+     * Creates a new instance of a VertexSpec using the provided closure. A new {@link VertexSpec} will be the delegate
+     * while the {@link Graph} will be the owner and this.
      * @param graph
      * @param closure
      * @return the resulting VertexSpec

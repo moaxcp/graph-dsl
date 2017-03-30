@@ -132,10 +132,8 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in the graph. The configuration given by the closure is delegated to a
-     * {@link VertexSpec}. See {@link VertexSpec} for details on how it modifies this graph and the {@link Vertex}. If
-     * config is present the closure is applied to the {@link Vertex} using {@link Vertex#leftShift(Closure)}. This can
-     * be used to configure traits applied to the vertex in the closure.
+     * Creates or updates a {@link Vertex} in this graph. The configuration given by the closure is delegated to a
+     * {@link VertexSpec}. See {@link VertexSpec} for details on how it modifies this graph and the {@link Vertex}.
      * @param closure - delegates to {@link VertexSpec}
      * @return the resulting {@link Vertex}
      */
@@ -146,6 +144,12 @@ class Graph {
         vertex
     }
 
+    /**
+     * Creates or updates a {@link Vertex} in this graph. The map must contain configuration described in
+     * {@VertexSpec#newInstance(Map)}.
+     * @param map
+     * @return the resulting {@link Vertex}
+     */
     Vertex vertex(Map<String, ?> map) {
         VertexSpec spec = VertexSpec.newInstance(map)
         Vertex vertex = vertex(spec.name)
@@ -153,7 +157,14 @@ class Graph {
         vertex
     }
 
-    Vertex vertex(String name, Closure closure) {
+    /**
+     * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is delegated to a
+     * {@link VertexSpec}. See {@link VertexSpec} for details on how it modifies this graph and the {@link Vertex}.
+     * @param name
+     * @param closure
+     * @return
+     */
+    Vertex vertex(String name, @DelegatesTo(VertexSpec) Closure closure) {
         //TODO if vertex is renamed in closure must rename across all edges.
         VertexSpec spec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(name)
@@ -161,7 +172,15 @@ class Graph {
         vertex
     }
 
+    /**
+     * Creates or updates a {@link Vertex} in this graph with the given name. The map must contain configuration described in
+     * {@VertexSpec#newInstance(Map)}.
+     * @param name
+     * @param map
+     * @return
+     */
     Vertex vertex(String name, Map<String, ?> map) {
+        //TODO if vertex is renamed in closure must rename across all edges.
         VertexSpec spec = VertexSpec.newInstance(map)
         Vertex vertex = vertex(name)
         spec.applyToGraphAndVertex(this, vertex)
@@ -169,21 +188,14 @@ class Graph {
     }
 
     /**
-     * Adds a Vertex using the provided map to set its properties. The Vertex
-     * is then added to vertices overwriting any previous Vertex with the given
-     * name entry in the map.
-     *
-     * The provided closure is called with the vertex as the delegate.
-     *
-     * If the map contains a traits entry the value should contain a list of traits or classes
-     * to apply to the Vertex as traits. The resulting Vertex has all of those traits
-     * applied in the order of the list.
-     *
-     * @param map a map with a name entry. There can be an optional traits entry with a list of classes as a value.
-     * @param closure
+     * Creates or updates a {@link Vertex} in this graph. This method creates two {@link VertexSpec} objects from the
+     * map and closure. The map is applied before the closure.
+     * @param map -
+     * @param closure -
      * @return the resulting vertex
      */
     Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
+        //TODO if vertex is renamed in closure must rename across all edges.
         VertexSpec mapSpec = VertexSpec.newInstance(map)
         VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(map.name)
@@ -192,7 +204,16 @@ class Graph {
         vertex
     }
 
+    /**
+     * Creates or updates a {@link Vertex} in this graph. This method creates two {@link VertexSpec} objects from the
+     * map and closure. The map is applied before the closure.
+     * @param name
+     * @param map
+     * @param closure
+     * @return
+     */
     Vertex vertex(String name, Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
+        //TODO if vertex is renamed in closure must rename across all edges.
         VertexSpec mapSpec = VertexSpec.newInstance(map)
         VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(name)
