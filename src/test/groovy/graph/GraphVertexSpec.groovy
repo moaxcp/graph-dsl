@@ -285,4 +285,17 @@ class GraphVertexSpec extends Specification {
         then:
         thrown IllegalArgumentException
     }
+
+    def 'can create multiple vertices'() {
+        when:
+        Set<Vertex> vertices = graph.vertex 'step1', 'step2', 'step3', 'step4'
+
+        then:
+        vertices == [
+                new Vertex(name:'step1'),
+                new Vertex(name:'step2'),
+                new Vertex(name:'step3'),
+                new Vertex(name:'step4')
+        ] as Set<Vertex>
+    }
 }

@@ -132,6 +132,17 @@ class Graph {
     }
 
     /**
+     * Finds or creates all vertices returning them in a Set.
+     * @param names
+     * @return
+     */
+    Set<Vertex> vertex(String... names) {
+        names.collect { name ->
+            vertex(name)
+        } as Set<Vertex>
+    }
+
+    /**
      * Creates or updates a {@link Vertex} in this graph. The configuration given by the closure is delegated to a
      * {@link VertexSpec}. See {@link VertexSpec} for details on how it modifies this graph and the {@link Vertex}.
      * @param closure - delegates to {@link VertexSpec}
@@ -245,15 +256,22 @@ class Graph {
     }
 
     /**
-     * Creates a map with the entries one and two set to the params one and two.
-     * This map is then passed to edge(map, closure = null).
-     * @param one
-     * @param two
-     * @param closure
+     * Creates or finds an edge between two vertices. The vertices are checked using {#vertex(String... names)}. If the
+     * edge already exists it is returned.
+     * @param one - the name of the first {@link Vertex}
+     * @param two - the name of the second {@link Vertex}
      * @return the resulting edge
      */
-    def edge(String one, String two, closure = null) {
-        edge(one: one, two: two, closure)
+    def edge(String one, String two) {
+        vertex(one, two)
+        Edge e = edgeFactory.newEdge(one, two)
+        Edge edge = edges.find  { it == e } ?: e
+        edges << edge
+        edge
+    }
+
+    def edge(String one, String two, Closure closure) {
+        edge(one:one, two:two, closure)
     }
 
     /**
