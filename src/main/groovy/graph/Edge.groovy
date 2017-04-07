@@ -77,4 +77,10 @@ class Edge {
     def propertyMissing(String name, value) {
         delegate[name] = value
     }
+
+    def leftShift(Closure closure) {
+        Closure code = closure.rehydrate(this, this, this)
+        code()
+        this
+    }
 }

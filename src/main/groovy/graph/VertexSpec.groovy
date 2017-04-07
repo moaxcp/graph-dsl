@@ -61,11 +61,7 @@ class VertexSpec {
      * @param config added to the config member variable
      */
     void config(@DelegatesTo(Vertex) Closure config) {
-        if(this.config) {
-            this.config << config
-        } else {
-            this.config = config
-        }
+        this.config = config
     }
 
     /**

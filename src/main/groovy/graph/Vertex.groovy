@@ -29,7 +29,6 @@ class Vertex {
         delegate[name] = value
     }
 
-    //cannot @DelegatesTo because delegate is dynamic at runtime
     def leftShift(Closure closure) {
         Closure code = closure.rehydrate(this, this, this)
         code()

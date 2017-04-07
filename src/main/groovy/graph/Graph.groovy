@@ -262,7 +262,7 @@ class Graph {
      * @param two - the name of the second {@link Vertex}
      * @return the resulting edge
      */
-    def edge(String one, String two) {
+    Edge edge(String one, String two) {
         vertex(one, two)
         Edge e = edgeFactory.newEdge(one, two)
         Edge edge = edges.find  { it == e } ?: e
@@ -270,7 +270,13 @@ class Graph {
         edge
     }
 
-    def edge(String one, String two, Closure closure) {
+    //todo edge(Closure)
+    //todo edge(Map)
+    //todo edge(String, String, Closure)
+    //todo edge(String, String, Map)
+    //todo edge(String, String, Map, Closure)
+
+    Edge edge(String one, String two, Closure closure) {
         edge(one:one, two:two, closure)
     }
 
@@ -289,7 +295,7 @@ class Graph {
      * @throws IllegalArgumentException
      * @return the resulting edge
      */
-    def edge(map, closure = null) {
+    Edge edge(map, closure = null) {
         def e = edgeFactory.newEdge(map.one, map.two)
         def edge = edges.find { it == e } ?: e
 

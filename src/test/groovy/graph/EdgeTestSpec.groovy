@@ -2,7 +2,7 @@ package graph
 
 import spock.lang.Specification
 
-class EdgeSpec extends Specification {
+class EdgeTestSpec extends Specification {
     def edge = new Edge(one: 'step1', two: 'step2')
 
     def 'equals with null'() {
