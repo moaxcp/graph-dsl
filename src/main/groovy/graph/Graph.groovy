@@ -221,7 +221,7 @@ class Graph {
     Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
         VertexSpec mapSpec = VertexSpec.newInstance(map)
         VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
-        Vertex vertex = vertex(map.name)
+        Vertex vertex = vertex(mapSpec.name)
         mapSpec.applyToGraphAndVertex(this, vertex)
         closureSpec.applyToGraphAndVertex(this, vertex)
         vertex
@@ -236,7 +236,6 @@ class Graph {
      * @return
      */
     Vertex vertex(String name, Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
-        //TODO if vertex is renamed in closure must rename across all edges.
         VertexSpec mapSpec = VertexSpec.newInstance(map)
         VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(name)
@@ -270,50 +269,49 @@ class Graph {
         edge
     }
 
-    //todo edge(Closure)
-    //todo edge(Map)
-    //todo edge(String, String, Closure)
-    //todo edge(String, String, Map)
-    //todo edge(String, String, Map, Closure)
-
-    Edge edge(String one, String two, Closure closure) {
-        edge(one:one, two:two, closure)
+    Edge edge(@DelegatesTo(EdgeSpec) Closure closure) {
+        EdgeSpec spec = EdgeSpec.newInstance(this, closure)
+        Edge edge = edge(spec.one, spec.two)
+        spec.applyToGraphAndEdge(this, edge)
+        edge
     }
 
-    /**
-     * Uses map to create an Edge object. And adds it to edges. If an edge already
-     * exists between the to vertices it cannot be added and an IllegalArgumentException is thrown.
-     *
-     * The provided closure is called with the edge as the delegate.
-     *
-     * If the map contains a traits entry its value should contain a list of traits
-     * or classes to apply to the Edge as traits. The resulting Edge as all of those traits
-     * applied in the order of the list.
-     *
-     * @param map
-     * @param closure
-     * @throws IllegalArgumentException
-     * @return the resulting edge
-     */
-    Edge edge(map, closure = null) {
-        def e = edgeFactory.newEdge(map.one, map.two)
-        def edge = edges.find { it == e } ?: e
+    Edge edge(Map<String, ?> map) {
+        EdgeSpec spec = EdgeSpec.newInstance(map)
+        Edge edge = edge(spec.one, spec.two)
+        spec.applyToGraphAndEdge(this, edge)
+        edge
+    }
 
-        edge = map.traits?.inject(edge) { val, it ->
-            val.delegateAs(it)
-        } ?: edge
+    Edge edge(String one, String two, @DelegatesTo(EdgeSpec) Closure closure) {
+        EdgeSpec spec = EdgeSpec.newInstance(this, closure)
+        Edge edge = edge(one, two)
+        spec.applyToGraphAndEdge(this, edge)
+        edge
+    }
 
-        if (map.trait) {
-            edge.delegateAs(map.trait)
-        }
+    Edge edge(String one, String two, Map<String, ?> map) {
+        EdgeSpec spec = EdgeSpec.newInstance(map)
+        Edge edge = edge(one, two)
+        spec.applyToGraphAndEdge(this, edge)
+        edge
+    }
 
-        if (closure) {
-            closure.delegate = edge
-            closure()
-        }
+    Edge edge(Map<String, ?> map, @DelegatesTo(EdgeSpec) Closure closure) {
+        EdgeSpec mapSpec = EdgeSpec.newInstance(map)
+        EdgeSpec closureSpec = EdgeSpec.newInstance(this, closure)
+        Edge edge = edge(mapSpec.one, mapSpec.two)
+        mapSpec.applyToGraphAndEdge(this, edge)
+        closureSpec.applyToGraphAndEdge(this, edge)
+        edge
+    }
 
-        edges.add(edge)
-
+    Edge edge(String one, String two, Map<String, ?> map, @DelegatesTo(EdgeSpec) Closure closure) {
+        EdgeSpec mapSpec = EdgeSpec.newInstance(map)
+        EdgeSpec closureSpec = EdgeSpec.newInstance(this, closure)
+        Edge edge = edge(one, two)
+        mapSpec.applyToGraphAndEdge(this, edge)
+        closureSpec.applyToGraphAndEdge(this, edge)
         edge
     }
 

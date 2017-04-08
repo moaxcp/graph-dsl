@@ -6,71 +6,185 @@ class GraphEdgeSpec extends Specification {
 
     def graph = new Graph()
 
-    def 'can add edge to graph'() {
+    def 'can add/get with edge(String, String)'() {
         when:
-        graph.edge 'step1', 'step2'
+        Edge edge = graph.edge 'step1', 'step2'
 
         then:
-        graph.edges.first().one == 'step1'
-        graph.edges.first().two == 'step2'
+        graph.edges.size() == 1
+        graph.edges.first().is edge
+        edge.one == 'step1'
+        edge.two == 'step2'
     }
 
-    def 'can add edge to graph with closure'() {
+    def 'can get with second call to edge(String, String)'() {
         setup:
-        def edgeOne
-        def edgeTwo
+        Edge expected = graph.edge 'step1', 'step2'
 
         when:
-        graph.edge 'step1', 'step2', {
-            edgeOne = one
-            edgeTwo = two
+        Edge result = graph.edge 'step1', 'step2'
+
+        then:
+        result.is expected
+    }
+
+    def 'can add/get with edge(Closure)'() {
+        when:
+        Edge edge = graph.edge {
+            one = 'step1'
+            two = 'step2'
         }
 
         then:
-        edgeOne == 'step1'
-        edgeTwo == 'step2'
+        graph.edges.size() == 1
+        graph.edges.first().is edge
+        edge.one == 'step1'
+        edge.two == 'step2'
     }
 
-    def 'can add edge to graph with map'() {
-        when:
-        graph.edge one: 'step1', two: 'step2'
-
-        then:
-        graph.edges.first().one == 'step1'
-        graph.edges.first().two == 'step2'
-    }
-
-    def 'can add edge with map and closure to graph'() {
+    def 'can get with second call to edge(Closure)'() {
         setup:
-        def edgeOne
-        def edgeTwo
+        Edge expected = graph.edge {
+            one = 'step1'
+            two = 'step2'
+        }
 
         when:
-        graph.edge one: 'step1', two: 'step2', {
-            edgeOne = one
-            edgeTwo = two
+        Edge result = graph.edge {
+            one = 'step1'
+            two = 'step2'
         }
 
         then:
-        edgeOne == 'step1'
-        edgeTwo == 'step2'
+        result.is expected
     }
 
-    def 'can add edge with single trait'() {
+    def 'can add traits with edge(Closure)'() {
         when:
-        graph.edge one: 'step1', two: 'step2', trait: Weight
+        Edge edge = graph.edge {
+            one = 'step1'
+            two = 'step2'
+            traits Mapping
+        }
 
         then:
-        graph.edges[0].delegate instanceof Weight
+        edge.delegate instanceof Mapping
     }
 
-    def 'can add edge with map and traits to graph'() {
+    def 'can add/get edge with edge(Map)'() {
         when:
-        graph.edge one: 'step1', two: 'step2', traits: [Weight, Value]
+        Edge edge = graph.edge one:'step1', two:'step2'
 
         then:
-        graph.edges[0].delegate instanceof Weight
-        graph.edges[0].delegate instanceof Value
+        graph.edges.size() == 1
+        graph.edges.first().is edge
+        edge.one == 'step1'
+        edge.two == 'step2'
+    }
+
+    def 'can get with second call to edge(Map)'() {
+        setup:
+        Edge expected = graph.edge one:'step1', two:'step2'
+
+        when:
+        Edge result = graph.edge one:'step1', two:'step2'
+
+        then:
+        result.is expected
+    }
+
+    def 'can add traits with edge(Map)'() {
+        when:
+        Edge edge = graph.edge one:'step1', two:'step2', traits:Mapping
+
+        then:
+        edge.delegate instanceof Mapping
+    }
+
+    def 'can add/get edge with edge(String, String, Closure)'() {
+        when:
+        Edge edge = graph.edge 'step1', 'step2', {}
+
+        then:
+        graph.edges.size() == 1
+        graph.edges.first().is edge
+        edge.one == 'step1'
+        edge.two == 'step2'
+    }
+
+    def 'can get with second call to edge(String, String, Clousre)'() {
+        setup:
+        Edge expected = graph.edge 'step1', 'step2', {}
+
+        when:
+        Edge result = graph.edge 'step1', 'step2', {}
+
+        then:
+        result.is expected
+    }
+
+    def 'can add/get edge with edge(String, String, Map)'() {
+        when:
+        Edge edge = graph.edge 'step1', 'step2', [:]
+
+        then:
+        graph.edges.size() == 1
+        graph.edges.first().is edge
+        edge.one == 'step1'
+        edge.two == 'step2'
+    }
+
+    def 'can get with second call to edge(String, String, Map)'() {
+        setup:
+        Edge expected = graph.edge 'step1', 'step2', [:]
+
+        when:
+        Edge result = graph.edge 'step1', 'step2', [:]
+
+        then:
+        result.is expected
+    }
+
+    def 'can add/get edge with edge(Map, Closure)'() {
+        when:
+        Edge edge = graph.edge(one:'step1', two:'step2') {}
+
+        then:
+        graph.edges.size() == 1
+        graph.edges.first().is edge
+    }
+
+    def 'can get with second call to edge(Map, Closure)'() {
+        setup:
+        Edge expected = graph.edge(one:'step1', two:'step2') {}
+
+        when:
+        Edge result = graph.edge(one:'step1', two:'step2') {}
+
+        then:
+        result.is expected
+    }
+
+    def 'can add/get edge with edge(String, String, Map, Closure'() {
+        when:
+        Edge edge = graph.edge('step1', 'step2', [:]) {}
+
+        then:
+        graph.edges.size() == 1
+        graph.edges.first().is edge
+        edge.one == 'step1'
+        edge.two == 'step2'
+    }
+
+    def 'can get with second call to edge(String, String, Map, Closure)'() {
+        setup:
+        Edge expected = graph.edge('step1', 'step2', [:]) {}
+
+        when:
+        Edge result = graph.edge('step1', 'step2', [:]) {}
+
+        then:
+        result.is expected
     }
 
     def 'cannot add duplicate edge with the same order'() {
@@ -93,20 +207,7 @@ class GraphEdgeSpec extends Specification {
 
         then:
         graph.edges.size() == 1
-    }
-
-    def 'can modify existing edge'() {
-        setup:
-        def edge = graph.edge 'step1', 'step2'
-
-        when:
-        def testValue = false
-        def testEdge = graph.edge 'step1', 'step2', {
-            testValue = delegate == edge
-        }
-
-        then:
-        testValue
-        edge == testEdge
+        graph.edges.first().one == 'step1'
+        graph.edges.first().two == 'step2'
     }
 }

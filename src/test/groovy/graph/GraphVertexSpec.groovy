@@ -27,7 +27,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
-        graph.vertices.step1 == vertex
+        graph.vertices.step1.is vertex
         vertex.name == 'step1'
     }
 
@@ -39,8 +39,7 @@ class GraphVertexSpec extends Specification {
         def result = graph.vertex 'step1'
 
         then:
-        result == expected
-        result.name == 'step1'
+        result.is expected
     }
 
     def 'can add/get with vertex(Closure)'() {
@@ -51,7 +50,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
-        graph.vertices.step1 == vertex
+        graph.vertices.step1.is vertex
         vertex.name == 'step1'
     }
 
@@ -67,8 +66,7 @@ class GraphVertexSpec extends Specification {
         }
 
         then:
-        result == expected
-        result.name == 'step1'
+        result.is expected
     }
 
     def 'can add traits with vertex(Closure)'() {
@@ -103,7 +101,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
-        graph.vertices.step1 == vertex
+        graph.vertices.step1.is vertex
         vertex.name == 'step1'
     }
 
@@ -115,8 +113,7 @@ class GraphVertexSpec extends Specification {
         def result = graph.vertex name:'step1'
 
         then:
-        result == expected
-        result.name == 'step1'
+        result.is expected
     }
 
     def 'can add traits with vertex(Map)'() {
@@ -158,7 +155,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
-        graph.vertices.step1 == vertex
+        graph.vertices.step1.is vertex
         vertex.name == 'step1'
     }
 
@@ -170,8 +167,7 @@ class GraphVertexSpec extends Specification {
         def result = graph.vertex 'step1', {}
 
         then:
-        result == expected
-        result.name == 'step1'
+        result.is expected
     }
 
     def 'can add/get vertex with vertex(String, Map)'() {
@@ -180,7 +176,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
-        graph.vertices.step1 == vertex
+        graph.vertices.step1.is vertex
         vertex.name == 'step1'
     }
 
@@ -192,8 +188,7 @@ class GraphVertexSpec extends Specification {
         def result = graph.vertex 'step1', [:]
 
         then:
-        result == expected
-        result.name == 'step1'
+        result.is expected
     }
 
     def 'can add/get vertex with vertex(Map, Closure)'() {
@@ -202,7 +197,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
-        graph.vertices.step1 == vertex
+        graph.vertices.step1.is vertex
         vertex.name == 'step1'
     }
 
@@ -214,8 +209,7 @@ class GraphVertexSpec extends Specification {
         def result = graph.vertex(name:'step1') {}
 
         then:
-        result == expected
-        result.name == 'step1'
+        result.is expected
     }
 
     def 'can add/get vertex with vertex(String, Map, Closure)'() {
@@ -224,7 +218,7 @@ class GraphVertexSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
-        graph.vertices.step1 == vertex
+        graph.vertices.step1.is vertex
         vertex.name == 'step1'
     }
 
@@ -236,8 +230,7 @@ class GraphVertexSpec extends Specification {
         def result = graph.vertex('step1', [:]) {}
 
         then:
-        result == expected
-        result.name == 'step1'
+        result.is expected
     }
 
     def 'vertices is unmodifiable'() {

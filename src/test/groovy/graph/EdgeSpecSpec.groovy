@@ -73,4 +73,31 @@ class EdgeSpecSpec extends Specification {
         edge.one == 'c'
         edge.two == 'd'
     }
+
+    def 'can newInstance with closure'() {
+        setup:
+        Closure closure = {
+            one = 'a'
+            two = 'b'
+        }
+
+        when:
+        EdgeSpec spec = EdgeSpec.newInstance(new Graph(), closure)
+
+        then:
+        spec.one == 'a'
+        spec.two == 'b'
+    }
+
+    def 'can newInstance with map'() {
+        setup:
+        Map map = [one:'a', two:'b']
+
+        when:
+        EdgeSpec spec = EdgeSpec.newInstance(map)
+
+        then:
+        spec.one == 'a'
+        spec.two == 'b'
+    }
 }
