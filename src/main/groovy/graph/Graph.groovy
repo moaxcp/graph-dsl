@@ -143,8 +143,8 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph. The configuration given by the closure is delegated to a
-     * {@link VertexSpec}. See {@link VertexSpec} for details on how it modifies this graph and the {@link Vertex}.
+     * Creates or updates a {@link Vertex} in this graph. See {@link VertexSpec@applyToGraphAndVertex(Graph,Vertex)} for details
+     * on how this graph and the {@link Vertex} are modified.
      * @param closure - delegates to {@link VertexSpec}
      * @return the resulting {@link Vertex}
      */
@@ -157,7 +157,7 @@ class Graph {
 
     /**
      * Creates or updates a {@link Vertex} in this graph. The map must contain configuration described in
-     * {@VertexSpec#newInstance(Map)}.
+     * {@link VertexSpec#newInstance(Map)}.
      * @param map
      * @return the resulting {@link Vertex}
      */
@@ -182,6 +182,11 @@ class Graph {
         vertex
     }
 
+    /**
+     * Renames a {@link Vertex}. All edges connecting the {@link Vertex} are updated with the new name.
+     * @param name
+     * @param newName
+     */
     void rename(String name, String newName) {
         if(!newName) {
             throw new IllegalArgumentException("newName is null or empty.")
@@ -199,7 +204,7 @@ class Graph {
 
     /**
      * Creates or updates a {@link Vertex} in this graph with the given name. The map must contain configuration described in
-     * {@VertexSpec#newInstance(Map)}.
+     * {@link VertexSpec#newInstance(Map)}.
      * @param name
      * @param map
      * @return
@@ -269,6 +274,12 @@ class Graph {
         edge
     }
 
+    /**
+     * Creates or updates a {@link Edge} in this graph. See {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)} for details
+     * on how this graph and the {@link Edge} are modified.
+     * @param closure - delegates to {@link EdgeSpec}
+     * @return the resulting {@link Edge}
+     */
     Edge edge(@DelegatesTo(EdgeSpec) Closure closure) {
         EdgeSpec spec = EdgeSpec.newInstance(this, closure)
         Edge edge = edge(spec.one, spec.two)
@@ -276,6 +287,12 @@ class Graph {
         edge
     }
 
+    /**
+     * Creates or updates a {@link Edge} in this graph. The map must contain configuration described in
+     * {@link EdgeSpec#newInstance(Map)}.
+     * @param map
+     * @return the resulting {@link Edge}
+     */
     Edge edge(Map<String, ?> map) {
         EdgeSpec spec = EdgeSpec.newInstance(map)
         Edge edge = edge(spec.one, spec.two)
@@ -283,6 +300,14 @@ class Graph {
         edge
     }
 
+    /**
+     * Creates or updtes a {@link Edge} in this graph with the given one and two. The configuration given by the closure is delegated to an
+     * {@link EdgeSpec}. See {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)} for details on how it modifies this graph and the {@link Edge}.
+     * @param one
+     * @param two
+     * @param closure
+     * @return
+     */
     Edge edge(String one, String two, @DelegatesTo(EdgeSpec) Closure closure) {
         EdgeSpec spec = EdgeSpec.newInstance(this, closure)
         Edge edge = edge(one, two)
@@ -290,6 +315,14 @@ class Graph {
         edge
     }
 
+    /**
+     * Creates or updates a {@link Edge} in this graph with the given one and two. The map must contain configuration described in
+     * {@link EdgeSpec#newInstance(Map)}.
+     * @param one
+     * @param two
+     * @param map
+     * @return
+     */
     Edge edge(String one, String two, Map<String, ?> map) {
         EdgeSpec spec = EdgeSpec.newInstance(map)
         Edge edge = edge(one, two)
@@ -297,6 +330,13 @@ class Graph {
         edge
     }
 
+    /**
+     * Creates or updates a {@link Edge} in this graph. This methods creates two {@link EdgeSpec} objects from the
+     * map and closure. The map is applied before the clsoure using {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)}.
+     * @param map
+     * @param closure
+     * @return
+     */
     Edge edge(Map<String, ?> map, @DelegatesTo(EdgeSpec) Closure closure) {
         EdgeSpec mapSpec = EdgeSpec.newInstance(map)
         EdgeSpec closureSpec = EdgeSpec.newInstance(this, closure)
@@ -306,6 +346,15 @@ class Graph {
         edge
     }
 
+    /**
+     * Creates or updates a {@link Edge} in this graph with the given one and two. This methods creates two {@link EdgeSpec} objects from the
+     * map and closure. The map is applied before the clsoure using {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)}.
+     * @param one
+     * @param two
+     * @param map
+     * @param closure
+     * @return
+     */
     Edge edge(String one, String two, Map<String, ?> map, @DelegatesTo(EdgeSpec) Closure closure) {
         EdgeSpec mapSpec = EdgeSpec.newInstance(map)
         EdgeSpec closureSpec = EdgeSpec.newInstance(this, closure)

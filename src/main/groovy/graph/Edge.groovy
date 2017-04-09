@@ -78,7 +78,12 @@ class Edge {
         delegate[name] = value
     }
 
-    def leftShift(Closure closure) {
+    /**
+     * Runs the closure on this {@link Edge}.
+     * @param closure
+     * @return this {@link Edge}
+     */
+    Edge leftShift(Closure closure) {
         Closure code = closure.rehydrate(this, this, this)
         code()
         this

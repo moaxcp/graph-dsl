@@ -17,14 +17,15 @@ class VertexSpec {
     private Closure config
 
     /**
-     * @return the set of traits that should be applied to the {@link Vertex}
+     * The set of traits that should be applied to the {@link Vertex}.
+     * @return
      */
     Set<Class> getTraits() {
         traits
     }
 
     /**
-     * {@link Graph} will use this set to create edges between the {@link Vertex} and other vertices.
+     * The set of edges to create between the {@link Vertex} and other vertices.
      * @return The names of vertices the {@link Vertex} should connect to.
      */
     Set<String> getConnectsTo() {
@@ -32,17 +33,16 @@ class VertexSpec {
     }
 
     /**
-     * @return The config applied to the {@link Vertex} using its leftShift operator.
+     * The config applied to the {@link Vertex} using its leftShift operator.
+     * @return
      */
     Closure getConfig() {
         config
     }
 
     /**
-     * Adds to the set of traits to be applied to the {@link Vertex} {@link #getTraits()} is used to get the {@link Set}.
-     * Traits will be applied to the {@link Vertex} before the {@link Vertex} is configured. {@link #config} can be
-     * used to configure these traits.
-     * @param classes traits to apply
+     * Adds to the set of traits to be applied to the {@link Vertex}.
+     * @param traits - added to the set
      */
     void traits(Class... traits) {
         this.traits.addAll(traits)
@@ -57,7 +57,7 @@ class VertexSpec {
     }
 
     /**
-     * Either appends to or sets the config member. This config is applied to the {@link Vertex} after traits are applied.
+     * Sets the config closure which will be run on the {@link Vertex}.
      * @param config added to the config member variable
      */
     void config(@DelegatesTo(Vertex) Closure config) {
@@ -65,8 +65,12 @@ class VertexSpec {
     }
 
     /**
-     * Apply this specification to the given {@link Graph} and {@link Vertex}. First traits are applied. Then edges are
-     * created from connectsTo. Finally the config is applied to the {@link Vertex} using the leftShift operator.
+     * Applies this {@link VertexSpec} to the {@link Vertex} and {@link Graph}. Members from this spec are applied in this order:
+     * <p>
+     * 1. renames vertex to name if set
+     * 2. applies traits to the vertex
+     * 3. connects the vertex vertices listed in connectsTo set
+     * 4. configures the vertex using vertex << config
      * @param graph
      * @param vertex
      */

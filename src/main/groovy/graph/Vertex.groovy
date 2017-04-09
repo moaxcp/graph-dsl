@@ -21,15 +21,31 @@ class Vertex {
         delegate.invokeMethod(name, args)
     }
 
+    /**
+     * returns property from delegate.
+     * @param name
+     * @return
+     */
     def propertyMissing(String name) {
-        delegate."$name"
+        delegate[name]
     }
 
+    /**
+     * sets the property on delegate.
+     * @param name
+     * @param value
+     * @return
+     */
     def propertyMissing(String name, value) {
         delegate[name] = value
     }
 
-    def leftShift(Closure closure) {
+    /**
+     * Runs the closure on this {@link Vertex}.
+     * @param closure
+     * @return this {@link Vertex}
+     */
+    Vertex leftShift(Closure closure) {
         Closure code = closure.rehydrate(this, this, this)
         code()
         this
