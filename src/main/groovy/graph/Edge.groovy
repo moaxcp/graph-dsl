@@ -77,4 +77,15 @@ class Edge {
     def propertyMissing(String name, value) {
         delegate[name] = value
     }
+
+    /**
+     * Runs the closure on this {@link Edge}.
+     * @param closure
+     * @return this {@link Edge}
+     */
+    Edge leftShift(Closure closure) {
+        Closure code = closure.rehydrate(this, this, this)
+        code()
+        this
+    }
 }

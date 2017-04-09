@@ -12,16 +12,19 @@ It is designed to be groovy, using closures and metaprogramming for minimal setu
 
 ```groovy
 #!/usr/bin/env groovy
-@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.6.0')
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.8.0')
 import static graph.Graph.graph
 
 graph {
-    vertex 'step1'
-    vertex 'step2'
-    vertex 'step3'
-    vertex 'step4'
-    edge 'step1', 'step2'
-    edge 'step3', 'step4'
+    edge 'a', 'b'
+    edge 'a', 'd'
+    edge 'b', 'c'
+    edge 'b', 'd'
+    edge 'd', 'a'
+    edge 'd', 'c'
+    edge 'd', 'e'
+    edge 'f', 'g'
+    edge 'g', 'd'
 }
 ```
 
@@ -78,13 +81,28 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 * [gitflow-avh](https://github.com/petervanderdoes/gitflow-avh)
 * [gradle](https://gradle.org/) 
     * [gradle-gitflow](https://github.com/amkay/gradle-gitflow)
+* [codenarc](http://codenarc.sourceforge.net/)
 * [groovy](http://www.groovy-lang.org/)
 * [spock](http://spockframework.org/)
 * [jacoco](http://www.eclemma.org/jacoco/)
 * [sonarqube.com](https://sonarqube.com/dashboard?id=com.github.moaxcp%3Agraph-dsl)
 * [travis-ci.org](https://travis-ci.org/moaxcp/graph-dsl)
+* [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## 0.8.0
+
+This is a major update to the api. It focuses on the edge and vertex methods in Graph. These methods
+provide developers with the flexibility to create and configure the objects as they see fit. All edge
+and vertex methods return the object which allows the object to be configured with the `<<` operator.
+The methods use *Spec objects to store specifications for the edge or vertex and then applies it to the
+graph. See the groovydoc for more details.
+
+* upgraded to groovy-2.4.10
+* Adding edge and vertex methods to Graph which provides many new ways to manipulate a graph.
+* Vertices can be renamed and edges can be moved to different vertices.
+* Anytime a vertex is referenced it will be created.
 
 ## 0.7.0
 
