@@ -86,6 +86,19 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## x.x.x
+
+This is a major update to the api. It focuses on the edge and vertex methods in Graph. These methods
+provide developers with the flexibility to create and configure the objects as they see fit. All edge
+and vertex methods return the object which allows the object to be configured with the `<<` operator.
+The methods use *Spec objects to store specifications for the edge or vertex and then applies it to the
+graph. See the groovydoc for more details.
+
+* upgraded to groovy-2.4.10
+* Adding edge and vertex methods to Graph which provides many new ways to manipulate a graph.
+* Vertices can be renamed and edges can be moved to different vertices.
+* Anytime a vertex is referenced it will be created.
+
 ## 0.7.0
 
 * Added support for classifying edges. This can be used to detect cycles in a graph.
