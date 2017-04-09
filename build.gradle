@@ -28,7 +28,7 @@ description = 'A groovy dsl for creating and traversing graphs.'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-ext.groovyVersion = '2.4.9'
+ext.groovyVersion = '2.4.10'
 
 jacocoTestReport {
     dependsOn test
