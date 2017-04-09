@@ -86,7 +86,7 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
-## x.x.x
+## 0.8.0
 
 This is a major update to the api. It focuses on the edge and vertex methods in Graph. These methods
 provide developers with the flexibility to create and configure the objects as they see fit. All edge
