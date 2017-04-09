@@ -3,22 +3,33 @@ package graph
 import groovy.transform.PackageScope
 
 /**
- * Implementation of a Graph. Vertices are represented as key/value pairs in a map. The edges connect the keys in
- * the map to form a graph. The values in the map are the contents of the vertices. This makes it easy to represent
- * a graph as string vertices with edges that connect strings.
+ * An implementation of a Graph. A {@link Vertex} is identified in this Graph using the vertex name property. A
+ * {@link Edge} is identified by the names of the to vertices it connects.
+ * <p>
+ * {@link Vertex} and {@link Edge} objects are added using the vertex and edge methods. These methods will always create
+ * objects if not present to reduce the code needed to express a graph and to ensure the integrity of the graph. There
+ * are a few styles that may be used to express vertices and edges in this Graph. See the edge and vertex methods for
+ * more details.
+ * <p>
+ * The default behavior is that of an undirected graph. There can only be one {@link Edge} between any two vertices.
+ * When traversing a graph an {@link Edge} is adjacent to a {@link Vertex} if it's one or two property equals the name
+ * of the {@link Vertex}.
+ * <p>
+ * Plugins may be applied to this graph to change its behavior and the behavior of the vertices and edges within this
+ * graph. For more information on plugins see {@link Plugin}.
  */
 class Graph {
-    final def vertices = [:] as LinkedHashMap<String, Vertex>
-    def edges = [] as LinkedHashSet
-    def plugins = [] as LinkedHashSet
-    def EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
-    def VertexFactory vertexFactory = new DefaultVertexFactory()
+    private Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
+    private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
+    private Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
+    private EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
+    private VertexFactory vertexFactory = new DefaultVertexFactory()
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
      * from one of the closures passed to search methods changing the behavior of a traversal.
      */
-    def enum Traversal {
+    enum Traversal {
         /**
          * stops the current traversal. Useful in search when a vertex is found to end the traversal early.
          */
@@ -48,7 +59,7 @@ class Graph {
      * @param c
      * @return
      */
-    def static graph(Closure c) {
+    static Graph graph(Closure c) {
         def graph = new Graph()
         graph.with(c)
         graph
@@ -58,7 +69,7 @@ class Graph {
      * returns the vertices as an unmodifiableMap
      * @return
      */
-    def getVertices() {
+    Map<String, ? extends Vertex> getVertices() {
         Collections.unmodifiableMap(vertices)
     }
 
@@ -66,7 +77,7 @@ class Graph {
      * returns the edges as an unmodifiable set
      * @return
      */
-    def getEdges() {
+    Set<? extends Edge> getEdges() {
         Collections.unmodifiableSet(edges)
     }
 
@@ -74,16 +85,16 @@ class Graph {
      * returns plugins as an unmodifiable set
      * @return
      */
-    def getPlugins() {
+    Set<? extends Plugin> getPlugins() {
         Collections.unmodifiableSet(plugins)
     }
 
     /**
-     * applies a plugin to this graph.
-     * @param pluginClass
+     * Creates and applies a {@link Plugin} to this graph.
+     * @param pluginClass - the {@link Plugin} to create and apply to this graph.
      * @return
      */
-    def apply(Class pluginClass) {
+    void apply(Class pluginClass) {
         if (plugins.contains(pluginClass)) {
             throw new IllegalArgumentException("$pluginClass.name is already applied.")
         }
@@ -91,12 +102,12 @@ class Graph {
             throw new IllegalArgumentException("$pluginClass.name does not implement Plugin")
         }
         plugins << pluginClass
-        def plugin = pluginClass.newInstance()
+        Plugin plugin = pluginClass.newInstance()
         plugin.apply(this)
     }
 
     /**
-     * Adds a vertex object directly.
+     * Adds a vertex object directly. For internal use to create copies of a Graph.
      * @param vertex
      * @return true if add was successful.
      */
@@ -106,48 +117,135 @@ class Graph {
     }
 
     /**
-     * Creates a map with the name key set to the name param. The map
-     * and closure are passed to vertex(Map, Clousre)
-     * @param name
-     * @param closure
-     * @return the resulting vertex
+     * Finds the {@link Vertex} with the given name or creates a new one.
+     * @param name - the name of the {@link Vertex} to find or create.
+     * @return the resulting {@link Vertex}
+     * @throws {@link IllegalArgumentException} When name is null or empty.
      */
-    def vertex(String name, Closure closure = null) {
-        vertex(name: name, closure)
+    Vertex vertex(String name) {
+        if(!name) {
+            throw new IllegalArgumentException("!name failed. Name must be groovy truth.")
+        }
+        Vertex vertex = vertices[name] ?: vertexFactory.newVertex(name)
+        vertices[name] = vertex
+        vertex
     }
 
     /**
-     * Adds a Vertex using the provided map to set its properties. The Vertex
-     * is then added to vertices overwriting any previous Vertex with the given
-     * name entry in the map.
-     *
-     * The provided closure is called with the vertex as the delegate.
-     *
-     * If the map contains a traits entry the value should contain a list of traits or classes
-     * to apply to the Vertex as traits. The resulting Vertex has all of those traits
-     * applied in the order of the list.
-     *
-     * @param map a map with a name entry. There can be an optional traits entry with a list of classes as a value.
+     * Finds or creates all vertices returning them in a Set.
+     * @param names
+     * @return
+     */
+    Set<Vertex> vertex(String... names) {
+        names.collect { name ->
+            vertex(name)
+        } as Set<Vertex>
+    }
+
+    /**
+     * Creates or updates a {@link Vertex} in this graph. See {@link VertexSpec@applyToGraphAndVertex(Graph,Vertex)} for details
+     * on how this graph and the {@link Vertex} are modified.
+     * @param closure - delegates to {@link VertexSpec}
+     * @return the resulting {@link Vertex}
+     */
+    Vertex vertex(@DelegatesTo(VertexSpec) Closure closure) {
+        VertexSpec spec = VertexSpec.newInstance(this, closure)
+        Vertex vertex = vertex(spec.name)
+        spec.applyToGraphAndVertex(this, vertex)
+        vertex
+    }
+
+    /**
+     * Creates or updates a {@link Vertex} in this graph. The map must contain configuration described in
+     * {@link VertexSpec#newInstance(Map)}.
+     * @param map
+     * @return the resulting {@link Vertex}
+     */
+    Vertex vertex(Map<String, ?> map) {
+        VertexSpec spec = VertexSpec.newInstance(map)
+        Vertex vertex = vertex(spec.name)
+        spec.applyToGraphAndVertex(this, vertex)
+        vertex
+    }
+
+    /**
+     * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is delegated to a
+     * {@link VertexSpec}. See {@link VertexSpec} for details on how it modifies this graph and the {@link Vertex}.
+     * @param name
      * @param closure
+     * @return
+     */
+    Vertex vertex(String name, @DelegatesTo(VertexSpec) Closure closure) {
+        VertexSpec spec = VertexSpec.newInstance(this, closure)
+        Vertex vertex = vertex(name)
+        spec.applyToGraphAndVertex(this, vertex)
+        vertex
+    }
+
+    /**
+     * Renames a {@link Vertex}. All edges connecting the {@link Vertex} are updated with the new name.
+     * @param name
+     * @param newName
+     */
+    void rename(String name, String newName) {
+        if(!newName) {
+            throw new IllegalArgumentException("newName is null or empty.")
+        }
+        adjacentEdges(name).each {
+            if(it.one == name) {
+                it.one = newName
+            }
+            if(it.two == name) {
+                it.two = newName
+            }
+            vertex(name).name = newName
+        }
+    }
+
+    /**
+     * Creates or updates a {@link Vertex} in this graph with the given name. The map must contain configuration described in
+     * {@link VertexSpec#newInstance(Map)}.
+     * @param name
+     * @param map
+     * @return
+     */
+    Vertex vertex(String name, Map<String, ?> map) {
+        VertexSpec spec = VertexSpec.newInstance(map)
+        Vertex vertex = vertex(name)
+        spec.applyToGraphAndVertex(this, vertex)
+        vertex
+    }
+
+    /**
+     * Creates or updates a {@link Vertex} in this graph. This method creates two {@link VertexSpec} objects from the
+     * map and closure. The map is applied before the closure.
+     * @param map -
+     * @param closure -
      * @return the resulting vertex
      */
-    def vertex(map, Closure closure = null) {
-        def vertex = vertices[map.name] ?: vertexFactory.newVertex(map.name)
+    Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
+        VertexSpec mapSpec = VertexSpec.newInstance(map)
+        VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
+        Vertex vertex = vertex(mapSpec.name)
+        mapSpec.applyToGraphAndVertex(this, vertex)
+        closureSpec.applyToGraphAndVertex(this, vertex)
+        vertex
+    }
 
-        vertex = map.traits?.inject(vertex) { val, it ->
-            val.delegateAs(it)
-        } ?: vertex
-
-        if (map.trait) {
-            vertex.delegateAs(map.trait)
-        }
-
-        if (closure != null) {
-            closure.delegate = vertex
-            closure()
-        }
-
-        vertices[map.name] = vertex
+    /**
+     * Creates or updates a {@link Vertex} in this graph. This method creates two {@link VertexSpec} objects from the
+     * map and closure. The map is applied before the closure.
+     * @param name
+     * @param map
+     * @param closure
+     * @return
+     */
+    Vertex vertex(String name, Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
+        VertexSpec mapSpec = VertexSpec.newInstance(map)
+        VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
+        Vertex vertex = vertex(name)
+        mapSpec.applyToGraphAndVertex(this, vertex)
+        closureSpec.applyToGraphAndVertex(this, vertex)
         vertex
     }
 
@@ -162,51 +260,107 @@ class Graph {
     }
 
     /**
-     * Creates a map with the entries one and two set to the params one and two.
-     * This map is then passed to edge(map, closure = null).
-     * @param one
-     * @param two
-     * @param closure
+     * Creates or finds an edge between two vertices. The vertices are checked using {#vertex(String... names)}. If the
+     * edge already exists it is returned.
+     * @param one - the name of the first {@link Vertex}
+     * @param two - the name of the second {@link Vertex}
      * @return the resulting edge
      */
-    def edge(String one, String two, closure = null) {
-        edge(one: one, two: two, closure)
+    Edge edge(String one, String two) {
+        vertex(one, two)
+        Edge e = edgeFactory.newEdge(one, two)
+        Edge edge = edges.find  { it == e } ?: e
+        edges << edge
+        edge
     }
 
     /**
-     * Uses map to create an Edge object. And adds it to edges. If an edge already
-     * exists between the to vertices it cannot be added and an IllegalArgumentException is thrown.
-     *
-     * The provided closure is called with the edge as the delegate.
-     *
-     * If the map contains a traits entry its value should contain a list of traits
-     * or classes to apply to the Edge as traits. The resulting Edge as all of those traits
-     * applied in the order of the list.
-     *
+     * Creates or updates a {@link Edge} in this graph. See {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)} for details
+     * on how this graph and the {@link Edge} are modified.
+     * @param closure - delegates to {@link EdgeSpec}
+     * @return the resulting {@link Edge}
+     */
+    Edge edge(@DelegatesTo(EdgeSpec) Closure closure) {
+        EdgeSpec spec = EdgeSpec.newInstance(this, closure)
+        Edge edge = edge(spec.one, spec.two)
+        spec.applyToGraphAndEdge(this, edge)
+        edge
+    }
+
+    /**
+     * Creates or updates a {@link Edge} in this graph. The map must contain configuration described in
+     * {@link EdgeSpec#newInstance(Map)}.
+     * @param map
+     * @return the resulting {@link Edge}
+     */
+    Edge edge(Map<String, ?> map) {
+        EdgeSpec spec = EdgeSpec.newInstance(map)
+        Edge edge = edge(spec.one, spec.two)
+        spec.applyToGraphAndEdge(this, edge)
+        edge
+    }
+
+    /**
+     * Creates or updtes a {@link Edge} in this graph with the given one and two. The configuration given by the closure is delegated to an
+     * {@link EdgeSpec}. See {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)} for details on how it modifies this graph and the {@link Edge}.
+     * @param one
+     * @param two
+     * @param closure
+     * @return
+     */
+    Edge edge(String one, String two, @DelegatesTo(EdgeSpec) Closure closure) {
+        EdgeSpec spec = EdgeSpec.newInstance(this, closure)
+        Edge edge = edge(one, two)
+        spec.applyToGraphAndEdge(this, edge)
+        edge
+    }
+
+    /**
+     * Creates or updates a {@link Edge} in this graph with the given one and two. The map must contain configuration described in
+     * {@link EdgeSpec#newInstance(Map)}.
+     * @param one
+     * @param two
+     * @param map
+     * @return
+     */
+    Edge edge(String one, String two, Map<String, ?> map) {
+        EdgeSpec spec = EdgeSpec.newInstance(map)
+        Edge edge = edge(one, two)
+        spec.applyToGraphAndEdge(this, edge)
+        edge
+    }
+
+    /**
+     * Creates or updates a {@link Edge} in this graph. This methods creates two {@link EdgeSpec} objects from the
+     * map and closure. The map is applied before the clsoure using {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)}.
      * @param map
      * @param closure
-     * @throws IllegalArgumentException
-     * @return the resulting edge
+     * @return
      */
-    def edge(map, closure = null) {
-        def e = edgeFactory.newEdge(map.one, map.two)
-        def edge = edges.find { it == e } ?: e
+    Edge edge(Map<String, ?> map, @DelegatesTo(EdgeSpec) Closure closure) {
+        EdgeSpec mapSpec = EdgeSpec.newInstance(map)
+        EdgeSpec closureSpec = EdgeSpec.newInstance(this, closure)
+        Edge edge = edge(mapSpec.one, mapSpec.two)
+        mapSpec.applyToGraphAndEdge(this, edge)
+        closureSpec.applyToGraphAndEdge(this, edge)
+        edge
+    }
 
-        edge = map.traits?.inject(edge) { val, it ->
-            val.delegateAs(it)
-        } ?: edge
-
-        if (map.trait) {
-            edge.delegateAs(map.trait)
-        }
-
-        if (closure) {
-            closure.delegate = edge
-            closure()
-        }
-
-        edges.add(edge)
-
+    /**
+     * Creates or updates a {@link Edge} in this graph with the given one and two. This methods creates two {@link EdgeSpec} objects from the
+     * map and closure. The map is applied before the clsoure using {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)}.
+     * @param one
+     * @param two
+     * @param map
+     * @param closure
+     * @return
+     */
+    Edge edge(String one, String two, Map<String, ?> map, @DelegatesTo(EdgeSpec) Closure closure) {
+        EdgeSpec mapSpec = EdgeSpec.newInstance(map)
+        EdgeSpec closureSpec = EdgeSpec.newInstance(this, closure)
+        Edge edge = edge(one, two)
+        mapSpec.applyToGraphAndEdge(this, edge)
+        closureSpec.applyToGraphAndEdge(this, edge)
         edge
     }
 
@@ -382,9 +536,6 @@ class Graph {
         for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
             Edge edge = adjacentEdges[index]
             String connectedName = root == edge.one ? edge.two : edge.one
-            //if white tree edge
-            //if grey back edge
-            //if black forward or cross edge. must keep track of trees to say cross edge.
             if(spec.classifyEdge && spec.classifyEdge(edge, root, connectedName, spec.colors[connectedName]) == Traversal.STOP) {
                 return Traversal.STOP
             }

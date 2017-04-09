@@ -2,7 +2,7 @@ package graph
 
 import spock.lang.Specification
 
-class VertexSpec extends Specification {
+class VertexTestSpec extends Specification {
 
     def vertex = new Vertex()
 
@@ -85,5 +85,40 @@ class VertexSpec extends Specification {
 
         then:
         equals
+    }
+
+    def 'method is missing on delegate'() {
+        when:
+        vertex.methodThatDoesNotExistonVertex()
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def 'property is missing on delegate'() {
+        when:
+        vertex.length = 10
+
+        then:
+        thrown MissingPropertyException
+    }
+
+    def 'can add traits to delegate'() {
+        when:
+        vertex.delegateAs(Weight)
+
+        then:
+        vertex.delegate instanceof Weight
+    }
+
+    def 'can use method from delegate'() {
+        when:
+        vertex.delegateAs(Weight)
+        vertex.weight {
+            10
+        }
+
+        then:
+        vertex.weight == 10
     }
 }
