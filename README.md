@@ -91,7 +91,7 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
-## x.x.x
+## 0.8.1
 
 * Automatically publishing javadoc and groovydoc to gh-pages.
 
