@@ -91,6 +91,10 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## x.x.x
+
+* Automatically publishing javadoc and groovydoc to gh-pages.
+
 ## 0.8.0
 
 This is a major update to the api. It focuses on the edge and vertex methods in Graph. These methods

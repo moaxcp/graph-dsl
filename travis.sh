@@ -22,6 +22,23 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     -Dnexus.username=moaxcp \
     -Dnexus.password=$NEXUS_PASSWORD
 
+    ./gradlew groovydoc
+    ./gradlew javadoc
+
+    git config --global user.email "travis@travis-ci.org"
+    git config --global user.name "travis-ci"
+    git clone --branch=gh-pages https://${GITHUB_TOKEN}@github.com/moaxcp/graph-dsl gh-pages
+    cd gh-pages
+    git rm -rf groovydoc
+    cp -Rf build/docs/groovydoc .
+    git add -f .
+    git commit -m "Lastest groovydoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
+    git rm -rf javadoc
+    git add -f .
+    git commit -m "Lastest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
+    git push -fq origin gh-pages
+    cd ..
+
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "Build for internal pull request"
     ./gradlew test --continue sonarqube \
