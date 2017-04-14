@@ -403,7 +403,7 @@ class Graph {
      * @param name
      * @return set of adjacent edges.
      */
-    Set<Edge> adjacentEdges(name) {
+    Set<? extends Edge> adjacentEdges(name) {
         edges.findAll {
             name == it.one || name == it.two
         }
