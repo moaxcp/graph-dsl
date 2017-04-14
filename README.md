@@ -91,6 +91,16 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.9.0
+
+Added reversePostOrder to DirectedGraphPlugin. This will allow a DirectedGraph to perform a
+closure on each vertex in reverse post order (topological order). Also added reversePostOrderSort which
+returns the vertex names in reverse post order of a graph.
+
+DirectedGraphPlugin was reorganized making it possible to javadoc methods dynamically added to the graph.
+The methods added are static in DirectedGraphPlugin. They are added to Graph's metaClass using method pointers
+while currying the graph param to the apply method. This could be used in future plugins.
+
 ## 0.8.2
 
 * fixing publishing of javadoc and groovydoc. gh-pages branch must exist.
