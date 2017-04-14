@@ -91,7 +91,7 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
-## x.x.x
+## 0.9.0
 
 Added reversePostOrder to DirectedGraphPlugin. This will allow a DirectedGraph to perform a
 closure on each vertex in reverse post order (topological order). Also added reversePostOrderSort which
