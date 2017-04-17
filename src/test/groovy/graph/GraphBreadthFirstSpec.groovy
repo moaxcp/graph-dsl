@@ -138,4 +138,20 @@ class GraphBreadthFirstSpec extends Specification {
         then:
         visitList == ['A', 'B', 'D', 'E', 'C']
     }
+
+    def 'breadthFirstTraversal change root'() {
+        setup:
+        def visitList = []
+
+        when:
+        def traversal = graph.breadthFirstTraversal {
+            root = 'E'
+            visit { vertex ->
+                visitList << vertex.name
+            }
+        }
+
+        then:
+        visitList == ['E', 'A', 'D', 'B', 'C']
+    }
 }
