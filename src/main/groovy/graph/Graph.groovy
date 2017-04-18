@@ -578,10 +578,23 @@ class Graph {
         }
     }
 
+    /**
+     * Executes closure on each {@link Vertex} in breadth first order. If the closure returns true the {@link Vertex} is
+     * returned.
+     * @param closure closure to execute on each {@link Vertex}
+     * @return first {@link Vertex} where closure returns true
+     */
     Vertex findBfs(Closure closure) {
         findBfs(null, closure)
     }
 
+    /**
+     * Executes closure on each {@link Vertex} in breadth first order starting at root. If the closure returns true the
+     * {@link Vertex} is returned.
+     * @param root where to start breadth first traversal
+     * @param closure closure to execute on each {@link Vertex}
+     * @return first {@link Vertex} where closure returns true
+     */
     Vertex findBfs(String root, Closure closure) {
         Vertex result = null
         breadthFirstTraversal {
