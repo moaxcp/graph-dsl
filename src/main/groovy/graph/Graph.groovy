@@ -556,6 +556,28 @@ class Graph {
     }
 
     /**
+     * executes closure on each {@link Vertex} in breadth first order.
+     * @param closure
+     */
+    void eachBfs(Closure closure) {
+        breadthFirstTraversal {
+            visit closure
+        }
+    }
+
+    /**
+     * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}
+     * @param root
+     * @param closure
+     */
+    void eachBfs(String root, Closure closure) {
+        breadthFirstTraversal {
+            delegate.root = root
+            visit closure
+        }
+    }
+
+    /**
      * configures a breadth first traversal with the given closure using
      * breadthFirstTraversalSpec().
      *
