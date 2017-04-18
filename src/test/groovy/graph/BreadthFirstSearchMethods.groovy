@@ -5,6 +5,8 @@ import spock.lang.Specification
 class BreadthFirstSearchMethods extends Specification {
 
     Graph graph = new Graph()
+    def defaultOrder = []
+    def orderFromD = []
 
     def setup() {
         graph.with {
@@ -12,18 +14,20 @@ class BreadthFirstSearchMethods extends Specification {
             vertex 'B', [connectsTo:['C', 'D']]
             vertex 'D', [connectsTo:['C', 'E', 'A']]
         }
+        graph.breadthFirstTraversal {
+            visit { vertex ->
+                defaultOrder << vertex.name
+            }
+        }
+        graph.breadthFirstTraversal {
+            root = 'D'
+            visit { vertex ->
+                orderFromD << vertex.name
+            }
+        }
     }
 
     def 'eachBfs is in breadthFirstOrder'() {
-        setup:
-        def expected = []
-        graph.breadthFirstTraversal {
-            root = 'A'
-            visit { vertex ->
-                expected << vertex.name
-            }
-        }
-
         when:
         def result = []
         graph.eachBfs {
@@ -31,19 +35,10 @@ class BreadthFirstSearchMethods extends Specification {
         }
 
         then:
-        expected == result
+        defaultOrder == result
     }
 
-    def 'eachBfs can start a different root'() {
-        setup:
-        def expected = []
-        graph.breadthFirstTraversal {
-            root = 'D'
-            visit { vertex ->
-                expected << vertex.name
-            }
-        }
-
+    def 'eachBfs can start at different root'() {
         when:
         def result = []
         graph.eachBfs('D') {
@@ -51,6 +46,40 @@ class BreadthFirstSearchMethods extends Specification {
         }
 
         then:
-        expected == result
+        orderFromD == result
+    }
+
+    def 'findBfs is in breadth first order'() {
+        when:
+        def result = []
+        graph.findBfs {
+            result << it.name
+            false
+        }
+
+        then:
+        defaultOrder == result
+    }
+
+    def 'findBfs can start at different root'() {
+        when:
+        def result = []
+        graph.findBfs('D') {
+            result << it.name
+            false
+        }
+
+        then:
+        orderFromD == result
+    }
+
+    def 'findBfs can find vertex'() {
+        when:
+        Vertex vertex = graph.findBfs {
+            it.name == 'D'
+        }
+
+        then:
+        vertex.name == 'D'
     }
 }

@@ -556,20 +556,15 @@ class Graph {
     }
 
     /**
-     * executes closure on each {@link Vertex} in breadth first order.
+     * executes closure on each {@link Vertex} in breadth first order. See {@link #breadthFirstTraversal} for details.
      * @param closure
      */
     void eachBfs(Closure closure) {
-        breadthFirstTraversal {
-            visit { vertex ->
-                closure(vertex)
-                return null
-            }
-        }
+        eachBfs(null, closure)
     }
 
     /**
-     * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}
+     * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}. See {@link #breadthFirstTraversal} for details.
      * @param root
      * @param closure
      */
@@ -581,6 +576,24 @@ class Graph {
                 return null
             }
         }
+    }
+
+    Vertex findBfs(Closure closure) {
+        findBfs(null, closure)
+    }
+
+    Vertex findBfs(String root, Closure closure) {
+        Vertex result = null
+        breadthFirstTraversal {
+            delegate.root = root
+            visit { vertex ->
+                if (closure(vertex)) {
+                    result = vertex
+                    return Traversal.STOP
+                }
+            }
+        }
+        result
     }
 
     /**
