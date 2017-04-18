@@ -561,7 +561,10 @@ class Graph {
      */
     void eachBfs(Closure closure) {
         breadthFirstTraversal {
-            visit closure
+            visit { vertex ->
+                closure(vertex)
+                return null
+            }
         }
     }
 
@@ -573,7 +576,10 @@ class Graph {
     void eachBfs(String root, Closure closure) {
         breadthFirstTraversal {
             delegate.root = root
-            visit closure
+            visit { vertex ->
+                closure(vertex)
+                return null
+            }
         }
     }
 
