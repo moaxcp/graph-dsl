@@ -82,4 +82,28 @@ class BreadthFirstSearchMethods extends Specification {
         then:
         vertex.name == 'D'
     }
+
+    def 'injectBfs is in breadth first order'() {
+        when:
+        def result = []
+        graph.injectBfs(result) { list, vertex ->
+            list << vertex.name
+            list
+        }
+
+        then:
+        defaultOrder == result
+    }
+
+    def 'injectBfs can start at different root'() {
+        when:
+        def result = []
+        graph.injectBfs('D', result) { list, vertex ->
+            list << vertex.name
+            list
+        }
+
+        then:
+        orderFromD == result
+    }
 }

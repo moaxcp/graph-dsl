@@ -610,6 +610,36 @@ class Graph {
     }
 
     /**
+     * Executes closure on each vertex in breadth first order. object is the initial value passed to the closure. Each returned
+     * value from the closure is passed to the next call.
+     * @param object
+     * @param closure
+     * @return object returned from the final call to closure.
+     */
+    def injectBfs(Object object, Closure closure) {
+        injectBfs(null, object, closure)
+    }
+
+    /**
+     * Executes closure on each vertex in breadth first order starting at root. object is the initial value passed to the closure. Each returned
+     * value from the closure is passed to the next call.
+     * @param root
+     * @param object
+     * @param closure
+     * @return object returned from the final call to closure.
+     */
+    def injectBfs(String root, Object object, Closure closure) {
+        Object result = object
+        breadthFirstTraversal {
+            delegate.root = root
+            visit { vertex ->
+                result = closure(result, vertex)
+            }
+        }
+        result
+    }
+
+    /**
      * configures a breadth first traversal with the given closure using
      * breadthFirstTraversalSpec().
      *
