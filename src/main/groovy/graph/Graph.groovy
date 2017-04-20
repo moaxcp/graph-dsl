@@ -664,6 +664,27 @@ class Graph {
     }
 
     /**
+     * Runs closure on each vertex in breadth first order collecting the result.
+     * @param closure to run on each vertex
+     * @return the results from closure
+     */
+    def collectBfs(Closure closure) {
+        collectBfs(null, closure)
+    }
+
+    /**
+     * Runs closure on each vertex in breadth first order, starting at root, collecting the result.
+     * @param root vertex to start at
+     * @param closure to run on each vertex
+     * @return the results from closure
+     */
+    def collectBfs(String root, Closure closure) {
+        injectBfs(root, []) { result, vertex ->
+            result << closure(vertex)
+        }
+    }
+
+    /**
      * configures a breadth first traversal with the given closure using
      * breadthFirstTraversalSpec().
      *
