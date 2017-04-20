@@ -384,7 +384,7 @@ class Graph {
      * @return the name of the first unvisited child vertex
      */
     def getUnvisitedChildName(colors, parentName) {
-        def edge = adjacentEdges(parentName).findAll {
+        def edge = traverseEdges(parentName).findAll {
             it.one != it.two
         }.find {
             def childName = parentName == it.one ? it.two : it.one
@@ -403,10 +403,19 @@ class Graph {
      * @param name
      * @return set of adjacent edges.
      */
-    Set<? extends Edge> adjacentEdges(name) {
+    Set<? extends Edge> adjacentEdges(String name) {
         edges.findAll {
             name == it.one || name == it.two
         }
+    }
+
+    /**
+     * Returns edges from vertex with name that should be traversed.
+     * @param name
+     * @return
+     */
+    Set<? extends Edge> traverseEdges(String name) {
+        adjacentEdges(name)
     }
 
     /**
@@ -532,7 +541,7 @@ class Graph {
         }
         spec.colors[root] = TraversalColor.GREY
 
-        Set<Edge> adjacentEdges = adjacentEdges(root)
+        Set<Edge> adjacentEdges = traverseEdges(root)
         for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
             Edge edge = adjacentEdges[index]
             String connectedName = root == edge.one ? edge.two : edge.one
@@ -724,7 +733,7 @@ class Graph {
         queue << root
         while (queue.size() != 0) {
             String current = queue.poll()
-            Set<Edge> adjacentEdges = adjacentEdges(current)
+            Set<Edge> adjacentEdges = traverseEdges(current)
             for (int i = 0; i < adjacentEdges.size(); i++) {
                 Edge edge = adjacentEdges[i]
                 String connected = current == edge.one ? edge.two : edge.one

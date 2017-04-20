@@ -28,7 +28,7 @@ class DirectedGraphPlugin implements Plugin {
         graph.metaClass.inDegree = this.&inDegree.curry(graph)
         graph.metaClass.outEdges = this.&outEdges.curry(graph)
         graph.metaClass.outDegree = this.&outDegree.curry(graph)
-        graph.metaClass.adjacentEdges = this.&adjacentEdges.curry(graph)
+        graph.metaClass.traverseEdges = this.&traverseEdges.curry(graph)
         graph.metaClass.reversePostOrderSort = this.&reversePostOrderSort.curry(graph)
         graph.metaClass.reversePostOrder = this.&reversePostOrder.curry(graph)
     }
@@ -83,7 +83,7 @@ class DirectedGraphPlugin implements Plugin {
      * @param name
      * @return
      */
-    static Set<? extends Edge> adjacentEdges(Graph graph, String name) {
+    static Set<? extends Edge> traverseEdges(Graph graph, String name) {
         graph.outEdges(name)
     }
 

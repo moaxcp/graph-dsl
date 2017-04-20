@@ -40,7 +40,7 @@ class DirectedGraphSpec extends Specification {
         out == 2
     }
 
-    def 'adjacentEdges are outEdges'() {
+    def 'traverseEdges are outEdges'() {
         setup:
         def expected = [] as LinkedHashSet<DirectedEdge>
         graph.with {
@@ -52,7 +52,7 @@ class DirectedGraphSpec extends Specification {
 
         when:
         def out = graph.outEdges 'step1'
-        def adjacent = graph.adjacentEdges 'step1'
+        def adjacent = graph.traverseEdges 'step1'
 
         then:
         out == expected
