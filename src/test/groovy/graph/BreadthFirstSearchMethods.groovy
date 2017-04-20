@@ -106,4 +106,30 @@ class BreadthFirstSearchMethods extends Specification {
         then:
         orderFromD == result
     }
+
+    def 'findAllBfs is in breadth first order'() {
+        when:
+        def result = graph.findAllBfs{ true }
+
+        then:
+        defaultOrder == result*.name
+    }
+
+    def 'findAllBfs can start at different root'() {
+        when:
+        def result = graph.findAllBfs('D') { true }
+
+        then:
+        orderFromD == result*.name
+    }
+
+    def 'findAllBfs can find all'() {
+        when:
+        def result = graph.findAllBfs {
+            it.name in ['A', 'C', 'E']
+        }
+
+        then:
+        result*.name == ['A', 'C', 'E']
+    }
 }

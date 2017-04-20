@@ -640,6 +640,30 @@ class Graph {
     }
 
     /**
+     * Runs closure on each vertex in breadth first order. The vertices where closure returns true are returned.
+     * @param closure to run on each vertex
+     * @return the vertices where closure returns true
+     */
+    def findAllBfs(Closure closure) {
+        findAllBfs(null, closure)
+    }
+
+    /**
+     * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are returned.
+     * @param root the vertex to start from
+     * @param closure to run on each vertex
+     * @return the vertices where closure returns true
+     */
+    def findAllBfs(String root, Closure closure) {
+        injectBfs(root, []) { result, vertex ->
+            if(closure(vertex)) {
+                result << vertex
+            }
+            result
+        }
+    }
+
+    /**
      * configures a breadth first traversal with the given closure using
      * breadthFirstTraversalSpec().
      *
