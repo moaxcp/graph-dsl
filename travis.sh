@@ -23,14 +23,17 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     -Dnexus.password=$NEXUS_PASSWORD
 
     ./gradlew groovydoc
-    ./gradlew javadoc
+    ./gradlew check
+    ./gradlew jacocoTestReport
 
     git config --global user.email "travis@travis-ci.org"
     git config --global user.name "travis-ci"
     git clone --branch=gh-pages https://${GITHUB_TOKEN}@github.com/moaxcp/graph-dsl gh-pages
     cd gh-pages
-    git rm -rf groovydoc
-    cp -Rf build/docs/groovydoc .
+    git rm -rf docs
+    git rm -rf reports
+    cp -Rf ../build/docs .
+    cp -Rf ../build/reports .
     git add -f .
     git commit -m "Lastest groovydoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
     git push -fq origin gh-pages
