@@ -91,7 +91,7 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
-## x.x.x
+## 0.10.0
 
 This release features breadth first search methods. These are methods that follow the standard collection methods
 that come with groovy: eachBfs, findBfs, findAllBfs, injectBfs, and collectBfs. There are two overrides for each.
