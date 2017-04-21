@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VertexSpec.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">VertexSpec.groovy</span></div><h1>VertexSpec.groovy</h1><pre class="source lang-java linenums">package graph
+
+import groovy.transform.PackageScope
+
+/**
+ * Specification class that helps vertex methods in {@link Graph} objects. It can be the delegate of closures used in
+ * vertex methods of {@link Graph}.
+ */
+@PackageScope
+class VertexSpec {
+    /**
+     * The name of the {@link Vertex} to create or update.
+     */
+    String name
+<span class="fc" id="L15">    private Set&lt;Class&gt; traits = [] as Set&lt;Class&gt;</span>
+<span class="fc" id="L16">    private Set&lt;String&gt; connectsTo = [] as Set&lt;String&gt;</span>
+    private Closure config
+
+    /**
+     * The set of traits that should be applied to the {@link Vertex}.
+     * @return
+     */
+    Set&lt;Class&gt; getTraits() {
+<span class="pc" id="L24">        traits</span>
+    }
+
+    /**
+     * The set of edges to create between the {@link Vertex} and other vertices.
+     * @return The names of vertices the {@link Vertex} should connect to.
+     */
+    Set&lt;String&gt; getConnectsTo() {
+<span class="pc" id="L32">        connectsTo</span>
+    }
+
+    /**
+     * The config applied to the {@link Vertex} using its leftShift operator.
+     * @return
+     */
+    Closure getConfig() {
+<span class="pc" id="L40">        config</span>
+    }
+
+    /**
+     * Adds to the set of traits to be applied to the {@link Vertex}.
+     * @param traits - added to the set
+     */
+    void traits(Class... traits) {
+<span class="fc" id="L48">        this.traits.addAll(traits)</span>
+    }
+
+    /**
+     * Adds to the names the {@link Vertex} should connect to.
+     * @param names
+     */
+    void connectsTo(String... names) {
+<span class="fc" id="L56">        connectsTo.addAll(names)</span>
+    }
+
+    /**
+     * Sets the config closure which will be run on the {@link Vertex}.
+     * @param config added to the config member variable
+     */
+    void config(@DelegatesTo(Vertex) Closure config) {
+<span class="fc" id="L64">        this.config = config</span>
+    }
+
+    /**
+     * Applies this {@link VertexSpec} to the {@link Vertex} and {@link Graph}. Members from this spec are applied in this order:
+     * &lt;p&gt;
+     * 1. renames vertex to name if set
+     * 2. applies traits to the vertex
+     * 3. connects the vertex vertices listed in connectsTo set
+     * 4. configures the vertex using vertex &lt;&lt; config
+     * @param graph
+     * @param vertex
+     */
+    void applyToGraphAndVertex(Graph graph, Vertex vertex) {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if(name) {</span>
+<span class="fc" id="L79">            graph.rename(vertex.name, name)</span>
+        }
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (traits) {</span>
+<span class="fc" id="L82">            vertex.delegateAs(traits as Class[])</span>
+        }
+<span class="fc" id="L84">        connectsTo.each {</span>
+<span class="pc" id="L85">            graph.edge vertex.name, it</span>
+        }
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if(config) {</span>
+<span class="fc" id="L88">            vertex &lt;&lt; config</span>
+        }
+    }
+
+    /**
+     * Creates a new instance of a VertexSpec using the provided closure. A new {@link VertexSpec} will be the delegate
+     * while the {@link Graph} will be the owner and this.
+     * @param graph
+     * @param closure
+     * @return the resulting VertexSpec
+     */
+    static VertexSpec newInstance(Graph graph, @DelegatesTo(VertexSpec) Closure closure) {
+<span class="fc" id="L100">        VertexSpec spec = new VertexSpec()</span>
+
+<span class="fc" id="L102">        Closure code = closure.rehydrate(spec, graph, graph)</span>
+<span class="fc" id="L103">        code()</span>
+
+<span class="pc" id="L105">        spec</span>
+    }
+
+    /**
+     * creates a new instance of a VertexSpec using the provided Map. Valid values that can be in the Map are:
+     * &lt;p&gt;
+     * traits - list of traits to be applied to the {@link Vertex}&lt;br&gt;
+     * connectsTo - list of vertices to connect the {@link Vertex} to.&lt;br&gt;
+     * config - closure to be applied to the {@link Vertex} after traits and edges are created.
+     * &lt;p&gt;
+     * All other values are ignored.
+     * @param map
+     * @return
+     */
+    static VertexSpec newInstance(Map&lt;String, ?&gt; map) {
+<span class="fc" id="L120">        VertexSpec spec = new VertexSpec(name:map.name)</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if (map.traits) {</span>
+<span class="fc" id="L122">            spec.traits(map.traits as Class[])</span>
+        }
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (map.connectsTo) {</span>
+<span class="fc" id="L125">            spec.connectsTo(map.connectsTo as String[])</span>
+        }
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        if(map.config) {</span>
+<span class="fc" id="L128">            spec.config(map.config)</span>
+        }
+
+<span class="pc" id="L131">        spec</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

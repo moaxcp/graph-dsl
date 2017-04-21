@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EdgeClassification.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">EdgeClassification.groovy</span></div><h1>EdgeClassification.groovy</h1><pre class="source lang-java linenums">package graph
+
+import groovy.transform.PackageScope
+
+/**
+ * The results from classifyEdges in Graph.
+ */
+class EdgeClassification {
+<span class="fc" id="L9">    Graph forrest = []</span>
+<span class="fc" id="L10">    List&lt;Edge&gt; backEdges = []</span>
+<span class="fc" id="L11">    List&lt;Edge&gt; treeEdges = []</span>
+<span class="fc" id="L12">    List&lt;Edge&gt; forwardEdges = []</span>
+<span class="fc" id="L13">    List&lt;Edge&gt; crossEdges = []</span>
+
+    /**
+     * The resulting edge type. Used in addEdge to notify the action closure.
+     */
+    enum EdgeType {
+        /**
+         * When the followed edge is GREY
+         */
+        BACK_EDGE,
+        /**
+         * When the followed edge is WHITE
+         */
+        TREE_EDGE,
+        /**
+         * When the followed edge is BLACK and the connecting vertex is not in the forrest
+         */
+        FORWARD_EDGE,
+        /**
+         * When the followed edge is BLACK and the connecting vertex is in the forreest
+         */
+        CROSS_EDGE
+    }
+
+    /**
+     * Adds an edge calling action with the classification.
+     * @param graph
+     * @param edge
+     * @param from
+     * @param to
+     * @param toColor
+     * @param action
+     */
+    @PackageScope
+    void addEdge(Graph graph, Edge edge, String from, String to, Graph.TraversalColor toColor, Closure action) {
+<span class="fc" id="L48">        def edgeType</span>
+<span class="fc" id="L49">        switch(toColor) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            case Graph.TraversalColor.WHITE:</span>
+<span class="fc" id="L51">                forrest.addVertex(graph.vertex(from))</span>
+<span class="fc" id="L52">                forrest.addVertex(graph.vertex(to))</span>
+<span class="fc" id="L53">                forrest.addEdge(edge)</span>
+<span class="fc" id="L54">                treeEdges &lt;&lt; edge</span>
+<span class="fc" id="L55">                edgeType = EdgeClassification.EdgeType.TREE_EDGE</span>
+<span class="pc" id="L56">                break</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            case Graph.TraversalColor.GREY:</span>
+<span class="fc" id="L59">                backEdges &lt;&lt; edge</span>
+<span class="fc" id="L60">                edgeType = EdgeClassification.EdgeType.BACK_EDGE</span>
+<span class="pc" id="L61">                break</span>
+
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            case Graph.TraversalColor.BLACK:</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                if(forrest.vertices[to]) {</span>
+<span class="fc" id="L65">                    crossEdges &lt;&lt; edge</span>
+<span class="fc" id="L66">                    edgeType = EdgeClassification.EdgeType.CROSS_EDGE</span>
+                } else {
+<span class="fc" id="L68">                    forwardEdges &lt;&lt; edge</span>
+<span class="fc" id="L69">                    edgeType = EdgeClassification.EdgeType.FORWARD_EDGE</span>
+                }
+<span class="fc" id="L71">                break</span>
+
+            default:
+<span class="nc" id="L74">                throw new IllegalStateException(&quot;Edge from $from to $to needs to be WHITE, GREY, or BLACK.&quot;)</span>
+        }
+<span class="fc" id="L76">        action(from, to, edgeType)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
