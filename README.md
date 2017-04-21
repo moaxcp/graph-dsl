@@ -91,6 +91,29 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.10.0
+
+This release features breadth first search methods. These are methods that follow the standard collection methods
+that come with groovy: eachBfs, findBfs, findAllBfs, injectBfs, and collectBfs. There are two overrides for each.
+The first takes a closure and starts at the first vertex in the vertices map. The second can specify the root to
+start at in the breadth first traversal. Here is a short example using findBfs:
+
+```groovy
+findBfs {
+    it.work > 0
+}
+```
+
+Finds the first vertex with `work > 0`
+
+```groovy
+findBfs('step4') {
+    it.work > 0
+}
+```
+
+Finds the first vertex with `work > 0` starting at step4.
+
 ## 0.9.0
 
 Added reversePostOrder to DirectedGraphPlugin. This will allow a DirectedGraph to perform a

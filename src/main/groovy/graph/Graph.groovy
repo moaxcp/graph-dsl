@@ -384,7 +384,7 @@ class Graph {
      * @return the name of the first unvisited child vertex
      */
     def getUnvisitedChildName(colors, parentName) {
-        def edge = adjacentEdges(parentName).findAll {
+        def edge = traverseEdges(parentName).findAll {
             it.one != it.two
         }.find {
             def childName = parentName == it.one ? it.two : it.one
@@ -403,10 +403,19 @@ class Graph {
      * @param name
      * @return set of adjacent edges.
      */
-    Set<? extends Edge> adjacentEdges(name) {
+    Set<? extends Edge> adjacentEdges(String name) {
         edges.findAll {
             name == it.one || name == it.two
         }
+    }
+
+    /**
+     * Returns edges from vertex with name that should be traversed.
+     * @param name
+     * @return
+     */
+    Set<? extends Edge> traverseEdges(String name) {
+        adjacentEdges(name)
     }
 
     /**
@@ -532,7 +541,7 @@ class Graph {
         }
         spec.colors[root] = TraversalColor.GREY
 
-        Set<Edge> adjacentEdges = adjacentEdges(root)
+        Set<Edge> adjacentEdges = traverseEdges(root)
         for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
             Edge edge = adjacentEdges[index]
             String connectedName = root == edge.one ? edge.two : edge.one
@@ -553,6 +562,135 @@ class Graph {
         }
         spec.colors[root] = TraversalColor.BLACK
         null
+    }
+
+    /**
+     * executes closure on each {@link Vertex} in breadth first order. See {@link #breadthFirstTraversal} for details.
+     * @param closure
+     */
+    void eachBfs(Closure closure) {
+        eachBfs(null, closure)
+    }
+
+    /**
+     * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}. See {@link #breadthFirstTraversal} for details.
+     * @param root
+     * @param closure
+     */
+    void eachBfs(String root, Closure closure) {
+        breadthFirstTraversal {
+            delegate.root = root
+            visit { vertex ->
+                closure(vertex)
+                return null
+            }
+        }
+    }
+
+    /**
+     * Executes closure on each {@link Vertex} in breadth first order. If the closure returns true the {@link Vertex} is
+     * returned.
+     * @param closure closure to execute on each {@link Vertex}
+     * @return first {@link Vertex} where closure returns true
+     */
+    Vertex findBfs(Closure closure) {
+        findBfs(null, closure)
+    }
+
+    /**
+     * Executes closure on each {@link Vertex} in breadth first order starting at root. If the closure returns true the
+     * {@link Vertex} is returned.
+     * @param root where to start breadth first traversal
+     * @param closure closure to execute on each {@link Vertex}
+     * @return first {@link Vertex} where closure returns true
+     */
+    Vertex findBfs(String root, Closure closure) {
+        Vertex result = null
+        breadthFirstTraversal {
+            delegate.root = root
+            visit { vertex ->
+                if (closure(vertex)) {
+                    result = vertex
+                    return Traversal.STOP
+                }
+            }
+        }
+        result
+    }
+
+    /**
+     * Executes closure on each vertex in breadth first order. object is the initial value passed to the closure. Each returned
+     * value from the closure is passed to the next call.
+     * @param object
+     * @param closure
+     * @return object returned from the final call to closure.
+     */
+    def injectBfs(Object object, Closure closure) {
+        injectBfs(null, object, closure)
+    }
+
+    /**
+     * Executes closure on each vertex in breadth first order starting at root. object is the initial value passed to the closure. Each returned
+     * value from the closure is passed to the next call.
+     * @param root
+     * @param object
+     * @param closure
+     * @return object returned from the final call to closure.
+     */
+    def injectBfs(String root, Object object, Closure closure) {
+        Object result = object
+        breadthFirstTraversal {
+            delegate.root = root
+            visit { vertex ->
+                result = closure(result, vertex)
+            }
+        }
+        result
+    }
+
+    /**
+     * Runs closure on each vertex in breadth first order. The vertices where closure returns true are returned.
+     * @param closure to run on each vertex
+     * @return the vertices where closure returns true
+     */
+    def findAllBfs(Closure closure) {
+        findAllBfs(null, closure)
+    }
+
+    /**
+     * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are returned.
+     * @param root the vertex to start from
+     * @param closure to run on each vertex
+     * @return the vertices where closure returns true
+     */
+    def findAllBfs(String root, Closure closure) {
+        injectBfs(root, []) { result, vertex ->
+            if(closure(vertex)) {
+                result << vertex
+            }
+            result
+        }
+    }
+
+    /**
+     * Runs closure on each vertex in breadth first order collecting the result.
+     * @param closure to run on each vertex
+     * @return the results from closure
+     */
+    def collectBfs(Closure closure) {
+        collectBfs(null, closure)
+    }
+
+    /**
+     * Runs closure on each vertex in breadth first order, starting at root, collecting the result.
+     * @param root vertex to start at
+     * @param closure to run on each vertex
+     * @return the results from closure
+     */
+    def collectBfs(String root, Closure closure) {
+        injectBfs(root, []) { result, vertex ->
+            result << closure(vertex)
+        }
     }
 
     /**
@@ -595,7 +733,7 @@ class Graph {
         queue << root
         while (queue.size() != 0) {
             String current = queue.poll()
-            Set<Edge> adjacentEdges = adjacentEdges(current)
+            Set<Edge> adjacentEdges = traverseEdges(current)
             for (int i = 0; i < adjacentEdges.size(); i++) {
                 Edge edge = adjacentEdges[i]
                 String connected = current == edge.one ? edge.two : edge.one
