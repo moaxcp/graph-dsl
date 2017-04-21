@@ -30,8 +30,8 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     git config --global user.name "travis-ci"
     git clone --branch=gh-pages https://${GITHUB_TOKEN}@github.com/moaxcp/graph-dsl gh-pages
     cd gh-pages
-    git rm -rf docs
-    git rm -rf reports
+    git rm -rf docs || true
+    git rm -rf reports || true
     cp -Rf ../build/docs .
     cp -Rf ../build/reports .
     git add -f .
