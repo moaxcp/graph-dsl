@@ -128,11 +128,11 @@ class DirectedGraphSpec extends Specification {
     def 'can get topological sort'() {
         setup:
         graph.with {
-            vertex('A', [connectsTo:['B', 'D', 'E']])
-            vertex('B', [connectsTo:['D', 'C']])
-            vertex('C', [connectsTo:'D'])
-            vertex('D', [connectsTo:'G'])
-            vertex('G', [connectsTo:'F'])
+            vertex('A', [edgesFirst:['B', 'D', 'E']])
+            vertex('B', [edgesFirst:['D', 'C']])
+            vertex('C', [edgesFirst:'D'])
+            vertex('D', [edgesFirst:'G'])
+            vertex('G', [edgesFirst:'F'])
         }
 
         when:
@@ -145,11 +145,11 @@ class DirectedGraphSpec extends Specification {
     def 'can perform reversePostOrder'() {
         setup:
         graph.with {
-            vertex('A', [connectsTo:['B', 'D', 'E']])
-            vertex('B', [connectsTo:['D', 'C']])
-            vertex('C', [connectsTo:'D'])
-            vertex('D', [connectsTo:'G'])
-            vertex('G', [connectsTo:'F'])
+            vertex('A', [edgesFirst:['B', 'D', 'E']])
+            vertex('B', [edgesFirst:['D', 'C']])
+            vertex('C', [edgesFirst:'D'])
+            vertex('D', [edgesFirst:'G'])
+            vertex('G', [edgesFirst:'F'])
         }
         def rpo = []
 

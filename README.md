@@ -12,45 +12,33 @@ It is designed to be groovy, using closures and metaprogramming for minimal setu
 
 ```groovy
 #!/usr/bin/env groovy
-@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.8.0')
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.11.0')
 import static graph.Graph.graph
 
 graph {
-    edge 'a', 'b'
-    edge 'a', 'd'
-    edge 'b', 'c'
-    edge 'b', 'd'
-    edge 'd', 'a'
-    edge 'd', 'c'
-    edge 'd', 'e'
+    apply DirectedGraphPlugin
+    vertex ('a') {
+        edgesFirst 'b', 'd'
+        edgesSecond 'd'
+    }
+    
+    vertex {
+        name 'b'
+        edgesFirst 'c', 'd'
+    }
+    
+    vertex('d', [edgesFirst:'c']) {
+        edgesFirst 'e'
+    }
+    
     edge 'f', 'g'
     edge 'g', 'd'
-}
-```
-
-## Apply a plugin
-
-Plugins may be applied to graphs to change their behavior.
-
-```groovy
-graph.apply DirectedGraph
-```
-
-This plugin makes the graph into a directed graph.
-
-## depth first traversal
-
-Depth first traversal supports preorder and postorder traversal.
-
-```groovy
-graph.depthFirstTraversal {
-    preorder { vertex ->
-        println vertex.name
+    
+    eachBfs {
+        println it.name
     }
 }
 ```
-
-The closure is used to build a DepthFirstTraversalSpec. The spec defines the behavoir of the traversal which is to print the name of each vertex on preorder visits.
 
 # Getting Started
 
@@ -90,6 +78,24 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## 0.11.0
+
+Removing connectsTo from VertexSpec and replacing it with edgesFirst and edgesSecond. This helps in creating directed graphs
+using the vertex methods. It also helps when creating vertices first then applying the DirectedGraphPlugin.
+
+## 0.10.3
+
+Publishing of gh-pages was still broken. This release fixed the issue. Also added reports to gh-pages so we can now view
+test results, code coverage, and static analysis.
+
+## 0.10.2
+
+Fixed publishing of gh-pages.
+
+## 0.10.1
+
+Release to maven central for 0.10.0 failed. Upgraded gradle-nexus-staging-plugin which fixed the problem.
 
 ## 0.10.0
 

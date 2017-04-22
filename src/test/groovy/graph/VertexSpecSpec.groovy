@@ -26,7 +26,7 @@ class VertexSpecSpec extends Specification {
         setup:
         Vertex vertex = graph.vertex 'step1'
         VertexSpec spec = new VertexSpec()
-        spec.connectsTo 'step2', 'step3'
+        spec.edgesFirst 'step2', 'step3'
 
         when:
         spec.applyToGraphAndVertex(graph, vertex)
@@ -55,7 +55,7 @@ class VertexSpecSpec extends Specification {
         VertexSpec spec = VertexSpec.newInstance(graph) {
             name = 'step1'
             traits Mapping, Weight
-            connectsTo 'step2', 'step3'
+            edgesFirst 'step2', 'step3'
             config {
                 label = 'the first step'
                 weight 100
@@ -65,7 +65,7 @@ class VertexSpecSpec extends Specification {
         then:
         spec.name == 'step1'
         spec.traits == [Mapping, Weight] as Set<Class>
-        spec.connectsTo == ['step2', 'step3'] as Set<String>
+        spec.edgesFirst() == ['step2', 'step3'] as Set<String>
         spec.config != null
         spec.config instanceof Closure
     }

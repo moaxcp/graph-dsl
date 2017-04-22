@@ -82,17 +82,42 @@ class GraphVertexSpec extends Specification {
         vertex.delegate instanceof Weight
     }
 
-    def 'can add edges using connectsTo with vertex(Closure)'() {
+    def 'can add edges using edgesFirst with vertex(Closure)'() {
         when:
         graph.vertex {
             name = 'step1'
-            connectsTo 'step2', 'step3'
+            edgesFirst 'step2', 'step3'
+        }
+        def edgeOne = graph.edges.find {
+            it.one == 'step1' && it.two == 'step2'
+        }
+        def edgeTwo = graph.edges.find {
+            it.one == 'step1' && it.two == 'step3'
         }
 
         then:
         graph.edges.size() == 2
-        graph.edges.contains(new Edge(one:'step1', two:'step2'))
-        graph.edges.contains(new Edge(one:'step1', two:'step2'))
+        edgeOne != null
+        edgeTwo != null
+    }
+
+    def 'can add edges using edgesSecond with vertex(Closure)'() {
+        when:
+        graph.vertex {
+            name = 'step1'
+            edgesSecond 'step2', 'step3'
+        }
+        def edgeOne = graph.edges.find {
+            it.one == 'step2' && it.two == 'step1'
+        }
+        def edgeTwo = graph.edges.find {
+            it.one == 'step3' && it.two == 'step1'
+        }
+
+        then:
+        graph.edges.size() == 2
+        edgeOne != null
+        edgeTwo != null
     }
 
     def 'can add/get vertex with vertex(Map)'() {
@@ -126,14 +151,36 @@ class GraphVertexSpec extends Specification {
         vertex.delegate instanceof Weight
     }
 
-    def 'can add edges using connectsTo with vertex(Map)'() {
+    def 'can add edges using edgesFirst with vertex(Map)'() {
         when:
-        graph.vertex name:'step1', connectsTo:['step2', 'step3']
+        graph.vertex name:'step1', edgesFirst:['step2', 'step3']
+        def edgeOne = graph.edges.find {
+            it.one == 'step1' && it.two == 'step2'
+        }
+        def edgeTwo = graph.edges.find {
+            it.one == 'step1' && it.two == 'step3'
+        }
 
         then:
         graph.edges.size() == 2
-        graph.edges.contains(new Edge(one:'step1', two:'step2'))
-        graph.edges.contains(new Edge(one:'step1', two:'step2'))
+        edgeOne != null
+        edgeTwo != null
+    }
+
+    def 'can add edges using edgesSecond with vertex(Map)'() {
+        when:
+        graph.vertex name:'step1', edgesSecond:['step2', 'step3']
+        def edgeOne = graph.edges.find {
+            it.one == 'step2' && it.two == 'step1'
+        }
+        def edgeTwo = graph.edges.find {
+            it.one == 'step3' && it.two == 'step1'
+        }
+
+        then:
+        graph.edges.size() == 2
+        edgeOne != null
+        edgeTwo != null
     }
 
     def 'can configure vertex traits with VertexSpec.config(Closure) in vertex(Map)'() {
