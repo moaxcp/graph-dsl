@@ -13,7 +13,8 @@ class VertexSpec {
      */
     String name
     private Set<Class> traits = [] as Set<Class>
-    private Set<String> connectsTo = [] as Set<String>
+    private Set<String> edgesFirst = [] as Set<String>
+    private Set<String> edgesSecond = [] as Set<String>
     private Closure config
 
     /**
@@ -28,8 +29,8 @@ class VertexSpec {
      * The set of edges to create between the {@link Vertex} and other vertices.
      * @return The names of vertices the {@link Vertex} should connect to.
      */
-    Set<String> getConnectsTo() {
-        connectsTo
+    Set<String> edgesFirst() {
+        edgesFirst
     }
 
     /**
@@ -49,11 +50,21 @@ class VertexSpec {
     }
 
     /**
-     * Adds to the names the {@link Vertex} should connect to.
+     * Adds to the names the {@link Vertex} should connect to. In the resulting edge the vertex named by this spec
+     * will be edge.one.
      * @param names
      */
-    void connectsTo(String... names) {
-        connectsTo.addAll(names)
+    void edgesFirst(String... names) {
+        edgesFirst.addAll(names)
+    }
+
+    /**
+     * Adds to the names the {@link Vertex} should connect to. In the resulting edge the vertex named by this spec
+     * will be edge.two.
+     * @param names
+     */
+    void edgesSecond(String... names) {
+        edgesSecond.addAll(names)
     }
 
     /**
@@ -69,7 +80,7 @@ class VertexSpec {
      * <p>
      * 1. renames vertex to name if set
      * 2. applies traits to the vertex
-     * 3. connects the vertex vertices listed in connectsTo set
+     * 3. connects the vertex vertices listed in edgesFirst set
      * 4. configures the vertex using vertex << config
      * @param graph
      * @param vertex
@@ -81,8 +92,11 @@ class VertexSpec {
         if (traits) {
             vertex.delegateAs(traits as Class[])
         }
-        connectsTo.each {
+        edgesFirst.each {
             graph.edge vertex.name, it
+        }
+        edgesSecond.each {
+            graph.edge it, vertex.name
         }
         if(config) {
             vertex << config
@@ -109,7 +123,7 @@ class VertexSpec {
      * creates a new instance of a VertexSpec using the provided Map. Valid values that can be in the Map are:
      * <p>
      * traits - list of traits to be applied to the {@link Vertex}<br>
-     * connectsTo - list of vertices to connect the {@link Vertex} to.<br>
+     * edgesFirst - list of vertices to connect the {@link Vertex} to.<br>
      * config - closure to be applied to the {@link Vertex} after traits and edges are created.
      * <p>
      * All other values are ignored.
@@ -121,8 +135,11 @@ class VertexSpec {
         if (map.traits) {
             spec.traits(map.traits as Class[])
         }
-        if (map.connectsTo) {
-            spec.connectsTo(map.connectsTo as String[])
+        if (map.edgesFirst) {
+            spec.edgesFirst(map.edgesFirst as String[])
+        }
+        if(map.edgesSecond) {
+            spec.edgesSecond(map.edgesSecond as String[])
         }
         if(map.config) {
             spec.config(map.config)

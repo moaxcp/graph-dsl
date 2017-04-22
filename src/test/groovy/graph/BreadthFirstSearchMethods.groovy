@@ -10,9 +10,9 @@ class BreadthFirstSearchMethods extends Specification {
 
     def setup() {
         graph.with {
-            vertex 'A', [connectsTo:['B', 'D']]
-            vertex 'B', [connectsTo:['C', 'D']]
-            vertex 'D', [connectsTo:['C', 'E', 'A']]
+            vertex 'A', [edgesFirst:['B', 'D'], edgesSecond:['D']]
+            vertex 'B', [edgesFirst:['C', 'D']]
+            vertex 'D', [edgesFirst:['C', 'E']]
         }
         graph.breadthFirstTraversal {
             visit { vertex ->
