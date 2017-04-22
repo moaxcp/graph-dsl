@@ -12,7 +12,7 @@ It is designed to be groovy, using closures and metaprogramming for minimal setu
 
 ```groovy
 #!/usr/bin/env groovy
-@Grab(group='com.github.moaxcp', module='graph-dsl', version='xxx')
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.11.0')
 import static graph.Graph.graph
 
 graph {
@@ -79,7 +79,7 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
-## x.x.x
+## 0.11.0
 
 Removing connectsTo from VertexSpec and replacing it with edgesFirst and edgesSecond. This helps in creating directed graphs
 using the vertex methods. It also helps when creating vertices first then applying the DirectedGraphPlugin.
