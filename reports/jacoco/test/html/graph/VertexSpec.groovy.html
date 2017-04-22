@@ -13,7 +13,8 @@ class VertexSpec {
      */
     String name
 <span class="fc" id="L15">    private Set&lt;Class&gt; traits = [] as Set&lt;Class&gt;</span>
-<span class="fc" id="L16">    private Set&lt;String&gt; connectsTo = [] as Set&lt;String&gt;</span>
+<span class="fc" id="L16">    private Set&lt;String&gt; edgesFirst = [] as Set&lt;String&gt;</span>
+<span class="fc" id="L17">    private Set&lt;String&gt; edgesSecond = [] as Set&lt;String&gt;</span>
     private Closure config
 
     /**
@@ -21,15 +22,15 @@ class VertexSpec {
      * @return
      */
     Set&lt;Class&gt; getTraits() {
-<span class="pc" id="L24">        traits</span>
+<span class="pc" id="L25">        traits</span>
     }
 
     /**
      * The set of edges to create between the {@link Vertex} and other vertices.
      * @return The names of vertices the {@link Vertex} should connect to.
      */
-    Set&lt;String&gt; getConnectsTo() {
-<span class="pc" id="L32">        connectsTo</span>
+    Set&lt;String&gt; edgesFirst() {
+<span class="pc" id="L33">        edgesFirst</span>
     }
 
     /**
@@ -37,7 +38,7 @@ class VertexSpec {
      * @return
      */
     Closure getConfig() {
-<span class="pc" id="L40">        config</span>
+<span class="pc" id="L41">        config</span>
     }
 
     /**
@@ -45,15 +46,25 @@ class VertexSpec {
      * @param traits - added to the set
      */
     void traits(Class... traits) {
-<span class="fc" id="L48">        this.traits.addAll(traits)</span>
+<span class="fc" id="L49">        this.traits.addAll(traits)</span>
     }
 
     /**
-     * Adds to the names the {@link Vertex} should connect to.
+     * Adds to the names the {@link Vertex} should connect to. In the resulting edge the vertex named by this spec
+     * will be edge.one.
      * @param names
      */
-    void connectsTo(String... names) {
-<span class="fc" id="L56">        connectsTo.addAll(names)</span>
+    void edgesFirst(String... names) {
+<span class="fc" id="L58">        edgesFirst.addAll(names)</span>
+    }
+
+    /**
+     * Adds to the names the {@link Vertex} should connect to. In the resulting edge the vertex named by this spec
+     * will be edge.two.
+     * @param names
+     */
+    void edgesSecond(String... names) {
+<span class="fc" id="L67">        edgesSecond.addAll(names)</span>
     }
 
     /**
@@ -61,7 +72,7 @@ class VertexSpec {
      * @param config added to the config member variable
      */
     void config(@DelegatesTo(Vertex) Closure config) {
-<span class="fc" id="L64">        this.config = config</span>
+<span class="fc" id="L75">        this.config = config</span>
     }
 
     /**
@@ -69,23 +80,26 @@ class VertexSpec {
      * &lt;p&gt;
      * 1. renames vertex to name if set
      * 2. applies traits to the vertex
-     * 3. connects the vertex vertices listed in connectsTo set
+     * 3. connects the vertex vertices listed in edgesFirst set
      * 4. configures the vertex using vertex &lt;&lt; config
      * @param graph
      * @param vertex
      */
     void applyToGraphAndVertex(Graph graph, Vertex vertex) {
-<span class="fc bfc" id="L78" title="All 2 branches covered.">        if(name) {</span>
-<span class="fc" id="L79">            graph.rename(vertex.name, name)</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if(name) {</span>
+<span class="fc" id="L90">            graph.rename(vertex.name, name)</span>
         }
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (traits) {</span>
-<span class="fc" id="L82">            vertex.delegateAs(traits as Class[])</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (traits) {</span>
+<span class="fc" id="L93">            vertex.delegateAs(traits as Class[])</span>
         }
-<span class="fc" id="L84">        connectsTo.each {</span>
-<span class="pc" id="L85">            graph.edge vertex.name, it</span>
+<span class="fc" id="L95">        edgesFirst.each {</span>
+<span class="pc" id="L96">            graph.edge vertex.name, it</span>
         }
-<span class="fc bfc" id="L87" title="All 2 branches covered.">        if(config) {</span>
-<span class="fc" id="L88">            vertex &lt;&lt; config</span>
+<span class="fc" id="L98">        edgesSecond.each {</span>
+<span class="pc" id="L99">            graph.edge it, vertex.name</span>
+        }
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if(config) {</span>
+<span class="fc" id="L102">            vertex &lt;&lt; config</span>
         }
     }
 
@@ -97,19 +111,19 @@ class VertexSpec {
      * @return the resulting VertexSpec
      */
     static VertexSpec newInstance(Graph graph, @DelegatesTo(VertexSpec) Closure closure) {
-<span class="fc" id="L100">        VertexSpec spec = new VertexSpec()</span>
+<span class="fc" id="L114">        VertexSpec spec = new VertexSpec()</span>
 
-<span class="fc" id="L102">        Closure code = closure.rehydrate(spec, graph, graph)</span>
-<span class="fc" id="L103">        code()</span>
+<span class="fc" id="L116">        Closure code = closure.rehydrate(spec, graph, graph)</span>
+<span class="fc" id="L117">        code()</span>
 
-<span class="pc" id="L105">        spec</span>
+<span class="pc" id="L119">        spec</span>
     }
 
     /**
      * creates a new instance of a VertexSpec using the provided Map. Valid values that can be in the Map are:
      * &lt;p&gt;
      * traits - list of traits to be applied to the {@link Vertex}&lt;br&gt;
-     * connectsTo - list of vertices to connect the {@link Vertex} to.&lt;br&gt;
+     * edgesFirst - list of vertices to connect the {@link Vertex} to.&lt;br&gt;
      * config - closure to be applied to the {@link Vertex} after traits and edges are created.
      * &lt;p&gt;
      * All other values are ignored.
@@ -117,18 +131,21 @@ class VertexSpec {
      * @return
      */
     static VertexSpec newInstance(Map&lt;String, ?&gt; map) {
-<span class="fc" id="L120">        VertexSpec spec = new VertexSpec(name:map.name)</span>
-<span class="fc bfc" id="L121" title="All 2 branches covered.">        if (map.traits) {</span>
-<span class="fc" id="L122">            spec.traits(map.traits as Class[])</span>
+<span class="fc" id="L134">        VertexSpec spec = new VertexSpec(name:map.name)</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (map.traits) {</span>
+<span class="fc" id="L136">            spec.traits(map.traits as Class[])</span>
         }
-<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (map.connectsTo) {</span>
-<span class="fc" id="L125">            spec.connectsTo(map.connectsTo as String[])</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        if (map.edgesFirst) {</span>
+<span class="fc" id="L139">            spec.edgesFirst(map.edgesFirst as String[])</span>
         }
-<span class="fc bfc" id="L127" title="All 2 branches covered.">        if(map.config) {</span>
-<span class="fc" id="L128">            spec.config(map.config)</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if(map.edgesSecond) {</span>
+<span class="fc" id="L142">            spec.edgesSecond(map.edgesSecond as String[])</span>
+        }
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        if(map.config) {</span>
+<span class="fc" id="L145">            spec.config(map.config)</span>
         }
 
-<span class="pc" id="L131">        spec</span>
+<span class="pc" id="L148">        spec</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
