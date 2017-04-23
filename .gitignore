@@ -1,6 +1,3 @@
-.gradle
-build
-.idea/
-*.iml
-*.iws
-signingkey.gpg
+_site
+.sass-cache
+.jekyll-metadata
