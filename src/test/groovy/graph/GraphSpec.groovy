@@ -1,6 +1,7 @@
 package graph
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class GraphSpec extends Specification {
     def 'can only apply Plugin once'() {
@@ -37,5 +38,15 @@ class GraphSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
+    }
+
+    @Unroll
+    def 'dynamic method and property returns spec with name set'() {
+        expect:
+        spec instanceof VertexSpec
+        spec.name =='step1'
+
+        where:
+        spec << [new Graph().step1, new Graph().step1(), new Graph().step2(name:'step1')]
     }
 }

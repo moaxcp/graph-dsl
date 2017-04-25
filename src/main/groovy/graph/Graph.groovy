@@ -766,4 +766,32 @@ class Graph {
         }
         ec
     }
+
+    /**
+     * Creates a {@link VertexSpec}
+     * @param name
+     * @return a {@link VertexSpec} with name set to the property name.
+     */
+    def propertyMissing(String name) {
+        VertexSpec.newInstance(name:name)
+    }
+
+    /**
+     * Creates a {@link VertexSpec}. The result is similar to calling {@link VertexSpec#newInstance(Map)}
+     * <pre>
+     *     VertexSpec.newInstance([name:name + args[0])
+     * </pre>
+     * @param name
+     * @param args
+     * @return a {@link VertexSpec}
+     */
+    def methodMissing(String name, args) {
+        if(args.size() == 0) {
+            return VertexSpec.newInstance(name:name)
+        }
+
+        if(args.size() == 1) {
+            return VertexSpec.newInstance([name:name] + args[0])
+        }
+    }
 }
