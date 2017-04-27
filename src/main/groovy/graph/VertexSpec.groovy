@@ -147,4 +147,30 @@ class VertexSpec {
 
         spec
     }
+
+    /**
+     * Creates a new {@link VertexSpec} from members in this {@link VertexSpec} and the spec param. Members in the spec
+     * param override the members in this. The config closure is appended if set.
+     * @param spec
+     * @return A new spec
+     */
+    VertexSpec overlay(VertexSpec spec) {
+        VertexSpec next = new VertexSpec()
+        if(spec.name) {
+            next.name = spec.name
+        } else {
+            next.name = name
+        }
+
+        next.traits ((traits + spec.traits) as Class[])
+        next.edgesFirst ((edgesFirst + spec.edgesFirst) as String[])
+        next.edgesSecond ((edgesSecond + spec.edgesSecond) as String[])
+
+        if(config) {
+            next.config config << spec.config
+        } else {
+            next.config spec.config
+        }
+        next
+    }
 }

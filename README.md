@@ -79,6 +79,32 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
+## 0.12.0
+
+This release introduces a new way of creating a Vertex. The new methods allow vertices to be created without using strings for names.
+Vertices can now be added with the following syntax.
+
+```groovy
+graph.with {
+    vertex step1
+    vertex step2(traits:Mapping)
+    vertex step3 {
+        traits:Mapping
+        config {
+            label = 'step3'
+        }
+    }
+    vertex step4(traits:Mapping) {
+        config {
+            label = 'step4'
+        }
+    }
+}
+```
+
+This was achieve by adding propertyMissing and methodMissing to Graph which return a VertexSpec. A vertex(VertexSpec) method was
+added to allow this syntax.
+
 ## 0.11.0
 
 Removing connectsTo from VertexSpec and replacing it with edgesFirst and edgesSecond. This helps in creating directed graphs
