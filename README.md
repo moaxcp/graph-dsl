@@ -79,7 +79,7 @@ Contributions are welcome. Please submit a pull request to the develop branch in
 
 # Releases
 
-## x.x.x
+## 0.12.0
 
 This release introduces a new way of creating a Vertex. The new methods allow vertices to be created without using strings for names.
 Vertices can now be added with the following syntax.
