@@ -147,5 +147,31 @@ class VertexSpec {
 
 <span class="pc" id="L148">        spec</span>
     }
+
+    /**
+     * Creates a new {@link VertexSpec} from members in this {@link VertexSpec} and the spec param. Members in the spec
+     * param override the members in this. The config closure is appended if set.
+     * @param spec
+     * @return A new spec
+     */
+    VertexSpec overlay(VertexSpec spec) {
+<span class="fc" id="L158">        VertexSpec next = new VertexSpec()</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">        if(spec.name) {</span>
+<span class="fc" id="L160">            next.name = spec.name</span>
+        } else {
+<span class="fc" id="L162">            next.name = name</span>
+        }
+
+<span class="fc" id="L165">        next.traits ((traits + spec.traits) as Class[])</span>
+<span class="fc" id="L166">        next.edgesFirst ((edgesFirst + spec.edgesFirst) as String[])</span>
+<span class="fc" id="L167">        next.edgesSecond ((edgesSecond + spec.edgesSecond) as String[])</span>
+
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if(config) {</span>
+<span class="nc" id="L170">            next.config config &lt;&lt; spec.config</span>
+        } else {
+<span class="fc" id="L172">            next.config spec.config</span>
+        }
+<span class="pc" id="L174">        next</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
