@@ -338,4 +338,29 @@ class GraphVertexSpec extends Specification {
                 new Vertex(name:'step4')
         ] as Set<Vertex>
     }
+
+    def 'can create Vertex with VertexSpec property'() {
+        when:
+        def vertex = graph.vertex graph.step1
+
+        then:
+        vertex.name == 'step1'
+    }
+
+    def 'can create Vertex with VertexSpec method'() {
+        when:
+        graph.with {
+            vertex step1(traits:Mapping) {
+                config {
+                    label = 'step1'
+                }
+            }
+        }
+        Vertex vertex = graph.vertices.step1
+
+        then:
+        vertex.name == 'step1'
+        vertex.delegate instanceof Mapping
+        vertex.label == 'step1'
+    }
 }

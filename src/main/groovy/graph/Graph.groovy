@@ -250,6 +250,17 @@ class Graph {
     }
 
     /**
+     * Creates or updates a {@link Vertex} in this graph. The {@link VertexSpec} is applied.
+     * @param spec
+     * @return
+     */
+    Vertex vertex(VertexSpec spec) {
+        Vertex vertex = vertex(spec.name)
+        spec.applyToGraphAndVertex(this, vertex)
+        vertex
+    }
+
+    /**
      * Adds an edge object directly.
      * @param edge
      * @return true if add was successful.
@@ -787,11 +798,19 @@ class Graph {
      */
     def methodMissing(String name, args) {
         if(args.size() == 0) {
-            return VertexSpec.newInstance(name:name)
+            return this."$name"
         }
 
-        if(args.size() == 1) {
+        if(args.size() == 1 && args[0] instanceof Map) {
             return VertexSpec.newInstance([name:name] + args[0])
+        }
+
+        if(args.size() == 1 && args[0] instanceof Closure) {
+            return this."$name".overlay(VertexSpec.newInstance(this, args[0]))
+        }
+
+        if(args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
+            return this."$name".overlay(this."$name"(args[0]).overlay(this."$name"(args[1])))
         }
     }
 }

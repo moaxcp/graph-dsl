@@ -109,4 +109,27 @@ class VertexSpecSpec extends Specification {
         graph.adjacentEdges('step1').size() == 3
         graph.adjacentEdges('').size() == 0
     }
+
+    def 'overlay with null'() {
+        setup:
+        VertexSpec first = new VertexSpec()
+        VertexSpec second = new VertexSpec()
+        second.name = 'step1'
+        second.traits Mapping
+        second.edgesFirst 'step2'
+        second.edgesSecond 'step3'
+        second.config {
+            label = 'step1'
+        }
+
+        when:
+        VertexSpec result = first.overlay second
+
+        then:
+        result.name == 'step1'
+        result.traits == [Mapping] as Set<Class>
+        result.edgesFirst == ['step2'] as Set<String>
+        result.edgesSecond == ['step3'] as Set<String>
+
+    }
 }
