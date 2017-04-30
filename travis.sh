@@ -41,7 +41,7 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
 
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "Build for internal pull request"
-    ./gradlew test --continue sonarqube \
+    ./gradlew sonarqube \
     -Dsonar.analysis.mode=preview \
     -Dsonar.github.oauth=$GITHUB_TOKEN \
     -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
