@@ -11,7 +11,7 @@ class VertexSpecSpec extends Specification {
         Vertex vertex = graph.vertex {
             name = 'step1'
             traits Mapping, Weight
-            config {
+            runnerCode {
                 label = 'the first step'
                 weight { 100 }
             }
@@ -29,7 +29,7 @@ class VertexSpecSpec extends Specification {
         spec.edgesFirst 'step2', 'step3'
 
         when:
-        spec.applyToGraphAndVertex(graph, vertex)
+        spec.apply(graph, vertex)
 
         then:
         graph.edges.find { new Edge(one:'step1', two:'step2') }
@@ -43,7 +43,7 @@ class VertexSpecSpec extends Specification {
         spec.traits Mapping, Weight
 
         when:
-        spec.applyToGraphAndVertex(graph, vertex)
+        spec.apply(graph, vertex)
 
         then:
         vertex.delegate instanceof Mapping
@@ -56,7 +56,7 @@ class VertexSpecSpec extends Specification {
             name = 'step1'
             traits Mapping, Weight
             edgesFirst 'step2', 'step3'
-            config {
+            runnerCode {
                 label = 'the first step'
                 weight 100
             }
@@ -65,9 +65,9 @@ class VertexSpecSpec extends Specification {
         then:
         spec.name == 'step1'
         spec.traits == [Mapping, Weight] as Set<Class>
-        spec.edgesFirst() == ['step2', 'step3'] as Set<String>
-        spec.config != null
-        spec.config instanceof Closure
+        spec.getEdgesFirst() == ['step2', 'step3'] as Set<String>
+        spec.runnerCode != null
+        spec.runnerCode instanceof Closure
     }
 
     def 'can rename with applyToGraphAndVertex(Graph, Vertex)'() {
@@ -83,7 +83,7 @@ class VertexSpecSpec extends Specification {
         spec.name = 'step5'
 
         when:
-        spec.applyToGraphAndVertex(graph, graph.vertex('step1'))
+        spec.apply(graph, graph.vertex('step1'))
 
         then:
         graph.adjacentEdges('step1').size() == 0
@@ -103,7 +103,7 @@ class VertexSpecSpec extends Specification {
         spec.name = ''
 
         when:
-        spec.applyToGraphAndVertex(graph, graph.vertex('step1'))
+        spec.apply(graph, graph.vertex('step1'))
 
         then:
         graph.adjacentEdges('step1').size() == 3
@@ -118,7 +118,7 @@ class VertexSpecSpec extends Specification {
         second.traits Mapping
         second.edgesFirst 'step2'
         second.edgesSecond 'step3'
-        second.config {
+        second.runnerCode {
             label = 'step1'
         }
 
@@ -128,7 +128,7 @@ class VertexSpecSpec extends Specification {
         then:
         result.name == 'step1'
         result.traits == [Mapping] as Set<Class>
-        result.edgesFirst == ['step2'] as Set<String>
+        result.getEdgesFirst() == ['step2'] as Set<String>
         result.edgesSecond == ['step3'] as Set<String>
 
     }

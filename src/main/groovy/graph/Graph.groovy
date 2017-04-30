@@ -123,12 +123,7 @@ class Graph {
      * @throws {@link IllegalArgumentException} When name is null or empty.
      */
     Vertex vertex(String name) {
-        if(!name) {
-            throw new IllegalArgumentException("!name failed. Name must be groovy truth.")
-        }
-        Vertex vertex = vertices[name] ?: vertexFactory.newVertex(name)
-        vertices[name] = vertex
-        vertex
+        vertex(new VertexSpec(name:name))
     }
 
     /**
@@ -143,19 +138,6 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph. See {@link VertexSpec@applyToGraphAndVertex(Graph,Vertex)} for details
-     * on how this graph and the {@link Vertex} are modified.
-     * @param closure - delegates to {@link VertexSpec}
-     * @return the resulting {@link Vertex}
-     */
-    Vertex vertex(@DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec spec = VertexSpec.newInstance(this, closure)
-        Vertex vertex = vertex(spec.name)
-        spec.applyToGraphAndVertex(this, vertex)
-        vertex
-    }
-
-    /**
      * Creates or updates a {@link Vertex} in this graph. The map must contain configuration described in
      * {@link VertexSpec#newInstance(Map)}.
      * @param map
@@ -164,7 +146,7 @@ class Graph {
     Vertex vertex(Map<String, ?> map) {
         VertexSpec spec = VertexSpec.newInstance(map)
         Vertex vertex = vertex(spec.name)
-        spec.applyToGraphAndVertex(this, vertex)
+        spec.apply(this, vertex)
         vertex
     }
 
@@ -178,7 +160,7 @@ class Graph {
     Vertex vertex(String name, @DelegatesTo(VertexSpec) Closure closure) {
         VertexSpec spec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(name)
-        spec.applyToGraphAndVertex(this, vertex)
+        spec.apply(this, vertex)
         vertex
     }
 
@@ -212,7 +194,7 @@ class Graph {
     Vertex vertex(String name, Map<String, ?> map) {
         VertexSpec spec = VertexSpec.newInstance(map)
         Vertex vertex = vertex(name)
-        spec.applyToGraphAndVertex(this, vertex)
+        spec.apply(this, vertex)
         vertex
     }
 
@@ -227,8 +209,8 @@ class Graph {
         VertexSpec mapSpec = VertexSpec.newInstance(map)
         VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(mapSpec.name)
-        mapSpec.applyToGraphAndVertex(this, vertex)
-        closureSpec.applyToGraphAndVertex(this, vertex)
+        mapSpec.apply(this, vertex)
+        closureSpec.apply(this, vertex)
         vertex
     }
 
@@ -244,8 +226,8 @@ class Graph {
         VertexSpec mapSpec = VertexSpec.newInstance(map)
         VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
         Vertex vertex = vertex(name)
-        mapSpec.applyToGraphAndVertex(this, vertex)
-        closureSpec.applyToGraphAndVertex(this, vertex)
+        mapSpec.apply(this, vertex)
+        closureSpec.apply(this, vertex)
         vertex
     }
 
@@ -255,8 +237,13 @@ class Graph {
      * @return
      */
     Vertex vertex(VertexSpec spec) {
-        Vertex vertex = vertex(spec.name)
-        spec.applyToGraphAndVertex(this, vertex)
+        if(!spec.name) {
+            throw new IllegalArgumentException("!name failed. Name must be groovy truth.")
+        }
+        Vertex vertex = vertices[spec.name] ?: vertexFactory.newVertex(spec.name)
+        vertices[spec.name] = vertex
+
+        spec.apply(this, vertex)
         vertex
     }
 
@@ -806,7 +793,7 @@ class Graph {
         }
 
         if(args.size() == 1 && args[0] instanceof Closure) {
-            return this."$name".overlay(VertexSpec.newInstance(this, args[0]))
+            return this."$name".overlay(VertexSpec.newInstance(args[0]))
         }
 
         if(args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
