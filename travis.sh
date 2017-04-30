@@ -42,8 +42,7 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "Build for internal pull request"
     #always run test and sonarqube. If tests fail they will be reported in sonar.
-    set -e
-    ./gradlew test
+    ./gradlew test || \
     ./gradlew -x test sonarqube \
     -Dsonar.analysis.mode=preview \
     -Dsonar.github.oauth=$GITHUB_TOKEN \
@@ -51,7 +50,6 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
     -Dsonar.host.url=$SONAR_HOST_URL \
     -Dsonar.login=$SONAR_TOKEN
-    set -e
     ./gradlew test #make sure build fails if tests fail
 
 else
