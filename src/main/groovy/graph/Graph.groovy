@@ -145,23 +145,20 @@ class Graph {
      */
     Vertex vertex(Map<String, ?> map) {
         VertexSpec spec = VertexSpec.newInstance(map)
-        Vertex vertex = vertex(spec.name)
-        spec.apply(this, vertex)
-        vertex
+        vertex(spec)
     }
 
     /**
      * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is delegated to a
-     * {@link VertexSpec}. See {@link VertexSpec} for details on how it modifies this graph and the {@link Vertex}.
+     * {@link VertexSpecRunner} See {@link VertexSpecRunner} for details on how it modifies this graph and the {@link Vertex}.
      * @param name
      * @param closure
      * @return
      */
-    Vertex vertex(String name, @DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec spec = VertexSpec.newInstance(this, closure)
-        Vertex vertex = vertex(name)
-        spec.apply(this, vertex)
-        vertex
+    Vertex vertex(String name, Closure closure) {
+        VertexSpec spec = new VertexSpec(name:name)
+        spec.runnerCode closure
+        vertex(spec)
     }
 
     /**
@@ -173,6 +170,10 @@ class Graph {
         if(!newName) {
             throw new IllegalArgumentException("newName is null or empty.")
         }
+        Vertex vertex = vertex(name)
+        vertices.remove(vertex.name)
+        vertex.name = newName
+        vertices[vertex.name] = vertex
         adjacentEdges(name).each {
             if(it.one == name) {
                 it.one = newName
@@ -180,7 +181,6 @@ class Graph {
             if(it.two == name) {
                 it.two = newName
             }
-            vertex(name).name = newName
         }
     }
 
@@ -192,43 +192,36 @@ class Graph {
      * @return
      */
     Vertex vertex(String name, Map<String, ?> map) {
-        VertexSpec spec = VertexSpec.newInstance(map)
-        Vertex vertex = vertex(name)
-        spec.apply(this, vertex)
-        vertex
+        VertexSpec spec = new VertexSpec(name:name)
+        spec = spec.overlay(VertexSpec.newInstance(map))
+        vertex(spec)
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph. This method creates two {@link VertexSpec} objects from the
-     * map and closure. The map is applied before the closure.
+     * Creates or updates a {@link Vertex} in this graph. The configuration given by the closure is delegated to a
+     * {@link VertexSpecRunner} See {@link VertexSpecRunner} for details on how it modifies this graph and the {@link Vertex}.
      * @param map -
      * @param closure -
      * @return the resulting vertex
      */
-    Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec mapSpec = VertexSpec.newInstance(map)
-        VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
-        Vertex vertex = vertex(mapSpec.name)
-        mapSpec.apply(this, vertex)
-        closureSpec.apply(this, vertex)
-        vertex
+    Vertex vertex(Map<String, ?> map, Closure closure) {
+        VertexSpec spec = VertexSpec.newInstance(map)
+        spec.runnerCode closure
+        vertex(spec)
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph. This method creates two {@link VertexSpec} objects from the
-     * map and closure. The map is applied before the closure.
+     * Creates or updates a {@link Vertex} in this graph.
      * @param name
      * @param map
      * @param closure
      * @return
      */
-    Vertex vertex(String name, Map<String, ?> map, @DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec mapSpec = VertexSpec.newInstance(map)
-        VertexSpec closureSpec = VertexSpec.newInstance(this, closure)
-        Vertex vertex = vertex(name)
-        mapSpec.apply(this, vertex)
-        closureSpec.apply(this, vertex)
-        vertex
+    Vertex vertex(String name, Map<String, ?> map, Closure closure) {
+        VertexSpec spec = new VertexSpec(name:name)
+        spec = spec.overlay(VertexSpec.newInstance(map))
+        spec.runnerCode closure
+        vertex(spec)
     }
 
     /**
@@ -237,14 +230,7 @@ class Graph {
      * @return
      */
     Vertex vertex(VertexSpec spec) {
-        if(!spec.name) {
-            throw new IllegalArgumentException("!name failed. Name must be groovy truth.")
-        }
-        Vertex vertex = vertices[spec.name] ?: vertexFactory.newVertex(spec.name)
-        vertices[spec.name] = vertex
-
-        spec.apply(this, vertex)
-        vertex
+        spec.apply(this)
     }
 
     /**
@@ -789,15 +775,21 @@ class Graph {
         }
 
         if(args.size() == 1 && args[0] instanceof Map) {
-            return VertexSpec.newInstance([name:name] + args[0])
+            VertexSpec spec = this."$name"
+            return spec.overlay(VertexSpec.newInstance(args[0]))
         }
 
         if(args.size() == 1 && args[0] instanceof Closure) {
-            return this."$name".overlay(VertexSpec.newInstance(args[0]))
+            VertexSpec spec = this."$name"
+            spec.runnerCode args[0]
+            return spec
         }
 
         if(args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
-            return this."$name".overlay(this."$name"(args[0]).overlay(this."$name"(args[1])))
+            VertexSpec spec = this."$name"
+            spec.overlay(VertexSpec.newInstance(args[0]))
+            spec.runnerCode = args[1]
+            return spec
         }
     }
 }

@@ -49,7 +49,7 @@ class VertexSpec {
     }
 
     /**
-     * The runnerCode applied to the {@link Vertex} using its leftShift operator.
+     * The runnerCode. This will be run against a VertexSpecRunner
      * @return
      */
     Closure getRunnerCode() {
@@ -83,10 +83,10 @@ class VertexSpec {
     }
 
     /**
-     * Sets the runnerCode closure which will be run on the {@link Vertex}.
-     * @param runnerCode added to the runnerCode member variable
+     * Sets the runnerCode closure.
+     * @param runnerCode
      */
-    void runnerCode(@DelegatesTo(Vertex) Closure runnerCode) {
+    void runnerCode(Closure runnerCode) {
         this.runnerCode = runnerCode
     }
 
@@ -98,7 +98,13 @@ class VertexSpec {
      * 3. connects the vertex vertices listed in edgesFirst set
      * @param graph
      */
-    void apply(Graph graph, Vertex vertex) {
+    Vertex apply(Graph graph) {
+        if(!name) {
+            throw new IllegalArgumentException("!name failed. Name must be groovy truth.")
+        }
+        Vertex vertex = graph.vertices[name] ?: graph.vertexFactory.newVertex(name)
+        graph.addVertex(vertex)
+
         if(rename) {
             graph.rename(name, rename)
         }
@@ -111,22 +117,8 @@ class VertexSpec {
         edgesSecond.each {
             graph.edge it, vertex.name
         }
-    }
 
-    /**
-     * Creates a new instance of a VertexSpec using the provided closure. A new {@link VertexSpec} will be the delegate
-     * while the {@link Graph} will be the owner and this.
-     * @param graph
-     * @param closure
-     * @return the resulting VertexSpec
-     */
-    static VertexSpec newInstance(@DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec spec = new VertexSpec()
-
-        Closure code = closure.rehydrate(spec, closure.owner, closure.getThisObject())
-        code()
-
-        spec
+        vertex
     }
 
     /**

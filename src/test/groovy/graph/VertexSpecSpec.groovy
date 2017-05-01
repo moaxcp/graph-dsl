@@ -4,55 +4,77 @@ import spock.lang.Specification
 
 class VertexSpecSpec extends Specification {
 
-    def graph = new Graph()
+    Graph graph = new Graph()
+    VertexSpec spec = new VertexSpec()
 
-    def 'can configure vertex traits with VertexSpec.config(Closure) in vertex(Closure)'() {
+    def 'apply throws exception on invalid name'() {
+        setup:
+        spec.name = ''
+
         when:
-        Vertex vertex = graph.vertex {
-            name = 'step1'
-            traits Mapping, Weight
-            runnerCode {
-                label = 'the first step'
-                weight { 100 }
-            }
-        }
+        spec.apply(graph)
 
         then:
-        vertex.label == 'the first step'
-        vertex.getWeight() == 100
+        thrown IllegalArgumentException
     }
 
-    def 'can add edges using connectsTo with applySpecToVertexAndGraph(VertexSpec, Vertex)'() {
+    def 'apply can add vertex'() {
         setup:
-        Vertex vertex = graph.vertex 'step1'
-        VertexSpec spec = new VertexSpec()
+        spec.name = 'step1'
+
+        when:
+        Vertex vertex = spec.apply(graph)
+
+        then:
+        graph.vertices[vertex.name] == vertex
+    }
+
+    def 'apply can rename vertex'() {
+        setup:
+        graph.vertex 'step1'
+        spec.name = 'step1'
+        spec.rename = 'step2'
+
+        when:
+        Vertex vertex = spec.apply(graph)
+
+        then:
+        graph.vertices.size() == 1
+        vertex.name == 'step2'
+        graph.vertices[vertex.name] == vertex
+    }
+
+    def 'apply can add edges using edgesFirst with'() {
+        setup:
+        spec.name = 'step1'
         spec.edgesFirst 'step2', 'step3'
 
         when:
-        spec.apply(graph, vertex)
+        spec.apply(graph)
 
         then:
+        graph.vertices.size() == 3
         graph.edges.find { new Edge(one:'step1', two:'step2') }
         graph.edges.find { new Edge(one:'step1', two:'step3') }
     }
 
-    def 'can add traits with applyToGraphAndVertex(Graph, Vertex)'() {
+    def 'apply can add traits'() {
         setup:
-        Vertex vertex = new Vertex(name:'step1')
-        VertexSpec spec = new VertexSpec()
+        spec.name = 'step1'
         spec.traits Mapping, Weight
 
         when:
-        spec.apply(graph, vertex)
+        Vertex vertex = spec.apply(graph)
 
         then:
+        graph.vertices.size() == 1
         vertex.delegate instanceof Mapping
         vertex.delegate instanceof Weight
     }
 
     def 'can make VertexSpec with Closure'() {
         when:
-        VertexSpec spec = VertexSpec.newInstance(graph) {
+        VertexSpec spec = VertexSpec.newInstance {
             name = 'step1'
             traits Mapping, Weight
             edgesFirst 'step2', 'step3'
@@ -68,46 +90,6 @@ class VertexSpecSpec extends Specification {
         spec.getEdgesFirst() == ['step2', 'step3'] as Set<String>
         spec.runnerCode != null
         spec.runnerCode instanceof Closure
-    }
-
-    def 'can rename with applyToGraphAndVertex(Graph, Vertex)'() {
-        setup:
-        graph.vertex 'step1'
-        graph.vertex 'step2'
-        graph.vertex 'step3'
-        graph.vertex 'step4'
-        graph.edge 'step1', 'step2'
-        graph.edge 'step1', 'step3'
-        graph.edge 'step4', 'step1'
-        VertexSpec spec = new VertexSpec()
-        spec.name = 'step5'
-
-        when:
-        spec.apply(graph, graph.vertex('step1'))
-
-        then:
-        graph.adjacentEdges('step1').size() == 0
-        graph.adjacentEdges('step5').size() == 3
-    }
-
-    def 'does not rename to false name applyToGraphAndVertex(Graph, Vertex)'() {
-        setup:
-        graph.vertex 'step1'
-        graph.vertex 'step2'
-        graph.vertex 'step3'
-        graph.vertex 'step4'
-        graph.edge 'step1', 'step2'
-        graph.edge 'step1', 'step3'
-        graph.edge 'step4', 'step1'
-        VertexSpec spec = new VertexSpec()
-        spec.name = ''
-
-        when:
-        spec.apply(graph, graph.vertex('step1'))
-
-        then:
-        graph.adjacentEdges('step1').size() == 3
-        graph.adjacentEdges('').size() == 0
     }
 
     def 'overlay with null'() {

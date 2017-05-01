@@ -4,6 +4,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class GraphSpec extends Specification {
+
     def 'can only apply Plugin once'() {
         setup:
         def graph = new Graph()

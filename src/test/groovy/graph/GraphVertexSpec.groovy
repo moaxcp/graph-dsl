@@ -227,6 +227,8 @@ class GraphVertexSpec extends Specification {
         graph.rename 'step1', 'step5'
 
         then:
+        graph.vertices['step1'] == null
+        graph.vertices.size() == 4
         graph.adjacentEdges('step1').size() == 0
         graph.adjacentEdges('step5').size() == 3
     }
