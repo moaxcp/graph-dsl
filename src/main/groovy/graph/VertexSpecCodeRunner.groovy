@@ -66,6 +66,14 @@ class VertexSpecCodeRunner {
         vertex[name] = value
     }
 
+    /**
+     * This object becomes the delegate of closure and then closure is called. The methods
+     * in this object become available in the closure along with the properties vertex and graph.
+     * If methods or properties are missing then vertex is checked. Otherwise standard closure delegation
+     * takes place (owner, this).
+     * @param closure
+     * @return
+     */
     def runCode(@DelegatesTo(VertexSpecCodeRunner) Closure closure) {
         closure.delegate = this
         closure()

@@ -150,7 +150,7 @@ class Graph {
 
     /**
      * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is delegated to a
-     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner} for details on how it modifies this graph and the {@link Vertex}.
+     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure} for details on how it modifies this graph and the {@link Vertex}.
      * @param name
      * @param closure
      * @return
@@ -199,7 +199,7 @@ class Graph {
 
     /**
      * Creates or updates a {@link Vertex} in this graph. The configuration given by the closure is delegated to a
-     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner} for details on how it modifies this graph and the {@link Vertex}.
+     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure)} for details on how it modifies this graph and the {@link Vertex}.
      * @param map -
      * @param closure -
      * @return the resulting vertex
