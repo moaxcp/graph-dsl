@@ -23,7 +23,7 @@ class Graph {
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
     private Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
     private EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
-    private VertexFactory vertexFactory = new DefaultVertexFactory()
+    VertexFactory vertexFactory = new DefaultVertexFactory()
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
