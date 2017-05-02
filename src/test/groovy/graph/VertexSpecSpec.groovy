@@ -44,20 +44,6 @@ class VertexSpecSpec extends Specification {
         graph.vertices[vertex.name] == vertex
     }
 
-    def 'apply can add edges using edgesFirst with'() {
-        setup:
-        spec.name = 'step1'
-        spec.edgesFirst 'step2', 'step3'
-
-        when:
-        spec.apply(graph)
-
-        then:
-        graph.vertices.size() == 3
-        graph.edges.find { new Edge(one:'step1', two:'step2') }
-        graph.edges.find { new Edge(one:'step1', two:'step3') }
-    }
-
     def 'apply can add traits'() {
         setup:
         spec.name = 'step1'
@@ -72,24 +58,32 @@ class VertexSpecSpec extends Specification {
         vertex.delegate instanceof Weight
     }
 
-    def 'can make VertexSpec with Closure'() {
+    def 'apply can add edges using edgesFirst'() {
+        setup:
+        spec.name = 'step1'
+        spec.edgesFirst 'step2', 'step3'
+
         when:
-        VertexSpec spec = VertexSpec.newInstance {
-            name = 'step1'
-            traits Mapping, Weight
-            edgesFirst 'step2', 'step3'
-            runnerCode {
-                label = 'the first step'
-                weight 100
-            }
-        }
+        spec.apply(graph)
 
         then:
-        spec.name == 'step1'
-        spec.traits == [Mapping, Weight] as Set<Class>
-        spec.getEdgesFirst() == ['step2', 'step3'] as Set<String>
-        spec.runnerCode != null
-        spec.runnerCode instanceof Closure
+        graph.vertices.size() == 3
+        graph.edges.find { new Edge(one:'step1', two:'step2') }
+        graph.edges.find { new Edge(one:'step1', two:'step3') }
+    }
+
+    def 'apply can ad edges using edgesSecond'() {
+        setup:
+        spec.name = 'step1'
+        spec.edgesSecond 'step2', 'step3'
+
+        when:
+        spec.apply(graph)
+
+        then:
+        graph.vertices.size() == 3
+        graph.edges.find { new Edge(one:'step2', two:'step1') }
+        graph.edges.find { new Edge(one:'step3', two:'step1') }
     }
 
     def 'overlay with null'() {
@@ -97,6 +91,7 @@ class VertexSpecSpec extends Specification {
         VertexSpec first = new VertexSpec()
         VertexSpec second = new VertexSpec()
         second.name = 'step1'
+        second.rename = 'step2'
         second.traits Mapping
         second.edgesFirst 'step2'
         second.edgesSecond 'step3'
@@ -109,9 +104,10 @@ class VertexSpecSpec extends Specification {
 
         then:
         result.name == 'step1'
+        result.rename == 'step2'
         result.traits == [Mapping] as Set<Class>
         result.getEdgesFirst() == ['step2'] as Set<String>
         result.edgesSecond == ['step3'] as Set<String>
-
+        result.runnerCode != null
     }
 }

@@ -49,7 +49,7 @@ class VertexSpec {
     }
 
     /**
-     * The runnerCode. This will be run against a VertexSpecRunner
+     * The runnerCode. This will be run against a VertexSpecCodeRunner
      * @return
      */
     Closure getRunnerCode() {
@@ -116,6 +116,11 @@ class VertexSpec {
         }
         edgesSecond.each {
             graph.edge it, vertex.name
+        }
+
+        if(runnerCode) {
+            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph, vertex)
+            runner.runCode(runnerCode)
         }
 
         vertex

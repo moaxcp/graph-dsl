@@ -150,7 +150,7 @@ class Graph {
 
     /**
      * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is delegated to a
-     * {@link VertexSpecRunner} See {@link VertexSpecRunner} for details on how it modifies this graph and the {@link Vertex}.
+     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner} for details on how it modifies this graph and the {@link Vertex}.
      * @param name
      * @param closure
      * @return
@@ -199,7 +199,7 @@ class Graph {
 
     /**
      * Creates or updates a {@link Vertex} in this graph. The configuration given by the closure is delegated to a
-     * {@link VertexSpecRunner} See {@link VertexSpecRunner} for details on how it modifies this graph and the {@link Vertex}.
+     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner} for details on how it modifies this graph and the {@link Vertex}.
      * @param map -
      * @param closure -
      * @return the resulting vertex
@@ -787,7 +787,7 @@ class Graph {
 
         if(args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
             VertexSpec spec = this."$name"
-            spec.overlay(VertexSpec.newInstance(args[0]))
+            spec = spec.overlay(VertexSpec.newInstance(args[0]))
             spec.runnerCode = args[1]
             return spec
         }

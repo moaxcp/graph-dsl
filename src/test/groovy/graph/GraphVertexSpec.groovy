@@ -105,10 +105,10 @@ class GraphVertexSpec extends Specification {
         edgeTwo != null
     }
 
-    def 'can configure vertex traits with VertexSpec.config(Closure) in vertex(Map)'() {
+    def 'can configure vertex traits with VertexSpec.runnerCode(Closure) in vertex(Map)'() {
         when:
         Vertex vertex = graph.vertex name:'step1', traits:[Mapping, Weight],
-            config:{
+            runnerCode:{
                 label = 'the first step'
                 weight { 100 }
             }
@@ -275,9 +275,7 @@ class GraphVertexSpec extends Specification {
         when:
         graph.with {
             vertex step1(traits:Mapping) {
-                config {
-                    label = 'step1'
-                }
+                label = 'step1'
             }
         }
         Vertex vertex = graph.vertices.step1
