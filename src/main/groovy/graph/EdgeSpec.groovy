@@ -25,7 +25,7 @@ class EdgeSpec {
     }
 
     /**
-     * The runnerCode applied to the {@link Edge} using its {@link Edge#leftShift(Edge)} operator.
+     * The config applied to the {@link Edge} using its {@link Edge#leftShift(Edge)} operator.
      * @return
      */
     Closure getConfig() {
@@ -41,7 +41,7 @@ class EdgeSpec {
     }
 
     /**
-     * Sets the runnerCode closure which will be run on the {@link Edge}.
+     * Sets the config closure which will be run on the {@link Edge}.
      * @param config
      */
     void config(@DelegatesTo(Edge) Closure config) {
@@ -54,7 +54,7 @@ class EdgeSpec {
      * 1. creates or gets the vertex and sets edge.one to one
      * 2. creates or gets the vertex and sets edge.two to two
      * 3. applies traits to edge using delegateAs
-     * 4. configures the edge using edge << runnerCode
+     * 4. configures the edge using edge << config
      * @param graph
      * @param edge
      */
@@ -95,7 +95,7 @@ class EdgeSpec {
      * Creates a new instance of an {@link EdgeSpec} using the provided Map. Valid values that can be in the Map are:
      * <p>
      * traits - list of traits to be applied to the {@link Edge}<br>
-     * runnerCode - closure to be applied to the {@link Edge}
+     * config - closure to be applied to the {@link Edge}
      * <p>
      * @param map
      * @return
