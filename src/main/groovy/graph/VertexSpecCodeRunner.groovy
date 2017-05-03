@@ -1,37 +1,58 @@
 package graph
 
+/**
+ * Delegate of the runnerCode closure in {@link VertexSpec}. This provides methods and properties that can be used in
+ * the closure. If method and property missing is delegated to the vertex.
+ */
 class VertexSpecCodeRunner {
     private Graph graph
     private Vertex vertex
 
-    public VertexSpecCodeRunner(Graph graph, Vertex vertex) {
-        this.graph = graph
-        this.vertex = vertex
-    }
-
+    /**
+     * @return the graph this vertex is being added to.
+     */
     Graph getGraph() {
         graph
     }
 
+    /**
+     * @return the vertex created by {@link VertexSpec}.
+     */
     Vertex getVertex() {
         vertex
     }
 
-    public rename(String newName) {
+    /**
+     * renames the vertex to newName
+     * @param newName
+     */
+    void rename(String newName) {
         graph.rename(vertex.name, newName)
     }
 
-    public traits(Class... traits) {
+    /**
+     * Adds traits to the vertex.
+     * @param traits
+     */
+    void traits(Class... traits) {
         vertex.delegateAs(traits as Class[])
     }
 
-    public edgesFirst(String... names) {
+    /**
+     * Creates edges where the vertex is edge.one and each name in names is edge.two.
+     * @param names of vertices to connect to.
+     */
+    void edgesFirst(String... names) {
         names.each {
             graph.edge vertex.name, it
         }
     }
 
-    public edgesSecond(String... names) {
+    /**
+     * Creates edges where the vertex is edge.two and each name in names is edge.one.
+     * @param names of vetices to connect to.
+     */
+    void edgesSecond(String... names) {
         names.each {
             graph.edge it, vertex.name
         }

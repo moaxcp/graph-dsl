@@ -37,7 +37,7 @@ class VertexSpec {
      * @return The names of vertices the {@link Vertex} should connect to.
      */
     Set<String> getEdgesFirst() {
-        edgesFirst
+        Collections.unmodifiableSet(edgesFirst)
     }
 
     /**
@@ -45,7 +45,7 @@ class VertexSpec {
      * @return The names of vertices the {@link Vertex} should connect to.
      */
     Set<String> getEdgesSecond() {
-        edgesSecond
+        Collections.unmodifiableSet(edgesSecond)
     }
 
     /**
@@ -93,9 +93,10 @@ class VertexSpec {
     /**
      * Applies this {@link VertexSpec} to the {@link Vertex} and {@link Graph}. Members from this spec are applied in this order:
      * <p>
-     * 1. renames vertex to rename if set
-     * 2. applies traits to the vertex
-     * 3. connects the vertex vertices listed in edgesFirst set
+     * 1. renames vertex to rename if set<br>
+     * 2. applies traits to the vertex<br>
+     * 3. creates edges between the vertex and edgesFirst where the vertex is edge.one<br>
+     * 4. creates edges between the vertex and edgesFirst where the vertex is edge.one<br>
      * @param graph
      */
     Vertex apply(Graph graph) {
@@ -119,7 +120,7 @@ class VertexSpec {
         }
 
         if(runnerCode) {
-            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph, vertex)
+            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph:graph, vertex:vertex)
             runner.runCode(runnerCode)
         }
 
@@ -132,7 +133,8 @@ class VertexSpec {
      * name - the name of the vertex to create or update<br>
      * rename - what to rename the vertex<br>
      * traits - list of traits to be applied to the {@link Vertex}<br>
-     * getEdgesFirst - list of vertices to connect the {@link Vertex} to.<br>
+     * edgesFirst - list of vertices to connect the {@link Vertex} to. The vertex is edge.one<br>
+     * edgesSecond - list of vertices to connect the {@link Vertex} to. The vertex is edge.two<br>
      * runnerCode - closure to be applied to the {@link Vertex} after traits and edges are created.
      * <p>
      * All other values are ignored.
