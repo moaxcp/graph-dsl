@@ -60,7 +60,19 @@ git clone https://github.com/moaxcp/graph-dsl.git
 
 # Contributing
 
-Contributions are welcome. Please submit a pull request to the develop branch in github. If there are any issues contact me moaxcp@gmail.com.
+Contributions are welcome. Please submit a pull request to the develop branch in github.
+
+## Ways to contribute
+
+Even if you are just learning groovy there are many ways to contribute.
+
+* Fix a codenarc issue. See [codenarc report](https://moaxcp.github.io/graph-dsl/reports/codenarc/main.html)
+* Add/fix groovydoc
+* create a wiki page
+* create a plugin
+* add a graph algorithm
+
+If there are any issues contact me moaxcp@gmail.com.
 
 # Technology
 

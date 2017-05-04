@@ -19,10 +19,12 @@ import groovy.transform.PackageScope
  * graph. For more information on plugins see {@link Plugin}.
  */
 class Graph {
-    private Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
+    private final Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
-    private Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
-    private EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
+    private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
+    @PackageScope
+    EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
+    @PackageScope
     VertexFactory vertexFactory = new DefaultVertexFactory()
 
     /**
@@ -47,11 +49,11 @@ class Graph {
         /**
          * a discovered vertex that still needs work
          */
-                GREY,
+        GREY,
         /**
          * a vertex that the algorithm is done with
          */
-                BLACK
+         BLACK
     }
 
     /**
@@ -60,7 +62,7 @@ class Graph {
      * @return
      */
     static Graph graph(Closure c) {
-        def graph = new Graph()
+        Graph graph = new Graph()
         graph.with(c)
         graph
     }
@@ -149,8 +151,9 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is delegated to a
-     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure} for details on how it modifies this graph and the {@link Vertex}.
+     * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is
+     * delegated to a {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure } for details on how
+     * it modifies this graph and the { @ link Vertex } .
      * @param name
      * @param closure
      * @return
@@ -167,26 +170,26 @@ class Graph {
      * @param newName
      */
     void rename(String name, String newName) {
-        if(!newName) {
-            throw new IllegalArgumentException("newName is null or empty.")
+        if (!newName) {
+            throw new IllegalArgumentException('newName is null or empty.')
         }
         Vertex vertex = vertex(name)
         vertices.remove(vertex.name)
         vertex.name = newName
         vertices[vertex.name] = vertex
         adjacentEdges(name).each {
-            if(it.one == name) {
+            if (it.one == name) {
                 it.one = newName
             }
-            if(it.two == name) {
+            if (it.two == name) {
                 it.two = newName
             }
         }
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given name. The map must contain configuration described in
-     * {@link VertexSpec#newInstance(Map)}.
+     * Creates or updates a {@link Vertex} in this graph with the given name. The map must contain configuration
+     * described in {@link VertexSpec#newInstance(Map)}.
      * @param name
      * @param map
      * @return
@@ -199,7 +202,8 @@ class Graph {
 
     /**
      * Creates or updates a {@link Vertex} in this graph. The configuration given by the closure is delegated to a
-     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure)} for details on how it modifies this graph and the {@link Vertex}.
+     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure)} for details on how it modifies
+     * this graph and the {@link Vertex}.
      * @param map -
      * @param closure -
      * @return the resulting vertex
@@ -253,14 +257,14 @@ class Graph {
     Edge edge(String one, String two) {
         vertex(one, two)
         Edge e = edgeFactory.newEdge(one, two)
-        Edge edge = edges.find  { it == e } ?: e
+        Edge edge = edges.find { it == e } ?: e
         edges << edge
         edge
     }
 
     /**
-     * Creates or updates a {@link Edge} in this graph. See {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)} for details
-     * on how this graph and the {@link Edge} are modified.
+     * Creates or updates a {@link Edge} in this graph. See {@link EdgeSpec#applyToGraphAndEdge(Graph, Edge)} for
+     * details on how this graph and the {@link Edge} are modified.
      * @param closure - delegates to {@link EdgeSpec}
      * @return the resulting {@link Edge}
      */
@@ -285,8 +289,9 @@ class Graph {
     }
 
     /**
-     * Creates or updtes a {@link Edge} in this graph with the given one and two. The configuration given by the closure is delegated to an
-     * {@link EdgeSpec}. See {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)} for details on how it modifies this graph and the {@link Edge}.
+     * Creates or updtes a {@link Edge} in this graph with the given one and two. The configuration given by the closure
+     * is delegated to an {@link EdgeSpec}. See {@link EdgeSpec#applyToGraphAndEdge(Graph, Edge)} for details on how it
+     * modifies this graph and the {@link Edge}.
      * @param one
      * @param two
      * @param closure
@@ -300,8 +305,8 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Edge} in this graph with the given one and two. The map must contain configuration described in
-     * {@link EdgeSpec#newInstance(Map)}.
+     * Creates or updates a {@link Edge} in this graph with the given one and two. The map must contain configuration
+     * described in {@link EdgeSpec#newInstance(Map)}.
      * @param one
      * @param two
      * @param map
@@ -316,7 +321,7 @@ class Graph {
 
     /**
      * Creates or updates a {@link Edge} in this graph. This methods creates two {@link EdgeSpec} objects from the
-     * map and closure. The map is applied before the clsoure using {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)}.
+     * map and closure. The map is applied before the clsoure using {@link EdgeSpec#applyToGraphAndEdge(Graph, Edge)}.
      * @param map
      * @param closure
      * @return
@@ -331,8 +336,9 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Edge} in this graph with the given one and two. This methods creates two {@link EdgeSpec} objects from the
-     * map and closure. The map is applied before the clsoure using {@link EdgeSpec#applyToGraphAndEdge(Graph,Edge)}.
+     * Creates or updates a {@link Edge} in this graph with the given one and two. This methods creates two
+     * {@link EdgeSpec} objects from the map and closure. The map is applied before the clsoure using
+     * {@link EdgeSpec#applyToGraphAndEdge(Graph, Edge)}.
      * @param one
      * @param two
      * @param map
@@ -354,7 +360,7 @@ class Graph {
      * @param colors a map of vertex name entries with the value of the TraversalColor
      * @return the first unvisited vertex name in the vertices.
      */
-    def getUnvisitedVertexName(colors) {
+    String getUnvisitedVertexName(colors) {
         vertices.find { k, v ->
             colors[(k)] != TraversalColor.BLACK && colors[k] != TraversalColor.GREY
         }?.key
@@ -367,13 +373,14 @@ class Graph {
      * @param parentName the name of the parent vertex to start searching from
      * @return the name of the first unvisited child vertex
      */
-    def getUnvisitedChildName(colors, parentName) {
-        def edge = traverseEdges(parentName).findAll {
+    @SuppressWarnings('BooleanMethodReturnsNull')
+    String getUnvisitedChildName(Map<String, TraversalColor> colors, String parentName) {
+        Edge edge = traverseEdges(parentName).findAll {
             it.one != it.two
         }.find {
-            def childName = parentName == it.one ? it.two : it.one
-            def color = colors[childName]
-            return !(color == TraversalColor.GREY || color == TraversalColor.BLACK)
+            String childName = parentName == it.one ? it.two : it.one
+            TraversalColor color = colors[childName]
+            !(color == TraversalColor.GREY || color == TraversalColor.BLACK)
         }
 
         if (!edge) {
@@ -409,9 +416,9 @@ class Graph {
      * color.
      * @return
      */
-    def makeColorMap() {
+    Map makeColorMap() {
         vertices.collectEntries { name, vertex ->
-            [(name): TraversalColor.WHITE]
+            [(name):TraversalColor.WHITE]
         }
     }
 
@@ -425,7 +432,7 @@ class Graph {
      * @return
      */
     Traversal depthFirstTraversal(Closure specClosure) {
-        def spec = depthFirstTraversalSpec(specClosure)
+        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(specClosure)
         traversal(this.&depthFirstTraversalConnected, spec)
     }
 
@@ -440,7 +447,7 @@ class Graph {
      * @return
      */
     DepthFirstTraversalSpec depthFirstTraversalSpec(Closure specClosure) {
-        def spec = new DepthFirstTraversalSpec()
+        DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()
         specClosure.delegate = spec
         specClosure()
         setupSpec(spec)
@@ -459,12 +466,8 @@ class Graph {
      * @param spec the traversal spec to configure with defaults.
      */
     void setupSpec(TraversalSpec spec) {
-        if (!spec.colors) {
-            spec.colors = makeColorMap()
-        }
-        if (!spec.root) {
-            spec.root = getUnvisitedVertexName(spec.colors)
-        }
+        spec.colors = spec.colors ?: makeColorMap()
+        spec.root = spec.root ?: getUnvisitedVertexName(spec.colors)
     }
 
     /**
@@ -478,7 +481,7 @@ class Graph {
      * @return
      */
     BreadthFirstTraversalSpec breadthFirstTraversalSpec(Closure specClosure) {
-        def spec = new BreadthFirstTraversalSpec()
+        BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()
         specClosure.delegate = spec
         specClosure()
         setupSpec(spec)
@@ -498,7 +501,7 @@ class Graph {
     Traversal traversal(traversalConnected, spec) {
         String name = spec.root
         while (name) {
-            def traversal = traversalConnected(name, spec)
+            Traversal traversal = traversalConnected(name, spec)
             if (traversal == Traversal.STOP) {
                 return Traversal.STOP
             }
@@ -529,7 +532,8 @@ class Graph {
         for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
             Edge edge = adjacentEdges[index]
             String connectedName = root == edge.one ? edge.two : edge.one
-            if(spec.classifyEdge && spec.classifyEdge(edge, root, connectedName, spec.colors[connectedName]) == Traversal.STOP) {
+            if (spec.classifyEdge && spec.classifyEdge(edge, root, connectedName,
+                    spec.colors[connectedName]) == Traversal.STOP) {
                 return Traversal.STOP
             }
             if (spec.colors[connectedName] == TraversalColor.WHITE) {
@@ -557,7 +561,8 @@ class Graph {
     }
 
     /**
-     * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}. See {@link #breadthFirstTraversal} for details.
+     * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}. See
+     * {@link #breadthFirstTraversal} for details.
      * @param root
      * @param closure
      */
@@ -566,7 +571,7 @@ class Graph {
             delegate.root = root
             visit { vertex ->
                 closure(vertex)
-                return null
+                null
             }
         }
     }
@@ -603,25 +608,25 @@ class Graph {
     }
 
     /**
-     * Executes closure on each vertex in breadth first order. object is the initial value passed to the closure. Each returned
-     * value from the closure is passed to the next call.
+     * Executes closure on each vertex in breadth first order. object is the initial value passed to the closure. Each
+     * returned value from the closure is passed to the next call.
      * @param object
      * @param closure
      * @return object returned from the final call to closure.
      */
-    def injectBfs(Object object, Closure closure) {
+    Object injectBfs(Object object, Closure closure) {
         injectBfs(null, object, closure)
     }
 
     /**
-     * Executes closure on each vertex in breadth first order starting at root. object is the initial value passed to the closure. Each returned
-     * value from the closure is passed to the next call.
+     * Executes closure on each vertex in breadth first order starting at root. object is the initial value passed to
+     * the closure. Each returned value from the closure is passed to the next call.
      * @param root
      * @param object
      * @param closure
      * @return object returned from the final call to closure.
      */
-    def injectBfs(String root, Object object, Closure closure) {
+    Object injectBfs(String root, Object object, Closure closure) {
         Object result = object
         breadthFirstTraversal {
             delegate.root = root
@@ -637,19 +642,20 @@ class Graph {
      * @param closure to run on each vertex
      * @return the vertices where closure returns true
      */
-    def findAllBfs(Closure closure) {
+    List<? extends Vertex> findAllBfs(Closure closure) {
         findAllBfs(null, closure)
     }
 
     /**
-     * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are returned.
+     * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are
+     * returned.
      * @param root the vertex to start from
      * @param closure to run on each vertex
      * @return the vertices where closure returns true
      */
-    def findAllBfs(String root, Closure closure) {
-        injectBfs(root, []) { result, vertex ->
-            if(closure(vertex)) {
+    List<? extends Vertex> findAllBfs(String root, Closure closure) {
+        (List<? extends Vertex>) injectBfs(root, []) { result, vertex ->
+            if (closure(vertex)) {
                 result << vertex
             }
             result
@@ -661,7 +667,7 @@ class Graph {
      * @param closure to run on each vertex
      * @return the results from closure
      */
-    def collectBfs(Closure closure) {
+    List<? extends Vertex> collectBfs(Closure closure) {
         collectBfs(null, closure)
     }
 
@@ -671,8 +677,8 @@ class Graph {
      * @param closure to run on each vertex
      * @return the results from closure
      */
-    def collectBfs(String root, Closure closure) {
-        injectBfs(root, []) { result, vertex ->
+    List<? extends Vertex> collectBfs(String root, Closure closure) {
+        (List<? extends Vertex>) injectBfs(root, []) { result, vertex ->
             result << closure(vertex)
         }
     }
@@ -687,10 +693,9 @@ class Graph {
      * @return
      */
     Traversal breadthFirstTraversal(Closure specClosure) {
-        def spec = breadthFirstTraversalSpec(specClosure)
+        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(specClosure)
         traversal(this.&breadthFirstTraversalConnected, spec)
     }
-
 
     /**
      * Performs a breadth first traversal on a connected component of the graph starting
@@ -713,7 +718,7 @@ class Graph {
             return traversal
         }
         spec.colors[root] = TraversalColor.GREY
-        Queue<String> queue = new LinkedList<>()
+        Queue<String> queue = [] as Queue<String>
         queue << root
         while (queue.size() != 0) {
             String current = queue.poll()
@@ -756,6 +761,7 @@ class Graph {
      * @param name
      * @return a {@link VertexSpec} with name set to the property name.
      */
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
         VertexSpec.newInstance(name:name)
     }
@@ -769,26 +775,28 @@ class Graph {
      * @param args
      * @return a {@link VertexSpec}
      */
+    @SuppressWarnings('Instanceof')
+    @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
-        if(args.size() == 0) {
+        if (args.size() == 0) {
             return this."$name"
         }
 
-        if(args.size() == 1 && args[0] instanceof Map) {
+        if (args.size() == 1 && args[0] instanceof Map) {
             VertexSpec spec = this."$name"
             return spec.overlay(VertexSpec.newInstance(args[0]))
         }
 
-        if(args.size() == 1 && args[0] instanceof Closure) {
+        if (args.size() == 1 && args[0] instanceof Closure) {
             VertexSpec spec = this."$name"
             spec.runnerCode args[0]
             return spec
         }
 
-        if(args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
+        if (args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
             VertexSpec spec = this."$name"
             spec = spec.overlay(VertexSpec.newInstance(args[0]))
-            spec.runnerCode = args[1]
+            spec.runnerCode args[1]
             return spec
         }
     }

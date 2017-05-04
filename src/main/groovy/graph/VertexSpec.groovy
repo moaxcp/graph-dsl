@@ -19,17 +19,17 @@ class VertexSpec {
      */
     String rename
 
-    private Set<Class> traits = [] as Set<Class>
-    private Set<String> edgesFirst = [] as Set<String>
-    private Set<String> edgesSecond = [] as Set<String>
-    private Closure runnerCode
+    private final Set<Class> traitsSet = [] as Set<Class>
+    private final Set<String> edgesFirstSet = [] as Set<String>
+    private final Set<String> edgesSecondSet = [] as Set<String>
+    private Closure runnerCodeClosure
 
     /**
      * The set of traits that should be applied to the {@link Vertex}.
      * @return
      */
     Set<Class> getTraits() {
-        traits
+        traitsSet
     }
 
     /**
@@ -37,7 +37,7 @@ class VertexSpec {
      * @return The names of vertices the {@link Vertex} should connect to.
      */
     Set<String> getEdgesFirst() {
-        Collections.unmodifiableSet(edgesFirst)
+        Collections.unmodifiableSet(edgesFirstSet)
     }
 
     /**
@@ -45,7 +45,7 @@ class VertexSpec {
      * @return The names of vertices the {@link Vertex} should connect to.
      */
     Set<String> getEdgesSecond() {
-        Collections.unmodifiableSet(edgesSecond)
+        Collections.unmodifiableSet(edgesSecondSet)
     }
 
     /**
@@ -53,7 +53,7 @@ class VertexSpec {
      * @return
      */
     Closure getRunnerCode() {
-        this.runnerCode
+        this.runnerCodeClosure
     }
 
     /**
@@ -61,7 +61,7 @@ class VertexSpec {
      * @param traits - added to the set
      */
     void traits(Class... traits) {
-        this.traits.addAll(traits)
+        this.traitsSet.addAll(traits)
     }
 
     /**
@@ -70,7 +70,7 @@ class VertexSpec {
      * @param names
      */
     void edgesFirst(String... names) {
-        edgesFirst.addAll(names)
+        edgesFirstSet.addAll(names)
     }
 
     /**
@@ -79,7 +79,7 @@ class VertexSpec {
      * @param names
      */
     void edgesSecond(String... names) {
-        edgesSecond.addAll(names)
+        edgesSecondSet.addAll(names)
     }
 
     /**
@@ -87,11 +87,12 @@ class VertexSpec {
      * @param runnerCode
      */
     void runnerCode(Closure runnerCode) {
-        this.runnerCode = runnerCode
+        this.runnerCodeClosure = runnerCode
     }
 
     /**
-     * Applies this {@link VertexSpec} to the {@link Vertex} and {@link Graph}. Members from this spec are applied in this order:
+     * Applies this {@link VertexSpec} to the {@link Vertex} and {@link Graph}. Members from this spec are applied in
+     * this order:
      * <p>
      * 1. renames vertex to rename if set<br>
      * 2. applies traits to the vertex<br>
@@ -100,28 +101,28 @@ class VertexSpec {
      * @param graph
      */
     Vertex apply(Graph graph) {
-        if(!name) {
-            throw new IllegalArgumentException("!name failed. Name must be groovy truth.")
+        if (!name) {
+            throw new IllegalArgumentException('!name failed. Name must be groovy truth.')
         }
         Vertex vertex = graph.vertices[name] ?: graph.vertexFactory.newVertex(name)
         graph.addVertex(vertex)
 
-        if(rename) {
+        if (rename) {
             graph.rename(name, rename)
         }
-        if (traits) {
-            vertex.delegateAs(traits as Class[])
+        if (traitsSet) {
+            vertex.delegateAs(traitsSet as Class[])
         }
-        edgesFirst.each {
+        edgesFirstSet.each {
             graph.edge vertex.name, it
         }
-        edgesSecond.each {
+        edgesSecondSet.each {
             graph.edge it, vertex.name
         }
 
-        if(runnerCode) {
+        if (runnerCodeClosure) {
             VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph:graph, vertex:vertex)
-            runner.runCode(runnerCode)
+            runner.runCode(runnerCodeClosure)
         }
 
         vertex
@@ -149,10 +150,10 @@ class VertexSpec {
         if (map.edgesFirst) {
             spec.edgesFirst(map.edgesFirst as String[])
         }
-        if(map.edgesSecond) {
+        if (map.edgesSecond) {
             spec.edgesSecond(map.edgesSecond as String[])
         }
-        if(map.runnerCode) {
+        if (map.runnerCode) {
             spec.runnerCode(map.runnerCode)
         }
 
@@ -167,7 +168,7 @@ class VertexSpec {
      */
     VertexSpec overlay(VertexSpec spec) {
         VertexSpec next = new VertexSpec()
-        if(spec.name) {
+        if (spec.name) {
             next.name = spec.name
         } else {
             next.name = name
@@ -175,14 +176,14 @@ class VertexSpec {
 
         next.rename = spec.rename
 
-        next.traits ((traits + spec.traits) as Class[])
-        next.edgesFirst ((edgesFirst + spec.edgesFirst) as String[])
-        next.edgesSecond ((edgesSecond + spec.edgesSecond) as String[])
+        next.traits((traitsSet + spec.traits) as Class[])
+        next.edgesFirst((edgesFirstSet + spec.edgesFirst) as String[])
+        next.edgesSecond((edgesSecondSet + spec.edgesSecond) as String[])
 
-        if(this.runnerCode) {
-            next.runnerCode this.runnerCode << spec.runnerCode
+        if (this.runnerCodeClosure) {
+            next.runnerCode this.runnerCodeClosure << spec.runnerCodeClosure
         } else {
-            next.runnerCode spec.runnerCode
+            next.runnerCode spec.runnerCodeClosure
         }
         next
     }

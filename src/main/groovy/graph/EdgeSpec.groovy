@@ -59,18 +59,18 @@ class EdgeSpec {
      * @param edge
      */
     void applyToGraphAndEdge(Graph graph, Edge edge) {
-        if(one) {
+        if (one) {
             graph.vertex(one)
             edge.one = one
         }
-        if(two) {
+        if (two) {
             graph.vertex(two)
             edge.two = two
         }
-        if(traits) {
+        if (traits) {
             edge.delegateAs(this.traits as Class[])
         }
-        if(config) {
+        if (config) {
             edge << config
         }
     }
@@ -101,11 +101,11 @@ class EdgeSpec {
      * @return
      */
     static EdgeSpec newInstance(Map<String, ?> map) {
-        EdgeSpec spec = new EdgeSpec(one:map.one, two:map.two)
-        if(map.traits) {
+        EdgeSpec spec = new EdgeSpec(one: map.one, two: map.two)
+        if (map.traits) {
             spec.traits(map.traits as Class[])
         }
-        if(map.config) {
+        if (map.config) {
             spec.config(map.config)
         }
 

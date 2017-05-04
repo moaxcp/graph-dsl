@@ -64,6 +64,7 @@ class VertexSpecCodeRunner {
      * @param args
      * @return
      */
+    @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
         vertex.invokeMethod(name, args)
     }
@@ -73,6 +74,7 @@ class VertexSpecCodeRunner {
      * @param name
      * @return
      */
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
         vertex[name]
     }
@@ -83,6 +85,7 @@ class VertexSpecCodeRunner {
      * @param value
      * @return
      */
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
         vertex[name] = value
     }
@@ -95,7 +98,7 @@ class VertexSpecCodeRunner {
      * @param closure
      * @return
      */
-    def runCode(@DelegatesTo(VertexSpecCodeRunner) Closure closure) {
+    void runCode(@DelegatesTo(VertexSpecCodeRunner) Closure closure) {
         closure.delegate = this
         closure()
     }
