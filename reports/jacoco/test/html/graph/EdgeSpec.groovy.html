@@ -59,18 +59,18 @@ class EdgeSpec {
      * @param edge
      */
     void applyToGraphAndEdge(Graph graph, Edge edge) {
-<span class="fc bfc" id="L62" title="All 2 branches covered.">        if(one) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (one) {</span>
 <span class="fc" id="L63">            graph.vertex(one)</span>
 <span class="fc" id="L64">            edge.one = one</span>
         }
-<span class="fc bfc" id="L66" title="All 2 branches covered.">        if(two) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (two) {</span>
 <span class="fc" id="L67">            graph.vertex(two)</span>
 <span class="fc" id="L68">            edge.two = two</span>
         }
-<span class="fc bfc" id="L70" title="All 2 branches covered.">        if(traits) {</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (traits) {</span>
 <span class="fc" id="L71">            edge.delegateAs(this.traits as Class[])</span>
         }
-<span class="fc bfc" id="L73" title="All 2 branches covered.">        if(config) {</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (config) {</span>
 <span class="fc" id="L74">            edge &lt;&lt; config</span>
         }
     }
@@ -101,11 +101,11 @@ class EdgeSpec {
      * @return
      */
     static EdgeSpec newInstance(Map&lt;String, ?&gt; map) {
-<span class="fc" id="L104">        EdgeSpec spec = new EdgeSpec(one:map.one, two:map.two)</span>
-<span class="fc bfc" id="L105" title="All 2 branches covered.">        if(map.traits) {</span>
+<span class="fc" id="L104">        EdgeSpec spec = new EdgeSpec(one: map.one, two: map.two)</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (map.traits) {</span>
 <span class="fc" id="L106">            spec.traits(map.traits as Class[])</span>
         }
-<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if(map.config) {</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (map.config) {</span>
 <span class="nc" id="L109">            spec.config(map.config)</span>
         }
 

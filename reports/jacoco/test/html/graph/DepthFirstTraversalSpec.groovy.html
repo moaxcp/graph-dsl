@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DepthFirstTraversalSpec.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">DepthFirstTraversalSpec.groovy</span></div><h1>DepthFirstTraversalSpec.groovy</h1><pre class="source lang-java linenums">package graph
+
 /**
  * Specification for a DepthFirstTraversal. Contains actions that are called when an
  * event happens during the traversal.
@@ -13,7 +14,7 @@ class DepthFirstTraversalSpec extends TraversalSpec {
      * @return
      */
     Closure getPreorder() {
-<span class="pc" id="L16">        preorderClosure</span>
+<span class="pc" id="L17">        preorderClosure</span>
     }
 
     /**
@@ -21,7 +22,7 @@ class DepthFirstTraversalSpec extends TraversalSpec {
      * @return
      */
     Closure getPostorder() {
-<span class="pc" id="L24">        postorderClosure</span>
+<span class="pc" id="L25">        postorderClosure</span>
     }
 
     /**
@@ -29,7 +30,7 @@ class DepthFirstTraversalSpec extends TraversalSpec {
      * @return
      */
     Closure getClassifyEdge() {
-<span class="pc" id="L32">        classifyEdgeClosure</span>
+<span class="pc" id="L33">        classifyEdgeClosure</span>
     }
 
     /**
@@ -38,7 +39,7 @@ class DepthFirstTraversalSpec extends TraversalSpec {
      * @return
      */
     void preorder(Closure preorderClosure) {
-<span class="fc" id="L41">        this.preorderClosure = preorderClosure</span>
+<span class="fc" id="L42">        this.preorderClosure = preorderClosure</span>
     }
 
     /**
@@ -47,7 +48,7 @@ class DepthFirstTraversalSpec extends TraversalSpec {
      * @return
      */
     void postorder(Closure postorderClosure) {
-<span class="fc" id="L50">        this.postorderClosure = postorderClosure</span>
+<span class="fc" id="L51">        this.postorderClosure = postorderClosure</span>
     }
 
     /**
@@ -55,7 +56,7 @@ class DepthFirstTraversalSpec extends TraversalSpec {
      * @param classifyEdgeClosure
      */
     void classifyEdge(Closure classifyEdgeClosure) {
-<span class="fc" id="L58">        this.classifyEdgeClosure = classifyEdgeClosure</span>
+<span class="fc" id="L59">        this.classifyEdgeClosure = classifyEdgeClosure</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

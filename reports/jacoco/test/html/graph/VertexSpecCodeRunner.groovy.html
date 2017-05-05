@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VertexSpecCodeRunner.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">VertexSpecCodeRunner.groovy</span></div><h1>VertexSpecCodeRunner.groovy</h1><pre class="source lang-java linenums">package graph
+
+/**
+ * Delegate of the runnerCode closure in {@link VertexSpec}. This provides methods and properties that can be used in
+ * the closure. If method and property missing is delegated to the vertex.
+ */
+class VertexSpecCodeRunner {
+    private Graph graph
+    private Vertex vertex
+
+    /**
+     * @return the graph this vertex is being added to.
+     */
+    Graph getGraph() {
+<span class="pc" id="L15">        graph</span>
+    }
+
+    /**
+     * @return the vertex created by {@link VertexSpec}.
+     */
+    Vertex getVertex() {
+<span class="pc" id="L22">        vertex</span>
+    }
+
+    /**
+     * renames the vertex to newName
+     * @param newName
+     */
+    void rename(String newName) {
+<span class="fc" id="L30">        graph.rename(vertex.name, newName)</span>
+    }
+
+    /**
+     * Adds traits to the vertex.
+     * @param traits
+     */
+    void traits(Class... traits) {
+<span class="fc" id="L38">        vertex.delegateAs(traits as Class[])</span>
+    }
+
+    /**
+     * Creates edges where the vertex is edge.one and each name in names is edge.two.
+     * @param names of vertices to connect to.
+     */
+    void edgesFirst(String... names) {
+<span class="fc" id="L46">        names.each {</span>
+<span class="pc" id="L47">            graph.edge vertex.name, it</span>
+        }
+    }
+
+    /**
+     * Creates edges where the vertex is edge.two and each name in names is edge.one.
+     * @param names of vetices to connect to.
+     */
+    void edgesSecond(String... names) {
+<span class="fc" id="L56">        names.each {</span>
+<span class="pc" id="L57">            graph.edge it, vertex.name</span>
+        }
+    }
+
+    /**
+     * calls method on vertex.
+     * @param name
+     * @param args
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def methodMissing(String name, args) {
+<span class="pc" id="L69">        vertex.invokeMethod(name, args)</span>
+    }
+
+    /**
+     * returns property from vertex.
+     * @param name
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def propertyMissing(String name) {
+<span class="pc" id="L79">        vertex[name]</span>
+    }
+
+    /**
+     * sets property on vertex.
+     * @param name
+     * @param value
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def propertyMissing(String name, value) {
+<span class="pc" id="L90">        vertex[name] = value</span>
+    }
+
+    /**
+     * This object becomes the delegate of closure and then closure is called. The methods
+     * in this object become available in the closure along with the properties vertex and graph.
+     * If methods or properties are missing then vertex is checked. Otherwise standard closure delegation
+     * takes place (owner, this).
+     * @param closure
+     * @return
+     */
+    void runCode(@DelegatesTo(VertexSpecCodeRunner) Closure closure) {
+<span class="fc" id="L102">        closure.delegate = this</span>
+<span class="fc" id="L103">        closure.resolveStrategy = Closure.DELEGATE_FIRST</span>
+<span class="fc" id="L104">        closure()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
