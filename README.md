@@ -91,7 +91,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
-## x.x.x
+## 0.13.0
 
 This release removes the need for the config closure when creating a vertex. It is now possible to apply traits and configure
 them all within the closure passed to vertex methods.
