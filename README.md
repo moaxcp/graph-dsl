@@ -17,17 +17,17 @@ import static graph.Graph.graph
 
 graph {
     apply DirectedGraphPlugin
-    vertex ('a') {
+    vertex a {
         edgesFirst 'b', 'd'
         edgesSecond 'd'
     }
     
-    vertex {
-        name 'b'
+    vertex renameMe {
+        rename 'b'
         edgesFirst 'c', 'd'
     }
     
-    vertex('d', [edgesFirst:'c']) {
+    vertex d([edgesFirst:'c']) {
         edgesFirst 'e'
     }
     
@@ -91,6 +91,25 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
+## x.x.x
+
+This release removes the need for the config closure when creating a vertex. It is now possible to apply traits and configure
+them all within the closure passed to vertex methods.
+
+```groovy
+graph.with {
+   vertex step1 {
+       traits Mapping
+       message = 'hello from step1'
+       queue = [] as LinkedList
+       traits Weight
+       weight { queue.size() }
+   }
+}
+```
+
+This change represents a major step in finalizing the vertex api.
+
 ## 0.12.0
 
 This release introduces a new way of creating a Vertex. The new methods allow vertices to be created without using strings for names.
@@ -101,7 +120,7 @@ graph.with {
     vertex step1
     vertex step2(traits:Mapping)
     vertex step3 {
-        traits:Mapping
+        traits Mapping
         config {
             label = 'step3'
         }

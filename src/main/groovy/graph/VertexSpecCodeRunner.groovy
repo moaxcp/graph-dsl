@@ -100,6 +100,7 @@ class VertexSpecCodeRunner {
      */
     void runCode(@DelegatesTo(VertexSpecCodeRunner) Closure closure) {
         closure.delegate = this
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure()
     }
 }

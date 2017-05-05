@@ -139,6 +139,21 @@ class GraphVertexSpec extends Specification {
         result.is expected
     }
 
+    def 'can configure traits in vertex(String, Closure)'() {
+        when:
+        Vertex vertex = graph.vertex('step1') {
+            traits Mapping
+            key = 'value'
+            traits Weight
+            weight { 100 }
+        }
+
+        then:
+        vertex.delegate instanceof Mapping
+        vertex.key == 'value'
+        vertex.weight == 100
+    }
+
     def 'can add/get vertex with vertex(String, Map)'() {
         when:
         def vertex = graph.vertex 'step1', [:]
