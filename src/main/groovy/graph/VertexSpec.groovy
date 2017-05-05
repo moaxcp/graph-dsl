@@ -3,42 +3,57 @@ package graph
 import groovy.transform.PackageScope
 
 /**
- * Specification class that helps vertex methods in {@link Graph} objects. It can be the delegate of closures used in
- * vertex methods of {@link Graph}.
+ * Specification class that helps vertex methods in {@link Graph} objects. VertexSpec is used to collect the details
+ * of an update or create.
  */
 @PackageScope
 class VertexSpec {
+
     /**
      * The name of the {@link Vertex} to create or update.
      */
     String name
-    private Set<Class> traits = [] as Set<Class>
-    private Set<String> edgesFirst = [] as Set<String>
-    private Set<String> edgesSecond = [] as Set<String>
-    private Closure config
+
+    /**
+     * The new name to give a {@link Vertex}
+     */
+    String rename
+
+    private final Set<Class> traitsSet = [] as Set<Class>
+    private final Set<String> edgesFirstSet = [] as Set<String>
+    private final Set<String> edgesSecondSet = [] as Set<String>
+    private Closure runnerCodeClosure
 
     /**
      * The set of traits that should be applied to the {@link Vertex}.
      * @return
      */
     Set<Class> getTraits() {
-        traits
+        traitsSet
     }
 
     /**
-     * The set of edges to create between the {@link Vertex} and other vertices.
+     * The set of edges to create between the {@link Vertex} and other vertices. The {@link Vertex} will be edge.one.
      * @return The names of vertices the {@link Vertex} should connect to.
      */
-    Set<String> edgesFirst() {
-        edgesFirst
+    Set<String> getEdgesFirst() {
+        Collections.unmodifiableSet(edgesFirstSet)
     }
 
     /**
-     * The config applied to the {@link Vertex} using its leftShift operator.
+     * The set of edges to create between the {@link Vertex} and other vertices. The {@link Vertex} will be edge.two.
+     * @return The names of vertices the {@link Vertex} should connect to.
+     */
+    Set<String> getEdgesSecond() {
+        Collections.unmodifiableSet(edgesSecondSet)
+    }
+
+    /**
+     * The runnerCode. This will be run against a VertexSpecCodeRunner
      * @return
      */
-    Closure getConfig() {
-        config
+    Closure getRunnerCode() {
+        this.runnerCodeClosure
     }
 
     /**
@@ -46,7 +61,7 @@ class VertexSpec {
      * @param traits - added to the set
      */
     void traits(Class... traits) {
-        this.traits.addAll(traits)
+        this.traitsSet.addAll(traits)
     }
 
     /**
@@ -55,7 +70,7 @@ class VertexSpec {
      * @param names
      */
     void edgesFirst(String... names) {
-        edgesFirst.addAll(names)
+        edgesFirstSet.addAll(names)
     }
 
     /**
@@ -64,85 +79,82 @@ class VertexSpec {
      * @param names
      */
     void edgesSecond(String... names) {
-        edgesSecond.addAll(names)
+        edgesSecondSet.addAll(names)
     }
 
     /**
-     * Sets the config closure which will be run on the {@link Vertex}.
-     * @param config added to the config member variable
+     * Sets the runnerCode closure.
+     * @param runnerCode
      */
-    void config(@DelegatesTo(Vertex) Closure config) {
-        this.config = config
+    void runnerCode(Closure runnerCode) {
+        this.runnerCodeClosure = runnerCode
     }
 
     /**
-     * Applies this {@link VertexSpec} to the {@link Vertex} and {@link Graph}. Members from this spec are applied in this order:
+     * Applies this {@link VertexSpec} to the {@link Vertex} and {@link Graph}. Members from this spec are applied in
+     * this order:
      * <p>
-     * 1. renames vertex to name if set
-     * 2. applies traits to the vertex
-     * 3. connects the vertex vertices listed in edgesFirst set
-     * 4. configures the vertex using vertex << config
+     * 1. renames vertex to rename if set<br>
+     * 2. applies traits to the vertex<br>
+     * 3. creates edges between the vertex and edgesFirst where the vertex is edge.one<br>
+     * 4. creates edges between the vertex and edgesFirst where the vertex is edge.one<br>
      * @param graph
-     * @param vertex
      */
-    void applyToGraphAndVertex(Graph graph, Vertex vertex) {
-        if(name) {
-            graph.rename(vertex.name, name)
+    Vertex apply(Graph graph) {
+        if (!name) {
+            throw new IllegalArgumentException('!name failed. Name must be groovy truth.')
         }
-        if (traits) {
-            vertex.delegateAs(traits as Class[])
+        Vertex vertex = graph.vertices[name] ?: graph.vertexFactory.newVertex(name)
+        graph.addVertex(vertex)
+
+        if (rename) {
+            graph.rename(name, rename)
         }
-        edgesFirst.each {
+        if (traitsSet) {
+            vertex.delegateAs(traitsSet as Class[])
+        }
+        edgesFirstSet.each {
             graph.edge vertex.name, it
         }
-        edgesSecond.each {
+        edgesSecondSet.each {
             graph.edge it, vertex.name
         }
-        if(config) {
-            vertex << config
+
+        if (runnerCodeClosure) {
+            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph:graph, vertex:vertex)
+            runner.runCode(runnerCodeClosure)
         }
-    }
 
-    /**
-     * Creates a new instance of a VertexSpec using the provided closure. A new {@link VertexSpec} will be the delegate
-     * while the {@link Graph} will be the owner and this.
-     * @param graph
-     * @param closure
-     * @return the resulting VertexSpec
-     */
-    static VertexSpec newInstance(Graph graph, @DelegatesTo(VertexSpec) Closure closure) {
-        VertexSpec spec = new VertexSpec()
-
-        Closure code = closure.rehydrate(spec, graph, graph)
-        code()
-
-        spec
+        vertex
     }
 
     /**
      * creates a new instance of a VertexSpec using the provided Map. Valid values that can be in the Map are:
      * <p>
+     * name - the name of the vertex to create or update<br>
+     * rename - what to rename the vertex<br>
      * traits - list of traits to be applied to the {@link Vertex}<br>
-     * edgesFirst - list of vertices to connect the {@link Vertex} to.<br>
-     * config - closure to be applied to the {@link Vertex} after traits and edges are created.
+     * edgesFirst - list of vertices to connect the {@link Vertex} to. The vertex is edge.one<br>
+     * edgesSecond - list of vertices to connect the {@link Vertex} to. The vertex is edge.two<br>
+     * runnerCode - closure to be applied to the {@link Vertex} after traits and edges are created.
      * <p>
      * All other values are ignored.
      * @param map
      * @return
      */
     static VertexSpec newInstance(Map<String, ?> map) {
-        VertexSpec spec = new VertexSpec(name:map.name)
+        VertexSpec spec = new VertexSpec(name:map.name, rename:map.rename)
         if (map.traits) {
             spec.traits(map.traits as Class[])
         }
         if (map.edgesFirst) {
             spec.edgesFirst(map.edgesFirst as String[])
         }
-        if(map.edgesSecond) {
+        if (map.edgesSecond) {
             spec.edgesSecond(map.edgesSecond as String[])
         }
-        if(map.config) {
-            spec.config(map.config)
+        if (map.runnerCode) {
+            spec.runnerCode(map.runnerCode)
         }
 
         spec
@@ -150,26 +162,28 @@ class VertexSpec {
 
     /**
      * Creates a new {@link VertexSpec} from members in this {@link VertexSpec} and the spec param. Members in the spec
-     * param override the members in this. The config closure is appended if set.
+     * param override the members in this. The runnerCode closure is appended if set.
      * @param spec
      * @return A new spec
      */
     VertexSpec overlay(VertexSpec spec) {
         VertexSpec next = new VertexSpec()
-        if(spec.name) {
+        if (spec.name) {
             next.name = spec.name
         } else {
             next.name = name
         }
 
-        next.traits ((traits + spec.traits) as Class[])
-        next.edgesFirst ((edgesFirst + spec.edgesFirst) as String[])
-        next.edgesSecond ((edgesSecond + spec.edgesSecond) as String[])
+        next.rename = spec.rename
 
-        if(config) {
-            next.config config << spec.config
+        next.traits((traitsSet + spec.traits) as Class[])
+        next.edgesFirst((edgesFirstSet + spec.edgesFirst) as String[])
+        next.edgesSecond((edgesSecondSet + spec.edgesSecond) as String[])
+
+        if (this.runnerCodeClosure) {
+            next.runnerCode this.runnerCodeClosure << spec.runnerCodeClosure
         } else {
-            next.config spec.config
+            next.runnerCode spec.runnerCodeClosure
         }
         next
     }
