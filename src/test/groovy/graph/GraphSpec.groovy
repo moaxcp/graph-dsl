@@ -4,6 +4,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class GraphSpec extends Specification {
+
     def 'can only apply Plugin once'() {
         setup:
         def graph = new Graph()
@@ -52,7 +53,7 @@ class GraphSpec extends Specification {
 
     def 'dynamic method with Map returns VertexSpec'() {
         when:
-        def spec = new Graph().step1(x:'y')
+        VertexSpec spec = new Graph().step1(x:'y')
 
         then:
         spec.name == 'step1'
@@ -60,27 +61,20 @@ class GraphSpec extends Specification {
 
     def 'dynamic method with closure returns VertexSpec'() {
         when:
-        def spec = new Graph().step1 {}
+        VertexSpec spec = new Graph().step1 {}
 
         then:
         spec.name == 'step1'
-    }
-
-    def 'can rename VertexSpec with closure'() {
-        when:
-        def spec = new Graph().step1 { name = 'step2' }
-
-        then:
-        spec.name == 'step2'
+        spec.runnerCode != null
     }
 
     def 'dynamic method with map and closure returns VertexSpec'() {
         when:
-        def spec = new Graph().step1(traits:Mapping) { edgesFirst 'step2' }
+        VertexSpec spec = new Graph().step1(traits:Mapping) { edgesFirst 'step2' }
 
         then:
         spec.name == 'step1'
         spec.traits == [Mapping] as Set<Class>
-        spec.edgesFirst == ['step2'] as Set<String>
+        spec.runnerCode != null
     }
 }

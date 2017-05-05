@@ -23,15 +23,15 @@ class EdgeClassification {
         /**
          * When the followed edge is WHITE
          */
-        TREE_EDGE,
+                TREE_EDGE,
         /**
          * When the followed edge is BLACK and the connecting vertex is not in the forrest
          */
-        FORWARD_EDGE,
+                FORWARD_EDGE,
         /**
          * When the followed edge is BLACK and the connecting vertex is in the forreest
          */
-        CROSS_EDGE
+                CROSS_EDGE
     }
 
     /**
@@ -45,8 +45,8 @@ class EdgeClassification {
      */
     @PackageScope
     void addEdge(Graph graph, Edge edge, String from, String to, Graph.TraversalColor toColor, Closure action) {
-        def edgeType
-        switch(toColor) {
+        EdgeType edgeType
+        switch (toColor) {
             case Graph.TraversalColor.WHITE:
                 forrest.addVertex(graph.vertex(from))
                 forrest.addVertex(graph.vertex(to))
@@ -61,7 +61,7 @@ class EdgeClassification {
                 break
 
             case Graph.TraversalColor.BLACK:
-                if(forrest.vertices[to]) {
+                if (forrest.vertices[to]) {
                     crossEdges << edge
                     edgeType = EdgeClassification.EdgeType.CROSS_EDGE
                 } else {

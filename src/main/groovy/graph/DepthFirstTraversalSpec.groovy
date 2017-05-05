@@ -1,4 +1,5 @@
 package graph
+
 /**
  * Specification for a DepthFirstTraversal. Contains actions that are called when an
  * event happens during the traversal.
