@@ -88,7 +88,7 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * This object becomes the delegate of the closure. The closure is ran with a {@link Closure#DELEGATE_FIRST}
+     * This object becomes the delegate of the closure. The closure is run with a {@link Closure#DELEGATE_FIRST}
      * strategy and then it is called.
      * @param closure
      */

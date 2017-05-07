@@ -129,7 +129,7 @@ class EdgeSpec {
     }
 
     /**
-     * Creates a new instance of an {@link EdgeSpec} using the provided Map. Valid values that can be in the Map are:
+     * Creates a new instance of an {@link EdgeSpec} using the provided Map. Valid entries that can be in the Map are:
      * <p>
      * one - the first vertex name in the {@link Edge}<br>
      * two - the second vertex name in the {@link Edge}<br>
@@ -138,6 +138,8 @@ class EdgeSpec {
      * traits - list of traits to be applied to the {@link Edge}<br>
      * runnerCode - closure to be applied to the {@link Graph} and {@link Edge} using a {@link EdgeSpecCodeRunner}
      * </p>
+     * one and two should always exist in any EdgeSpec applied to the graph. In those cases the map should have one and
+     * two set.
      * @param map containing list of valid values
      * @return the resulting EdgeSpec
      */
