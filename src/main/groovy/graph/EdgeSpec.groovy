@@ -1,8 +1,9 @@
 package graph
 
 /**
- * Specification class that helps edge methods in {@link Graph} objects. It can be the delegate of closures used in
- * edge methods of {@link Graph}.
+ * Specification class that helps edge methods in {@link Graph} objects create or update {@link Edge} objects. The
+ * specification describes what {@link Edge} to create or update, If one and two should be renamed, and what traits to
+ * apply to the {@link Edge}. runnerCode is a closure that will be run using an {@link EdgeSpecCodeRunner}.
  */
 class EdgeSpec {
     /**
@@ -13,23 +14,33 @@ class EdgeSpec {
      * Name of the second {@link Vertex} in the {@link Edge}.
      */
     String two
-    private Set<Class> traits = [] as Set<Class>
-    private Closure config
+
+    /**
+     * New name to give one in the {@link Edge}.
+     */
+    String renameOne
+    /**
+     * New name to give two in the {@link Edge}.
+     */
+    String renameTwo
+
+    private Set<Class> traitsSet = [] as Set<Class>
+    private Closure runnerCodeClosure
 
     /**
      * The set of traits that will be applied to the {@link Edge}.
      * @return
      */
     Set<Class> getTraits() {
-        traits
+        traitsSet
     }
 
     /**
-     * The config applied to the {@link Edge} using its {@link Edge#leftShift(Edge)} operator.
-     * @return
+     * Gets the runnerCode from this EdgeSpec.
+     * @return the runner code from this EdgeSpec.
      */
-    Closure getConfig() {
-        config
+    Closure getRunnerCode() {
+        runnerCodeClosure
     }
 
     /**
@@ -37,76 +48,108 @@ class EdgeSpec {
      * @param traits - added to the set
      */
     void traits(Class... traits) {
-        this.traits.addAll(traits)
+        this.traitsSet.addAll(traits)
     }
 
     /**
-     * Sets the config closure which will be run on the {@link Edge}.
-     * @param config
+     * sets runnerCodeClosure. This will be run when this is applied to a graph.
+     * @param runnerCodeClosure assigned to runnerCodeClosure
      */
-    void config(@DelegatesTo(Edge) Closure config) {
-        this.config = config
+    void runnerCode(@DelegatesTo(EdgeSpecCodeRunner) Closure runnerCodeClosure) {
+        this.runnerCodeClosure = runnerCodeClosure
     }
 
     /**
      * Applies this {@link EdgeSpec} to the Edge and Graph. Members from this spec are applied in this order:
      * <p>
-     * 1. creates or gets the vertex and sets edge.one to one
-     * 2. creates or gets the vertex and sets edge.two to two
-     * 3. applies traits to edge using delegateAs
-     * 4. configures the edge using edge << config
-     * @param graph
-     * @param edge
+     * 1. creates or gets the {@link Edge} with one and two<br>
+     * 2. creates or gets the vertices one and two point to<br>
+     * 3. if renameOne is set, renames one and creates or gets the vertex<br>
+     * 4. if renameTwo is set, renames two and creates or gets the vertex<br>
+     * 5. adds any traits to the edge's delegate using {@link Edge#delegateAs(Class[])}<br>
+     * 6. runs runnerCodeClosure against the graph and edge using a new {@link EdgeSpecCodeRunner}<br>
+     * 7. returns the edge<br>
+     * </p>
+     * @throws IllegalArgumentException if one or two is empty or null.
+     * @param graph to apply this EdgeSpec to
+     * @param edge the resulting edge
      */
-    void applyToGraphAndEdge(Graph graph, Edge edge) {
-        if (one) {
-            graph.vertex(one)
-            edge.one = one
+    Edge apply(Graph graph) {
+        if(!one) {
+            throw new IllegalArgumentException("!one failed. one must be groovy truth.")
         }
-        if (two) {
-            graph.vertex(two)
-            edge.two = two
+        if(!two) {
+            throw new IllegalArgumentException("!two failed. two must be groovy truth.")
         }
-        if (traits) {
-            edge.delegateAs(this.traits as Class[])
+        Edge e = graph.edgeFactory.newEdge(one, two)
+        Edge edge = graph.edges.find { it == e } ?: e
+        graph.addEdge(edge)
+        graph.vertex(one)
+        graph.vertex(two)
+
+        if (renameOne) {
+            graph.vertex(renameOne)
+            edge.one = renameOne
         }
-        if (config) {
-            edge << config
+        if (renameTwo) {
+            graph.vertex(renameTwo)
+            edge.two = renameTwo
         }
+        if (traitsSet) {
+            edge.delegateAs(this.traitsSet as Class[])
+        }
+
+        if (runnerCodeClosure) {
+            EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph:graph, edge:edge)
+            runner.runCode(runnerCodeClosure)
+        }
+
+        edge
     }
 
     /**
-     * Creates a new instance of an EdgeSpec using the provided closure. Anew @link EdgeSpec} is the delegate
-     * while the {@link Graph} is the owner and this.
-     * @param graph
-     * @param closure
-     * @return
+     * overlays the provided EdgeSpec with this spec returning a new EdgeSpec.
+     * @param spec to overlay with this
+     * @return the resulting EdgeSpec
      */
-    static EdgeSpec newInstance(Graph graph, @DelegatesTo(EdgeSpec) Closure closure) {
-        EdgeSpec spec = new EdgeSpec()
+    EdgeSpec overlay(EdgeSpec spec) {
+        EdgeSpec next = new EdgeSpec()
+        next.one = spec.one ?: one
+        next.two = spec.two ?: two
+        next.renameOne = spec.renameOne ?: renameOne
+        next.renameTwo = spec.renameTwo ?: renameTwo
+        next.traits((traitsSet + spec.traits) as Class[])
+        if (this.runnerCodeClosure) {
+            next.runnerCode this.runnerCodeClosure << spec.runnerCodeClosure
+        } else {
+            next.runnerCode spec.runnerCodeClosure
+        }
 
-        Closure code = closure.rehydrate(spec, graph, graph)
-        code()
-
-        spec
+        next
     }
 
     /**
-     * Creates a new instance of an {@link EdgeSpec} using the provided Map. Valid values that can be in the Map are:
+     * Creates a new instance of an {@link EdgeSpec} using the provided Map. Valid entries that can be in the Map are:
      * <p>
+     * one - the first vertex name in the {@link Edge}<br>
+     * two - the second vertex name in the {@link Edge}<br>
+     * renameOne - vertex name to rename one to in the {@link Edge}<br>
+     * renameTwo - vertex name to rename two to in the {@link Edge}<br>
      * traits - list of traits to be applied to the {@link Edge}<br>
-     * config - closure to be applied to the {@link Edge}
-     * <p>
-     * @param map
-     * @return
+     * runnerCode - closure to be applied to the {@link Graph} and {@link Edge} using a {@link EdgeSpecCodeRunner}
+     * </p>
+     * one and two should always exist in any EdgeSpec applied to the graph. In those cases the map should have one and
+     * two set.
+     * @param map containing list of valid values
+     * @return the resulting EdgeSpec
      */
     static EdgeSpec newInstance(Map<String, ?> map) {
-        EdgeSpec spec = new EdgeSpec(one: map.one, two: map.two)
+        EdgeSpec spec = new EdgeSpec(one:map.one, two:map.two, renameOne:map.renameOne, renameTwo:map.renameTwo)
         if (map.traits) {
             spec.traits(map.traits as Class[])
         }
-        if (map.config) {
-            spec.config(map.config)
+        if (map.runnerCode) {
+            spec.runnerCode(map.runnerCode)
         }
 
         spec

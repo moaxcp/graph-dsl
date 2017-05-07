@@ -168,13 +168,8 @@ class VertexSpec {
      */
     VertexSpec overlay(VertexSpec spec) {
         VertexSpec next = new VertexSpec()
-        if (spec.name) {
-            next.name = spec.name
-        } else {
-            next.name = name
-        }
-
-        next.rename = spec.rename
+        next.name = spec.name ?: name
+        next.rename = spec.rename ?: rename
 
         next.traits((traitsSet + spec.traits) as Class[])
         next.edgesFirst((edgesFirstSet + spec.edgesFirst) as String[])

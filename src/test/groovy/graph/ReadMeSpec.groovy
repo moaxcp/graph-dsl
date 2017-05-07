@@ -36,7 +36,7 @@ class ReadMeSpec extends Specification {
         graph != null
     }
 
-    def 'added codeRunner to VertexSpec'() {
+    def '0.13.0 added codeRunner to VertexSpec'() {
         when:
         def graph = Graph.graph {
             vertex step1 {
@@ -56,6 +56,28 @@ class ReadMeSpec extends Specification {
         vertex.delegate instanceof Weight
         graph.vertex('step1').message == 'hello from step1'
         graph.vertex('step1').weight == 0
+    }
+
+    def '0.14.0 added codeRunner to EdgeSpec'() {
+        when:
+        def graph = Graph.graph {
+            edge (step1, step2) {
+                traits Mapping
+                message = "hello from edge between $one and $two"
+                queue = [] as LinkedList
+                traits Weight
+                weight { queue.size() }
+            }
+        }
+        def edge = graph.edges.first()
+
+        then:
+        graph != null
+        edge != null
+        edge.delegate instanceof Mapping
+        edge.delegate instanceof Weight
+        edge.message == "hello from edge between step1 and step2"
+        edge.weight == 0
     }
 
     def 'test traits'() {

@@ -91,6 +91,25 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
+## x.x.x
+
+Just as in 0.13.0, where the config closure was removed from VertexSpec, this release removes the config closure from 
+EdgeSpec. Traits can be added and configured for an Edge all within the same closure.
+
+```groovy
+graph.with {
+    edge (step1, step2) {
+        traits Mapping
+        message = "hello from edge between $one and $two"
+        queue = [] as LinkedList
+        traits Weight
+        weight { queue.size() }
+    }
+}
+```
+
+As in 0.13.0 this represents a major step in finalizing the edge api.
+
 ## 0.13.0
 
 This release removes the need for the config closure when creating a vertex. It is now possible to apply traits and configure

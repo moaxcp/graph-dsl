@@ -2,14 +2,14 @@ package graph
 
 /**
  * Delegate of the runnerCode closure in {@link VertexSpec}. This provides methods and properties that can be used in
- * the closure. If method and property missing is delegated to the vertex.
+ * the closure. Method and property missing is delegated to the {@link Vertex}.
  */
 class VertexSpecCodeRunner {
     private Graph graph
     private Vertex vertex
 
     /**
-     * @return the graph this vertex is being added to.
+     * @return the graph this {@link Vertex} has been added to.
      */
     Graph getGraph() {
         graph
@@ -27,7 +27,8 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(String newName) {
-        graph.rename(vertex.name, newName)
+        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, rename:newName)
+        spec.apply(graph)
     }
 
     /**
@@ -35,7 +36,8 @@ class VertexSpecCodeRunner {
      * @param traits
      */
     void traits(Class... traits) {
-        vertex.delegateAs(traits as Class[])
+        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, traits:traits)
+        spec.apply(graph)
     }
 
     /**
@@ -43,9 +45,8 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void edgesFirst(String... names) {
-        names.each {
-            graph.edge vertex.name, it
-        }
+        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, edgesFirst:names)
+        spec.apply(graph)
     }
 
     /**
@@ -53,9 +54,8 @@ class VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void edgesSecond(String... names) {
-        names.each {
-            graph.edge it, vertex.name
-        }
+        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, edgesSecond:names)
+        spec.apply(graph)
     }
 
     /**
@@ -87,6 +87,9 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
+        if(name == 'name') {
+            throw new MissingPropertyException('Cannot set name in dsl. Consider using the rename method.')
+        }
         vertex[name] = value
     }
 
