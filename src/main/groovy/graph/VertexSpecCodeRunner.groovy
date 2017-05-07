@@ -2,14 +2,14 @@ package graph
 
 /**
  * Delegate of the runnerCode closure in {@link VertexSpec}. This provides methods and properties that can be used in
- * the closure. If method and property missing is delegated to the vertex.
+ * the closure. Method and property missing is delegated to the {@link Vertex}.
  */
 class VertexSpecCodeRunner {
     private Graph graph
     private Vertex vertex
 
     /**
-     * @return the graph this vertex is being added to.
+     * @return the graph this {@link Vertex} has been added to.
      */
     Graph getGraph() {
         graph
