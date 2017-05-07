@@ -259,6 +259,13 @@ class Graph {
         edge(spec)
     }
 
+    Edge edge(VertexSpec one, VertexSpec two) {
+        Vertex v1 = vertex(one)
+        Vertex v2 = vertex(two)
+        EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)
+        edge(spec)
+    }
+
     /**
      * Creates or updates a {@link Edge} in this graph. The map must contain configuration described in
      * {@link EdgeSpec#newInstance(Map)}.
@@ -267,6 +274,28 @@ class Graph {
      */
     Edge edge(Map<String, ?> map) {
         EdgeSpec spec = EdgeSpec.newInstance(map)
+        edge(spec)
+    }
+
+    /**
+     * Creates or updates a {@link Edge} in this graph with the given one and two. The map must contain configuration
+     * described in {@link EdgeSpec#newInstance(Map)}.
+     * @param one
+     * @param two
+     * @param map
+     * @return
+     */
+    Edge edge(String one, String two, Map<String, ?> map) {
+        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two)
+        spec = spec.overlay(EdgeSpec.newInstance(map))
+        edge(spec)
+    }
+
+    Edge edge(VertexSpec one, VertexSpec two, Map<String, ?> map) {
+        Vertex v1 = vertex(one)
+        Vertex v2 = vertex(two)
+        EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)
+        spec = spec.overlay(EdgeSpec.newInstance(map))
         edge(spec)
     }
 
@@ -284,17 +313,10 @@ class Graph {
         edge(spec)
     }
 
-    /**
-     * Creates or updates a {@link Edge} in this graph with the given one and two. The map must contain configuration
-     * described in {@link EdgeSpec#newInstance(Map)}.
-     * @param one
-     * @param two
-     * @param map
-     * @return
-     */
-    Edge edge(String one, String two, Map<String, ?> map) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two)
-        spec = spec.overlay(EdgeSpec.newInstance(map))
+    Edge edge(VertexSpec one, VertexSpec two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+        Vertex v1 = vertex(one)
+        Vertex v2 = vertex(two)
+        EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name, runnerCode:closure)
         edge(spec)
     }
 
@@ -321,8 +343,17 @@ class Graph {
      * @param closure
      * @return
      */
-    Edge edge(String one, String two, Map<String, ?> map, @DelegatesTo(EdgeSpec) Closure closure) {
+    Edge edge(String one, String two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
         EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two)
+        spec = spec.overlay(EdgeSpec.newInstance(map))
+        spec.runnerCode closure
+        edge(spec)
+    }
+
+    Edge edge(VertexSpec one, VertexSpec two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+        Vertex v1 = vertex(one)
+        Vertex v2 = vertex(two)
+        EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)
         spec = spec.overlay(EdgeSpec.newInstance(map))
         spec.runnerCode closure
         edge(spec)
