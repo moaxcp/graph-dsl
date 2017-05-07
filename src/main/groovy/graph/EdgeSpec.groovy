@@ -69,8 +69,6 @@ class EdgeSpec {
         graph.addEdge(edge)
         graph.vertex(one)
         graph.vertex(two)
-        edge.one = one
-        edge.two = two
 
         if (renameOne) {
             graph.vertex(renameOne)
@@ -90,6 +88,22 @@ class EdgeSpec {
         }
 
         edge
+    }
+
+    EdgeSpec overlay(EdgeSpec spec) {
+        EdgeSpec next = new EdgeSpec()
+        next.one = spec.one ?: one
+        next.two = spec.two ?: two
+        next.renameOne = spec.renameOne ?: renameOne
+        next.renameTwo = spec.renameTwo ?: renameTwo
+        next.traits((traitsSet + spec.traits) as Class[])
+        if (this.runnerCodeClosure) {
+            next.runnerCode this.runnerCodeClosure << spec.runnerCodeClosure
+        } else {
+            next.runnerCode spec.runnerCodeClosure
+        }
+
+        next
     }
 
     /**

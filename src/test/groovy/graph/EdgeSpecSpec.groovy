@@ -120,7 +120,7 @@ class EdgeSpecSpec extends Specification {
         spec.traits Mapping
         spec.one = 'step1'
         spec.two = 'step2'
-        def edge = graph.edge('one', 'two')
+        def edge = graph.edge('step1', 'step2')
 
         when:
         spec.apply(graph)
@@ -155,5 +155,28 @@ class EdgeSpecSpec extends Specification {
         then:
         spec.one == 'a'
         spec.two == 'b'
+    }
+
+    def 'overlay with null'() {
+        setup:
+        EdgeSpec first = new EdgeSpec()
+        EdgeSpec second = new EdgeSpec()
+        second.one = 'step1'
+        second.two = 'step2'
+        second.renameOne = 'step3'
+        second.renameTwo = 'step4'
+        second.traits Mapping
+        second.runnerCode {}
+
+        when:
+        EdgeSpec result = first.overlay(second)
+
+        then:
+        result.one == 'step1'
+        result.two == 'step2'
+        result.renameOne == 'step3'
+        result.renameTwo == 'step4'
+        result.traits == [Mapping] as Set<Class>
+        result.runnerCode != null
     }
 }

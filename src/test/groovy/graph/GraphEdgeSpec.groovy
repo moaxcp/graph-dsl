@@ -28,49 +28,6 @@ class GraphEdgeSpec extends Specification {
         result.is expected
     }
 
-    def 'can add/get with edge(Closure)'() {
-        when:
-        Edge edge = graph.edge {
-            one = 'step1'
-            two = 'step2'
-        }
-
-        then:
-        graph.edges.size() == 1
-        graph.edges.first().is edge
-        edge.one == 'step1'
-        edge.two == 'step2'
-    }
-
-    def 'can get with second call to edge(Closure)'() {
-        setup:
-        Edge expected = graph.edge {
-            one = 'step1'
-            two = 'step2'
-        }
-
-        when:
-        Edge result = graph.edge {
-            one = 'step1'
-            two = 'step2'
-        }
-
-        then:
-        result.is expected
-    }
-
-    def 'can add traits with edge(Closure)'() {
-        when:
-        Edge edge = graph.edge {
-            one = 'step1'
-            two = 'step2'
-            traits Mapping
-        }
-
-        then:
-        edge.delegate instanceof Mapping
-    }
-
     def 'can add/get edge with edge(Map)'() {
         when:
         Edge edge = graph.edge one:'step1', two:'step2'
@@ -182,6 +139,32 @@ class GraphEdgeSpec extends Specification {
 
         when:
         Edge result = graph.edge('step1', 'step2', [:]) {}
+
+        then:
+        result.is expected
+    }
+
+    def 'can add/get edge with edge(EdgeSpec)'() {
+        setup:
+        EdgeSpec spec = EdgeSpec.newInstance(one:'step1', two:'step2')
+
+        when:
+        Edge edge = graph.edge(spec)
+
+        then:
+        graph.edges.size() == 1
+        graph.edges.first().is edge
+        edge.one == 'step1'
+        edge.two == 'step2'
+    }
+
+    def 'can get with second call to edge(EdgeSpec)'() {
+        setup:
+        EdgeSpec spec = EdgeSpec.newInstance(one:'step1', two:'step2')
+        Edge expected = graph.edge(spec)
+
+        when:
+        Edge result = graph.edge(spec)
 
         then:
         result.is expected
