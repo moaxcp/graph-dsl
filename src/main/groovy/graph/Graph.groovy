@@ -259,6 +259,12 @@ class Graph {
         edge(spec)
     }
 
+    /**
+     * Creates or finds an edge between two vertices.
+     * @param one spec for the first {@link Vertex}
+     * @param two spec for the second {@link Vertex}
+     * @return the resulting edge
+     */
     Edge edge(VertexSpec one, VertexSpec two) {
         Vertex v1 = vertex(one)
         Vertex v2 = vertex(two)
@@ -291,6 +297,13 @@ class Graph {
         edge(spec)
     }
 
+    /**
+     * Creates or updates an {@link Edge} connecting the vertex one and two specify.
+     * @param one
+     * @param two
+     * @param map
+     * @return
+     */
     Edge edge(VertexSpec one, VertexSpec two, Map<String, ?> map) {
         Vertex v1 = vertex(one)
         Vertex v2 = vertex(two)
@@ -313,6 +326,13 @@ class Graph {
         edge(spec)
     }
 
+    /**
+     * Creates or updates an {@link Edge} connecting the vertex one and two specify.
+     * @param one
+     * @param two
+     * @param closure
+     * @return
+     */
     Edge edge(VertexSpec one, VertexSpec two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
         Vertex v1 = vertex(one)
         Vertex v2 = vertex(two)
@@ -350,6 +370,14 @@ class Graph {
         edge(spec)
     }
 
+    /**
+     * Creates or updates an {@link Edge} connecting the vertex one and two specify.
+     * @param one
+     * @param two
+     * @param map
+     * @param closure
+     * @return
+     */
     Edge edge(VertexSpec one, VertexSpec two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
         Vertex v1 = vertex(one)
         Vertex v2 = vertex(two)
@@ -359,6 +387,11 @@ class Graph {
         edge(spec)
     }
 
+    /**
+     * Applies spec to this graph.
+     * @param spec the specification for an {@link Edge}
+     * @return the resulting {@link Edge}
+     */
     Edge edge(EdgeSpec spec) {
         spec.apply(this)
     }
