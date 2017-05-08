@@ -168,24 +168,19 @@ class VertexSpec {
      */
     VertexSpec overlay(VertexSpec spec) {
 <span class="fc" id="L170">        VertexSpec next = new VertexSpec()</span>
-<span class="fc bfc" id="L171" title="All 2 branches covered.">        if (spec.name) {</span>
-<span class="fc" id="L172">            next.name = spec.name</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        next.name = spec.name ?: name</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        next.rename = spec.rename ?: rename</span>
+
+<span class="fc" id="L174">        next.traits((traitsSet + spec.traits) as Class[])</span>
+<span class="fc" id="L175">        next.edgesFirst((edgesFirstSet + spec.edgesFirst) as String[])</span>
+<span class="fc" id="L176">        next.edgesSecond((edgesSecondSet + spec.edgesSecond) as String[])</span>
+
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        if (this.runnerCodeClosure) {</span>
+<span class="nc" id="L179">            next.runnerCode this.runnerCodeClosure &lt;&lt; spec.runnerCodeClosure</span>
         } else {
-<span class="fc" id="L174">            next.name = name</span>
+<span class="fc" id="L181">            next.runnerCode spec.runnerCodeClosure</span>
         }
-
-<span class="fc" id="L177">        next.rename = spec.rename</span>
-
-<span class="fc" id="L179">        next.traits((traitsSet + spec.traits) as Class[])</span>
-<span class="fc" id="L180">        next.edgesFirst((edgesFirstSet + spec.edgesFirst) as String[])</span>
-<span class="fc" id="L181">        next.edgesSecond((edgesSecondSet + spec.edgesSecond) as String[])</span>
-
-<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if (this.runnerCodeClosure) {</span>
-<span class="nc" id="L184">            next.runnerCode this.runnerCodeClosure &lt;&lt; spec.runnerCodeClosure</span>
-        } else {
-<span class="fc" id="L186">            next.runnerCode spec.runnerCodeClosure</span>
-        }
-<span class="pc" id="L188">        next</span>
+<span class="pc" id="L183">        next</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

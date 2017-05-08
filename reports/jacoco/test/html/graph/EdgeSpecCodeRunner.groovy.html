@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EdgeSpecCodeRunner.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">EdgeSpecCodeRunner.groovy</span></div><h1>EdgeSpecCodeRunner.groovy</h1><pre class="source lang-java linenums">package graph
+
+/**
+ * Delegate of the runnerCode closure in {@link EdgeSpec}. This provides methods and properties that can be used in
+ * the closure. Method and property missing is delegated to the {@link Edge}
+ */
+class EdgeSpecCodeRunner {
+    private Graph graph
+    private Edge edge
+
+    /**
+     * Gets the graph the {@link Edge} has been added to. This can be used inside the runnerCode to access the graph.
+     * @return the graph the {@link Edge} has been added to.
+     */
+    Graph getGraph() {
+<span class="nc" id="L16">        graph</span>
+    }
+
+    /**
+     * Gets the {@link Edge} that has been added. This can be used inside the runnerCode to access the edge.
+     * @return the edge that has been added.
+     */
+    Edge getEdge() {
+<span class="nc" id="L24">        edge</span>
+    }
+
+    /**
+     * Renames edge.one to renameOne. This allows edge.one to point to a different {@link Vertex}
+     * @param renameOne the new name for edge.one
+     */
+    void renameOne(String renameOne) {
+<span class="fc" id="L32">        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, renameOne:renameOne)</span>
+<span class="fc" id="L33">        spec.apply(graph)</span>
+    }
+
+    /**
+     * Renames edge.two to renameTwo. This allows edge.two to point to a different {@link Vertex}.
+     * @param renameTwo the new name for edge.two
+     */
+    void renameTwo(String renameTwo) {
+<span class="fc" id="L41">        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, renameTwo:renameTwo)</span>
+<span class="fc" id="L42">        spec.apply(graph)</span>
+    }
+
+    /**
+     * Adds traits to the edge.
+     * @param traits
+     */
+    void traits(Class... traits) {
+<span class="fc" id="L50">        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, traits:traits)</span>
+<span class="fc" id="L51">        spec.apply(graph)</span>
+    }
+
+    /**
+     * Calls the missing method on the {@link Edge}.
+     * @param name
+     * @param args
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def methodMissing(String name, args) {
+<span class="pc" id="L62">        edge.invokeMethod(name, args)</span>
+    }
+
+    /**
+     * Gets the property from the {@link Edge}.
+     * @param name
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def propertyMissing(String name) {
+<span class="pc" id="L72">        edge[name]</span>
+    }
+
+    /**
+     * Sets the property on the {@link Edge}.
+     * @throws MissingPropertyException when attempting to set one or two.
+     * @param name
+     * @param value
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def propertyMissing(String name, value) {
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if (name == 'one') {</span>
+<span class="fc" id="L85">            throw new MissingPropertyException('Cannot set one in dsl. Consider using renameOne method')</span>
+        }
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (name == 'two') {</span>
+<span class="fc" id="L88">            throw new MissingPropertyException('Cannot set two in dsl. Consider using renameTwo method')</span>
+        }
+<span class="pc" id="L90">        edge[name] = value</span>
+    }
+
+    /**
+     * This object becomes the delegate of the closure. The closure is run with a {@link Closure#DELEGATE_FIRST}
+     * strategy and then it is called.
+     * @param closure
+     */
+    void runCode(@DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+<span class="fc" id="L99">        closure.delegate = this</span>
+<span class="fc" id="L100">        closure.resolveStrategy = Closure.DELEGATE_FIRST</span>
+<span class="fc" id="L101">        closure()</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

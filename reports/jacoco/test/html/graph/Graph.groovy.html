@@ -248,110 +248,174 @@ class Graph {
     }
 
     /**
-     * Creates or finds an edge between two vertices. The vertices are checked using {#vertex(String... names)}. If the
-     * edge already exists it is returned.
-     * @param one - the name of the first {@link Vertex}
-     * @param two - the name of the second {@link Vertex}
-     * @return the resulting edge
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
+     * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
+     * will be created.
+     * @param one - the name of the first {@link Vertex}.
+     * @param two - the name of the second {@link Vertex}.
+     * @return the resulting {@link Edge}.
      */
     Edge edge(String one, String two) {
-<span class="fc" id="L258">        vertex(one, two)</span>
-<span class="fc" id="L259">        Edge e = edgeFactory.newEdge(one, two)</span>
-<span class="pc bfc" id="L260" title="All 2 branches covered.">        Edge edge = edges.find { it == e } ?: e</span>
-<span class="fc" id="L261">        edges &lt;&lt; edge</span>
-<span class="pc" id="L262">        edge</span>
+<span class="fc" id="L259">        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two)</span>
+<span class="pc" id="L260">        edge(spec)</span>
     }
 
     /**
-     * Creates or updates a {@link Edge} in this graph. See {@link EdgeSpec#applyToGraphAndEdge(Graph, Edge)} for
-     * details on how this graph and the {@link Edge} are modified.
-     * @param closure - delegates to {@link EdgeSpec}
-     * @return the resulting {@link Edge}
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
+     * {@link Vertex} objects are obtained with {@link #vertex(VertexSpec,VertexSpec)} which will apply each
+     * {@link VertexSpec} to the {@link Graph}.
+     * @param one - {@link VertexSpec} for the first {@link Vertex}.
+     * @param two - {@link VertexSpec} for the second {@link Vertex}.
+     * @return the resulting {@link Edge}.
      */
-    Edge edge(@DelegatesTo(EdgeSpec) Closure closure) {
-<span class="fc" id="L272">        EdgeSpec spec = EdgeSpec.newInstance(this, closure)</span>
-<span class="fc" id="L273">        Edge edge = edge(spec.one, spec.two)</span>
-<span class="fc" id="L274">        spec.applyToGraphAndEdge(this, edge)</span>
-<span class="pc" id="L275">        edge</span>
+    Edge edge(VertexSpec one, VertexSpec two) {
+<span class="fc" id="L272">        Vertex v1 = vertex(one)</span>
+<span class="fc" id="L273">        Vertex v2 = vertex(two)</span>
+<span class="fc" id="L274">        EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)</span>
+<span class="pc" id="L275">        edge(spec)</span>
     }
 
     /**
-     * Creates or updates a {@link Edge} in this graph. The map must contain configuration described in
-     * {@link EdgeSpec#newInstance(Map)}.
-     * @param map
-     * @return the resulting {@link Edge}
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map must
+     * contain configuration described in {@link EdgeSpec#newInstance(Map)}. Specifically, it must contain entries
+     * for one and two.
+     * @param map - used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @return the resulting {@link Edge}.
      */
     Edge edge(Map&lt;String, ?&gt; map) {
-<span class="fc" id="L285">        EdgeSpec spec = EdgeSpec.newInstance(map)</span>
-<span class="fc" id="L286">        Edge edge = edge(spec.one, spec.two)</span>
-<span class="fc" id="L287">        spec.applyToGraphAndEdge(this, edge)</span>
-<span class="pc" id="L288">        edge</span>
+<span class="fc" id="L286">        EdgeSpec spec = EdgeSpec.newInstance(map)</span>
+<span class="pc" id="L287">        edge(spec)</span>
     }
 
     /**
-     * Creates or updtes a {@link Edge} in this graph with the given one and two. The configuration given by the closure
-     * is delegated to an {@link EdgeSpec}. See {@link EdgeSpec#applyToGraphAndEdge(Graph, Edge)} for details on how it
-     * modifies this graph and the {@link Edge}.
-     * @param one
-     * @param two
-     * @param closure
-     * @return
-     */
-    Edge edge(String one, String two, @DelegatesTo(EdgeSpec) Closure closure) {
-<span class="fc" id="L301">        EdgeSpec spec = EdgeSpec.newInstance(this, closure)</span>
-<span class="fc" id="L302">        Edge edge = edge(one, two)</span>
-<span class="fc" id="L303">        spec.applyToGraphAndEdge(this, edge)</span>
-<span class="pc" id="L304">        edge</span>
-    }
-
-    /**
-     * Creates or updates a {@link Edge} in this graph with the given one and two. The map must contain configuration
-     * described in {@link EdgeSpec#newInstance(Map)}.
-     * @param one
-     * @param two
-     * @param map
-     * @return
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map must
+     * contain configuration described in {@link EdgeSpec#newInstance(Map)}. If the map contains an entry for one
+     * or two those values will be used for the {@link Edge} instead of the parameters.
+     * @param one - the name of the first {@link Vertex}.
+     * @param two - the name of the second {@link Vertex}.
+     * @param map - used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @return the resulting {@link Edge}.
      */
     Edge edge(String one, String two, Map&lt;String, ?&gt; map) {
-<span class="fc" id="L316">        EdgeSpec spec = EdgeSpec.newInstance(map)</span>
-<span class="fc" id="L317">        Edge edge = edge(one, two)</span>
-<span class="fc" id="L318">        spec.applyToGraphAndEdge(this, edge)</span>
-<span class="pc" id="L319">        edge</span>
+<span class="fc" id="L300">        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two)</span>
+<span class="fc" id="L301">        spec = spec.overlay(EdgeSpec.newInstance(map))</span>
+<span class="pc" id="L302">        edge(spec)</span>
     }
 
     /**
-     * Creates or updates a {@link Edge} in this graph. This methods creates two {@link EdgeSpec} objects from the
-     * map and closure. The map is applied before the clsoure using {@link EdgeSpec#applyToGraphAndEdge(Graph, Edge)}.
-     * @param map
-     * @param closure
-     * @return
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
+     * {@link Vertex} objects are obtained with {@link #vertex(VertexSpec)} which will apply each
+     * {@link VertexSpec} to the {@link Graph}. The map must contain configuration described in
+     * {@link EdgeSpec#newInstance(Map)}. If the map contains an entry for one or two those values will be used for the
+     * {@link Edge} instead of the parameters.
+     * @param one - {@link VertexSpec} for the first {@link Vertex}.
+     * @param two - {@link VertexSpec} for the second {@link Vertex}.
+     * @param map - used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @return the resulting {@link Edge}.
      */
-    Edge edge(Map&lt;String, ?&gt; map, @DelegatesTo(EdgeSpec) Closure closure) {
-<span class="fc" id="L330">        EdgeSpec mapSpec = EdgeSpec.newInstance(map)</span>
-<span class="fc" id="L331">        EdgeSpec closureSpec = EdgeSpec.newInstance(this, closure)</span>
-<span class="fc" id="L332">        Edge edge = edge(mapSpec.one, mapSpec.two)</span>
-<span class="fc" id="L333">        mapSpec.applyToGraphAndEdge(this, edge)</span>
-<span class="fc" id="L334">        closureSpec.applyToGraphAndEdge(this, edge)</span>
-<span class="pc" id="L335">        edge</span>
+    Edge edge(VertexSpec one, VertexSpec two, Map&lt;String, ?&gt; map) {
+<span class="fc" id="L317">        Vertex v1 = vertex(one)</span>
+<span class="fc" id="L318">        Vertex v2 = vertex(two)</span>
+<span class="fc" id="L319">        EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)</span>
+<span class="fc" id="L320">        spec = spec.overlay(EdgeSpec.newInstance(map))</span>
+<span class="pc" id="L321">        edge(spec)</span>
     }
 
     /**
-     * Creates or updates a {@link Edge} in this graph with the given one and two. This methods creates two
-     * {@link EdgeSpec} objects from the map and closure. The map is applied before the clsoure using
-     * {@link EdgeSpec#applyToGraphAndEdge(Graph, Edge)}.
-     * @param one
-     * @param two
-     * @param map
-     * @param closure
-     * @return
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
+     * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
+     * will be created. The closure sets the runnerCode in an {@link EdgeSpec}. See
+     * {@link EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the {@link Edge} and {@link Graph}.
+     * @param one - the name of the first {@link Vertex}.
+     * @param two - the name of the second {@link Vertex}.
+     * @param closure - sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
+     * @return the resulting {@link Edge}.
      */
-    Edge edge(String one, String two, Map&lt;String, ?&gt; map, @DelegatesTo(EdgeSpec) Closure closure) {
-<span class="fc" id="L349">        EdgeSpec mapSpec = EdgeSpec.newInstance(map)</span>
-<span class="fc" id="L350">        EdgeSpec closureSpec = EdgeSpec.newInstance(this, closure)</span>
-<span class="fc" id="L351">        Edge edge = edge(one, two)</span>
-<span class="fc" id="L352">        mapSpec.applyToGraphAndEdge(this, edge)</span>
-<span class="fc" id="L353">        closureSpec.applyToGraphAndEdge(this, edge)</span>
-<span class="pc" id="L354">        edge</span>
+    Edge edge(String one, String two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+<span class="fc" id="L335">        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two, runnerCode:closure)</span>
+<span class="pc" id="L336">        edge(spec)</span>
+    }
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
+     * {@link Vertex} objects are obtained with {@link #vertex(VertexSpec,VertexSpec)} which will apply each
+     * {@link VertexSpec} to the {@link Graph}. The closure sets the runnerCode in an {@link EdgeSpec}. See
+     * {@link EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the {@link Edge} and {@link Graph}.
+     * @param one - {@link VertexSpec} for the first {@link Vertex}.
+     * @param two - {@link VertexSpec} for the second {@link Vertex}.
+     * @param closure - sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
+     * @return the resulting {@link Edge}.
+     */
+    Edge edge(VertexSpec one, VertexSpec two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+<span class="fc" id="L350">        Vertex v1 = vertex(one)</span>
+<span class="fc" id="L351">        Vertex v2 = vertex(two)</span>
+<span class="fc" id="L352">        EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name, runnerCode:closure)</span>
+<span class="pc" id="L353">        edge(spec)</span>
+    }
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map must
+     * contain configuration described in  {@link EdgeSpec#newInstance(Map)}. Specifically, it must contain entries
+     * for one and two. The closure sets the runnerCode in an {@link EdgeSpec}. See
+     * {@link EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the {@link Edge} and {@link Graph}.
+     * @param map - used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @param closure - sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
+     * @return the resulting {@link Edge}.
+     */
+    Edge edge(Map&lt;String, ?&gt; map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+<span class="fc" id="L366">        EdgeSpec spec = EdgeSpec.newInstance(map)</span>
+<span class="fc" id="L367">        spec.runnerCode closure</span>
+<span class="pc" id="L368">        edge(spec)</span>
+    }
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map must
+     * contain configuration described in {@link EdgeSpec#newInstance(Map)}. If the map contains an entry for one or
+     * two those values will be used for the {@link Edge} instead of the parameters. The closure sets the runnerCode in
+     * an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the
+     * {@link Edge} and {@link Graph}.
+     * @param one - the name of the first {@link Vertex}.
+     * @param two - the name of the second {@link Vertex}.
+     * @param map - used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @param closure - sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
+     * @return the resulting {@link Edge}.
+     */
+    Edge edge(String one, String two, Map&lt;String, ?&gt; map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+<span class="fc" id="L384">        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two)</span>
+<span class="fc" id="L385">        spec = spec.overlay(EdgeSpec.newInstance(map))</span>
+<span class="fc" id="L386">        spec.runnerCode closure</span>
+<span class="pc" id="L387">        edge(spec)</span>
+    }
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
+     * {@link Vertex} objects are obtained with {@link #vertex(VertexSpec)} which will apply each
+     * {@link VertexSpec} to the {@link Graph}. The map must contain configuration described in
+     * {@link EdgeSpec#newInstance(Map)}. If the map contains an entry for one or two those values will be used for the
+     * {@link Edge} instead of the parameters. The closure sets the runnerCode in an {@link EdgeSpec}. See
+     * {@link EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the {@link Edge} and {@link Graph}.
+     * @param one - {@link VertexSpec} for the first {@link Vertex}.
+     * @param two - {@link VertexSpec} for the second {@link Vertex}.
+     * @param map - used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @param closure - sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
+     * @return the resulting {@link Edge}.
+     */
+    Edge edge(VertexSpec one, VertexSpec two, Map&lt;String, ?&gt; map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+<span class="fc" id="L404">        Vertex v1 = vertex(one)</span>
+<span class="fc" id="L405">        Vertex v2 = vertex(two)</span>
+<span class="fc" id="L406">        EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)</span>
+<span class="fc" id="L407">        spec = spec.overlay(EdgeSpec.newInstance(map))</span>
+<span class="fc" id="L408">        spec.runnerCode closure</span>
+<span class="pc" id="L409">        edge(spec)</span>
+    }
+
+    /**
+     * Applies spec to this graph.
+     * @param spec the specification for an {@link Edge}
+     * @return the resulting {@link Edge}.
+     */
+    Edge edge(EdgeSpec spec) {
+<span class="pc" id="L418">        spec.apply(this)</span>
     }
 
     /**
@@ -361,8 +425,8 @@ class Graph {
      * @return the first unvisited vertex name in the vertices.
      */
     String getUnvisitedVertexName(colors) {
-<span class="pc" id="L364">        vertices.find { k, v -&gt;</span>
-<span class="pc bfc" id="L365" title="All 4 branches covered.">            colors[(k)] != TraversalColor.BLACK &amp;&amp; colors[k] != TraversalColor.GREY</span>
+<span class="pc" id="L428">        vertices.find { k, v -&gt;</span>
+<span class="pc bfc" id="L429" title="All 4 branches covered.">            colors[(k)] != TraversalColor.BLACK &amp;&amp; colors[k] != TraversalColor.GREY</span>
         }?.key
     }
 
@@ -375,18 +439,18 @@ class Graph {
      */
     @SuppressWarnings('BooleanMethodReturnsNull')
     String getUnvisitedChildName(Map&lt;String, TraversalColor&gt; colors, String parentName) {
-<span class="fc" id="L378">        Edge edge = traverseEdges(parentName).findAll {</span>
-<span class="pc" id="L379">            it.one != it.two</span>
+<span class="fc" id="L442">        Edge edge = traverseEdges(parentName).findAll {</span>
+<span class="pc" id="L443">            it.one != it.two</span>
         }.find {
-<span class="pc bpc" id="L381" title="1 of 2 branches missed.">            String childName = parentName == it.one ? it.two : it.one</span>
-<span class="fc" id="L382">            TraversalColor color = colors[childName]</span>
-<span class="pc bpc" id="L383" title="1 of 6 branches missed.">            !(color == TraversalColor.GREY || color == TraversalColor.BLACK)</span>
+<span class="pc bpc" id="L445" title="1 of 2 branches missed.">            String childName = parentName == it.one ? it.two : it.one</span>
+<span class="fc" id="L446">            TraversalColor color = colors[childName]</span>
+<span class="pc bpc" id="L447" title="1 of 6 branches missed.">            !(color == TraversalColor.GREY || color == TraversalColor.BLACK)</span>
         }
 
-<span class="fc bfc" id="L386" title="All 4 branches covered.">        if (!edge) {</span>
-<span class="fc" id="L387">            return null</span>
+<span class="fc bfc" id="L450" title="All 4 branches covered.">        if (!edge) {</span>
+<span class="fc" id="L451">            return null</span>
         }
-<span class="pc bpc" id="L389" title="1 of 2 branches missed.">        parentName == edge.one ? edge.two : edge.one</span>
+<span class="pc bpc" id="L453" title="1 of 2 branches missed.">        parentName == edge.one ? edge.two : edge.one</span>
     }
 
     /**
@@ -395,8 +459,8 @@ class Graph {
      * @return set of adjacent edges.
      */
     Set&lt;? extends Edge&gt; adjacentEdges(String name) {
-<span class="pc" id="L398">        edges.findAll {</span>
-<span class="pc bfc" id="L399" title="All 4 branches covered.">            name == it.one || name == it.two</span>
+<span class="pc" id="L462">        edges.findAll {</span>
+<span class="pc bfc" id="L463" title="All 4 branches covered.">            name == it.one || name == it.two</span>
         }
     }
 
@@ -406,7 +470,7 @@ class Graph {
      * @return
      */
     Set&lt;? extends Edge&gt; traverseEdges(String name) {
-<span class="pc" id="L409">        adjacentEdges(name)</span>
+<span class="pc" id="L473">        adjacentEdges(name)</span>
     }
 
     /**
@@ -417,8 +481,8 @@ class Graph {
      * @return
      */
     Map makeColorMap() {
-<span class="pc" id="L420">        vertices.collectEntries { name, vertex -&gt;</span>
-<span class="pc" id="L421">            [(name):TraversalColor.WHITE]</span>
+<span class="pc" id="L484">        vertices.collectEntries { name, vertex -&gt;</span>
+<span class="pc" id="L485">            [(name):TraversalColor.WHITE]</span>
         }
     }
 
@@ -432,8 +496,8 @@ class Graph {
      * @return
      */
     Traversal depthFirstTraversal(Closure specClosure) {
-<span class="fc" id="L435">        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(specClosure)</span>
-<span class="pc" id="L436">        traversal(this.&amp;depthFirstTraversalConnected, spec)</span>
+<span class="fc" id="L499">        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(specClosure)</span>
+<span class="pc" id="L500">        traversal(this.&amp;depthFirstTraversalConnected, spec)</span>
     }
 
     /**
@@ -447,11 +511,11 @@ class Graph {
      * @return
      */
     DepthFirstTraversalSpec depthFirstTraversalSpec(Closure specClosure) {
-<span class="fc" id="L450">        DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()</span>
-<span class="fc" id="L451">        specClosure.delegate = spec</span>
-<span class="fc" id="L452">        specClosure()</span>
-<span class="fc" id="L453">        setupSpec(spec)</span>
-<span class="pc" id="L454">        spec</span>
+<span class="fc" id="L514">        DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()</span>
+<span class="fc" id="L515">        specClosure.delegate = spec</span>
+<span class="fc" id="L516">        specClosure()</span>
+<span class="fc" id="L517">        setupSpec(spec)</span>
+<span class="pc" id="L518">        spec</span>
     }
 
     /**
@@ -466,8 +530,8 @@ class Graph {
      * @param spec the traversal spec to configure with defaults.
      */
     void setupSpec(TraversalSpec spec) {
-<span class="fc bfc" id="L469" title="All 2 branches covered.">        spec.colors = spec.colors ?: makeColorMap()</span>
-<span class="fc bfc" id="L470" title="All 2 branches covered.">        spec.root = spec.root ?: getUnvisitedVertexName(spec.colors)</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">        spec.colors = spec.colors ?: makeColorMap()</span>
+<span class="fc bfc" id="L534" title="All 2 branches covered.">        spec.root = spec.root ?: getUnvisitedVertexName(spec.colors)</span>
     }
 
     /**
@@ -481,11 +545,11 @@ class Graph {
      * @return
      */
     BreadthFirstTraversalSpec breadthFirstTraversalSpec(Closure specClosure) {
-<span class="fc" id="L484">        BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()</span>
-<span class="fc" id="L485">        specClosure.delegate = spec</span>
-<span class="fc" id="L486">        specClosure()</span>
-<span class="fc" id="L487">        setupSpec(spec)</span>
-<span class="pc" id="L488">        spec</span>
+<span class="fc" id="L548">        BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()</span>
+<span class="fc" id="L549">        specClosure.delegate = spec</span>
+<span class="fc" id="L550">        specClosure()</span>
+<span class="fc" id="L551">        setupSpec(spec)</span>
+<span class="pc" id="L552">        spec</span>
     }
 
     /**
@@ -499,15 +563,15 @@ class Graph {
      * @return null or a Traversal value
      */
     Traversal traversal(traversalConnected, spec) {
-<span class="fc" id="L502">        String name = spec.root</span>
-<span class="fc bfc" id="L503" title="All 2 branches covered.">        while (name) {</span>
-<span class="fc" id="L504">            Traversal traversal = traversalConnected(name, spec)</span>
-<span class="fc bfc" id="L505" title="All 2 branches covered.">            if (traversal == Traversal.STOP) {</span>
-<span class="fc" id="L506">                return Traversal.STOP</span>
+<span class="fc" id="L566">        String name = spec.root</span>
+<span class="fc bfc" id="L567" title="All 2 branches covered.">        while (name) {</span>
+<span class="fc" id="L568">            Traversal traversal = traversalConnected(name, spec)</span>
+<span class="fc bfc" id="L569" title="All 2 branches covered.">            if (traversal == Traversal.STOP) {</span>
+<span class="fc" id="L570">                return Traversal.STOP</span>
             }
-<span class="fc" id="L508">            name = getUnvisitedVertexName(spec.colors)</span>
+<span class="fc" id="L572">            name = getUnvisitedVertexName(spec.colors)</span>
         }
-<span class="pc" id="L510">        null</span>
+<span class="pc" id="L574">        null</span>
     }
 
     /**
@@ -522,34 +586,34 @@ class Graph {
      * @return null or a Traversal value
      */
     Traversal depthFirstTraversalConnected(String root, DepthFirstTraversalSpec spec) {
-<span class="fc bfc" id="L525" title="All 6 branches covered.">        if (spec.preorder &amp;&amp; spec.preorder(vertices[root]) == Traversal.STOP) {</span>
-<span class="fc" id="L526">            spec.colors[root] = TraversalColor.GREY</span>
-<span class="fc" id="L527">            return Traversal.STOP</span>
+<span class="fc bfc" id="L589" title="All 6 branches covered.">        if (spec.preorder &amp;&amp; spec.preorder(vertices[root]) == Traversal.STOP) {</span>
+<span class="fc" id="L590">            spec.colors[root] = TraversalColor.GREY</span>
+<span class="fc" id="L591">            return Traversal.STOP</span>
         }
-<span class="fc" id="L529">        spec.colors[root] = TraversalColor.GREY</span>
+<span class="fc" id="L593">        spec.colors[root] = TraversalColor.GREY</span>
 
-<span class="fc" id="L531">        Set&lt;Edge&gt; adjacentEdges = traverseEdges(root)</span>
-<span class="fc bfc" id="L532" title="All 2 branches covered.">        for (int index = 0; index &lt; adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges</span>
-<span class="fc" id="L533">            Edge edge = adjacentEdges[index]</span>
-<span class="fc bfc" id="L534" title="All 2 branches covered.">            String connectedName = root == edge.one ? edge.two : edge.one</span>
-<span class="fc bfc" id="L535" title="All 2 branches covered.">            if (spec.classifyEdge &amp;&amp; spec.classifyEdge(edge, root, connectedName,</span>
-<span class="fc bfc" id="L536" title="All 4 branches covered.">                    spec.colors[connectedName]) == Traversal.STOP) {</span>
-<span class="fc" id="L537">                return Traversal.STOP</span>
+<span class="fc" id="L595">        Set&lt;Edge&gt; adjacentEdges = traverseEdges(root)</span>
+<span class="fc bfc" id="L596" title="All 2 branches covered.">        for (int index = 0; index &lt; adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges</span>
+<span class="fc" id="L597">            Edge edge = adjacentEdges[index]</span>
+<span class="fc bfc" id="L598" title="All 2 branches covered.">            String connectedName = root == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L599" title="All 2 branches covered.">            if (spec.classifyEdge &amp;&amp; spec.classifyEdge(edge, root, connectedName,</span>
+<span class="fc bfc" id="L600" title="All 4 branches covered.">                    spec.colors[connectedName]) == Traversal.STOP) {</span>
+<span class="fc" id="L601">                return Traversal.STOP</span>
             }
-<span class="fc bfc" id="L539" title="All 2 branches covered.">            if (spec.colors[connectedName] == TraversalColor.WHITE) {</span>
-<span class="fc bfc" id="L540" title="All 2 branches covered.">                if (Traversal.STOP == depthFirstTraversalConnected(connectedName, spec)) {</span>
-<span class="fc" id="L541">                    return Traversal.STOP</span>
+<span class="fc bfc" id="L603" title="All 2 branches covered.">            if (spec.colors[connectedName] == TraversalColor.WHITE) {</span>
+<span class="fc bfc" id="L604" title="All 2 branches covered.">                if (Traversal.STOP == depthFirstTraversalConnected(connectedName, spec)) {</span>
+<span class="fc" id="L605">                    return Traversal.STOP</span>
                 }
             }
 
         }
 
-<span class="fc bfc" id="L547" title="All 6 branches covered.">        if (spec.postorder &amp;&amp; spec.postorder(vertices[root]) == Traversal.STOP) {</span>
-<span class="fc" id="L548">            spec.colors[root] = TraversalColor.BLACK</span>
-<span class="fc" id="L549">            return Traversal.STOP</span>
+<span class="fc bfc" id="L611" title="All 6 branches covered.">        if (spec.postorder &amp;&amp; spec.postorder(vertices[root]) == Traversal.STOP) {</span>
+<span class="fc" id="L612">            spec.colors[root] = TraversalColor.BLACK</span>
+<span class="fc" id="L613">            return Traversal.STOP</span>
         }
-<span class="fc" id="L551">        spec.colors[root] = TraversalColor.BLACK</span>
-<span class="pc" id="L552">        null</span>
+<span class="fc" id="L615">        spec.colors[root] = TraversalColor.BLACK</span>
+<span class="pc" id="L616">        null</span>
     }
 
     /**
@@ -557,7 +621,7 @@ class Graph {
      * @param closure
      */
     void eachBfs(Closure closure) {
-<span class="fc" id="L560">        eachBfs(null, closure)</span>
+<span class="fc" id="L624">        eachBfs(null, closure)</span>
     }
 
     /**
@@ -567,11 +631,11 @@ class Graph {
      * @param closure
      */
     void eachBfs(String root, Closure closure) {
-<span class="fc" id="L570">        breadthFirstTraversal {</span>
-<span class="fc" id="L571">            delegate.root = root</span>
-<span class="pc" id="L572">            visit { vertex -&gt;</span>
-<span class="fc" id="L573">                closure(vertex)</span>
-<span class="pc" id="L574">                null</span>
+<span class="fc" id="L634">        breadthFirstTraversal {</span>
+<span class="fc" id="L635">            delegate.root = root</span>
+<span class="pc" id="L636">            visit { vertex -&gt;</span>
+<span class="fc" id="L637">                closure(vertex)</span>
+<span class="pc" id="L638">                null</span>
             }
         }
     }
@@ -583,7 +647,7 @@ class Graph {
      * @return first {@link Vertex} where closure returns true
      */
     Vertex findBfs(Closure closure) {
-<span class="pc" id="L586">        findBfs(null, closure)</span>
+<span class="pc" id="L650">        findBfs(null, closure)</span>
     }
 
     /**
@@ -594,17 +658,17 @@ class Graph {
      * @return first {@link Vertex} where closure returns true
      */
     Vertex findBfs(String root, Closure closure) {
-<span class="fc" id="L597">        Vertex result = null</span>
-<span class="fc" id="L598">        breadthFirstTraversal {</span>
-<span class="fc" id="L599">            delegate.root = root</span>
-<span class="pc" id="L600">            visit { vertex -&gt;</span>
-<span class="fc bfc" id="L601" title="All 2 branches covered.">                if (closure(vertex)) {</span>
-<span class="fc" id="L602">                    result = vertex</span>
-<span class="pc" id="L603">                    return Traversal.STOP</span>
+<span class="fc" id="L661">        Vertex result = null</span>
+<span class="fc" id="L662">        breadthFirstTraversal {</span>
+<span class="fc" id="L663">            delegate.root = root</span>
+<span class="pc" id="L664">            visit { vertex -&gt;</span>
+<span class="fc bfc" id="L665" title="All 2 branches covered.">                if (closure(vertex)) {</span>
+<span class="fc" id="L666">                    result = vertex</span>
+<span class="pc" id="L667">                    return Traversal.STOP</span>
                 }
             }
         }
-<span class="pc" id="L607">        result</span>
+<span class="pc" id="L671">        result</span>
     }
 
     /**
@@ -615,7 +679,7 @@ class Graph {
      * @return object returned from the final call to closure.
      */
     Object injectBfs(Object object, Closure closure) {
-<span class="pc" id="L618">        injectBfs(null, object, closure)</span>
+<span class="pc" id="L682">        injectBfs(null, object, closure)</span>
     }
 
     /**
@@ -627,14 +691,14 @@ class Graph {
      * @return object returned from the final call to closure.
      */
     Object injectBfs(String root, Object object, Closure closure) {
-<span class="fc" id="L630">        Object result = object</span>
-<span class="fc" id="L631">        breadthFirstTraversal {</span>
-<span class="fc" id="L632">            delegate.root = root</span>
-<span class="pc" id="L633">            visit { vertex -&gt;</span>
-<span class="pc" id="L634">                result = closure(result, vertex)</span>
+<span class="fc" id="L694">        Object result = object</span>
+<span class="fc" id="L695">        breadthFirstTraversal {</span>
+<span class="fc" id="L696">            delegate.root = root</span>
+<span class="pc" id="L697">            visit { vertex -&gt;</span>
+<span class="pc" id="L698">                result = closure(result, vertex)</span>
             }
         }
-<span class="pc" id="L637">        result</span>
+<span class="pc" id="L701">        result</span>
     }
 
     /**
@@ -643,7 +707,7 @@ class Graph {
      * @return the vertices where closure returns true
      */
     List&lt;? extends Vertex&gt; findAllBfs(Closure closure) {
-<span class="pc" id="L646">        findAllBfs(null, closure)</span>
+<span class="pc" id="L710">        findAllBfs(null, closure)</span>
     }
 
     /**
@@ -654,11 +718,11 @@ class Graph {
      * @return the vertices where closure returns true
      */
     List&lt;? extends Vertex&gt; findAllBfs(String root, Closure closure) {
-<span class="pc" id="L657">        (List&lt;? extends Vertex&gt;) injectBfs(root, []) { result, vertex -&gt;</span>
-<span class="fc bfc" id="L658" title="All 2 branches covered.">            if (closure(vertex)) {</span>
-<span class="fc" id="L659">                result &lt;&lt; vertex</span>
+<span class="pc" id="L721">        (List&lt;? extends Vertex&gt;) injectBfs(root, []) { result, vertex -&gt;</span>
+<span class="fc bfc" id="L722" title="All 2 branches covered.">            if (closure(vertex)) {</span>
+<span class="fc" id="L723">                result &lt;&lt; vertex</span>
             }
-<span class="pc" id="L661">            result</span>
+<span class="pc" id="L725">            result</span>
         }
     }
 
@@ -668,7 +732,7 @@ class Graph {
      * @return the results from closure
      */
     List&lt;? extends Vertex&gt; collectBfs(Closure closure) {
-<span class="pc" id="L671">        collectBfs(null, closure)</span>
+<span class="pc" id="L735">        collectBfs(null, closure)</span>
     }
 
     /**
@@ -678,8 +742,8 @@ class Graph {
      * @return the results from closure
      */
     List&lt;? extends Vertex&gt; collectBfs(String root, Closure closure) {
-<span class="pc" id="L681">        (List&lt;? extends Vertex&gt;) injectBfs(root, []) { result, vertex -&gt;</span>
-<span class="pc" id="L682">            result &lt;&lt; closure(vertex)</span>
+<span class="pc" id="L745">        (List&lt;? extends Vertex&gt;) injectBfs(root, []) { result, vertex -&gt;</span>
+<span class="pc" id="L746">            result &lt;&lt; closure(vertex)</span>
         }
     }
 
@@ -693,8 +757,8 @@ class Graph {
      * @return
      */
     Traversal breadthFirstTraversal(Closure specClosure) {
-<span class="fc" id="L696">        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(specClosure)</span>
-<span class="pc" id="L697">        traversal(this.&amp;breadthFirstTraversalConnected, spec)</span>
+<span class="fc" id="L760">        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(specClosure)</span>
+<span class="pc" id="L761">        traversal(this.&amp;breadthFirstTraversalConnected, spec)</span>
     }
 
     /**
@@ -709,36 +773,36 @@ class Graph {
      * @return null or a Traversal value
      */
     Traversal breadthFirstTraversalConnected(String root, BreadthFirstTraversalSpec spec) {
-<span class="fc bfc" id="L712" title="All 4 branches covered.">        if (!vertices[root]) {</span>
-<span class="fc" id="L713">            throw new IllegalArgumentException(&quot;Could not find $root in graph&quot;)</span>
+<span class="fc bfc" id="L776" title="All 4 branches covered.">        if (!vertices[root]) {</span>
+<span class="fc" id="L777">            throw new IllegalArgumentException(&quot;Could not find $root in graph&quot;)</span>
         }
-<span class="fc" id="L715">        def traversal = spec.visit(vertices[root])</span>
-<span class="fc bfc" id="L716" title="All 2 branches covered.">        if (traversal == Traversal.STOP) {</span>
-<span class="fc" id="L717">            spec.colors[root] = TraversalColor.GREY</span>
-<span class="fc" id="L718">            return traversal</span>
+<span class="fc" id="L779">        def traversal = spec.visit(vertices[root])</span>
+<span class="fc bfc" id="L780" title="All 2 branches covered.">        if (traversal == Traversal.STOP) {</span>
+<span class="fc" id="L781">            spec.colors[root] = TraversalColor.GREY</span>
+<span class="fc" id="L782">            return traversal</span>
         }
-<span class="fc" id="L720">        spec.colors[root] = TraversalColor.GREY</span>
-<span class="fc" id="L721">        Queue&lt;String&gt; queue = [] as Queue&lt;String&gt;</span>
-<span class="fc" id="L722">        queue &lt;&lt; root</span>
-<span class="fc bfc" id="L723" title="All 2 branches covered.">        while (queue.size() != 0) {</span>
-<span class="fc" id="L724">            String current = queue.poll()</span>
-<span class="fc" id="L725">            Set&lt;Edge&gt; adjacentEdges = traverseEdges(current)</span>
-<span class="fc bfc" id="L726" title="All 2 branches covered.">            for (int i = 0; i &lt; adjacentEdges.size(); i++) {</span>
-<span class="fc" id="L727">                Edge edge = adjacentEdges[i]</span>
-<span class="fc bfc" id="L728" title="All 2 branches covered.">                String connected = current == edge.one ? edge.two : edge.one</span>
-<span class="fc bfc" id="L729" title="All 2 branches covered.">                if (spec.colors[connected] == TraversalColor.WHITE) {</span>
-<span class="fc" id="L730">                    traversal = spec.visit(vertices[connected])</span>
-<span class="fc bfc" id="L731" title="All 2 branches covered.">                    if (traversal == Traversal.STOP) {</span>
-<span class="fc" id="L732">                        spec.colors[connected] = TraversalColor.GREY</span>
-<span class="fc" id="L733">                        return traversal</span>
+<span class="fc" id="L784">        spec.colors[root] = TraversalColor.GREY</span>
+<span class="fc" id="L785">        Queue&lt;String&gt; queue = [] as Queue&lt;String&gt;</span>
+<span class="fc" id="L786">        queue &lt;&lt; root</span>
+<span class="fc bfc" id="L787" title="All 2 branches covered.">        while (queue.size() != 0) {</span>
+<span class="fc" id="L788">            String current = queue.poll()</span>
+<span class="fc" id="L789">            Set&lt;Edge&gt; adjacentEdges = traverseEdges(current)</span>
+<span class="fc bfc" id="L790" title="All 2 branches covered.">            for (int i = 0; i &lt; adjacentEdges.size(); i++) {</span>
+<span class="fc" id="L791">                Edge edge = adjacentEdges[i]</span>
+<span class="fc bfc" id="L792" title="All 2 branches covered.">                String connected = current == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L793" title="All 2 branches covered.">                if (spec.colors[connected] == TraversalColor.WHITE) {</span>
+<span class="fc" id="L794">                    traversal = spec.visit(vertices[connected])</span>
+<span class="fc bfc" id="L795" title="All 2 branches covered.">                    if (traversal == Traversal.STOP) {</span>
+<span class="fc" id="L796">                        spec.colors[connected] = TraversalColor.GREY</span>
+<span class="fc" id="L797">                        return traversal</span>
                     }
-<span class="fc" id="L735">                    spec.colors[connected] = TraversalColor.GREY</span>
-<span class="fc" id="L736">                    queue &lt;&lt; connected</span>
+<span class="fc" id="L799">                    spec.colors[connected] = TraversalColor.GREY</span>
+<span class="fc" id="L800">                    queue &lt;&lt; connected</span>
                 }
             }
-<span class="fc" id="L739">            spec.colors[current] = TraversalColor.BLACK</span>
+<span class="fc" id="L803">            spec.colors[current] = TraversalColor.BLACK</span>
         }
-<span class="pc" id="L741">        null</span>
+<span class="pc" id="L805">        null</span>
     }
 
     /**
@@ -747,13 +811,13 @@ class Graph {
      * @return the resulting EdgeClassification
      */
     EdgeClassification classifyEdges(Closure action) {
-<span class="fc" id="L750">        EdgeClassification ec = new EdgeClassification()</span>
-<span class="fc" id="L751">        depthFirstTraversal {</span>
-<span class="pc" id="L752">            classifyEdge { Edge edge, String from, String to, TraversalColor toColor -&gt;</span>
-<span class="pc" id="L753">                ec.addEdge(this, edge, from, to, toColor, action)</span>
+<span class="fc" id="L814">        EdgeClassification ec = new EdgeClassification()</span>
+<span class="fc" id="L815">        depthFirstTraversal {</span>
+<span class="pc" id="L816">            classifyEdge { Edge edge, String from, String to, TraversalColor toColor -&gt;</span>
+<span class="pc" id="L817">                ec.addEdge(this, edge, from, to, toColor, action)</span>
             }
         }
-<span class="pc" id="L756">        ec</span>
+<span class="pc" id="L820">        ec</span>
     }
 
     /**
@@ -763,7 +827,7 @@ class Graph {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-<span class="pc" id="L766">        VertexSpec.newInstance(name:name)</span>
+<span class="pc" id="L830">        VertexSpec.newInstance(name:name)</span>
     }
 
     /**
@@ -778,29 +842,29 @@ class Graph {
     @SuppressWarnings('Instanceof')
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
-<span class="pc bpc" id="L781" title="1 of 2 branches missed.">        if(name == 'vertex') {</span>
-<span class="nc" id="L782">            throw new IllegalArgumentException(&quot;Confusing name 'vertex' for spec.&quot;)</span>
+<span class="pc bpc" id="L845" title="1 of 2 branches missed.">        if (name == 'vertex') {</span>
+<span class="nc" id="L846">            throw new IllegalArgumentException(&quot;Confusing name 'vertex' for spec.&quot;)</span>
         }
-<span class="fc bfc" id="L784" title="All 2 branches covered.">        if (args.size() == 0) {</span>
-<span class="fc" id="L785">            return this.&quot;$name&quot;</span>
-        }
-
-<span class="fc bfc" id="L788" title="All 6 branches covered.">        if (args.size() == 1 &amp;&amp; args[0] instanceof Map) {</span>
-<span class="fc" id="L789">            VertexSpec spec = this.&quot;$name&quot;</span>
-<span class="fc" id="L790">            return spec.overlay(VertexSpec.newInstance(args[0]))</span>
+<span class="fc bfc" id="L848" title="All 2 branches covered.">        if (args.size() == 0) {</span>
+<span class="fc" id="L849">            return this.&quot;$name&quot;</span>
         }
 
-<span class="pc bpc" id="L793" title="1 of 6 branches missed.">        if (args.size() == 1 &amp;&amp; args[0] instanceof Closure) {</span>
-<span class="fc" id="L794">            VertexSpec spec = this.&quot;$name&quot;</span>
-<span class="fc" id="L795">            spec.runnerCode args[0]</span>
-<span class="fc" id="L796">            return spec</span>
+<span class="fc bfc" id="L852" title="All 6 branches covered.">        if (args.size() == 1 &amp;&amp; args[0] instanceof Map) {</span>
+<span class="fc" id="L853">            VertexSpec spec = this.&quot;$name&quot;</span>
+<span class="fc" id="L854">            return spec.overlay(VertexSpec.newInstance(args[0]))</span>
         }
 
-<span class="pc bpc" id="L799" title="5 of 10 branches missed.">        if (args.size() == 2 &amp;&amp; args[0] instanceof Map &amp;&amp; args[1] instanceof Closure) {</span>
-<span class="fc" id="L800">            VertexSpec spec = this.&quot;$name&quot;</span>
-<span class="fc" id="L801">            spec = spec.overlay(VertexSpec.newInstance(args[0]))</span>
-<span class="fc" id="L802">            spec.runnerCode args[1]</span>
-<span class="pc" id="L803">            return spec</span>
+<span class="pc bpc" id="L857" title="1 of 6 branches missed.">        if (args.size() == 1 &amp;&amp; args[0] instanceof Closure) {</span>
+<span class="fc" id="L858">            VertexSpec spec = this.&quot;$name&quot;</span>
+<span class="fc" id="L859">            spec.runnerCode args[0]</span>
+<span class="fc" id="L860">            return spec</span>
+        }
+
+<span class="pc bpc" id="L863" title="5 of 10 branches missed.">        if (args.size() == 2 &amp;&amp; args[0] instanceof Map &amp;&amp; args[1] instanceof Closure) {</span>
+<span class="fc" id="L864">            VertexSpec spec = this.&quot;$name&quot;</span>
+<span class="fc" id="L865">            spec = spec.overlay(VertexSpec.newInstance(args[0]))</span>
+<span class="fc" id="L866">            spec.runnerCode args[1]</span>
+<span class="pc" id="L867">            return spec</span>
         }
     }
 }

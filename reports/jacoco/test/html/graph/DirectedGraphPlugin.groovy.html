@@ -93,7 +93,7 @@ class DirectedGraphPlugin implements Plugin {
      * @return
      */
     static Deque&lt;String&gt; reversePostOrderSort(Graph graph) {
-<span class="fc" id="L96">        Deque&lt;String&gt; deque = new LinkedList&lt;String&gt;()</span>
+<span class="fc" id="L96">        Deque&lt;String&gt; deque = [] as LinkedList&lt;String&gt;</span>
 <span class="fc" id="L97">        graph.depthFirstTraversal {</span>
 <span class="pc" id="L98">            postorder { vertex -&gt;</span>
 <span class="pc" id="L99">                deque.addFirst(vertex.name)</span>
