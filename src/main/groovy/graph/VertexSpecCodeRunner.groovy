@@ -87,7 +87,7 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
-        if(name == 'name') {
+        if (name == 'name') {
             throw new MissingPropertyException('Cannot set name in dsl. Consider using the rename method.')
         }
         vertex[name] = value

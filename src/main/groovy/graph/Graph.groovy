@@ -842,7 +842,7 @@ class Graph {
     @SuppressWarnings('Instanceof')
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
-        if(name == 'vertex') {
+        if (name == 'vertex') {
             throw new IllegalArgumentException("Confusing name 'vertex' for spec.")
         }
         if (args.size() == 0) {
