@@ -57,6 +57,7 @@ class EdgeSpecCodeRunner {
      * @param args
      * @return
      */
+    @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
         edge.invokeMethod(name, args)
     }
@@ -66,6 +67,7 @@ class EdgeSpecCodeRunner {
      * @param name
      * @return
      */
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
         edge[name]
     }
@@ -77,11 +79,12 @@ class EdgeSpecCodeRunner {
      * @param value
      * @return
      */
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
-        if(name == 'one') {
+        if (name == 'one') {
             throw new MissingPropertyException('Cannot set one in dsl. Consider using renameOne method')
         }
-        if(name == 'two') {
+        if (name == 'two') {
             throw new MissingPropertyException('Cannot set two in dsl. Consider using renameTwo method')
         }
         edge[name] = value

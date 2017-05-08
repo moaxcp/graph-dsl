@@ -24,7 +24,7 @@ class EdgeSpec {
      */
     String renameTwo
 
-    private Set<Class> traitsSet = [] as Set<Class>
+    private final Set<Class> traitsSet = [] as Set<Class>
     private Closure runnerCodeClosure
 
     /**
@@ -66,7 +66,7 @@ class EdgeSpec {
      * 2. creates or gets the vertices one and two point to<br>
      * 3. if renameOne is set, renames one and creates or gets the vertex<br>
      * 4. if renameTwo is set, renames two and creates or gets the vertex<br>
-     * 5. adds any traits to the edge's delegate using {@link Edge#delegateAs(Class[])}<br>
+     * 5. adds any traits to the edge's delegate using {@link Edge#delegateAs(Class [ ])}<br>
      * 6. runs runnerCodeClosure against the graph and edge using a new {@link EdgeSpecCodeRunner}<br>
      * 7. returns the edge<br>
      * </p>
@@ -75,11 +75,11 @@ class EdgeSpec {
      * @param edge the resulting edge
      */
     Edge apply(Graph graph) {
-        if(!one) {
-            throw new IllegalArgumentException("!one failed. one must be groovy truth.")
+        if (!one) {
+            throw new IllegalArgumentException('!one failed. one must be groovy truth.')
         }
-        if(!two) {
-            throw new IllegalArgumentException("!two failed. two must be groovy truth.")
+        if (!two) {
+            throw new IllegalArgumentException('!two failed. two must be groovy truth.')
         }
         Edge e = graph.edgeFactory.newEdge(one, two)
         Edge edge = graph.edges.find { it == e } ?: e
