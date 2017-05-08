@@ -32,7 +32,7 @@ graph {
     }
     
     edge 'f', 'g'
-    edge 'g', 'd'
+    edge g, d
     
     eachBfs {
         println it.name

@@ -27,7 +27,7 @@ class ReadMeSpec extends Specification {
             }
 
             edge 'f', 'g'
-            edge 'g', 'd'
+            edge g, d
 
             println collectBfs { it.name }
         }
