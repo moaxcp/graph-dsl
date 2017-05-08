@@ -91,7 +91,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
-## x.x.x
+## 0.14.0
 
 Just as in 0.13.0, where the config closure was removed from VertexSpec, this release removes the config closure from 
 EdgeSpec. Traits can be added and configured for an Edge all within the same closure.
