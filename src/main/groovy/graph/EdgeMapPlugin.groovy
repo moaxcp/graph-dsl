@@ -6,9 +6,9 @@ package graph
 class EdgeMapPlugin implements Plugin {
 
     /**
-     * applies the {@link Mapping} triat to all edges in the graph. Creates a new {@link EdgeFactory} that will add
+     * applies the {@link Mapping} trait to all edges in the graph. Creates a new {@link EdgeFactory} that will add
      * the {@link Mapping} trait to any new edges created.
-     * @param graph
+     * @param graph this plugin is applied to.
      */
     @Override
     void apply(Graph graph) {
