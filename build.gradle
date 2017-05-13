@@ -8,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.amkay:gradle-gitflow:0.2.0'
-        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.3'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.4'
         classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.8.0'
     }
 }
@@ -148,7 +148,7 @@ nexusStaging {
 
 dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
-    testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+    testCompile ('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude group: 'org.codehaus.groovy', module:'groovy-all'
     }
     testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
