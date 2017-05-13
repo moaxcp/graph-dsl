@@ -1,5 +1,6 @@
 package graph
 
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -76,5 +77,18 @@ class GraphSpec extends Specification {
         spec.name == 'step1'
         spec.traits == [Mapping] as Set<Class>
         spec.runnerCode != null
+    }
+
+    @Ignore
+    def 'can delete an unconnected Vertex'() {
+        setup:
+        Graph graph = new Graph()
+        graph.vertex 'step1'
+
+        when:
+        graph.delete(graph.vertex('step1'))
+
+        then:
+        graph.vertices.size() == 0
     }
 }

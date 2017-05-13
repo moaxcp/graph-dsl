@@ -866,5 +866,7 @@ class Graph {
             spec.runnerCode args[1]
             return spec
         }
+
+        throw new MissingMethodException(name, Graph, args)
     }
 }
