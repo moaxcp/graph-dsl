@@ -119,6 +119,20 @@ class Graph {
     }
 
     /**
+     * Removes the {@link Vertex} from vertices with the matching name. If the Vertex has adjacentEdges it cannot be
+     * deleted and IllegalStateException will be thrown.
+     * @param name name of {@link Vertex} to delete from this graph
+     * @throws IllegalStateException if named vertex has adjacentEdges.
+     * @see {@link #adjacentEdges}
+     */
+    void delete(String name) {
+        if(adjacentEdges(name)) {
+            throw new IllegalStateException("Cannot delete $name. There are edges that connect to it. Try deleting those first.")
+        }
+        vertices.remove(name)
+    }
+
+    /**
      * Finds the {@link Vertex} with the given name or creates a new one.
      * @param name - the name of the {@link Vertex} to find or create.
      * @return the resulting {@link Vertex}
@@ -245,6 +259,19 @@ class Graph {
     @PackageScope
     boolean addEdge(Edge edge) {
         edges << edge
+    }
+
+    /**
+     * Removes an {@link Edge} from edges where an edge created by the edgeFactory equals an edge in edges. Using the
+     * edgeFactory ensures the edge removed matches the definition of an edge for this graph. If a plugin changes the
+     * definition of an edge, for example to {@link DirectedEdge}, this method will still work as expected. It will
+     * remove the edge where edge.one == one and edge.two == two. Keep in mind, in the case of the base {@link Edge}
+     * object edge.one can also equal two and edge.two can also equal one.
+     * @param one name of first vertex
+     * @param two name of second vertex
+     */
+    void deleteEdge(String one, String two) {
+        edges.remove(edgeFactory.newEdge(one, two))
     }
 
     /**

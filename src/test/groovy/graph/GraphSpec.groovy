@@ -79,16 +79,39 @@ class GraphSpec extends Specification {
         spec.runnerCode != null
     }
 
-    @Ignore
     def 'can delete an unconnected Vertex'() {
         setup:
         Graph graph = new Graph()
         graph.vertex 'step1'
 
         when:
-        graph.delete(graph.vertex('step1'))
+        graph.delete('step1')
 
         then:
         graph.vertices.size() == 0
+    }
+
+    def 'cannot delete connected vertex'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+
+        when:
+        graph.delete('step1')
+
+        then:
+        thrown IllegalStateException
+    }
+
+    def 'can delete edge'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+
+        when:
+        graph.deleteEdge('step1', 'step2')
+
+        then:
+        graph.edges.size() == 0
     }
 }
