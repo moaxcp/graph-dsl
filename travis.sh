@@ -1,10 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+git fetch --unshallow || true #allows sonar to get all commit history for exact blame info
+./gradlew audit
+
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "Build for master"
-
-    git fetch --unshallow || true #allows sonar to get all commit history for exact blame info
 
      ./gradlew sonarqube \
     -Dsonar.host.url=$SONAR_HOST_URL \
