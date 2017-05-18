@@ -82,7 +82,29 @@ class EdgeWeightPluginSpec extends Specification {
         def edges = graph.traverseEdges('step1')
 
         then:
-        edges instanceof SortedSet
+        edges[0].two == 'step2'
+        edges[1].two == 'step3'
+        edges[2].two == 'step4'
+    }
+
+    def 'new edges after applying DirectedGraphPlugin traverseEdges sorts edges by weight'() {
+        setup:
+        graph.apply EdgeWeightPlugin
+        graph.apply DirectedGraphPlugin
+        graph.edge ('step1', 'step4') {
+            weight { 3 }
+        }
+        graph.edge ('step1', 'step2') {
+            weight { 1 }
+        }
+        graph.edge ('step1', 'step3') {
+            weight { 2 }
+        }
+
+        when:
+        def edges = graph.traverseEdges('step1')
+
+        then:
         edges[0].two == 'step2'
         edges[1].two == 'step3'
         edges[2].two == 'step4'

@@ -18,9 +18,9 @@ class DirectedGraphPlugin implements Plugin {
      * @return
      */
     void apply(Graph graph) {
-        graph.@edges = graph.@edges.collect { edge ->
-            new DirectedEdge(one:edge.one, two:edge.two)
-        } as LinkedHashSet
+        graph.replaceEdges { edge ->
+            new DirectedEdge(one:edge.one, two:edge.two, delegate:edge.delegate)
+        }
 
         graph.edgeFactory = new DirectedEdgeFactory()
 
@@ -28,7 +28,7 @@ class DirectedGraphPlugin implements Plugin {
         graph.metaClass.inDegree = this.&inDegree.curry(graph)
         graph.metaClass.outEdges = this.&outEdges.curry(graph)
         graph.metaClass.outDegree = this.&outDegree.curry(graph)
-        graph.metaClass.traverseEdges = this.&traverseEdges.curry(graph.&traverseEdges)
+        graph.metaClass.traverseEdges = this.&traverseEdges.curry(graph)
         graph.metaClass.reversePostOrderSort = this.&reversePostOrderSort.curry(graph)
         graph.metaClass.reversePostOrder = this.&reversePostOrder.curry(graph)
     }
@@ -83,13 +83,8 @@ class DirectedGraphPlugin implements Plugin {
      * @param name
      * @return
      */
-    static Set<? extends Edge> traverseEdges(Closure originalTraverseEdges, String name) {
-        def edges = originalTraverseEdges(name)
-        def remove = edges.findAll {
-            name != it.two
-        }
-        edges.removeAll(remove)
-        edges
+    static Set<? extends Edge> traverseEdges(Graph graph, String name) {
+        graph.outEdges(name)
     }
 
     /**

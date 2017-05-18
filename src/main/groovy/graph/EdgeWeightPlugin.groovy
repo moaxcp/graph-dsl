@@ -8,15 +8,10 @@ class EdgeWeightPlugin implements Plugin {
             edge.delegateAs(Weight)
         }
 
-        graph.edgeFactory = new WeightedEdgeFactory()
+        Comparator comparator = { a, b ->
+            a.weight <=> b.weight
+        }
 
-        graph.metaClass.traverseEdges = this.&traverseEdges.curry(graph.&traverseEdges)
-    }
-
-    static Set<? extends Edge> traverseEdges(Closure originalTraverseEdges, String name) {
-        Set<Edge> edges = originalTraverseEdges(name)
-        TreeSet newEdges = new TreeSet(new OrderBy({ it.weight }))
-        newEdges.addAll(edges)
-        newEdges
+        graph.replaceEdgesSet(new TreeSet<>(comparator))
     }
 }

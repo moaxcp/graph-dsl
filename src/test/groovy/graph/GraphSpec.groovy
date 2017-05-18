@@ -114,4 +114,37 @@ class GraphSpec extends Specification {
         then:
         graph.edges.size() == 0
     }
+
+    def 'can replaceEdges'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step3'
+        graph.edge 'step2', 'step3'
+        graph.edge 'step2', 'step4'
+
+        when:
+        graph.replaceEdges {
+            new DirectedEdge(one:it.one, two:it.two, delegate:it.delegate)
+        }
+
+        then:
+        graph.edges.size() == 4
+        graph.edges.every { it instanceof DirectedEdge }
+    }
+
+    def 'can replaceEdgesSet'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step3'
+        graph.edge 'step2', 'step3'
+        graph.edge 'step2', 'step4'
+
+        when:
+        graph.replaceEdgesSet(new TreeSet<>(new OrderBy([{ it.one }, { it.two }])))
+
+        then:
+        graph.edges.size() == 4
+    }
 }
