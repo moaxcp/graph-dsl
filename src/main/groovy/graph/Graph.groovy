@@ -21,6 +21,7 @@ import groovy.transform.PackageScope
 class Graph {
     private final Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
+    private Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
     private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
     @PackageScope
     EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
@@ -288,6 +289,13 @@ class Graph {
         spec.apply(this)
     }
 
+    void edgeTraits(Class... traits) {
+        edges.each { edge ->
+            edge.delegateAs(traits)
+        }
+        edgeTraitsSet.addAll(traits)
+    }
+
     /**
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
      * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
@@ -456,6 +464,7 @@ class Graph {
      * @return the resulting {@link Edge}.
      */
     Edge edge(EdgeSpec spec) {
+        spec.traits(edgeTraitsSet as Class[])
         spec.apply(this)
     }
 

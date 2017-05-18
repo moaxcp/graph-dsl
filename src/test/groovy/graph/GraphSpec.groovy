@@ -147,4 +147,18 @@ class GraphSpec extends Specification {
         then:
         graph.edges.size() == 4
     }
+
+    def 'edgeTraits adds triats to all new edges'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edgeTraits(Mapping)
+
+        when:
+        graph.edge 'step1', 'step2'
+
+        then:
+        graph.edges.every {
+            it.delegate instanceof Mapping
+        }
+    }
 }

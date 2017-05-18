@@ -4,9 +4,7 @@ class EdgeWeightPlugin implements Plugin {
 
     @Override
     void apply(Graph graph) {
-        graph.edges.each { edge ->
-            edge.delegateAs(Weight)
-        }
+        graph.edgeTraits(Weight)
 
         Comparator comparator = { a, b ->
             a.weight <=> b.weight
