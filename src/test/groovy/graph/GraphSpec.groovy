@@ -148,17 +148,43 @@ class GraphSpec extends Specification {
         graph.edges.size() == 4
     }
 
-    def 'edgeTraits adds triats to all new edges'() {
+    def 'edgeTraits adds traits to all old  and new edges'() {
         setup:
         Graph graph = new Graph()
-        graph.edgeTraits(Mapping)
+        graph.edge 'step1', 'step2'
+        graph.edge 'step2', 'step3'
 
         when:
-        graph.edge 'step1', 'step2'
+        graph.edgeTraits(Mapping)
+
+        and:
+        graph.edgeTraits(Mapping)
+        graph.edge 'step3', 'step4'
+        graph.edge 'step4', 'step5'
 
         then:
-        graph.edges.every {
-            it.delegate instanceof Mapping
+        graph.edges.every { edge ->
+            edge.delegate instanceof Mapping
+        }
+    }
+
+    def 'vertexTraits adds traits to all old and new vertices'() {
+        setup:
+        Graph graph = new Graph()
+        graph.vertex 'step1'
+        graph.vertex 'step2'
+
+        when:
+        graph.vertexTraits(Mapping)
+
+        and:
+        graph.vertexTraits(Mapping)
+        graph.vertex 'step3'
+        graph.vertex 'step4'
+
+        then:
+        graph.vertices.every { name, vertex ->
+            vertex.delegate instanceof Mapping
         }
     }
 }

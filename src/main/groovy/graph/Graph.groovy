@@ -20,8 +20,9 @@ import groovy.transform.PackageScope
  */
 class Graph {
     private final Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
+    private final Set<Class> vertexTraitsSet = [] as LinkedHashSet<Class>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
-    private Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
+    private final Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
     private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
     @PackageScope
     EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
@@ -108,6 +109,10 @@ class Graph {
         edges << edge
     }
 
+    /**
+     * Replaces edges with results of running edges.collect(closure)
+     * @param closure to run on each edge
+     */
     @PackageScope
     void replaceEdges(Closure closure) {
         def replace = edges.collect(closure)
@@ -115,6 +120,10 @@ class Graph {
         edges.addAll(replace)
     }
 
+    /**
+     * Replaces set of edges used by Graph with the given set.
+     * @param set to replace set of edges
+     */
     @PackageScope
     void replaceEdgesSet(Set<? extends Edge> set) {
         assert set.empty
@@ -158,6 +167,17 @@ class Graph {
         plugins << pluginClass
         Plugin plugin = pluginClass.newInstance()
         plugin.apply(this)
+    }
+
+    /**
+     * Applies traits to all vertices and all future vertices.
+     * @param traits to add to vertices and all future vertices
+     */
+    void vertexTraits(Class... traits) {
+        vertices.each { name, vertex ->
+            vertex.delegateAs(traits)
+        }
+        vertexTraitsSet.addAll(traits)
     }
 
     /**
@@ -286,9 +306,14 @@ class Graph {
      * @return
      */
     Vertex vertex(VertexSpec spec) {
+        spec.traits(vertexTraitsSet as Class[])
         spec.apply(this)
     }
 
+    /**
+     * Applies traits to all edges and all future edges.
+     * @param traits to add to all edges and all future edges
+     */
     void edgeTraits(Class... traits) {
         edges.each { edge ->
             edge.delegateAs(traits)
