@@ -109,4 +109,33 @@ class EdgeWeightPluginSpec extends Specification {
         edges[1].two == 'step3'
         edges[2].two == 'step4'
     }
+
+    def 'depthFirstTraversal is ordered by weight'() {
+        setup:
+        graph.apply EdgeWeightPlugin
+        graph.edge('step2', 'step5') {
+            weight { 4 }
+        }
+        graph.edge('step2', 'step4') {
+            weight { 3 }
+        }
+        graph.edge('step1', 'step3') {
+            weight { 2 }
+        }
+        graph.edge('step1', 'step2') {
+            weight { 1 }
+        }
+
+        when:
+        def vertices = []
+        graph.depthFirstTraversal {
+            root = 'step1'
+            preorder { vertex ->
+                vertices << vertex.name
+            }
+        }
+
+        then:
+        vertices == ['step1', 'step2', 'step4', 'step5', 'step3']
+    }
 }

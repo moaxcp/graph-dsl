@@ -148,6 +148,23 @@ class GraphSpec extends Specification {
         graph.edges.size() == 4
     }
 
+    def 'set must be empty in replaceEdgesSet'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step3'
+        graph.edge 'step2', 'step3'
+        graph.edge 'step2', 'step4'
+
+        when:
+        def set = new TreeSet<>(new OrderBy([{ it.one }, { it.two }]))
+        set.add(new Edge(one:'step5', two:'step6'))
+        graph.replaceEdgesSet(set)
+
+        then:
+        thrown IllegalArgumentException
+    }
+
     def 'edgeTraits adds traits to all old  and new edges'() {
         setup:
         Graph graph = new Graph()

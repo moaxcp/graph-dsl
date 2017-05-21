@@ -96,6 +96,12 @@ If there are any issues contact me moaxcp@gmail.com.
 Vertex.name, Edge.one, and Edge.two is now @PackageScope. This only affects code that is @CompileStatic for now due to 
 [GROOVY-3010](https://issues.apache.org/jira/browse/GROOVY-3010).
 
+Vertices and edges may now be deleted. A vertex cannot be deleted if there are edges referencing it.
+
+Added edgeTraits and vertexTraits. These methods will ensure traits are applied to current and future edges and vertices.
+
+Added EdgeWeightPlugin. This plugin adds the Weight trait to each edge. Traversal methods are ordered by edge weight.
+
 ## 0.14.0
 
 Just as in 0.13.0, where the config closure was removed from VertexSpec, this release removes the config closure from 

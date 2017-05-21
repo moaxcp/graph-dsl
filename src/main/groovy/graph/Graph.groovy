@@ -85,8 +85,10 @@ class Graph {
      * @see {@link #adjacentEdges}
      */
     void delete(String name) {
-        if(adjacentEdges(name)) {
-            throw new IllegalStateException("Cannot delete $name. There are edges that connect to it. Try deleting those first.")
+        if (adjacentEdges(name)) {
+            throw new IllegalStateException(
+                    "Cannot delete $name. There are edges that connect to it. Try deleting those first."
+            )
         }
         vertices.remove(name)
     }
@@ -115,7 +117,7 @@ class Graph {
      */
     @PackageScope
     void replaceEdges(Closure closure) {
-        def replace = edges.collect(closure)
+        List replace = edges.collect(closure)
         edges.clear()
         edges.addAll(replace)
     }
@@ -126,7 +128,9 @@ class Graph {
      */
     @PackageScope
     void replaceEdgesSet(Set<? extends Edge> set) {
-        assert set.empty
+        if(!set.empty) {
+            throw new IllegalArgumentException('set must be empty.')
+        }
         set.addAll(edges)
         edges = set
     }
@@ -823,10 +827,8 @@ class Graph {
     }
 
     /**
-     * configures a breadth first traversal with the given closure using
-     * breadthFirstTraversalSpec().
-     *
-     * Once the spec is configured traversal(this.&breadthFirstTraversalConnected, spec) is called.
+     * configures a breadth first traversal with the given closure using breadthFirstTraversalSpec(). Once the spec is
+     * configured traversal(this.&breadthFirstTraversalConnected, spec) is called.
      *
      * @param specClosure
      * @return
@@ -840,7 +842,7 @@ class Graph {
      * Performs a breadth first traversal on a connected component of the graph starting
      * at the vertex identified by root. The behavior of the traversal is determined by
      * spec.colors and spec.visit.
-     *
+     * <p>
      * Traversal.STOP - It is possible to stop the traversal early by returning this value
      * in visit.
      * @param root the root of the vertex to start at
