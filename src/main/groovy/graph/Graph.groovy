@@ -209,10 +209,15 @@ class Graph {
      * @param names
      * @return
      */
-    Set<Vertex> vertex(String... names) {
-        names.collect { name ->
-            vertex(name)
-        } as Set<Vertex>
+    Set<Vertex> vertex(String name, String... names) {
+        Set<Vertex> set = new LinkedHashSet<>()
+        set << vertex(name)
+        names.collect {
+            vertex(it)
+        }.each {
+            set << it
+        }
+        set
     }
 
     /**

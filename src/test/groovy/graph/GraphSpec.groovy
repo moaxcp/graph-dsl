@@ -79,6 +79,38 @@ class GraphSpec extends Specification {
         spec.runnerCode != null
     }
 
+    def 'missingMethod with name vertex is illegal'() {
+        when:
+        VertexSpec spec = new Graph().methodMissing('vertex', [])
+
+        then:
+        thrown IllegalArgumentException
+    }
+
+    def 'methodMissing with one bad argument throws Exception'() {
+        when:
+        new Graph().methodMissing('noVertexSpec', ['one'])
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def 'methodMissing with two bad arguments throws exception'() {
+        when:
+        new Graph().methodMissing('noVertexSpec', ['one', 'two'])
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def 'methodMissing with a bad argument and map throws exception'() {
+        when:
+        new Graph().methodMissing('noVertexSpec', [[one:'one'], 'two'])
+
+        then:
+        thrown MissingMethodException
+    }
+
     def 'can delete an unconnected Vertex'() {
         setup:
         Graph graph = new Graph()
