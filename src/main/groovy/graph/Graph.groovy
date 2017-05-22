@@ -128,7 +128,7 @@ class Graph {
      */
     @PackageScope
     void replaceEdgesSet(Set<? extends Edge> set) {
-        if(!set.empty) {
+        if (!set.empty) {
             throw new IllegalArgumentException('set must be empty.')
         }
         set.addAll(edges)
