@@ -12,17 +12,6 @@ class EdgeMapPlugin implements Plugin {
      */
     @Override
     void apply(Graph graph) {
-        graph.@edges.each { edge ->
-            edge.delegateAs(Mapping)
-        }
-
-        graph.edgeFactory = new EdgeFactory() {
-            EdgeFactory oldFactory = graph.edgeFactory
-            @Override
-            Edge newEdge(String one, String two) {
-                Edge edge = oldFactory.newEdge(one, two)
-                edge.delegateAs(Mapping)
-            }
-        }
+        graph.edgeTraits(Mapping)
     }
 }

@@ -1,15 +1,26 @@
 package graph
 
+import groovy.transform.PackageScope
+
 /**
  * An edge between two vertices. This class uses a delegate when methods
  * and properties are missing. Traits should be applied to the delegate
  * using delegateAs().
  */
-@SuppressWarnings('NoDef')
 class Edge {
     String one
     String two
-    def delegate = new Object()
+    Object delegate = new Object()
+
+    @PackageScope
+    void setOne(String one) {
+        this.one = one
+    }
+
+    @PackageScope
+    void setTwo(String two) {
+        this.two = two
+    }
 
     /**
      * applies traits to the delegate.
@@ -55,6 +66,7 @@ class Edge {
      * @param args
      * @return
      */
+    @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
         delegate.invokeMethod(name, args)
     }
@@ -64,6 +76,7 @@ class Edge {
      * @param name
      * @return
      */
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
         delegate[name]
     }
@@ -74,6 +87,7 @@ class Edge {
      * @param value
      * @return
      */
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
         delegate[name] = value
     }

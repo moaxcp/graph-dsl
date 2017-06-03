@@ -18,9 +18,9 @@ class DirectedGraphPlugin implements Plugin {
      * @return
      */
     void apply(Graph graph) {
-        graph.@edges = graph.@edges.collect { edge ->
-            new DirectedEdge(one:edge.one, two:edge.two)
-        } as LinkedHashSet
+        graph.replaceEdges { edge ->
+            new DirectedEdge(one:edge.one, two:edge.two, delegate:edge.delegate)
+        }
 
         graph.edgeFactory = new DirectedEdgeFactory()
 

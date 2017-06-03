@@ -1,64 +1,168 @@
 # graph-dsl
 
-A groovy dsl for creating and traversing graphs. 
-For project build status check the [wiki](https://github.com/moaxcp/graph-dsl/wiki).
+A groovy dsl for creating and traversing extensible graphs. The graph can be extended with plugins and traits which 
+allow developers to create a graph with the desired behavior and values for their algorithm. For project build status 
+check the [wiki](https://github.com/moaxcp/graph-dsl/wiki).
 
 # Usage
-
-graph-dsl is used to create graphs and algorithms for graphs.
-It is designed to be groovy, using closures and metaprogramming for minimal setup.
-
-## Building a graph
 
 ```groovy
 #!/usr/bin/env groovy
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='0.11.0')
-import static graph.Graph.graph
+```
 
-graph {
-    apply DirectedGraphPlugin
-    vertex a {
-        edgesFirst 'b', 'd'
-        edgesSecond 'd'
+## Creating a graph
+
+The basic graph structure is held in a map of named vertices and a set of edges.
+
+All referenced vertices are created if they don't exist.
+
+```groovy
+def graph = graph {
+    edge step1, step2
+}
+assert graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
+assert graph.edges.size() == 1
+assert graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
+```
+
+This example of a graph creates two vertices named 'step1' and 'step2' as well as an edge between them. There are many
+other methods for creating vertices and edges.
+
+```groovy
+graph.with {
+    edge (A, B) {
+        traits Mapping, Mapping
+        queue = new LinkedList()
+        weight { queue.size() }
     }
     
-    vertex renameMe {
-        rename 'b'
-        edgesFirst 'c', 'd'
+    vertex A(traits:Mapping) {
+        action = {
+            println "processing"
+        }
     }
     
-    vertex d([edgesFirst:'c']) {
-        edgesFirst 'e'
-    }
-    
-    edge 'f', 'g'
-    edge g, d
-    
-    eachBfs {
-        println it.name
+    vertex B {
+        traits Mapping
+        action = {
+            println "done processing"
+        }
     }
 }
 ```
 
-# Getting Started
+The Default behavior of a graph is that of an undirected graph. These graphs have a set of edges where only one edge
+can connect any two vertices. This behavior can be changed to a directed graph at any time using the DirectedGraphPlugin
+
+```groovy
+graph.apply DirectedGraphPlugin
+```
+
+Traits can be added to all edges and vertices.
+
+```groovy
+graph.edgeTraits Mapping, Weight
+graph.vertexTraits Mapping
+```
+
+## Traversing a graph
+
+Once a graph is created there is a dsl for depthFirstTraversal and breadthFirstTraversal.
+
+```groovy
+graph {
+    apply DirectedGraphPlugin
+    vertex A {
+        edgesFirst 'B', 'D', 'E'
+        edgesSecond 'D'
+    }
+
+    vertex D {
+        edgesFirst 'C', 'E'
+        edgesSecond 'B'
+    }
+
+    edge B, C
+    depthFirstTraversal {
+        root = 'A'
+        preorder { vertex ->
+            println vertex.name
+        }
+    }
+
+    breadthFirstTraversal {
+        root = 'A'
+        visit { vertex ->
+            println "bft $vertex.name"
+        }
+    }
+}
+```
+
+## Functional methods
+
+There are functional methods build on the depthFirstTraversal and breadthFirstTraversal method.
+
+```groovy
+eachBfs {
+    println it.name
+}
+
+def vertex = findBfs {
+    it.name == 'A'
+}
+
+def bfsOrder = collectBfs {
+    it.name
+}
+```
+
+Note: These methods are not yet implemented for depth first traversal. The depth first traversal methods will be the
+defaults for each, find, inject, findAll, and collect.
+
+## Edge Classification
+
+Depth first traversal supports edge classification where an edge is classified as:
+
+* tree-edge - when the destination vertex is white
+* back-edge - when the destination vertex is grey
+* forward-edge - when the destination vertex is black
+* cross-edge - when the destination vertex is black and in a different tree
+
+## EdgeWeightPlugin
+
+This plugin applies Weight to all edges and changes all traversal methods to follow edges in order of their weight.
+
+# Getting Started With Development/Contributing
 
 ## install git
+
+Follow this guide to install git.
 
 https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
 ## install gitflow-avh
 
+This project uses gitflow-avh. It is a plugin for git that provides the `git flow` commands. These commands are used to
+follow the gitflow pattern for developing software. For more information see
+[Workflow](https://github.com/moaxcp/graph-dsl/wiki/Workflow) in the wiki.
+
 https://github.com/petervanderdoes/gitflow-avh/wiki/Installation
 
 ## clone the project
+
+clone the project from github.
 
 git clone https://github.com/moaxcp/graph-dsl.git
 
 ## build
 
+The project uses gradle for the build system. Using gradlew, you do not need to install gradle to build the project.
+
 `./gradlew build`
 
-# Contributing
+## Contributing
 
 Contributions are welcome. Please submit a pull request to the develop branch in github.
 
@@ -90,6 +194,29 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## 0.15.0
+
+This release combines fixes for a few issues on github.
+
+* [#75](https://github.com/moaxcp/graph-dsl/issues/75) Vertex.name, Edge.one, and Edge.two is now @PackageScope. This only 
+affects code that is @CompileStatic for now due to [GROOVY-3010](https://issues.apache.org/jira/browse/GROOVY-3010).
+* [#74](https://github.com/moaxcp/graph-dsl/issues/74)Vertices and edges may now be deleted. A vertex cannot be deleted if
+there are edges referencing it.
+* [#73](https://github.com/moaxcp/graph-dsl/issues/73) Added EdgeWeightPlugin. This plugin adds the Weight trait to each 
+edge. Traversal methods are ordered by edge weight.
+
+There were also several other changes that were not an issue on github:
+
+Updated gradle to 3.5. Refactored gradle script to use the plugins closure when possible. gradle-gitflow does not work 
+with the closure because it is not in the gradle repository. This is another reason to update the plugin. Spock was also 
+updated to 1.1.
+
+Added edgeTraits and vertexTraits. These methods will ensure traits are applied to current and future edges and vertices.
+
+Added tests to provide more code coverage in jacoco.
+
+Added more usage details to README.md
 
 ## 0.14.0
 
