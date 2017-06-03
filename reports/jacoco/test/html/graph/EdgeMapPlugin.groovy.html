@@ -12,18 +12,7 @@ class EdgeMapPlugin implements Plugin {
      */
     @Override
     void apply(Graph graph) {
-<span class="fc" id="L15">        graph.@edges.each { edge -&gt;</span>
-<span class="pc" id="L16">            edge.delegateAs(Mapping)</span>
-        }
-
-<span class="fc" id="L19">        graph.edgeFactory = new EdgeFactory() {</span>
-            EdgeFactory oldFactory = graph.edgeFactory
-            @Override
-            Edge newEdge(String one, String two) {
-<span class="fc" id="L23">                Edge edge = oldFactory.newEdge(one, two)</span>
-<span class="pc" id="L24">                edge.delegateAs(Mapping)</span>
-            }
-        }
+<span class="fc" id="L15">        graph.edgeTraits(Mapping)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

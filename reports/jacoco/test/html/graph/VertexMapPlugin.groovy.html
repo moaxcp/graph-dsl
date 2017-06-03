@@ -12,19 +12,7 @@ class VertexMapPlugin implements Plugin {
      */
     @Override
     void apply(Graph graph) {
-<span class="fc" id="L15">        graph.@vertices.each { name, vertex -&gt;</span>
-<span class="pc" id="L16">            vertex.delegateAs(Mapping)</span>
-        }
-
-<span class="fc" id="L19">        graph.vertexFactory = new VertexFactory() {</span>
-            VertexFactory oldFactory = graph.vertexFactory
-
-            @Override
-            Vertex newVertex(String name) {
-<span class="fc" id="L24">                Vertex vertex = oldFactory.newVertex(name)</span>
-<span class="pc" id="L25">                vertex.delegateAs(Mapping)</span>
-            }
-        }
+<span class="fc" id="L15">        graph.vertexTraits(Mapping)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
