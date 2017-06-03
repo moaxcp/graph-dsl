@@ -1,11 +1,68 @@
 package graph
 
 import spock.lang.Specification
+import static Graph.graph
 
 class ReadMeSpec extends Specification {
 
     def setup() {
 
+    }
+
+    def 'usage 1'() {
+        when:
+        def graph = graph {
+            edge step1, step2
+        }
+        then:
+        graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
+        graph.edges.size() == 1
+        graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
+    }
+
+    def 'usage 2'() {
+        when:
+        def graph = graph {
+
+        }
+
+        then:
+        true
+    }
+
+    def 'usage 3'() {
+        when:
+        def graph = graph {
+            apply DirectedGraphPlugin
+            vertex A {
+                edgesFirst 'B', 'D', 'E'
+                edgesSecond 'D'
+            }
+
+            vertex D {
+                edgesFirst 'C', 'E'
+                edgesSecond 'B'
+            }
+
+            edge B, C
+        }
+
+        graph.depthFirstTraversal {
+            root = 'A'
+            preorder { vertex ->
+                println "preorder $vertex.name"
+            }
+        }
+
+        graph.breadthFirstTraversal {
+            root = 'A'
+            visit { vertex ->
+                println "bft $vertex.name"
+            }
+        }
+
+        then:
+        true
     }
 
     def 'main readme example'() {
