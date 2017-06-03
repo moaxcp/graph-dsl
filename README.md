@@ -145,7 +145,8 @@ https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 ## install gitflow-avh
 
 This project uses gitflow-avh. It is a plugin for git that provides the `git flow` commands. These commands are used to
-follow the gitflow pattern for developing software.
+follow the gitflow pattern for developing software. For more information see
+[Workflow](https://github.com/moaxcp/graph-dsl/wiki/Workflow) in the wiki.
 
 https://github.com/petervanderdoes/gitflow-avh/wiki/Installation
 
