@@ -125,10 +125,10 @@ defaults for each, find, inject, findAll, and collect.
 
 Depth first traversal supports edge classification where an edge is classified as:
 
-tree-edge - when the destination vertex is white
-back-edge - when the destination vertex is grey
-forward-edge - when the destination vertex is black
-cross-edge - when the destination vertex is black and in a different tree
+* tree-edge - when the destination vertex is white
+* back-edge - when the destination vertex is grey
+* forward-edge - when the destination vertex is black
+* cross-edge - when the destination vertex is black and in a different tree
 
 ## EdgeWeightPlugin
 
@@ -195,7 +195,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
-## x.x.x
+## 0.15.0
 
 This release combines fixes for a few issues on github.
 
@@ -206,7 +206,7 @@ there are edges referencing it.
 * [#73](https://github.com/moaxcp/graph-dsl/issues/73) Added EdgeWeightPlugin. This plugin adds the Weight trait to each 
 edge. Traversal methods are ordered by edge weight.
 
-There were also several other changes that were not on github.
+There were also several other changes that were not an issue on github:
 
 Updated gradle to 3.5. Refactored gradle script to use the plugins closure when possible. gradle-gitflow does not work 
 with the closure because it is not in the gradle repository. This is another reason to update the plugin. Spock was also 
