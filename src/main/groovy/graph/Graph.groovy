@@ -20,7 +20,9 @@ import groovy.transform.PackageScope
  */
 class Graph {
     private final Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
+    private final Set<Class> vertexTraitsSet = [] as LinkedHashSet<Class>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
+    private final Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
     private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
     @PackageScope
     EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
@@ -76,11 +78,74 @@ class Graph {
     }
 
     /**
+     * Removes the {@link Vertex} from vertices with the matching name. If the Vertex has adjacentEdges it cannot be
+     * deleted and IllegalStateException will be thrown.
+     * @param name name of {@link Vertex} to delete from this graph
+     * @throws IllegalStateException if named vertex has adjacentEdges.
+     * @see {@link #adjacentEdges}
+     */
+    void delete(String name) {
+        if (adjacentEdges(name)) {
+            throw new IllegalStateException(
+                    "Cannot delete $name. There are edges that connect to it. Try deleting those first."
+            )
+        }
+        vertices.remove(name)
+    }
+
+    /**
      * returns the edges as an unmodifiable set
      * @return
      */
     Set<? extends Edge> getEdges() {
         Collections.unmodifiableSet(edges)
+    }
+
+    /**
+     * Adds an edge object directly.
+     * @param edge
+     * @return true if add was successful.
+     */
+    @PackageScope
+    boolean addEdge(Edge edge) {
+        edges << edge
+    }
+
+    /**
+     * Replaces edges with results of running edges.collect(closure)
+     * @param closure to run on each edge
+     */
+    @PackageScope
+    void replaceEdges(Closure closure) {
+        List replace = edges.collect(closure)
+        edges.clear()
+        edges.addAll(replace)
+    }
+
+    /**
+     * Replaces set of edges used by Graph with the given set.
+     * @param set to replace set of edges
+     */
+    @PackageScope
+    void replaceEdgesSet(Set<? extends Edge> set) {
+        if (!set.empty) {
+            throw new IllegalArgumentException('set must be empty.')
+        }
+        set.addAll(edges)
+        edges = set
+    }
+
+    /**
+     * Removes an {@link Edge} from edges where an edge created by the edgeFactory equals an edge in edges. Using the
+     * edgeFactory ensures the edge removed matches the definition of an edge for this graph. If a plugin changes the
+     * definition of an edge, for example to {@link DirectedEdge}, this method will still work as expected. It will
+     * remove the edge where edge.one == one and edge.two == two. Keep in mind, in the case of the base {@link Edge}
+     * object edge.one can also equal two and edge.two can also equal one.
+     * @param one name of first vertex
+     * @param two name of second vertex
+     */
+    void deleteEdge(String one, String two) {
+        edges.remove(edgeFactory.newEdge(one, two))
     }
 
     /**
@@ -109,6 +174,17 @@ class Graph {
     }
 
     /**
+     * Applies traits to all vertices and all future vertices.
+     * @param traits to add to vertices and all future vertices
+     */
+    void vertexTraits(Class... traits) {
+        vertices.each { name, vertex ->
+            vertex.delegateAs(traits)
+        }
+        vertexTraitsSet.addAll(traits)
+    }
+
+    /**
      * Adds a vertex object directly. For internal use to create copies of a Graph.
      * @param vertex
      * @return true if add was successful.
@@ -133,10 +209,15 @@ class Graph {
      * @param names
      * @return
      */
-    Set<Vertex> vertex(String... names) {
-        names.collect { name ->
-            vertex(name)
-        } as Set<Vertex>
+    Set<Vertex> vertex(String name, String... names) {
+        Set<Vertex> set = new LinkedHashSet<>()
+        set << vertex(name)
+        names.collect {
+            vertex(it)
+        }.each {
+            set << it
+        }
+        set
     }
 
     /**
@@ -234,17 +315,19 @@ class Graph {
      * @return
      */
     Vertex vertex(VertexSpec spec) {
+        spec.traits(vertexTraitsSet as Class[])
         spec.apply(this)
     }
 
     /**
-     * Adds an edge object directly.
-     * @param edge
-     * @return true if add was successful.
+     * Applies traits to all edges and all future edges.
+     * @param traits to add to all edges and all future edges
      */
-    @PackageScope
-    boolean addEdge(Edge edge) {
-        edges << edge
+    void edgeTraits(Class... traits) {
+        edges.each { edge ->
+            edge.delegateAs(traits)
+        }
+        edgeTraitsSet.addAll(traits)
     }
 
     /**
@@ -415,6 +498,7 @@ class Graph {
      * @return the resulting {@link Edge}.
      */
     Edge edge(EdgeSpec spec) {
+        spec.traits(edgeTraitsSet as Class[])
         spec.apply(this)
     }
 
@@ -748,10 +832,8 @@ class Graph {
     }
 
     /**
-     * configures a breadth first traversal with the given closure using
-     * breadthFirstTraversalSpec().
-     *
-     * Once the spec is configured traversal(this.&breadthFirstTraversalConnected, spec) is called.
+     * configures a breadth first traversal with the given closure using breadthFirstTraversalSpec(). Once the spec is
+     * configured traversal(this.&breadthFirstTraversalConnected, spec) is called.
      *
      * @param specClosure
      * @return
@@ -765,7 +847,7 @@ class Graph {
      * Performs a breadth first traversal on a connected component of the graph starting
      * at the vertex identified by root. The behavior of the traversal is determined by
      * spec.colors and spec.visit.
-     *
+     * <p>
      * Traversal.STOP - It is possible to stop the traversal early by returning this value
      * in visit.
      * @param root the root of the vertex to start at
@@ -866,5 +948,7 @@ class Graph {
             spec.runnerCode args[1]
             return spec
         }
+
+        throw new MissingMethodException(name, Graph, args)
     }
 }

@@ -1,6 +1,7 @@
 package graph
 
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.PackageScope
 
 /**
  * A vertex in the graph. Every vertex should have a name. All vertices have a delegate which allows methods to be added
@@ -10,6 +11,11 @@ import groovy.transform.EqualsAndHashCode
 class Vertex {
     String name
     Object delegate = new Object()
+
+    @PackageScope
+    void setName(String name) {
+        this.name = name
+    }
 
     /**
      * Wraps the delegate in the given traits and assigns delegate to the result.

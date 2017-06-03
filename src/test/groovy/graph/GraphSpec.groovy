@@ -1,5 +1,6 @@
 package graph
 
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -76,5 +77,163 @@ class GraphSpec extends Specification {
         spec.name == 'step1'
         spec.traits == [Mapping] as Set<Class>
         spec.runnerCode != null
+    }
+
+    def 'missingMethod with name vertex is illegal'() {
+        when:
+        VertexSpec spec = new Graph().methodMissing('vertex', [])
+
+        then:
+        thrown IllegalArgumentException
+    }
+
+    def 'methodMissing with one bad argument throws Exception'() {
+        when:
+        new Graph().methodMissing('noVertexSpec', ['one'])
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def 'methodMissing with two bad arguments throws exception'() {
+        when:
+        new Graph().methodMissing('noVertexSpec', ['one', 'two'])
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def 'methodMissing with a bad argument and map throws exception'() {
+        when:
+        new Graph().methodMissing('noVertexSpec', [[one:'one'], 'two'])
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def 'can delete an unconnected Vertex'() {
+        setup:
+        Graph graph = new Graph()
+        graph.vertex 'step1'
+
+        when:
+        graph.delete('step1')
+
+        then:
+        graph.vertices.size() == 0
+    }
+
+    def 'cannot delete connected vertex'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+
+        when:
+        graph.delete('step1')
+
+        then:
+        thrown IllegalStateException
+    }
+
+    def 'can delete edge'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+
+        when:
+        graph.deleteEdge('step1', 'step2')
+
+        then:
+        graph.edges.size() == 0
+    }
+
+    def 'can replaceEdges'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step3'
+        graph.edge 'step2', 'step3'
+        graph.edge 'step2', 'step4'
+
+        when:
+        graph.replaceEdges {
+            new DirectedEdge(one:it.one, two:it.two, delegate:it.delegate)
+        }
+
+        then:
+        graph.edges.size() == 4
+        graph.edges.every { it instanceof DirectedEdge }
+    }
+
+    def 'can replaceEdgesSet'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step3'
+        graph.edge 'step2', 'step3'
+        graph.edge 'step2', 'step4'
+
+        when:
+        graph.replaceEdgesSet(new TreeSet<>(new OrderBy([{ it.one }, { it.two }])))
+
+        then:
+        graph.edges.size() == 4
+    }
+
+    def 'set must be empty in replaceEdgesSet'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+        graph.edge 'step1', 'step3'
+        graph.edge 'step2', 'step3'
+        graph.edge 'step2', 'step4'
+
+        when:
+        def set = new TreeSet<>(new OrderBy([{ it.one }, { it.two }]))
+        set.add(new Edge(one:'step5', two:'step6'))
+        graph.replaceEdgesSet(set)
+
+        then:
+        thrown IllegalArgumentException
+    }
+
+    def 'edgeTraits adds traits to all old  and new edges'() {
+        setup:
+        Graph graph = new Graph()
+        graph.edge 'step1', 'step2'
+        graph.edge 'step2', 'step3'
+
+        when:
+        graph.edgeTraits(Mapping)
+
+        and:
+        graph.edgeTraits(Mapping)
+        graph.edge 'step3', 'step4'
+        graph.edge 'step4', 'step5'
+
+        then:
+        graph.edges.every { edge ->
+            edge.delegate instanceof Mapping
+        }
+    }
+
+    def 'vertexTraits adds traits to all old and new vertices'() {
+        setup:
+        Graph graph = new Graph()
+        graph.vertex 'step1'
+        graph.vertex 'step2'
+
+        when:
+        graph.vertexTraits(Mapping)
+
+        and:
+        graph.vertexTraits(Mapping)
+        graph.vertex 'step3'
+        graph.vertex 'step4'
+
+        then:
+        graph.vertices.every { name, vertex ->
+            vertex.delegate instanceof Mapping
+        }
     }
 }

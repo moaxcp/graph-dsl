@@ -12,18 +12,6 @@ class VertexMapPlugin implements Plugin {
      */
     @Override
     void apply(Graph graph) {
-        graph.@vertices.each { name, vertex ->
-            vertex.delegateAs(Mapping)
-        }
-
-        graph.vertexFactory = new VertexFactory() {
-            VertexFactory oldFactory = graph.vertexFactory
-
-            @Override
-            Vertex newVertex(String name) {
-                Vertex vertex = oldFactory.newVertex(name)
-                vertex.delegateAs(Mapping)
-            }
-        }
+        graph.vertexTraits(Mapping)
     }
 }

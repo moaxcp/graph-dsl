@@ -1,27 +1,24 @@
 import static com.github.amkay.gradle.gitflow.version.VersionType.*
 
 buildscript {
-    repositories {
-        maven {
-            url 'https://plugins.gradle.org/m2/'
-        }
-    }
     dependencies {
         classpath 'com.github.amkay:gradle-gitflow:0.2.0'
-        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.3'
-        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.8.0'
     }
+}
+
+plugins {
+    id 'net.ossindex.audit' version '0.1.1'
+    id 'io.codearte.nexus-staging' version '0.8.0'
+    id 'org.sonarqube' version '2.4'
 }
 
 apply plugin: 'idea'
 apply plugin: 'com.github.amkay.gitflow'
-apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'io.codearte.nexus-staging'
 
 group = 'com.github.moaxcp'
 description = 'A groovy dsl for creating and traversing graphs.'
@@ -148,7 +145,7 @@ nexusStaging {
 
 dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
-    testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+    testCompile ('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude group: 'org.codehaus.groovy', module:'groovy-all'
     }
     testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"

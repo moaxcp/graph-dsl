@@ -5,7 +5,7 @@ package graph
  */
 trait Weight {
 
-    private Closure weightClosure
+    private Closure weightClosure = { 0 }
 
     /**
      * Gets the weight by calling the weightClosure with this as the delegate.

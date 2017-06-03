@@ -83,7 +83,12 @@ class EdgeSpec {
         }
         Edge e = graph.edgeFactory.newEdge(one, two)
         Edge edge = graph.edges.find { it == e } ?: e
+
+        if (traitsSet) {
+            edge.delegateAs(this.traitsSet as Class[])
+        }
         graph.addEdge(edge)
+
         graph.vertex(one)
         graph.vertex(two)
 
@@ -94,9 +99,6 @@ class EdgeSpec {
         if (renameTwo) {
             graph.vertex(renameTwo)
             edge.two = renameTwo
-        }
-        if (traitsSet) {
-            edge.delegateAs(this.traitsSet as Class[])
         }
 
         if (runnerCodeClosure) {
