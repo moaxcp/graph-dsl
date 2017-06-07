@@ -194,6 +194,10 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
+## x.x.x
+
+* [#80](https://github.com/moaxcp/graph-dsl/issues/80) Removed sonarqube since it no longer supports groovy
+
 ## 0.15.0
 
 This release combines fixes for a few issues on github.
