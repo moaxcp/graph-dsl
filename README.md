@@ -189,11 +189,14 @@ If there are any issues contact me moaxcp@gmail.com.
 * [groovy](http://www.groovy-lang.org/)
 * [spock](http://spockframework.org/)
 * [jacoco](http://www.eclemma.org/jacoco/)
-* [sonarqube.com](https://sonarqube.com/dashboard?id=com.github.moaxcp%3Agraph-dsl)
 * [travis-ci.org](https://travis-ci.org/moaxcp/graph-dsl)
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## x.x.x
+
+* [#80](https://github.com/moaxcp/graph-dsl/issues/80) Removed sonarqube since it no longer supports groovy
 
 ## 0.15.0
 
