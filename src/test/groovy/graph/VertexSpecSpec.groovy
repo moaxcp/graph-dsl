@@ -61,7 +61,7 @@ class VertexSpecSpec extends Specification {
     def 'apply can add edges using edgesFirst'() {
         setup:
         spec.name = 'step1'
-        spec.edgesFirst 'step2', 'step3'
+        spec.connectsTo 'step2', 'step3'
 
         when:
         spec.apply(graph)
@@ -75,7 +75,7 @@ class VertexSpecSpec extends Specification {
     def 'apply can ad edges using edgesSecond'() {
         setup:
         spec.name = 'step1'
-        spec.edgesSecond 'step2', 'step3'
+        spec.connectsFrom 'step2', 'step3'
 
         when:
         spec.apply(graph)
@@ -93,8 +93,8 @@ class VertexSpecSpec extends Specification {
         second.name = 'step1'
         second.rename = 'step2'
         second.traits Mapping
-        second.edgesFirst 'step2'
-        second.edgesSecond 'step3'
+        second.connectsTo 'step2'
+        second.connectsFrom 'step3'
         second.runnerCode {
             label = 'step1'
         }
@@ -106,8 +106,8 @@ class VertexSpecSpec extends Specification {
         result.name == 'step1'
         result.rename == 'step2'
         result.traits == [Mapping] as Set<Class>
-        result.getEdgesFirst() == ['step2'] as Set<String>
-        result.edgesSecond == ['step3'] as Set<String>
+        result.getConnectsTo() == ['step2'] as Set<String>
+        result.connectsFrom == ['step3'] as Set<String>
         result.runnerCode != null
     }
 }
