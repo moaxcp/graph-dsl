@@ -74,13 +74,13 @@ Once a graph is created there is a dsl for depthFirstTraversal and breadthFirstT
 graph {
     apply DirectedGraphPlugin
     vertex A {
-        edgesFirst 'B', 'D', 'E'
-        edgesSecond 'D'
+        connectsTo 'B', 'D', 'E'
+        connectsFrom 'D'
     }
 
     vertex D {
-        edgesFirst 'C', 'E'
-        edgesSecond 'B'
+        connectsTo 'C', 'E'
+        connectsFrom 'B'
     }
 
     edge B, C
