@@ -20,8 +20,8 @@ class VertexSpec {
     String rename
 
     private final Set<Class> traitsSet = [] as Set<Class>
-    private final Set<String> edgesFirstSet = [] as Set<String>
-    private final Set<String> edgesSecondSet = [] as Set<String>
+    private final Set<String> connectsToSet = [] as Set<String>
+    private final Set<String> connectsFromSet = [] as Set<String>
     private Closure runnerCodeClosure
 
     /**
@@ -36,16 +36,16 @@ class VertexSpec {
      * The set of edges to create between the {@link Vertex} and other vertices. The {@link Vertex} will be edge.one.
      * @return The names of vertices the {@link Vertex} should connect to.
      */
-    Set<String> getEdgesFirst() {
-        Collections.unmodifiableSet(edgesFirstSet)
+    Set<String> getConnectsTo() {
+        Collections.unmodifiableSet(connectsToSet)
     }
 
     /**
      * The set of edges to create between the {@link Vertex} and other vertices. The {@link Vertex} will be edge.two.
      * @return The names of vertices the {@link Vertex} should connect to.
      */
-    Set<String> getEdgesSecond() {
-        Collections.unmodifiableSet(edgesSecondSet)
+    Set<String> getConnectsFrom() {
+        Collections.unmodifiableSet(connectsFromSet)
     }
 
     /**
@@ -69,8 +69,8 @@ class VertexSpec {
      * will be edge.one.
      * @param names
      */
-    void edgesFirst(String... names) {
-        edgesFirstSet.addAll(names)
+    void connectsTo(String... names) {
+        connectsToSet.addAll(names)
     }
 
     /**
@@ -78,8 +78,8 @@ class VertexSpec {
      * will be edge.two.
      * @param names
      */
-    void edgesSecond(String... names) {
-        edgesSecondSet.addAll(names)
+    void connectsFrom(String... names) {
+        connectsFromSet.addAll(names)
     }
 
     /**
@@ -96,8 +96,8 @@ class VertexSpec {
      * <p>
      * 1. renames vertex to rename if set<br>
      * 2. applies traits to the vertex<br>
-     * 3. creates edges between the vertex and edgesFirst where the vertex is edge.one<br>
-     * 4. creates edges between the vertex and edgesFirst where the vertex is edge.one<br>
+     * 3. creates edges between the vertex and connectsTo where the vertex is edge.one<br>
+     * 4. creates edges between the vertex and connectsFrom where the vertex is edge.two<br>
      * @param graph
      */
     Vertex apply(Graph graph) {
@@ -113,10 +113,10 @@ class VertexSpec {
         if (traitsSet) {
             vertex.delegateAs(traitsSet as Class[])
         }
-        edgesFirstSet.each {
+        connectsToSet.each {
             graph.edge vertex.name, it
         }
-        edgesSecondSet.each {
+        connectsFromSet.each {
             graph.edge it, vertex.name
         }
 
@@ -134,8 +134,8 @@ class VertexSpec {
      * name - the name of the vertex to create or update<br>
      * rename - what to rename the vertex<br>
      * traits - list of traits to be applied to the {@link Vertex}<br>
-     * edgesFirst - list of vertices to connect the {@link Vertex} to. The vertex is edge.one<br>
-     * edgesSecond - list of vertices to connect the {@link Vertex} to. The vertex is edge.two<br>
+     * connectsTo - list of vertices to connect the {@link Vertex} to. The vertex is edge.one<br>
+     * connectsFrom - list of vertices to connect the {@link Vertex} to. The vertex is edge.two<br>
      * runnerCode - closure to be applied to the {@link Vertex} after traits and edges are created.
      * <p>
      * All other values are ignored.
@@ -147,11 +147,11 @@ class VertexSpec {
         if (map.traits) {
             spec.traits(map.traits as Class[])
         }
-        if (map.edgesFirst) {
-            spec.edgesFirst(map.edgesFirst as String[])
+        if (map.connectsTo) {
+            spec.connectsTo(map.connectsTo as String[])
         }
-        if (map.edgesSecond) {
-            spec.edgesSecond(map.edgesSecond as String[])
+        if (map.connectsFrom) {
+            spec.connectsFrom(map.connectsFrom as String[])
         }
         if (map.runnerCode) {
             spec.runnerCode(map.runnerCode)
@@ -172,8 +172,8 @@ class VertexSpec {
         next.rename = spec.rename ?: rename
 
         next.traits((traitsSet + spec.traits) as Class[])
-        next.edgesFirst((edgesFirstSet + spec.edgesFirst) as String[])
-        next.edgesSecond((edgesSecondSet + spec.edgesSecond) as String[])
+        next.connectsTo((connectsToSet + spec.connectsTo) as String[])
+        next.connectsFrom((connectsFromSet + spec.connectsFrom) as String[])
 
         if (this.runnerCodeClosure) {
             next.runnerCode this.runnerCodeClosure << spec.runnerCodeClosure

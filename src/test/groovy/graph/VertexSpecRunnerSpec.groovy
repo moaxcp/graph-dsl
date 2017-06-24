@@ -31,9 +31,9 @@ class VertexSpecRunnerSpec extends Specification {
         vertex.delegate instanceof Weight
     }
 
-    def 'can add edgesFirst'() {
+    def 'can add edges with connectsTo'() {
         when:
-        runner.edgesFirst 'step2', 'step3'
+        runner.connectsTo 'step2', 'step3'
         def edges = graph.adjacentEdges('step1')
 
         then:
@@ -43,9 +43,9 @@ class VertexSpecRunnerSpec extends Specification {
         edges[1].one == 'step1'
     }
 
-    def 'can add edgesSecond'() {
+    def 'can add with connectsFrom'() {
         when:
-        runner.edgesSecond 'step2', 'step3'
+        runner.connectsFrom 'step2', 'step3'
         def edges = graph.adjacentEdges('step1')
 
         then:
