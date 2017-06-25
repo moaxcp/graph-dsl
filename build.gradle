@@ -9,6 +9,7 @@ buildscript {
 plugins {
     id 'net.ossindex.audit' version '0.1.1'
     id 'io.codearte.nexus-staging' version '0.8.0'
+    id "org.standardout.versioneye" version "1.4.0"
 }
 
 apply plugin: 'idea'
@@ -25,6 +26,11 @@ description = 'A groovy dsl for creating and traversing graphs.'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 ext.groovyVersion = '2.5.0-beta-1'
+
+versioneye {
+    includePlugins = true
+    exclude configurations.findAll { !it.canBeResolved }*.name as String[]
+}
 
 jacocoTestReport {
     dependsOn test

@@ -84,8 +84,8 @@ class EdgeSpec {
         Edge e = graph.edgeFactory.newEdge(one, two)
         Edge edge = graph.edges.find { it == e }
 
-        if(edge) {
-            if(renameOne || renameTwo) {
+        if (edge) {
+            if (renameOne || renameTwo) {
                 graph.deleteEdge(edge.one, edge.two)
             }
         } else {
