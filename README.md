@@ -8,14 +8,13 @@ check the [wiki](https://github.com/moaxcp/graph-dsl/wiki).
 
 ```groovy
 #!/usr/bin/env groovy
-@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.11.0')
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.15.0')
 ```
 
 ## Creating a graph
 
-The basic graph structure is held in a map of named vertices and a set of edges.
-
-All referenced vertices are created if they don't exist.
+The entry-point to the dsl is the `Graph.graph(Closure)` method. This method applies the closure to a new Graph object 
+and returns it. 
 
 ```groovy
 def graph = graph {
@@ -26,44 +25,65 @@ assert graph.edges.size() == 1
 assert graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
 ```
 
-This example of a graph creates two vertices named 'step1' and 'step2' as well as an edge between them. There are many
-other methods for creating vertices and edges.
+This example of a graph creates two vertices named 'step1' and 'step2' as well as an edge between them. The basic graph 
+structure is held in a map of named Vertex objects and a set of Edge objects. Each Edge contains the names of the two
+vertices it connects.
+
+There are a few rules the dsl follows as it is being processed:
+
+1. At the end of an operation all referenced vertices are created if they don't exist.
+2. If an edge or vertex already exists it will be reused by and operation.
+
+This gives the developer flexibility to create and modify the graph in many different ways.
 
 ```groovy
-graph.with {
+def workQueue = new LinkedList()
+graph {
     edge (A, B) {
-        traits Mapping, Mapping
-        queue = new LinkedList()
+        traits Mapping, Weight
+        queue = workQueue
         weight { queue.size() }
     }
     
     vertex A(traits:Mapping) {
         action = {
             println "processing"
+            workQueue << "work"
         }
     }
     
     vertex B {
         traits Mapping
         action = {
-            println "done processing"
+            println "done processing ${workQueue.poll()}"
         }
     }
 }
 ```
 
+In this graph the edge method creates the vertices A and B as well as an edge. It also configures the edge to have a
+queue and a weight that is the size of the queue. The vertices A and B are also configured to perform an action. A adds
+work to the queue and B processes the work.
+
 The Default behavior of a graph is that of an undirected graph. These graphs have a set of edges where only one edge
-can connect any two vertices. This behavior can be changed to a directed graph at any time using the DirectedGraphPlugin
+can connect any two vertices. An undirected graph can be changed to a directed graph at any time using 
+`DirectedGraphPlugin`.
 
 ```groovy
-graph.apply DirectedGraphPlugin
+graph {
+    //lots of code
+    apply DirectedGraphPlugin
+    //lots of code
+}
 ```
 
-Traits can be added to all edges and vertices.
+Traits can be added to all edges and vertices using `edgeTraits` and `vertexTraits`.
 
 ```groovy
-graph.edgeTraits Mapping, Weight
-graph.vertexTraits Mapping
+graph {
+    edgeTraits Mapping, Weight
+    vertexTraits Mapping
+}
 ```
 
 ## Traversing a graph
@@ -77,12 +97,12 @@ graph {
         connectsTo 'B', 'D', 'E'
         connectsFrom 'D'
     }
-
+    
     vertex D {
         connectsTo 'C', 'E'
         connectsFrom 'B'
     }
-
+    
     edge B, C
     depthFirstTraversal {
         root = 'A'
@@ -90,7 +110,7 @@ graph {
             println vertex.name
         }
     }
-
+    
     breadthFirstTraversal {
         root = 'A'
         visit { vertex ->
@@ -100,26 +120,29 @@ graph {
 }
 ```
 
-## Functional methods
+## Functional search methods
 
-There are functional methods build on the depthFirstTraversal and breadthFirstTraversal method.
+There are functional search methods build on the depthFirstTraversal and breadthFirstTraversal method. These methods 
+follow the standard names in groovy: each, find, inject, findAll, collect. The methods can specify which type of 
+search to perform such as `eachBfs` or `eachDfs`. When a search type is not specified the methods default to depth 
+first search.
 
 ```groovy
 eachBfs {
     println it.name
 }
-
+    
 def vertex = findBfs {
     it.name == 'A'
 }
-
+    
 def bfsOrder = collectBfs {
     it.name
 }
 ```
 
-Note: These methods are not yet implemented for depth first traversal. The depth first traversal methods will be the
-defaults for each, find, inject, findAll, and collect.
+Note: These methods are not yet implemented for depth first traversal. The depth first search methods will be the
+defaults when a search type is not specified.
 
 ## Edge Classification
 
@@ -130,9 +153,69 @@ Depth first traversal supports edge classification where an edge is classified a
 * forward-edge - when the destination vertex is black
 * cross-edge - when the destination vertex is black and in a different tree
 
+To classify edges use the `classifyEdges(Closure)` method.
+
+```
+graph {
+    //setup graph
+    classifyEdges { from, to, edgeType ->
+        println "$from $to is $edgeType"
+    }
+}
+```
+
+`classifyEdges` returns an EdgeClassification object. This object contains lists of all back edges, tree-edges,
+forward edges, and cross edges. There is also a new Graph called forest that gets created. 
+`EdgeClassification.forrest` contains the forrest created by tree edges. It uses the vertex and edge objects
+from the original graph object.
+
+# Plugins
+
+Plugins provide graphs with extra functionality. They can:
+
+1. Modify all edges and vertices by adding traits or replacing them
+2. modify the factories so they create different edges and vertices 
+3. perform meta-programming on the graph to change or add methods
+
+## DirectedGraphPlugin
+
+The DirectedGraphPlugin changes the behavior of a graph to that of a directed graph. In a directed graph edges 
+become directional. Only two edges can exist between any two vertices. In that case, the edges need to go in 
+opposite directions.
+
+Traversal methods will only follow out edges from a vertex.
+
 ## EdgeWeightPlugin
 
 This plugin applies Weight to all edges and changes all traversal methods to follow edges in order of their weight.
+
+## EdgeMapPlugin
+
+All edges and all future edges will have the Mapping triat.
+
+Note: will probably be deleted in the future.
+
+## VertexMapPlugin
+
+All vertices and all future vertices will have the Mapping trait.
+
+Note: will probably be deleted in the future.
+
+# Traits
+
+Traits are standard groovy traits that developers or plugins can apply to Vertex or Edge
+delegates. The Vertex and Edge objects call their delegate when a method or property is
+missing. This allows properties and methods to be added to a Vertex or Edge at runtime.
+
+## Mapping
+
+Allows a vertex or edge to act like a Map. When a property is missing in the delegate this
+trait will return or set the value in its map.
+
+## Weight
+
+Adds a weight property to a vertex or map. The weight is set with the `weight` method passing
+in a closure. This makes the weight lazy so it can change dynamically.
 
 # Getting Started With Development/Contributing
 
@@ -197,6 +280,8 @@ If there are any issues contact me moaxcp@gmail.com.
 ## x.x.x
 
 * [#80](https://github.com/moaxcp/graph-dsl/issues/80) Removed sonarqube since it no longer supports groovy
+* [#78](https://github.com/moaxcp/graph-dsl/issues/78) Changed edgesFirst and edgesSecond in dsl to connectsTo and connectsFrom.
+* [#77](https://github.com/moaxcp/graph-dsl/issues/77) renameOne and renameTwo in edge methods will not add extra vertex objects to the graph.
 
 ## 0.15.0
 

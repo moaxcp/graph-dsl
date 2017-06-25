@@ -6,7 +6,7 @@ import groovy.transform.PackageScope
  * The results from classifyEdges in Graph.
  */
 class EdgeClassification {
-    Graph forrest = []
+    Graph forrest = new Graph()
     List<Edge> backEdges = []
     List<Edge> treeEdges = []
     List<Edge> forwardEdges = []
