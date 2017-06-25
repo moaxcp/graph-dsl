@@ -108,7 +108,7 @@ class Graph {
      */
     @PackageScope
     boolean addEdge(Edge edge) {
-        edges << edge
+        edges.add(edge)
     }
 
     /**
