@@ -1,15 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-git fetch --unshallow || true #allows sonar to get all commit history for exact blame info
+git fetch --unshallow || true #get all commit history for exact blame info
 ./gradlew audit
 
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "Build for master"
 
-     ./gradlew sonarqube \
-    -Dsonar.host.url=$SONAR_HOST_URL \
-    -Dsonar.login=$SONAR_TOKEN
+    ./gradlew check
+    ./gradlew -Pversioneye.api_key=$VERSIONEYE_KEY versionEyeSecurityAndLicenseCheck
 
     ./gradlew uploadArchives \
     -Dnexus.username=moaxcp \
@@ -23,7 +22,6 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     -Dnexus.password=$NEXUS_PASSWORD
 
     ./gradlew groovydoc
-    ./gradlew check
     ./gradlew jacocoTestReport
 
     git config --global user.email "travis@travis-ci.org"
@@ -41,15 +39,6 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
 
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     echo "Build for internal pull request"
-    #always run test and sonarqube. If tests fail they will be reported in sonar.
-    ./gradlew test || true
-    ./gradlew -x test sonarqube \
-    -Dsonar.analysis.mode=preview \
-    -Dsonar.github.oauth=$GITHUB_TOKEN \
-    -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
-    -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
-    -Dsonar.host.url=$SONAR_HOST_URL \
-    -Dsonar.login=$SONAR_TOKEN
     ./gradlew test #make sure build fails if tests fail
 
 else

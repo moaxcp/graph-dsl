@@ -1,12 +1,14 @@
 package graph
 
 import groovy.transform.PackageScope
+import groovy.transform.ToString
 
 /**
  * An edge between two vertices. This class uses a delegate when methods
  * and properties are missing. Traits should be applied to the delegate
  * using delegateAs().
  */
+@ToString(includeNames=true, excludes='delegate')
 class Edge {
     String one
     String two

@@ -95,6 +95,23 @@ class EdgeSpecSpec extends Specification {
         graph.edges.first().two == 'step2'
     }
 
+    def 'renameOne does not create extra vertices'() {
+        setup:
+        spec.one = 'step1'
+        spec.two = 'step2'
+        spec.renameOne = 'step4'
+
+        when:
+        spec.apply(graph)
+
+        then:
+        graph.vertices.size() == 2
+        graph.vertices.step4.name == 'step4'
+        graph.edges.size() == 1
+        graph.edges.first().one == 'step4'
+        graph.edges.first().two == 'step2'
+    }
+
     def 'can renameTwo'() {
         setup:
         graph.edge('step1', 'step2')
@@ -107,6 +124,22 @@ class EdgeSpecSpec extends Specification {
 
         then:
         graph.vertices.size() == 3
+        graph.vertices.step4.name == 'step4'
+        graph.edges.size() == 1
+        graph.edges.first().one == 'step1'
+        graph.edges.first().two == 'step4'
+    }
+
+    def 'renameTwo does not create extra vertices'() {
+        spec.one = 'step1'
+        spec.two = 'step2'
+        spec.renameTwo = 'step4'
+
+        when:
+        spec.apply(graph)
+
+        then:
+        graph.vertices.size() == 2
         graph.vertices.step4.name == 'step4'
         graph.edges.size() == 1
         graph.edges.first().one == 'step1'

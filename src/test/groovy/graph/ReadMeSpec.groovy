@@ -35,13 +35,13 @@ class ReadMeSpec extends Specification {
         def graph = graph {
             apply DirectedGraphPlugin
             vertex A {
-                edgesFirst 'B', 'D', 'E'
-                edgesSecond 'D'
+                connectsTo 'B', 'D', 'E'
+                connectsFrom 'D'
             }
 
             vertex D {
-                edgesFirst 'C', 'E'
-                edgesSecond 'B'
+                connectsTo 'C', 'E'
+                connectsFrom 'B'
             }
 
             edge B, C
@@ -70,17 +70,17 @@ class ReadMeSpec extends Specification {
         Graph graph = Graph.graph {
             apply DirectedGraphPlugin
             vertex a {
-                edgesFirst 'b', 'd'
-                edgesSecond 'd'
+                connectsTo 'b', 'd'
+                connectsFrom 'd'
             }
 
             vertex renameMe {
                 rename 'b'
-                edgesFirst 'c', 'd'
+                connectsTo 'c', 'd'
             }
 
-            vertex d([edgesFirst:'c']) {
-                edgesFirst 'e'
+            vertex d([connectsTo:'c']) {
+                connectsTo 'e'
             }
 
             edge 'f', 'g'

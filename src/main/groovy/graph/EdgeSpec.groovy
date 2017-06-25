@@ -82,24 +82,35 @@ class EdgeSpec {
             throw new IllegalArgumentException('!two failed. two must be groovy truth.')
         }
         Edge e = graph.edgeFactory.newEdge(one, two)
-        Edge edge = graph.edges.find { it == e } ?: e
+        Edge edge = graph.edges.find { it == e }
 
-        if (traitsSet) {
-            edge.delegateAs(this.traitsSet as Class[])
+        if (edge) {
+            if (renameOne || renameTwo) {
+                graph.deleteEdge(edge.one, edge.two)
+            }
+        } else {
+            edge = e
         }
-        graph.addEdge(edge)
-
-        graph.vertex(one)
-        graph.vertex(two)
 
         if (renameOne) {
             graph.vertex(renameOne)
             edge.one = renameOne
+        } else {
+            graph.vertex(one)
         }
+
         if (renameTwo) {
             graph.vertex(renameTwo)
             edge.two = renameTwo
+        } else {
+            graph.vertex(two)
         }
+
+        if (traitsSet) {
+            edge.delegateAs(this.traitsSet as Class[])
+        }
+
+        graph.addEdge(edge)
 
         if (runnerCodeClosure) {
             EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph:graph, edge:edge)

@@ -1,11 +1,14 @@
 package graph
 
+import groovy.transform.ToString
+
 /**
  * Represents a directed edge in a grpah. Since these should be soted in a
  * Set the equals method is overridden to allow edges in both directions between
  * two vertices.
  */
 @SuppressWarnings('EqualsAndHashCode') //equals still meets contract with hashCode (I think)
+@ToString(includeSuper=true, includeNames=true)
 class DirectedEdge extends Edge {
 
     /**

@@ -73,9 +73,9 @@ class GraphVertexSpec extends Specification {
         vertex.delegate instanceof Weight
     }
 
-    def 'can add edges using edgesFirst with vertex(Map)'() {
+    def 'can add edges using connectsTo with vertex(Map)'() {
         when:
-        graph.vertex name:'step1', edgesFirst:['step2', 'step3']
+        graph.vertex name:'step1', connectsTo:['step2', 'step3']
         def edgeOne = graph.edges.find {
             it.one == 'step1' && it.two == 'step2'
         }
@@ -89,9 +89,9 @@ class GraphVertexSpec extends Specification {
         edgeTwo != null
     }
 
-    def 'can add edges using edgesSecond with vertex(Map)'() {
+    def 'can add edges using connectsFrom with vertex(Map)'() {
         when:
-        graph.vertex name:'step1', edgesSecond:['step2', 'step3']
+        graph.vertex name:'step1', connectsFrom:['step2', 'step3']
         def edgeOne = graph.edges.find {
             it.one == 'step2' && it.two == 'step1'
         }

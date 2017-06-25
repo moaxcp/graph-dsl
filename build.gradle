@@ -9,7 +9,7 @@ buildscript {
 plugins {
     id 'net.ossindex.audit' version '0.1.1'
     id 'io.codearte.nexus-staging' version '0.8.0'
-    id 'org.sonarqube' version '2.4'
+    id "org.standardout.versioneye" version "1.4.0"
 }
 
 apply plugin: 'idea'
@@ -25,14 +25,19 @@ description = 'A groovy dsl for creating and traversing graphs.'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-ext.groovyVersion = '2.5.0-alpha-1'
+ext.groovyVersion = '2.5.0-beta-1'
+
+versioneye {
+    includePlugins = true
+    exclude configurations.findAll { !it.canBeResolved }*.name as String[]
+}
 
 jacocoTestReport {
     dependsOn test
 }
 
 gradle.taskGraph.whenReady { graph ->
-    if (graph.hasTask(':jacocoTestReport') || graph.hasTask(':sonarqube')) {
+    if (graph.hasTask(':jacocoTestReport')) {
         compileGroovy.groovyOptions.optimizationOptions.all = false
         logger.warn 'all groovy optimizations are turned off for jacoco'
     }

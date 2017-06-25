@@ -2,11 +2,13 @@ package graph
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.PackageScope
+import groovy.transform.ToString
 
 /**
  * A vertex in the graph. Every vertex should have a name. All vertices have a delegate which allows methods to be added
  * dynamically.
  */
+@ToString(includeNames=true, excludes='delegate')
 @EqualsAndHashCode(excludes = ['delegate'])
 class Vertex {
     String name
