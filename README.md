@@ -277,7 +277,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
-## x.x.x
+## 0.16.0
 
 * [#80](https://github.com/moaxcp/graph-dsl/issues/80) Removed sonarqube since it no longer supports groovy
 * [#78](https://github.com/moaxcp/graph-dsl/issues/78) Changed edgesFirst and edgesSecond in dsl to connectsTo and connectsFrom.

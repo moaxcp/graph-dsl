@@ -9,6 +9,7 @@ buildscript {
 plugins {
     id 'net.ossindex.audit' version '0.1.1'
     id 'io.codearte.nexus-staging' version '0.8.0'
+    id "org.standardout.versioneye" version "1.4.0"
 }
 
 apply plugin: 'idea'
