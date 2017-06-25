@@ -20,8 +20,8 @@ class VertexSpec {
     String rename
 
 <span class="fc" id="L22">    private final Set&lt;Class&gt; traitsSet = [] as Set&lt;Class&gt;</span>
-<span class="fc" id="L23">    private final Set&lt;String&gt; edgesFirstSet = [] as Set&lt;String&gt;</span>
-<span class="fc" id="L24">    private final Set&lt;String&gt; edgesSecondSet = [] as Set&lt;String&gt;</span>
+<span class="fc" id="L23">    private final Set&lt;String&gt; connectsToSet = [] as Set&lt;String&gt;</span>
+<span class="fc" id="L24">    private final Set&lt;String&gt; connectsFromSet = [] as Set&lt;String&gt;</span>
     private Closure runnerCodeClosure
 
     /**
@@ -36,16 +36,16 @@ class VertexSpec {
      * The set of edges to create between the {@link Vertex} and other vertices. The {@link Vertex} will be edge.one.
      * @return The names of vertices the {@link Vertex} should connect to.
      */
-    Set&lt;String&gt; getEdgesFirst() {
-<span class="pc" id="L40">        Collections.unmodifiableSet(edgesFirstSet)</span>
+    Set&lt;String&gt; getConnectsTo() {
+<span class="pc" id="L40">        Collections.unmodifiableSet(connectsToSet)</span>
     }
 
     /**
      * The set of edges to create between the {@link Vertex} and other vertices. The {@link Vertex} will be edge.two.
      * @return The names of vertices the {@link Vertex} should connect to.
      */
-    Set&lt;String&gt; getEdgesSecond() {
-<span class="pc" id="L48">        Collections.unmodifiableSet(edgesSecondSet)</span>
+    Set&lt;String&gt; getConnectsFrom() {
+<span class="pc" id="L48">        Collections.unmodifiableSet(connectsFromSet)</span>
     }
 
     /**
@@ -69,8 +69,8 @@ class VertexSpec {
      * will be edge.one.
      * @param names
      */
-    void edgesFirst(String... names) {
-<span class="fc" id="L73">        edgesFirstSet.addAll(names)</span>
+    void connectsTo(String... names) {
+<span class="fc" id="L73">        connectsToSet.addAll(names)</span>
     }
 
     /**
@@ -78,8 +78,8 @@ class VertexSpec {
      * will be edge.two.
      * @param names
      */
-    void edgesSecond(String... names) {
-<span class="fc" id="L82">        edgesSecondSet.addAll(names)</span>
+    void connectsFrom(String... names) {
+<span class="fc" id="L82">        connectsFromSet.addAll(names)</span>
     }
 
     /**
@@ -96,8 +96,8 @@ class VertexSpec {
      * &lt;p&gt;
      * 1. renames vertex to rename if set&lt;br&gt;
      * 2. applies traits to the vertex&lt;br&gt;
-     * 3. creates edges between the vertex and edgesFirst where the vertex is edge.one&lt;br&gt;
-     * 4. creates edges between the vertex and edgesFirst where the vertex is edge.one&lt;br&gt;
+     * 3. creates edges between the vertex and connectsTo where the vertex is edge.one&lt;br&gt;
+     * 4. creates edges between the vertex and connectsFrom where the vertex is edge.two&lt;br&gt;
      * @param graph
      */
     Vertex apply(Graph graph) {
@@ -113,10 +113,10 @@ class VertexSpec {
 <span class="fc bfc" id="L113" title="All 2 branches covered.">        if (traitsSet) {</span>
 <span class="fc" id="L114">            vertex.delegateAs(traitsSet as Class[])</span>
         }
-<span class="fc" id="L116">        edgesFirstSet.each {</span>
+<span class="fc" id="L116">        connectsToSet.each {</span>
 <span class="pc" id="L117">            graph.edge vertex.name, it</span>
         }
-<span class="fc" id="L119">        edgesSecondSet.each {</span>
+<span class="fc" id="L119">        connectsFromSet.each {</span>
 <span class="pc" id="L120">            graph.edge it, vertex.name</span>
         }
 
@@ -134,8 +134,8 @@ class VertexSpec {
      * name - the name of the vertex to create or update&lt;br&gt;
      * rename - what to rename the vertex&lt;br&gt;
      * traits - list of traits to be applied to the {@link Vertex}&lt;br&gt;
-     * edgesFirst - list of vertices to connect the {@link Vertex} to. The vertex is edge.one&lt;br&gt;
-     * edgesSecond - list of vertices to connect the {@link Vertex} to. The vertex is edge.two&lt;br&gt;
+     * connectsTo - list of vertices to connect the {@link Vertex} to. The vertex is edge.one&lt;br&gt;
+     * connectsFrom - list of vertices to connect the {@link Vertex} to. The vertex is edge.two&lt;br&gt;
      * runnerCode - closure to be applied to the {@link Vertex} after traits and edges are created.
      * &lt;p&gt;
      * All other values are ignored.
@@ -147,11 +147,11 @@ class VertexSpec {
 <span class="fc bfc" id="L147" title="All 2 branches covered.">        if (map.traits) {</span>
 <span class="fc" id="L148">            spec.traits(map.traits as Class[])</span>
         }
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (map.edgesFirst) {</span>
-<span class="fc" id="L151">            spec.edgesFirst(map.edgesFirst as String[])</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (map.connectsTo) {</span>
+<span class="fc" id="L151">            spec.connectsTo(map.connectsTo as String[])</span>
         }
-<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (map.edgesSecond) {</span>
-<span class="fc" id="L154">            spec.edgesSecond(map.edgesSecond as String[])</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (map.connectsFrom) {</span>
+<span class="fc" id="L154">            spec.connectsFrom(map.connectsFrom as String[])</span>
         }
 <span class="fc bfc" id="L156" title="All 2 branches covered.">        if (map.runnerCode) {</span>
 <span class="fc" id="L157">            spec.runnerCode(map.runnerCode)</span>
@@ -172,8 +172,8 @@ class VertexSpec {
 <span class="fc bfc" id="L172" title="All 2 branches covered.">        next.rename = spec.rename ?: rename</span>
 
 <span class="fc" id="L174">        next.traits((traitsSet + spec.traits) as Class[])</span>
-<span class="fc" id="L175">        next.edgesFirst((edgesFirstSet + spec.edgesFirst) as String[])</span>
-<span class="fc" id="L176">        next.edgesSecond((edgesSecondSet + spec.edgesSecond) as String[])</span>
+<span class="fc" id="L175">        next.connectsTo((connectsToSet + spec.connectsTo) as String[])</span>
+<span class="fc" id="L176">        next.connectsFrom((connectsFromSet + spec.connectsFrom) as String[])</span>
 
 <span class="pc bpc" id="L178" title="1 of 2 branches missed.">        if (this.runnerCodeClosure) {</span>
 <span class="nc" id="L179">            next.runnerCode this.runnerCodeClosure &lt;&lt; spec.runnerCodeClosure</span>

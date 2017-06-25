@@ -82,31 +82,42 @@ class EdgeSpec {
 <span class="nc" id="L82">            throw new IllegalArgumentException('!two failed. two must be groovy truth.')</span>
         }
 <span class="fc" id="L84">        Edge e = graph.edgeFactory.newEdge(one, two)</span>
-<span class="pc bfc" id="L85" title="All 2 branches covered.">        Edge edge = graph.edges.find { it == e } ?: e</span>
+<span class="pc" id="L85">        Edge edge = graph.edges.find { it == e }</span>
 
-<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (traitsSet) {</span>
-<span class="fc" id="L88">            edge.delegateAs(this.traitsSet as Class[])</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (edge) {</span>
+<span class="fc bfc" id="L88" title="All 6 branches covered.">            if (renameOne || renameTwo) {</span>
+<span class="fc" id="L89">                graph.deleteEdge(edge.one, edge.two)</span>
+            }
+        } else {
+<span class="fc" id="L92">            edge = e</span>
         }
-<span class="fc" id="L90">        graph.addEdge(edge)</span>
-
-<span class="fc" id="L92">        graph.vertex(one)</span>
-<span class="fc" id="L93">        graph.vertex(two)</span>
 
 <span class="fc bfc" id="L95" title="All 2 branches covered.">        if (renameOne) {</span>
 <span class="fc" id="L96">            graph.vertex(renameOne)</span>
 <span class="fc" id="L97">            edge.one = renameOne</span>
-        }
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (renameTwo) {</span>
-<span class="fc" id="L100">            graph.vertex(renameTwo)</span>
-<span class="fc" id="L101">            edge.two = renameTwo</span>
+        } else {
+<span class="fc" id="L99">            graph.vertex(one)</span>
         }
 
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (runnerCodeClosure) {</span>
-<span class="fc" id="L105">            EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph:graph, edge:edge)</span>
-<span class="fc" id="L106">            runner.runCode(runnerCodeClosure)</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (renameTwo) {</span>
+<span class="fc" id="L103">            graph.vertex(renameTwo)</span>
+<span class="fc" id="L104">            edge.two = renameTwo</span>
+        } else {
+<span class="fc" id="L106">            graph.vertex(two)</span>
         }
 
-<span class="pc" id="L109">        edge</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (traitsSet) {</span>
+<span class="fc" id="L110">            edge.delegateAs(this.traitsSet as Class[])</span>
+        }
+
+<span class="fc" id="L113">        graph.addEdge(edge)</span>
+
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if (runnerCodeClosure) {</span>
+<span class="fc" id="L116">            EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph:graph, edge:edge)</span>
+<span class="fc" id="L117">            runner.runCode(runnerCodeClosure)</span>
+        }
+
+<span class="pc" id="L120">        edge</span>
     }
 
     /**
@@ -115,19 +126,19 @@ class EdgeSpec {
      * @return the resulting EdgeSpec
      */
     EdgeSpec overlay(EdgeSpec spec) {
-<span class="fc" id="L118">        EdgeSpec next = new EdgeSpec()</span>
-<span class="fc bfc" id="L119" title="All 2 branches covered.">        next.one = spec.one ?: one</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">        next.two = spec.two ?: two</span>
-<span class="fc bfc" id="L121" title="All 2 branches covered.">        next.renameOne = spec.renameOne ?: renameOne</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">        next.renameTwo = spec.renameTwo ?: renameTwo</span>
-<span class="fc" id="L123">        next.traits((traitsSet + spec.traits) as Class[])</span>
-<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        if (this.runnerCodeClosure) {</span>
-<span class="nc" id="L125">            next.runnerCode this.runnerCodeClosure &lt;&lt; spec.runnerCodeClosure</span>
+<span class="fc" id="L129">        EdgeSpec next = new EdgeSpec()</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        next.one = spec.one ?: one</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        next.two = spec.two ?: two</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        next.renameOne = spec.renameOne ?: renameOne</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        next.renameTwo = spec.renameTwo ?: renameTwo</span>
+<span class="fc" id="L134">        next.traits((traitsSet + spec.traits) as Class[])</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if (this.runnerCodeClosure) {</span>
+<span class="nc" id="L136">            next.runnerCode this.runnerCodeClosure &lt;&lt; spec.runnerCodeClosure</span>
         } else {
-<span class="fc" id="L127">            next.runnerCode spec.runnerCodeClosure</span>
+<span class="fc" id="L138">            next.runnerCode spec.runnerCodeClosure</span>
         }
 
-<span class="pc" id="L130">        next</span>
+<span class="pc" id="L141">        next</span>
     }
 
     /**
@@ -146,15 +157,15 @@ class EdgeSpec {
      * @return the resulting EdgeSpec
      */
     static EdgeSpec newInstance(Map&lt;String, ?&gt; map) {
-<span class="fc" id="L149">        EdgeSpec spec = new EdgeSpec(one:map.one, two:map.two, renameOne:map.renameOne, renameTwo:map.renameTwo)</span>
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (map.traits) {</span>
-<span class="fc" id="L151">            spec.traits(map.traits as Class[])</span>
+<span class="fc" id="L160">        EdgeSpec spec = new EdgeSpec(one:map.one, two:map.two, renameOne:map.renameOne, renameTwo:map.renameTwo)</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (map.traits) {</span>
+<span class="fc" id="L162">            spec.traits(map.traits as Class[])</span>
         }
-<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (map.runnerCode) {</span>
-<span class="fc" id="L154">            spec.runnerCode(map.runnerCode)</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        if (map.runnerCode) {</span>
+<span class="fc" id="L165">            spec.runnerCode(map.runnerCode)</span>
         }
 
-<span class="pc" id="L157">        spec</span>
+<span class="pc" id="L168">        spec</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

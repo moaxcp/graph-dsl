@@ -2,19 +2,21 @@
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.PackageScope
+import groovy.transform.ToString
 
 /**
  * A vertex in the graph. Every vertex should have a name. All vertices have a delegate which allows methods to be added
  * dynamically.
  */
+@ToString(includeNames=true, excludes='delegate')
 @EqualsAndHashCode(excludes = ['delegate'])
 class Vertex {
     String name
-<span class="fc" id="L13">    Object delegate = new Object()</span>
+<span class="fc" id="L15">    Object delegate = new Object()</span>
 
     @PackageScope
     void setName(String name) {
-<span class="fc" id="L17">        this.name = name</span>
+<span class="fc" id="L19">        this.name = name</span>
     }
 
     /**
@@ -23,8 +25,8 @@ class Vertex {
      * @return this
      */
     Vertex delegateAs(Class&lt;?&gt;... traits) {
-<span class="fc" id="L26">        delegate = delegate.withTraits(traits)</span>
-<span class="pc" id="L27">        this</span>
+<span class="fc" id="L28">        delegate = delegate.withTraits(traits)</span>
+<span class="pc" id="L29">        this</span>
     }
 
     /**
@@ -35,7 +37,7 @@ class Vertex {
      */
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
-<span class="pc" id="L38">        delegate.invokeMethod(name, args)</span>
+<span class="pc" id="L40">        delegate.invokeMethod(name, args)</span>
     }
 
     /**
@@ -45,7 +47,7 @@ class Vertex {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-<span class="pc" id="L48">        delegate[name]</span>
+<span class="pc" id="L50">        delegate[name]</span>
     }
 
     /**
@@ -56,7 +58,7 @@ class Vertex {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
-<span class="pc" id="L59">        delegate[name] = value</span>
+<span class="pc" id="L61">        delegate[name] = value</span>
     }
 
     /**
@@ -65,9 +67,9 @@ class Vertex {
      * @return this {@link Vertex}
      */
     Vertex leftShift(Closure closure) {
-<span class="nc" id="L68">        Closure code = closure.rehydrate(this, this, this)</span>
-<span class="nc" id="L69">        code()</span>
-<span class="nc" id="L70">        this</span>
+<span class="nc" id="L70">        Closure code = closure.rehydrate(this, this, this)</span>
+<span class="nc" id="L71">        code()</span>
+<span class="nc" id="L72">        this</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

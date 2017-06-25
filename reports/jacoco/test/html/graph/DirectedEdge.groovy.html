@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DirectedEdge.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">DirectedEdge.groovy</span></div><h1>DirectedEdge.groovy</h1><pre class="source lang-java linenums">package graph
 
+import groovy.transform.ToString
+
 /**
  * Represents a directed edge in a grpah. Since these should be soted in a
  * Set the equals method is overridden to allow edges in both directions between
  * two vertices.
  */
 @SuppressWarnings('EqualsAndHashCode') //equals still meets contract with hashCode (I think)
+@ToString(includeSuper=true, includeNames=true)
 class DirectedEdge extends Edge {
 
     /**
@@ -15,14 +18,14 @@ class DirectedEdge extends Edge {
      */
     @SuppressWarnings('Instanceof')
     boolean equals(Object o) {
-<span class="fc bfc" id="L18" title="All 4 branches covered.">        if (!(o instanceof DirectedEdge)) {</span>
-<span class="fc" id="L19">            return false</span>
+<span class="fc bfc" id="L21" title="All 4 branches covered.">        if (!(o instanceof DirectedEdge)) {</span>
+<span class="fc" id="L22">            return false</span>
         }
-<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (this.is(o)) {</span>
-<span class="fc" id="L22">            return true</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        if (this.is(o)) {</span>
+<span class="fc" id="L25">            return true</span>
         }
-<span class="fc" id="L24">        DirectedEdge rhs = (DirectedEdge) o</span>
-<span class="pc bfc" id="L25" title="All 4 branches covered.">        one == rhs.one &amp;&amp; two == rhs.two</span>
+<span class="fc" id="L27">        DirectedEdge rhs = (DirectedEdge) o</span>
+<span class="pc bfc" id="L28" title="All 4 branches covered.">        one == rhs.one &amp;&amp; two == rhs.two</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
