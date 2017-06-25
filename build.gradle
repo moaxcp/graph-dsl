@@ -27,6 +27,11 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 ext.groovyVersion = '2.5.0-beta-1'
 
+versioneye {
+    includePlugins = true
+    exclude configurations.findAll { !it.canBeResolved }*.name as String[]
+}
+
 jacocoTestReport {
     dependsOn test
 }

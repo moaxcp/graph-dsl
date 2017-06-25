@@ -7,6 +7,9 @@ git fetch --unshallow || true #get all commit history for exact blame info
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "Build for master"
 
+    ./gradlew check
+    ./gradlew -Pversioneye.api_key=$VERSIONEYE_KEY versionEyeSecurityAndLicenseCheck
+
     ./gradlew uploadArchives \
     -Dnexus.username=moaxcp \
     -Dnexus.password=$NEXUS_PASSWORD \
@@ -19,7 +22,6 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     -Dnexus.password=$NEXUS_PASSWORD
 
     ./gradlew groovydoc
-    ./gradlew check
     ./gradlew jacocoTestReport
 
     git config --global user.email "travis@travis-ci.org"
