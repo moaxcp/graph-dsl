@@ -319,6 +319,12 @@ class Graph {
         spec.apply(this)
     }
 
+    Vertex vertex(VertexNameSpec spec) {
+        VertexSpec next = spec.toVertexSpec()
+        next.traits(vertexTraitsSet as Class[])
+        next.apply(this)
+    }
+
     /**
      * Applies traits to all edges and all future edges.
      * @param traits to add to all edges and all future edges
@@ -356,6 +362,10 @@ class Graph {
         Vertex v2 = vertex(two)
         EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)
         edge(spec)
+    }
+
+    Edge edge(VertexNameSpec one, VertexNameSpec two) {
+        edge(one.name, two.name)
     }
 
     /**
@@ -404,6 +414,10 @@ class Graph {
         edge(spec)
     }
 
+    Edge edge(VertexNameSpec one, VertexNameSpec two, Map<String, ?> map) {
+        edge(one.name, two.name, map)
+    }
+
     /**
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
      * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
@@ -434,6 +448,9 @@ class Graph {
         Vertex v2 = vertex(two)
         EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name, runnerCode:closure)
         edge(spec)
+    }
+    Edge edge(VertexNameSpec one, VertexNameSpec two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+        edge(one.name, two.name, closure)
     }
 
     /**
@@ -490,6 +507,9 @@ class Graph {
         spec = spec.overlay(EdgeSpec.newInstance(map))
         spec.runnerCode closure
         edge(spec)
+    }
+    Edge edge(VertexNameSpec one, VertexNameSpec two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+        edge(one.name, two.name, map, closure)
     }
 
     /**
@@ -909,7 +929,7 @@ class Graph {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-        VertexSpec.newInstance(name:name)
+        new VertexNameSpec(name:name)
     }
 
     /**
@@ -928,22 +948,22 @@ class Graph {
             throw new IllegalArgumentException("Confusing name 'vertex' for spec.")
         }
         if (args.size() == 0) {
-            return this."$name"
+            return this."$name".toVertexSpec()
         }
 
         if (args.size() == 1 && args[0] instanceof Map) {
-            VertexSpec spec = this."$name"
+            VertexSpec spec = this."$name".toVertexSpec()
             return spec.overlay(VertexSpec.newInstance(args[0]))
         }
 
         if (args.size() == 1 && args[0] instanceof Closure) {
-            VertexSpec spec = this."$name"
+            VertexSpec spec = this."$name".toVertexSpec()
             spec.runnerCode args[0]
             return spec
         }
 
         if (args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
-            VertexSpec spec = this."$name"
+            VertexSpec spec = this."$name".toVertexSpec()
             spec = spec.overlay(VertexSpec.newInstance(args[0]))
             spec.runnerCode args[1]
             return spec
