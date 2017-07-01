@@ -666,14 +666,15 @@ class Graph {
      * @param spec
      * @return null or a Traversal value
      */
-    Traversal traversal(traversalConnected, spec) {
-        String name = spec.root
-        while (name) {
-            Traversal traversal = traversalConnected(name, spec)
+    Traversal traversal(traversalConnected, TraversalSpec spec) {
+        spec.roots = [] as Set
+        while (spec.root) {
+            Traversal traversal = traversalConnected(spec)
             if (traversal == Traversal.STOP) {
                 return Traversal.STOP
             }
-            name = getUnvisitedVertexName(spec.colors)
+            spec.roots << spec.root
+            spec.root = getUnvisitedVertexName(spec.colors)
         }
         null
     }
@@ -685,11 +686,11 @@ class Graph {
      *
      * Traversal.STOP - It is possible to stop the traversal early by returning this value
      * in preorder and postorder.
-     * @param root the root of the vertex to start at
      * @param spec the DepthFirstTraversalSpec
      * @return null or a Traversal value
      */
-    Traversal depthFirstTraversalConnected(String root, DepthFirstTraversalSpec spec) {
+    Traversal depthFirstTraversalConnected(DepthFirstTraversalSpec spec) {
+        def root = spec.root
         if (spec.preorder && spec.preorder(vertices[root]) == Traversal.STOP) {
             spec.colors[root] = TraversalColor.GREY
             return Traversal.STOP
@@ -705,11 +706,11 @@ class Graph {
                 return Traversal.STOP
             }
             if (spec.colors[connectedName] == TraversalColor.WHITE) {
-                if (Traversal.STOP == depthFirstTraversalConnected(connectedName, spec)) {
+                spec.root = connectedName
+                if (Traversal.STOP == depthFirstTraversalConnected(spec)) {
                     return Traversal.STOP
                 }
             }
-
         }
 
         if (spec.postorder && spec.postorder(vertices[root]) == Traversal.STOP) {
@@ -865,27 +866,26 @@ class Graph {
 
     /**
      * Performs a breadth first traversal on a connected component of the graph starting
-     * at the vertex identified by root. The behavior of the traversal is determined by
+     * at the vertex identified by spec.root. The behavior of the traversal is determined by
      * spec.colors and spec.visit.
      * <p>
      * Traversal.STOP - It is possible to stop the traversal early by returning this value
      * in visit.
-     * @param root the root of the vertex to start at
      * @param spec the BreadthFirstTraversalSpec
      * @return null or a Traversal value
      */
-    Traversal breadthFirstTraversalConnected(String root, BreadthFirstTraversalSpec spec) {
-        if (!vertices[root]) {
-            throw new IllegalArgumentException("Could not find $root in graph")
+    Traversal breadthFirstTraversalConnected(BreadthFirstTraversalSpec spec) {
+        if (!vertices[spec.root]) {
+            throw new IllegalArgumentException("Could not find $spec.root in graph")
         }
-        def traversal = spec.visit(vertices[root])
+        def traversal = spec.visit(vertices[spec.root])
         if (traversal == Traversal.STOP) {
-            spec.colors[root] = TraversalColor.GREY
+            spec.colors[spec.root] = TraversalColor.GREY
             return traversal
         }
-        spec.colors[root] = TraversalColor.GREY
+        spec.colors[spec.root] = TraversalColor.GREY
         Queue<String> queue = [] as Queue<String>
-        queue << root
+        queue << spec.root
         while (queue.size() != 0) {
             String current = queue.poll()
             Set<Edge> adjacentEdges = traverseEdges(current)

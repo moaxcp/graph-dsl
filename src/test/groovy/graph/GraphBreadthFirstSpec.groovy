@@ -50,13 +50,14 @@ class GraphBreadthFirstSpec extends Specification {
         def visitList = []
 
         def spec = new BreadthFirstTraversalSpec()
+        spec.root = 'A'
         spec.colors = graph.makeColorMap()
         spec.visit { vertex ->
             visitList << vertex.name
         }
 
         when:
-        def traversal = graph.breadthFirstTraversalConnected 'A', spec
+        def traversal = graph.breadthFirstTraversalConnected spec
 
         then:
         traversal != Graph.Traversal.STOP
@@ -69,10 +70,11 @@ class GraphBreadthFirstSpec extends Specification {
     def 'root does not exist'() {
         setup:
         def spec = new BreadthFirstTraversalSpec()
+        spec.root = 'step1'
         spec.colors = graph.makeColorMap()
 
         when:
-        graph.breadthFirstTraversalConnected 'step1', spec
+        graph.breadthFirstTraversalConnected spec
 
         then:
         thrown IllegalArgumentException
@@ -81,6 +83,7 @@ class GraphBreadthFirstSpec extends Specification {
     def 'can stop traversal'() {
         setup:
         def spec = new BreadthFirstTraversalSpec()
+        spec.root = 'A'
         spec.colors = graph.makeColorMap()
         def visitList = []
         spec.visit { vertex ->
@@ -91,7 +94,7 @@ class GraphBreadthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.breadthFirstTraversalConnected 'A', spec
+        def traversal = graph.breadthFirstTraversalConnected spec
 
         then:
         traversal == Graph.Traversal.STOP
@@ -104,6 +107,7 @@ class GraphBreadthFirstSpec extends Specification {
     def 'can stop traversal at root'() {
         setup:
         def spec = new BreadthFirstTraversalSpec()
+        spec.root = 'A'
         spec.colors = graph.makeColorMap()
         def visitList = []
         spec.visit { vertex ->
@@ -114,7 +118,7 @@ class GraphBreadthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.breadthFirstTraversalConnected 'A', spec
+        def traversal = graph.breadthFirstTraversalConnected spec
 
         then:
         traversal == Graph.Traversal.STOP

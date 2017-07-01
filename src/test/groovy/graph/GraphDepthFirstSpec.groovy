@@ -217,6 +217,7 @@ public class GraphDepthFirstSpec extends Specification {
         def postorderList = []
 
         def spec = new DepthFirstTraversalSpec()
+        spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.preorder { vertex ->
             preorderList << vertex.name
@@ -229,7 +230,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal == Graph.Traversal.STOP
@@ -268,13 +269,14 @@ public class GraphDepthFirstSpec extends Specification {
         def preorderList = []
 
         def spec = new DepthFirstTraversalSpec()
+        spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.preorder { vertex ->
             preorderList << vertex.name
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal != Graph.Traversal.STOP
@@ -303,13 +305,14 @@ public class GraphDepthFirstSpec extends Specification {
         def postorderList = []
 
         def spec = new DepthFirstTraversalSpec()
+        spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.postorder { vertex ->
             postorderList << vertex.name
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal != Graph.Traversal.STOP
@@ -336,6 +339,7 @@ public class GraphDepthFirstSpec extends Specification {
         def preorderList = []
 
         def spec = new DepthFirstTraversalSpec()
+        spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.postorder { vertex ->
             postorderList << vertex.name
@@ -348,7 +352,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal == Graph.Traversal.STOP
@@ -448,6 +452,7 @@ public class GraphDepthFirstSpec extends Specification {
         def edges = []
 
         def spec = graph.depthFirstTraversalSpec {
+            root = 'A'
             classifyEdge { edge, from, to, toColor ->
                 fromNames << from
                 toNames << to
@@ -457,7 +462,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        graph.depthFirstTraversalConnected 'A', spec
+        graph.depthFirstTraversalConnected spec
 
         then:
         fromNames[0] == 'A'
@@ -483,6 +488,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         def spec = graph.depthFirstTraversalSpec {
+            root = 'A'
             classifyEdge { edge, from, to, toColor ->
                 if(from == 'B' && to == 'C') {
                     return Graph.Traversal.STOP
@@ -491,7 +497,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'A', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal == Graph.Traversal.STOP
