@@ -4,112 +4,6 @@ import spock.lang.Specification
 
 public class GraphDepthFirstSpec extends Specification {
 
-    def 'can get correct first unvisited vertex'() {
-        setup:
-        def graph = new Graph()
-        graph.vertex 'step1'
-        def colors = []
-
-        when:
-        def name = graph.getUnvisitedVertexName(colors)
-
-        then:
-        name == 'step1'
-    }
-
-    def 'can get correct first unvisited white vertex'() {
-        setup:
-        def graph = new Graph()
-        graph.vertex 'step1'
-        def colors = ['step1': graph.Graph.TraversalColor.WHITE]
-
-        when:
-        def name = graph.getUnvisitedVertexName(colors)
-
-        then:
-        name == 'step1'
-    }
-
-    def 'can get correct second unvisited vertex'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'step1'
-            vertex 'step2'
-        }
-        def colors = ['step1': graph.Graph.TraversalColor.GREY]
-
-        when:
-        def name = graph.getUnvisitedVertexName(colors)
-
-        then:
-        name == 'step2'
-    }
-
-    def 'can get unvisited child right'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'step1'
-            vertex 'step2'
-            vertex 'step3'
-            edge 'step1', 'step2'
-            edge 'step1', 'step3'
-        }
-        def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY
-        ]
-
-        when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
-
-        then:
-        childName == 'step3'
-    }
-
-    def 'can get unvisited child left'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'step1'
-            vertex 'step2'
-            vertex 'step3'
-            edge 'step1', 'step2'
-            edge 'step1', 'step3'
-        }
-        def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step3': graph.Graph.TraversalColor.GREY
-        ]
-
-        when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
-
-        then:
-        childName == 'step2'
-    }
-
-    def 'can get no unvisited child'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'step1'
-            vertex 'step2'
-            edge 'step1', 'step2'
-        }
-        def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY
-        ]
-
-        when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
-
-        then:
-        childName == null
-
-    }
 
     def 'can get adjacent edges'() {
         setup:
@@ -159,6 +53,33 @@ public class GraphDepthFirstSpec extends Specification {
         }
         Closure c = {
             root = 'step1'
+            colors = ['step1' : graph.Graph.TraversalColor.WHITE]
+            preorder {
+                //do nothing
+            }
+            postorder {
+                //do nothing
+            }
+        }
+
+        when:
+        def spec = graph.depthFirstTraversalSpec(c)
+
+        then:
+        spec.root == 'step1'
+        spec.colors == ['step1' : graph.Graph.TraversalColor.WHITE]
+        spec.preorder != null
+        spec.postorder != null
+    }
+
+    def 'can depthFirstTraversalSpec custom with VertexNameSpec'() {
+        setup:
+        def graph = new Graph()
+        graph.with {
+            vertex 'step1'
+        }
+        Closure c = {
+            root new VertexNameSpec(name:'step1')
             colors = ['step1' : graph.Graph.TraversalColor.WHITE]
             preorder {
                 //do nothing
