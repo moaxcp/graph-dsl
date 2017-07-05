@@ -4,7 +4,6 @@ package graph
  * The base specification for any traversal.
  */
 class TraversalSpec {
-    Graph graph
 
     /**
      * The root {@link Vertex} to start the traversal from.
@@ -31,6 +30,6 @@ class TraversalSpec {
 
 
     def propertyMissing(String name) {
-        graph[name]
+        new VertexNameSpec(name:name)
     }
 }
