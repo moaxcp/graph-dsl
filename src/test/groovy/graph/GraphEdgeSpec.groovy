@@ -32,6 +32,20 @@ class GraphEdgeSpec extends Specification {
         when:
         Edge result
         graph.with {
+            result = edge step1(), step2()
+        }
+
+        then:
+        graph.edges.size() == 1
+        graph.vertices.size() == 2
+        graph.edges.first().one == 'step1'
+        graph.edges.first().two == 'step2'
+    }
+
+    def 'can add/get with edge(VertexNameSpec, VertexNameSpec)'() {
+        when:
+        Edge result
+        graph.with {
             result = edge step1, step2
         }
 
@@ -94,11 +108,25 @@ class GraphEdgeSpec extends Specification {
         result.is expected
     }
 
-    def 'can add/get edge with edge(VertexSpec, VertexSpec, Closure)'() {
+    def 'can add/get edge with edge(VertexNameSpec, VertexNameSpec, Closure)'() {
         when:
         Edge result
         graph.with {
             result = edge(step1, step2) {}
+        }
+
+        then:
+        graph.edges.size() == 1
+        graph.vertices.size() == 2
+        graph.edges.first().one == 'step1'
+        graph.edges.first().two == 'step2'
+    }
+
+    def 'can add/get edge with edge(VertexSpec, VertexSpec, Closure)'() {
+        when:
+        Edge result
+        graph.with {
+            result = edge(step1(), step2()) {}
         }
 
         then:
@@ -131,6 +159,20 @@ class GraphEdgeSpec extends Specification {
     }
 
     def 'can add/get with edge(VertexSpec, VertexSpec, Map)'() {
+        when:
+        Edge result
+        graph.with {
+            result = edge step1(), step2(), [:]
+        }
+
+        then:
+        graph.edges.size() == 1
+        graph.vertices.size() == 2
+        graph.edges.first().one == 'step1'
+        graph.edges.first().two == 'step2'
+    }
+
+    def 'can add/get with edge(VertexNameSpec, VertexNameSpec, Map)'() {
         when:
         Edge result
         graph.with {
@@ -186,11 +228,25 @@ class GraphEdgeSpec extends Specification {
         result.is expected
     }
 
-    def 'can add/get edge with edge(VertexSpec, VertexSpec, Map, Closure)'() {
+    def 'can add/get edge with edge(VertexNameSpec, VertexNameSpec, Map, Closure)'() {
         when:
         Edge result
         graph.with {
             result = edge step1, step2, [:], {}
+        }
+
+        then:
+        graph.edges.size() == 1
+        graph.vertices.size() == 2
+        graph.edges.first().one == 'step1'
+        graph.edges.first().two == 'step2'
+    }
+
+    def 'can add/get edge with edge(VertexSpec, VertexSpec, Map, Closure)'() {
+        when:
+        Edge result
+        graph.with {
+            result = edge step1(), step2(), [:], {}
         }
 
         then:

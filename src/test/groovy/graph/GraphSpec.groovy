@@ -43,13 +43,22 @@ class GraphSpec extends Specification {
     }
 
     @Unroll
-    def 'dynamic method and property returns VertexSpec with name set'() {
+    def 'dynamic method returns VertexSpec with name set'() {
         expect:
         spec instanceof VertexSpec
         spec.name =='step1'
 
         where:
-        spec << [new Graph().step1, new Graph().step1(), new Graph().step2(name:'step1')]
+        spec << [new Graph().step1(), new Graph().step2(name:'step1')]
+    }
+
+    def 'dynamic property returns VertexNameSpec with name set'() {
+        setup:
+        def spec = new Graph().step1
+
+        expect:
+        spec instanceof VertexNameSpec
+        spec.name == 'step1'
     }
 
     def 'dynamic method with Map returns VertexSpec'() {
