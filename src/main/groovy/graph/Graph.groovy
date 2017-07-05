@@ -655,6 +655,7 @@ class Graph {
      */
     DepthFirstTraversalSpec depthFirstTraversalSpec(Closure specClosure) {
         DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()
+        spec.graph = this
         specClosure.delegate = spec
         specClosure()
         setupSpec(spec)
@@ -689,6 +690,7 @@ class Graph {
      */
     BreadthFirstTraversalSpec breadthFirstTraversalSpec(Closure specClosure) {
         BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()
+        spec.graph = this
         specClosure.delegate = spec
         specClosure()
         setupSpec(spec)
