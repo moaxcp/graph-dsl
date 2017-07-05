@@ -110,4 +110,37 @@ class VertexSpecSpec extends Specification {
         result.connectsFrom == ['step3'] as Set<String>
         result.runnerCode != null
     }
+
+    def 'overlay with values'() {
+        setup:
+        VertexSpec first = new VertexSpec()
+        first.name = 'stepa'
+        first.rename = 'step4'
+        first.traits Weight
+        first.connectsTo 'step5'
+        first.connectsFrom 'step6'
+        first.runnerCode {
+            label = 'step7'
+        }
+        VertexSpec second = new VertexSpec()
+        second.name = 'step1'
+        second.rename = 'step2'
+        second.traits Mapping
+        second.connectsTo 'step2'
+        second.connectsFrom 'step3'
+        second.runnerCode {
+            label = 'step1'
+        }
+
+        when:
+        VertexSpec result = first.overlay second
+
+        then:
+        result.name == 'step1'
+        result.rename == 'step2'
+        result.traits == [Mapping, Weight] as Set<Class>
+        result.getConnectsTo() == ['step2', 'step5'] as Set<String>
+        result.connectsFrom == ['step3', 'step6'] as Set<String>
+        result.runnerCode != null
+    }
 }
