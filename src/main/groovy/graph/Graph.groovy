@@ -634,12 +634,17 @@ class Graph {
      * depthFirstTraversalSpec().
      *
      * Once the spec is configured traversal(graph.&depthFirstTraversalConnected, spec) is called.
-     *
+     * @param root  optional root to start traversal
      * @param specClosure
      * @return
      */
-    Traversal depthFirstTraversal(Closure specClosure) {
-        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(specClosure)
+    Traversal depthFirstTraversal(String root = null, Closure specClosure) {
+        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(root, specClosure)
+        traversal(this.&depthFirstTraversalConnected, spec)
+    }
+
+    Traversal depthFirstTraversal(VertexNameSpec root, Closure specClosure) {
+        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(root.name, specClosure)
         traversal(this.&depthFirstTraversalConnected, spec)
     }
 
@@ -653,8 +658,9 @@ class Graph {
      * change the behavior of the depth first traversal.
      * @return
      */
-    DepthFirstTraversalSpec depthFirstTraversalSpec(Closure specClosure) {
+    DepthFirstTraversalSpec depthFirstTraversalSpec(String root = null, Closure specClosure) {
         DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()
+        spec.root = root
         specClosure.delegate = spec
         specClosure()
         setupSpec(spec)
@@ -687,8 +693,9 @@ class Graph {
      * change the behavior of the breadth first traversal.
      * @return
      */
-    BreadthFirstTraversalSpec breadthFirstTraversalSpec(Closure specClosure) {
+    BreadthFirstTraversalSpec breadthFirstTraversalSpec(String root = null, Closure specClosure) {
         BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()
+        spec.root = root
         specClosure.delegate = spec
         specClosure()
         setupSpec(spec)
@@ -894,12 +901,17 @@ class Graph {
     /**
      * configures a breadth first traversal with the given closure using breadthFirstTraversalSpec(). Once the spec is
      * configured traversal(this.&breadthFirstTraversalConnected, spec) is called.
-     *
+     * @param root  optional root to start traversal.
      * @param specClosure
      * @return
      */
-    Traversal breadthFirstTraversal(Closure specClosure) {
-        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(specClosure)
+    Traversal breadthFirstTraversal(String root = null, Closure specClosure) {
+        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(root, specClosure)
+        traversal(this.&breadthFirstTraversalConnected, spec)
+    }
+
+    Traversal breadthFirstTraversal(VertexNameSpec root, Closure specClosure) {
+        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(root.name, specClosure)
         traversal(this.&breadthFirstTraversalConnected, spec)
     }
 

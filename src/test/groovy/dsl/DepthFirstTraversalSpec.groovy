@@ -3,7 +3,7 @@ package dsl
 import spock.lang.Specification
 import graph.Graph
 
-class BreadthFirstTraversalSpec extends Specification {
+class DepthFirstTraversalSpec extends Specification {
     Graph graph = new Graph()
 
     def setup() {
@@ -19,65 +19,65 @@ class BreadthFirstTraversalSpec extends Specification {
         }
     }
 
-    def 'breadth first traversal with string root'() {
+    def 'depth first traversal with string root'() {
         given:
         def names = []
         graph.with {
-            breadthFirstTraversal {
+            depthFirstTraversal {
                 root = 'A'
-                visit { vertex ->
+                preorder { vertex ->
                     names << vertex.name
                 }
             }
         }
 
         expect:
-        names == ['A', 'B', 'D', 'E', 'C']
+        names == ['A', 'B', 'D', 'C', 'E']
     }
 
-    def 'breadth first traversal with VertexNameSpec root'() {
+    def 'depth first traversal with VertexNameSpec root'() {
         given:
         def names = []
         graph.with {
-            breadthFirstTraversal {
+            depthFirstTraversal {
                 root A
-                visit { vertex ->
+                preorder { vertex ->
                     names << vertex.name
                 }
             }
         }
 
         expect:
-        names == ['A', 'B', 'D', 'E', 'C']
+        names == ['A', 'B', 'D', 'C', 'E']
     }
 
-    def 'breadth first traversal with string root param'() {
+    def 'depth first traversal with string root param'() {
         given:
         def names = []
         graph.with {
-            breadthFirstTraversal('A') {
-                visit { vertex ->
+            depthFirstTraversal('A') {
+                preorder { vertex ->
                     names << vertex.name
                 }
             }
         }
 
         expect:
-        names == ['A', 'B', 'D', 'E', 'C']
+        names == ['A', 'B', 'D', 'C', 'E']
     }
 
-    def 'breadth first traversal with VertexNameSpec root param'() {
+    def 'depth first traversal with VertexNameSpec root param'() {
         given:
         def names = []
         graph.with {
-            breadthFirstTraversal(A) {
-                visit { vertex ->
+            depthFirstTraversal(A) {
+                preorder { vertex ->
                     names << vertex.name
                 }
             }
         }
 
         expect:
-        names == ['A', 'B', 'D', 'E', 'C']
+        names == ['A', 'B', 'D', 'C', 'E']
     }
 }
