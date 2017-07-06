@@ -281,6 +281,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 * [#82](https://github.com/moaxcp/graph-dsl/issues/82) Methods that take vertex names should also take VertexNameSpec
 * [#84](https://github.com/moaxcp/graph-dsl/issues/84) Configure gradle to fail for codenarc violations and jacoc verification
+* [#87](https://github.com/moaxcp/graph-dsl/issues/87) 
 
 ## 0.16.0
 

@@ -4,6 +4,7 @@ package graph
  * The base specification for any traversal.
  */
 class TraversalSpec {
+
     /**
      * The root {@link Vertex} to start the traversal from.
      */
@@ -25,5 +26,10 @@ class TraversalSpec {
      */
     void root(VertexNameSpec spec) {
         root = spec.name
+    }
+
+
+    def propertyMissing(String name) {
+        new VertexNameSpec(name:name)
     }
 }
