@@ -567,7 +567,7 @@ class Graph {
      * @param colors a map of vertex name entries with the value of the TraversalColor
      * @return the first unvisited vertex name in the vertices.
      */
-    String getUnvisitedVertexName(colors) {
+    String getUnvisitedVertexName(Map colors) {
         vertices.find { k, v ->
             colors[(k)] != TraversalColor.BLACK && colors[k] != TraversalColor.GREY
         }?.key
@@ -617,10 +617,8 @@ class Graph {
     }
 
     /**
-     * creates and returns a color map in the form of
-     * name : color. name is the vertex
-     * name and TraversalColor.WHITE is the
-     * color.
+     * Creates and returns a color map in the form of name:color where name is the vertex name and color is
+     * TraversalColor.WHITE.
      * @return
      */
     Map makeColorMap() {
@@ -630,35 +628,38 @@ class Graph {
     }
 
     /**
-     * configures a depth first traversal with the given closure using
-     * depthFirstTraversalSpec().
-     *
-     * Once the spec is configured traversal(graph.&depthFirstTraversalConnected, spec) is called.
+     * configures a depth first traversal with the given closure using {@link #depthFirstTraversalSpec(String,Closure)}.
+     * Once the spec is configured {@link #traversal(Closure,TraversalSpec)} is called.
      * @param root  optional root to start traversal
-     * @param specClosure
-     * @return
+     * @param specClosure  closure for depthFirstTraversalSpec method
+     * @return result of the traversal
      */
-    Traversal depthFirstTraversal(String root = null, Closure specClosure) {
+    Traversal depthFirstTraversal(String root = null, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
         DepthFirstTraversalSpec spec = depthFirstTraversalSpec(root, specClosure)
         traversal(this.&depthFirstTraversalConnected, spec)
     }
 
-    Traversal depthFirstTraversal(VertexNameSpec root, Closure specClosure) {
+    /**
+     * configures a depth first traversal with the given closure using {@link #depthFirstTraversalSpec(String,Closure)}.
+     * Once the spec is configured {@link #traversal(Closure,TraversalSpec)} is called.
+     * @param root  optional root to start traversal
+     * @param specClosure  closure for depthFirstTraversalSpec method
+     * @return result of the traversal
+     */
+    Traversal depthFirstTraversal(VertexNameSpec root, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
         DepthFirstTraversalSpec spec = depthFirstTraversalSpec(root.name, specClosure)
         traversal(this.&depthFirstTraversalConnected, spec)
     }
 
     /**
-     * creates a DepthFirstTraversalSpec from the provided closure.
-     *
-     * defaults will be configured with the setupSpec method.
-     *
-     * @param specClosure is a closure that has a new DepthFirstTraversalSpec
-     * as a delegate. Modify the DepthFirstTraversalSpec in this closure to
-     * change the behavior of the depth first traversal.
-     * @return
+     * Creates a DepthFirstTraversalSpec from the provided closure. If root is set spec.root will be set before calling
+     * the closure. Defaults will be configured with the setupSpec method after the closure is called.
+     * @param root  optional root to start traversal
+     * @param specClosure   A closure that has a new DepthFirstTraversalSpec as a delegate. Modify the
+     * DepthFirstTraversalSpec in this closure to change the behavior of the depth first traversal.
+     * @return resulting specification
      */
-    DepthFirstTraversalSpec depthFirstTraversalSpec(String root = null, Closure specClosure) {
+    DepthFirstTraversalSpec depthFirstTraversalSpec(String root = null, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
         DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()
         spec.root = root
         specClosure.delegate = spec
@@ -668,15 +669,10 @@ class Graph {
     }
 
     /**
-     * Configures defaults for a TraversalSpec. When colors and root are not set
-     * This method will generate defaults.
-     *
-     * if colors is not defined in the spec it defaults to the result of
-     * makeColorMap()
-     *
-     * if root is not defined in the spec it defaults to the result of
-     * getUnvisitedVertexName(spec.colors)
-     * @param spec the traversal spec to configure with defaults.
+     * Configures defaults for a TraversalSpec. When colors and root are not set This method will generate defaults. If
+     * colors is not defined in the spec it defaults to the result of {@link #makeColorMap()}. If root is not defined
+     * in the spec it defaults to the result of calling {@link #getUnvisitedVertexName(Map)} with spec.colors.
+     * @param spec the {@link TraversalSpec} to configure with defaults.
      */
     void setupSpec(TraversalSpec spec) {
         spec.colors = spec.colors ?: makeColorMap()
@@ -684,16 +680,14 @@ class Graph {
     }
 
     /**
-     * Creates a BreadthFirstTraversalSpec with the given closure.
-     *
-     * defaults will be configured with the setupSpec method.
-     *
-     * @param specClosure is a closure that has a new BreadthFirstTraversalSpec
-     * as a delegate. Modify the BreadthFirstTraversalSpec in this closure to
-     * change the behavior of the breadth first traversal.
-     * @return
+     * Creates a BreadthFirstTraversalSpec from the provided closure. If root is set spec.root will be set before
+     * calling the closure. Defaults will be configured with the setupSpec method after the closure is called.
+     * @param root  optional root to start traversal
+     * @param specClosure   A closure that has a new BreadthFirstTraversalSpec as a delegate. Modify the
+     * BreadthFirstTraversalSpec in this closure to change the behavior of the depth first traversal.
+     * @return resulting specification
      */
-    BreadthFirstTraversalSpec breadthFirstTraversalSpec(String root = null, Closure specClosure) {
+    BreadthFirstTraversalSpec breadthFirstTraversalSpec(String root = null, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
         BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()
         spec.root = root
         specClosure.delegate = spec
@@ -905,12 +899,12 @@ class Graph {
      * @param specClosure
      * @return
      */
-    Traversal breadthFirstTraversal(String root = null, Closure specClosure) {
+    Traversal breadthFirstTraversal(String root = null, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
         BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(root, specClosure)
         traversal(this.&breadthFirstTraversalConnected, spec)
     }
 
-    Traversal breadthFirstTraversal(VertexNameSpec root, Closure specClosure) {
+    Traversal breadthFirstTraversal(VertexNameSpec root, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
         BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(root.name, specClosure)
         traversal(this.&breadthFirstTraversalConnected, spec)
     }

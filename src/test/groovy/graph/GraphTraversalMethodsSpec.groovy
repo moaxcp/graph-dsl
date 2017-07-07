@@ -8,7 +8,7 @@ class GraphTraversalMethodsSpec extends Specification {
         setup:
         def graph = new Graph()
         graph.vertex 'step1'
-        def colors = []
+        def colors = [:]
 
         when:
         def name = graph.getUnvisitedVertexName(colors)
