@@ -1,5 +1,6 @@
 package dsl
 
+import graph.EdgeClassification
 import spock.lang.Specification
 import graph.Graph
 
@@ -22,6 +23,8 @@ class DepthFirstTraversalSpec extends Specification {
     def 'depth first traversal with string root'() {
         given:
         def names = []
+
+        when:
         graph.with {
             depthFirstTraversal {
                 root = 'A'
@@ -31,13 +34,15 @@ class DepthFirstTraversalSpec extends Specification {
             }
         }
 
-        expect:
+        then:
         names == ['A', 'B', 'D', 'C', 'E']
     }
 
     def 'depth first traversal with VertexNameSpec root'() {
         given:
         def names = []
+
+        when:
         graph.with {
             depthFirstTraversal {
                 root A
@@ -47,13 +52,15 @@ class DepthFirstTraversalSpec extends Specification {
             }
         }
 
-        expect:
+        then:
         names == ['A', 'B', 'D', 'C', 'E']
     }
 
     def 'depth first traversal with string root param'() {
         given:
         def names = []
+
+        when:
         graph.with {
             depthFirstTraversal('A') {
                 preorder { vertex ->
@@ -62,13 +69,15 @@ class DepthFirstTraversalSpec extends Specification {
             }
         }
 
-        expect:
+        then:
         names == ['A', 'B', 'D', 'C', 'E']
     }
 
     def 'depth first traversal with VertexNameSpec root param'() {
         given:
         def names = []
+
+        when:
         graph.with {
             depthFirstTraversal(A) {
                 preorder { vertex ->
@@ -77,7 +86,7 @@ class DepthFirstTraversalSpec extends Specification {
             }
         }
 
-        expect:
+        then:
         names == ['A', 'B', 'D', 'C', 'E']
     }
 }
