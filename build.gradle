@@ -36,16 +36,70 @@ jacocoTestReport {
     dependsOn test
 }
 
+jacocoTestCoverageVerification {
+    dependsOn test
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.83
+            }
+            limit {
+                counter = 'BRANCH'
+                minimum = 0.89
+            }
+        }
+
+        rule {
+            element = 'CLASS'
+            includes = ['graph.Graph']
+            limit {
+                minimum = 0.96
+            }
+            limit {
+                counter = 'BRANCH'
+                minimum = 1.0
+            }
+        }
+
+        rule {
+            element = 'CLASS'
+            includes = ['graph.EdgeSpec']
+            limit {
+                minimum = 0.93
+            }
+            limit {
+                counter = 'BRANCH'
+                minimum = 0.92
+            }
+        }
+
+        rule {
+            element = 'CLASS'
+            includes = ['graph.VertexSpec']
+            limit {
+                minimum = 0.95
+            }
+            limit {
+                counter = 'BRANCH'
+                minimum = 0.96
+            }
+        }
+    }
+}
+
 gradle.taskGraph.whenReady { graph ->
-    if (graph.hasTask(':jacocoTestReport')) {
+    if (graph.hasTask(':jacocoTestReport') || graph.hasTask(':jacocoTestCoverageVerification')) {
         compileGroovy.groovyOptions.optimizationOptions.all = false
         logger.warn 'all groovy optimizations are turned off for jacoco'
     }
 }
 
 codenarc {
-    ignoreFailures = true
     configFile = file 'config/codenarc/codenarc.groovy'
+    maxPriority1Violations = 0
+    maxPriority2Violations = 2
+    maxPriority3Violations = 1
+    ignoreFailures = true
 }
 
 repositories {

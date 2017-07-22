@@ -3,6 +3,7 @@ set -euo pipefail
 
 git fetch --unshallow || true #get all commit history for exact blame info
 ./gradlew audit
+./gradlew jacocoTestCoverageVerification
 
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "Build for master"

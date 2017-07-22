@@ -94,25 +94,25 @@ Once a graph is created there is a dsl for depthFirstTraversal and breadthFirstT
 graph {
     apply DirectedGraphPlugin
     vertex A {
-        connectsTo 'B', 'D', 'E'
-        connectsFrom 'D'
+        connectsTo B, D, E
+        connectsFrom D
     }
     
     vertex D {
-        connectsTo 'C', 'E'
-        connectsFrom 'B'
+        connectsTo C, E
+        connectsFrom B
     }
     
     edge B, C
     depthFirstTraversal {
-        root = 'A'
+        root A
         preorder { vertex ->
             println vertex.name
         }
     }
     
     breadthFirstTraversal {
-        root = 'A'
+        root A
         visit { vertex ->
             println "bft $vertex.name"
         }
@@ -155,7 +155,7 @@ Depth first traversal supports edge classification where an edge is classified a
 
 To classify edges use the `classifyEdges(Closure)` method.
 
-```
+```groovy
 graph {
     //setup graph
     classifyEdges { from, to, edgeType ->
@@ -247,7 +247,7 @@ The project uses gradle for the build system. Using gradlew, you do not need to 
 
 ## Contributing
 
-Contributions are welcome. Please submit a pull request to the develop branch in github.
+All contributions are welcome. Please submit a pull request to the develop branch in github.
 
 ## Ways to contribute
 
@@ -276,6 +276,13 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## 0.17.0
+
+* [#82](https://github.com/moaxcp/graph-dsl/issues/82) Methods that take vertex names should also take VertexNameSpec
+* [#84](https://github.com/moaxcp/graph-dsl/issues/84) Configure gradle to fail for codenarc violations and jacoc verification
+* [#87](https://github.com/moaxcp/graph-dsl/issues/87) TraversalSpec should return VertexNameSpec when property or method is missing
+* [#85](https://github.com/moaxcp/graph-dsl/issues/85) Traversal methods should accept a root param
 
 ## 0.16.0
 

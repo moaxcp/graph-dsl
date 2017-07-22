@@ -4,112 +4,6 @@ import spock.lang.Specification
 
 public class GraphDepthFirstSpec extends Specification {
 
-    def 'can get correct first unvisited vertex'() {
-        setup:
-        def graph = new Graph()
-        graph.vertex 'step1'
-        def colors = []
-
-        when:
-        def name = graph.getUnvisitedVertexName(colors)
-
-        then:
-        name == 'step1'
-    }
-
-    def 'can get correct first unvisited white vertex'() {
-        setup:
-        def graph = new Graph()
-        graph.vertex 'step1'
-        def colors = ['step1': graph.Graph.TraversalColor.WHITE]
-
-        when:
-        def name = graph.getUnvisitedVertexName(colors)
-
-        then:
-        name == 'step1'
-    }
-
-    def 'can get correct second unvisited vertex'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'step1'
-            vertex 'step2'
-        }
-        def colors = ['step1': graph.Graph.TraversalColor.GREY]
-
-        when:
-        def name = graph.getUnvisitedVertexName(colors)
-
-        then:
-        name == 'step2'
-    }
-
-    def 'can get unvisited child right'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'step1'
-            vertex 'step2'
-            vertex 'step3'
-            edge 'step1', 'step2'
-            edge 'step1', 'step3'
-        }
-        def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY
-        ]
-
-        when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
-
-        then:
-        childName == 'step3'
-    }
-
-    def 'can get unvisited child left'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'step1'
-            vertex 'step2'
-            vertex 'step3'
-            edge 'step1', 'step2'
-            edge 'step1', 'step3'
-        }
-        def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step3': graph.Graph.TraversalColor.GREY
-        ]
-
-        when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
-
-        then:
-        childName == 'step2'
-    }
-
-    def 'can get no unvisited child'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'step1'
-            vertex 'step2'
-            edge 'step1', 'step2'
-        }
-        def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY
-        ]
-
-        when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
-
-        then:
-        childName == null
-
-    }
 
     def 'can get adjacent edges'() {
         setup:
@@ -178,6 +72,33 @@ public class GraphDepthFirstSpec extends Specification {
         spec.postorder != null
     }
 
+    def 'can depthFirstTraversalSpec custom with VertexNameSpec'() {
+        setup:
+        def graph = new Graph()
+        graph.with {
+            vertex 'step1'
+        }
+        Closure c = {
+            root new VertexNameSpec(name:'step1')
+            colors = ['step1' : graph.Graph.TraversalColor.WHITE]
+            preorder {
+                //do nothing
+            }
+            postorder {
+                //do nothing
+            }
+        }
+
+        when:
+        def spec = graph.depthFirstTraversalSpec(c)
+
+        then:
+        spec.root == 'step1'
+        spec.colors == ['step1' : graph.Graph.TraversalColor.WHITE]
+        spec.preorder != null
+        spec.postorder != null
+    }
+
     def 'can depthFirstTraversalSpec'() {
         setup:
         def graph = new Graph()
@@ -217,6 +138,7 @@ public class GraphDepthFirstSpec extends Specification {
         def postorderList = []
 
         def spec = new DepthFirstTraversalSpec()
+        spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.preorder { vertex ->
             preorderList << vertex.name
@@ -229,7 +151,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal == Graph.Traversal.STOP
@@ -268,13 +190,14 @@ public class GraphDepthFirstSpec extends Specification {
         def preorderList = []
 
         def spec = new DepthFirstTraversalSpec()
+        spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.preorder { vertex ->
             preorderList << vertex.name
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal != Graph.Traversal.STOP
@@ -303,13 +226,14 @@ public class GraphDepthFirstSpec extends Specification {
         def postorderList = []
 
         def spec = new DepthFirstTraversalSpec()
+        spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.postorder { vertex ->
             postorderList << vertex.name
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal != Graph.Traversal.STOP
@@ -336,6 +260,7 @@ public class GraphDepthFirstSpec extends Specification {
         def preorderList = []
 
         def spec = new DepthFirstTraversalSpec()
+        spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.postorder { vertex ->
             postorderList << vertex.name
@@ -348,7 +273,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'step1', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal == Graph.Traversal.STOP
@@ -448,6 +373,7 @@ public class GraphDepthFirstSpec extends Specification {
         def edges = []
 
         def spec = graph.depthFirstTraversalSpec {
+            root = 'A'
             classifyEdge { edge, from, to, toColor ->
                 fromNames << from
                 toNames << to
@@ -457,7 +383,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        graph.depthFirstTraversalConnected 'A', spec
+        graph.depthFirstTraversalConnected spec
 
         then:
         fromNames[0] == 'A'
@@ -483,6 +409,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         def spec = graph.depthFirstTraversalSpec {
+            root = 'A'
             classifyEdge { edge, from, to, toColor ->
                 if(from == 'B' && to == 'C') {
                     return Graph.Traversal.STOP
@@ -491,7 +418,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
 
         when:
-        def traversal = graph.depthFirstTraversalConnected 'A', spec
+        def traversal = graph.depthFirstTraversalConnected spec
 
         then:
         traversal == Graph.Traversal.STOP

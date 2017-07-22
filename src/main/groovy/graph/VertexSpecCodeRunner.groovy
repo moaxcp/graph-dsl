@@ -50,12 +50,52 @@ class VertexSpecCodeRunner {
     }
 
     /**
+     * Creates edges where the vertex is edge.one and each name in names is edge.two.
+     * @param names of vertices to connect to.
+     */
+    void connectsTo(VertexNameSpec... names) {
+        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsTo:names*.name)
+        spec.apply(graph)
+    }
+
+    /**
+     * Applies the specs to graph and adds edges using {@link #connectsTo(String...)}.
+     * @param specs  specs to apply to graph and connectTo.
+     */
+    void connectsTo(VertexSpec... specs) {
+        specs.each {
+            it.apply(graph)
+        }
+        connectsTo(specs*.name as String[])
+    }
+
+    /**
      * Creates edges where the vertex is edge.two and each name in names is edge.one.
      * @param names of vetices to connect to.
      */
     void connectsFrom(String... names) {
         VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsFrom:names)
         spec.apply(graph)
+    }
+
+    /**
+     * Creates edges where the vertex is edge.two and each name in names is edge.one.
+     * @param names of vetices to connect to.
+     */
+    void connectsFrom(VertexNameSpec... names) {
+        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsFrom:names*.name)
+        spec.apply(graph)
+    }
+
+    /**
+     * Applies the specs to graph and adds edges using {@link #connectsFrom(String...)}.
+     * @param specs  specs to apply to graph and connectFrom.
+     */
+    void connectsFrom(VertexSpec... specs) {
+        specs.each {
+            it.apply(graph)
+        }
+        connectsFrom(specs*.name as String[])
     }
 
     /**

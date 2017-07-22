@@ -34,11 +34,29 @@ class EdgeSpecCodeRunner {
     }
 
     /**
+     * Renames edge.one to renameOne.name. This allows edge.one to point to a different {@link Vertex}
+     * @param renameOne  the new name for edge.one
+     */
+    void renameOne(VertexNameSpec renameOne) {
+        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, renameOne:renameOne.name)
+        spec.apply(graph)
+    }
+
+    /**
      * Renames edge.two to renameTwo. This allows edge.two to point to a different {@link Vertex}.
      * @param renameTwo the new name for edge.two
      */
     void renameTwo(String renameTwo) {
         EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, renameTwo:renameTwo)
+        spec.apply(graph)
+    }
+
+    /**
+     * Renames edge.two to renameTwo.name. This allows edge.two to point to a different {@link Vertex}
+     * @param renameTwo  the new name for edge.two
+     */
+    void renameTwo(VertexNameSpec renameTwo) {
+        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, renameTwo:renameTwo.name)
         spec.apply(graph)
     }
 
