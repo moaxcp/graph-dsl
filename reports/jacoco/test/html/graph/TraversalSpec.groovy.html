@@ -4,14 +4,33 @@
  * The base specification for any traversal.
  */
 class TraversalSpec {
+
     /**
      * The root {@link Vertex} to start the traversal from.
      */
     String root
 
     /**
+     * The roots of the traversal. Connected traversals start at each of these roots.
+     */
+<span class="fc" id="L16">    Set roots = [] as Set</span>
+
+    /**
      * The state of colors to start the traversal from.
      */
     Map colors
+
+    /**
+     * Sets the root of this traversal using the name from spec.
+     * @param spec  for name of root
+     */
+    void root(VertexNameSpec spec) {
+<span class="fc" id="L28">        root = spec.name</span>
+    }
+
+
+    def propertyMissing(String name) {
+<span class="pc" id="L33">        new VertexNameSpec(name:name)</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

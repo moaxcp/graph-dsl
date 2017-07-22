@@ -12,7 +12,7 @@ class VertexSpecCodeRunner {
      * @return the graph this {@link Vertex} has been added to.
      */
     Graph getGraph() {
-<span class="nc" id="L15">        graph</span>
+<span class="pc" id="L15">        graph</span>
     }
 
     /**
@@ -50,12 +50,52 @@ class VertexSpecCodeRunner {
     }
 
     /**
+     * Creates edges where the vertex is edge.one and each name in names is edge.two.
+     * @param names of vertices to connect to.
+     */
+    void connectsTo(VertexNameSpec... names) {
+<span class="fc" id="L57">        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsTo:names*.name)</span>
+<span class="fc" id="L58">        spec.apply(graph)</span>
+    }
+
+    /**
+     * Applies the specs to graph and adds edges using {@link #connectsTo(String...)}.
+     * @param specs  specs to apply to graph and connectTo.
+     */
+    void connectsTo(VertexSpec... specs) {
+<span class="fc" id="L66">        specs.each {</span>
+<span class="pc" id="L67">            it.apply(graph)</span>
+        }
+<span class="fc" id="L69">        connectsTo(specs*.name as String[])</span>
+    }
+
+    /**
      * Creates edges where the vertex is edge.two and each name in names is edge.one.
      * @param names of vetices to connect to.
      */
     void connectsFrom(String... names) {
-<span class="fc" id="L57">        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsFrom:names)</span>
-<span class="fc" id="L58">        spec.apply(graph)</span>
+<span class="fc" id="L77">        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsFrom:names)</span>
+<span class="fc" id="L78">        spec.apply(graph)</span>
+    }
+
+    /**
+     * Creates edges where the vertex is edge.two and each name in names is edge.one.
+     * @param names of vetices to connect to.
+     */
+    void connectsFrom(VertexNameSpec... names) {
+<span class="fc" id="L86">        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsFrom:names*.name)</span>
+<span class="fc" id="L87">        spec.apply(graph)</span>
+    }
+
+    /**
+     * Applies the specs to graph and adds edges using {@link #connectsFrom(String...)}.
+     * @param specs  specs to apply to graph and connectFrom.
+     */
+    void connectsFrom(VertexSpec... specs) {
+<span class="fc" id="L95">        specs.each {</span>
+<span class="pc" id="L96">            it.apply(graph)</span>
+        }
+<span class="fc" id="L98">        connectsFrom(specs*.name as String[])</span>
     }
 
     /**
@@ -66,7 +106,7 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
-<span class="pc" id="L69">        vertex.invokeMethod(name, args)</span>
+<span class="pc" id="L109">        vertex.invokeMethod(name, args)</span>
     }
 
     /**
@@ -76,7 +116,7 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-<span class="pc" id="L79">        vertex[name]</span>
+<span class="pc" id="L119">        vertex[name]</span>
     }
 
     /**
@@ -87,10 +127,10 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if (name == 'name') {</span>
-<span class="nc" id="L91">            throw new MissingPropertyException('Cannot set name in dsl. Consider using the rename method.')</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (name == 'name') {</span>
+<span class="nc" id="L131">            throw new MissingPropertyException('Cannot set name in dsl. Consider using the rename method.')</span>
         }
-<span class="pc" id="L93">        vertex[name] = value</span>
+<span class="pc" id="L133">        vertex[name] = value</span>
     }
 
     /**
@@ -102,9 +142,9 @@ class VertexSpecCodeRunner {
      * @return
      */
     void runCode(@DelegatesTo(VertexSpecCodeRunner) Closure closure) {
-<span class="fc" id="L105">        closure.delegate = this</span>
-<span class="fc" id="L106">        closure.resolveStrategy = Closure.DELEGATE_FIRST</span>
-<span class="fc" id="L107">        closure()</span>
+<span class="fc" id="L145">        closure.delegate = this</span>
+<span class="fc" id="L146">        closure.resolveStrategy = Closure.DELEGATE_FIRST</span>
+<span class="fc" id="L147">        closure()</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

@@ -175,8 +175,8 @@ class VertexSpec {
 <span class="fc" id="L175">        next.connectsTo((connectsToSet + spec.connectsTo) as String[])</span>
 <span class="fc" id="L176">        next.connectsFrom((connectsFromSet + spec.connectsFrom) as String[])</span>
 
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        if (this.runnerCodeClosure) {</span>
-<span class="nc" id="L179">            next.runnerCode this.runnerCodeClosure &lt;&lt; spec.runnerCodeClosure</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        if (this.runnerCodeClosure) {</span>
+<span class="fc" id="L179">            next.runnerCode this.runnerCodeClosure &lt;&lt; spec.runnerCodeClosure</span>
         } else {
 <span class="fc" id="L181">            next.runnerCode spec.runnerCodeClosure</span>
         }
