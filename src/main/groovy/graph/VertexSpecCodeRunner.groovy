@@ -53,7 +53,7 @@ class VertexSpecCodeRunner {
      * Creates edges where the vertex is edge.one and each name in names is edge.two.
      * @param names of vertices to connect to.
      */
-    void connectsTo(VertexNameSpec... names) {
+    void connectsTo(NameSpec... names) {
         VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsTo:names*.name)
         spec.apply(graph)
     }
@@ -82,7 +82,7 @@ class VertexSpecCodeRunner {
      * Creates edges where the vertex is edge.two and each name in names is edge.one.
      * @param names of vetices to connect to.
      */
-    void connectsFrom(VertexNameSpec... names) {
+    void connectsFrom(NameSpec... names) {
         VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsFrom:names*.name)
         spec.apply(graph)
     }

@@ -1,6 +1,5 @@
 package graph
 
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -57,7 +56,7 @@ class GraphSpec extends Specification {
         def spec = new Graph().step1
 
         expect:
-        spec instanceof VertexNameSpec
+        spec instanceof NameSpec
         spec.name == 'step1'
     }
 
