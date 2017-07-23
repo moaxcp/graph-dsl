@@ -330,6 +330,10 @@ class Graph {
         next.apply(this)
     }
 
+    Vertex vertex(ConfigSpec spec) {
+        vertex(VertexSpec.from(spec))
+    }
+
     /**
      * Applies traits to all edges and all future edges.
      * @param traits to add to all edges and all future edges
@@ -362,7 +366,7 @@ class Graph {
      * @param two - {@link VertexSpec} for the second {@link Vertex}.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(VertexSpec one, VertexSpec two) {
+    Edge edge(ConfigSpec one, ConfigSpec two) {
         Vertex v1 = vertex(one)
         Vertex v2 = vertex(two)
         EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)
@@ -418,7 +422,7 @@ class Graph {
      * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(VertexSpec one, VertexSpec two, Map<String, ?> map) {
+    Edge edge(ConfigSpec one, ConfigSpec two, Map<String, ?> map) {
         Vertex v1 = vertex(one)
         Vertex v2 = vertex(two)
         EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)
@@ -463,7 +467,7 @@ class Graph {
      * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(VertexSpec one, VertexSpec two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(ConfigSpec one, ConfigSpec two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
         Vertex v1 = vertex(one)
         Vertex v2 = vertex(two)
         EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name, runnerCode:closure)
@@ -529,7 +533,7 @@ class Graph {
      * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(VertexSpec one, VertexSpec two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(ConfigSpec one, ConfigSpec two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
         Vertex v1 = vertex(one)
         Vertex v2 = vertex(two)
         EdgeSpec spec = EdgeSpec.newInstance(one:v1.name, two:v2.name)
@@ -993,25 +997,19 @@ class Graph {
             throw new IllegalArgumentException("Confusing name 'vertex' for spec.")
         }
         if (args.size() == 0) {
-            return VertexSpec.newInstance(name:name)
+            return new ConfigSpec(name:name)
         }
 
         if (args.size() == 1 && args[0] instanceof Map) {
-            VertexSpec spec = VertexSpec.newInstance(name:name)
-            return spec.overlay(VertexSpec.newInstance(args[0]))
+            return new ConfigSpec(name:name, map:(Map) args[0])
         }
 
         if (args.size() == 1 && args[0] instanceof Closure) {
-            VertexSpec spec = VertexSpec.newInstance(name:name)
-            spec.runnerCode args[0]
-            return spec
+            return new ConfigSpec(name:name, closure:(Closure) args[0])
         }
 
         if (args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
-            VertexSpec spec = VertexSpec.newInstance(name:name)
-            spec = spec.overlay(VertexSpec.newInstance(args[0]))
-            spec.runnerCode args[1]
-            return spec
+            return new ConfigSpec(name:name, map:(Map) args[0], closure:(Closure) args[1])
         }
 
         throw new MissingMethodException(name, Graph, args)

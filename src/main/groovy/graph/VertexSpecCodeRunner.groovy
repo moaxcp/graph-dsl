@@ -62,9 +62,9 @@ class VertexSpecCodeRunner {
      * Applies the specs to graph and adds edges using {@link #connectsTo(String...)}.
      * @param specs  specs to apply to graph and connectTo.
      */
-    void connectsTo(VertexSpec... specs) {
+    void connectsTo(ConfigSpec... specs) {
         specs.each {
-            it.apply(graph)
+            VertexSpec.from(it).apply(graph)
         }
         connectsTo(specs*.name as String[])
     }
@@ -91,9 +91,9 @@ class VertexSpecCodeRunner {
      * Applies the specs to graph and adds edges using {@link #connectsFrom(String...)}.
      * @param specs  specs to apply to graph and connectFrom.
      */
-    void connectsFrom(VertexSpec... specs) {
+    void connectsFrom(ConfigSpec... specs) {
         specs.each {
-            it.apply(graph)
+            VertexSpec.from(it).apply(graph)
         }
         connectsFrom(specs*.name as String[])
     }
