@@ -71,7 +71,7 @@ class Graph {
 
     /**
      * returns the vertices as an unmodifiableMap
-     * @return
+     * @return vertices as an unmodifiableMap
      */
     Map<String, ? extends Vertex> getVertices() {
         Collections.unmodifiableMap(vertices)
@@ -201,7 +201,7 @@ class Graph {
      * @throws {@link IllegalArgumentException} When name is null or empty.
      */
     Vertex vertex(String name) {
-        vertex(new VertexSpec(name:name))
+        vertex(new NameSpec(name:name))
     }
 
     /**
@@ -227,7 +227,7 @@ class Graph {
      * @return the resulting {@link Vertex}
      */
     Vertex vertex(Map<String, ?> map) {
-        VertexSpec spec = VertexSpec.newInstance(map)
+        ConfigSpec spec = new ConfigSpec(map:map)
         vertex(spec)
     }
 
@@ -240,8 +240,7 @@ class Graph {
      * @return
      */
     Vertex vertex(String name, Closure closure) {
-        VertexSpec spec = new VertexSpec(name:name)
-        spec.runnerCode closure
+        ConfigSpec spec = new ConfigSpec(name:name, closure:closure)
         vertex(spec)
     }
 
@@ -276,8 +275,7 @@ class Graph {
      * @return
      */
     Vertex vertex(String name, Map<String, ?> map) {
-        VertexSpec spec = new VertexSpec(name:name)
-        spec = spec.overlay(VertexSpec.newInstance(map))
+        ConfigSpec spec = new ConfigSpec(name:name, map:map)
         vertex(spec)
     }
 
@@ -290,8 +288,7 @@ class Graph {
      * @return the resulting vertex
      */
     Vertex vertex(Map<String, ?> map, Closure closure) {
-        VertexSpec spec = VertexSpec.newInstance(map)
-        spec.runnerCode closure
+        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
         vertex(spec)
     }
 
@@ -303,20 +300,8 @@ class Graph {
      * @return
      */
     Vertex vertex(String name, Map<String, ?> map, Closure closure) {
-        VertexSpec spec = new VertexSpec(name:name)
-        spec = spec.overlay(VertexSpec.newInstance(map))
-        spec.runnerCode closure
+        ConfigSpec spec = new ConfigSpec(name:name, map:map, closure:closure)
         vertex(spec)
-    }
-
-    /**
-     * Creates or updates a {@link Vertex} in this graph. The {@link VertexSpec} is applied.
-     * @param spec
-     * @return
-     */
-    Vertex vertex(VertexSpec spec) {
-        spec.traits(vertexTraitsSet as Class[])
-        spec.apply(this)
     }
 
     /**
@@ -331,7 +316,9 @@ class Graph {
     }
 
     Vertex vertex(ConfigSpec spec) {
-        vertex(VertexSpec.from(spec))
+        VertexSpec vspec = VertexSpec.from(spec)
+        vspec.traits(vertexTraitsSet as Class[])
+        vspec.apply(this)
     }
 
     /**
