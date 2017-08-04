@@ -182,4 +182,11 @@ class VertexSpec {
         }
         next
     }
+
+    static VertexSpec from(ConfigSpec spec) {
+        VertexSpec vspec = newInstance(name:spec.name)
+        vspec = vspec.overlay(newInstance(spec.map))
+        vspec.runnerCode spec.closure
+        vspec
+    }
 }

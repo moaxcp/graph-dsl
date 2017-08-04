@@ -277,6 +277,10 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
+## x.x.x
+
+* [#93](https://github.com/moaxcp/graph-dsl/issues/93)
+
 ## 0.17.0
 
 * [#82](https://github.com/moaxcp/graph-dsl/issues/82) Methods that take vertex names should also take VertexNameSpec

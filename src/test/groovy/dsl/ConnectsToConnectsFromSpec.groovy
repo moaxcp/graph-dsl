@@ -7,7 +7,7 @@ import static graph.Graph.graph
 
 class ConnectsToConnectsFromSpec extends Specification {
 
-    def 'use connectsTo with a VertexNameSpec'() {
+    def 'use connectsTo with a NameSpec'() {
         given:
         Graph graph = graph {
             vertex A {

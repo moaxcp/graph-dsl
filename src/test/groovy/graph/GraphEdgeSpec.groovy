@@ -28,7 +28,7 @@ class GraphEdgeSpec extends Specification {
         result.is expected
     }
 
-    def 'can add/get with edge(VertexSpec, VertexSpec)'() {
+    def 'can add/get with edge(ConfigSpec, ConfigSpec)'() {
         when:
         Edge result
         graph.with {
@@ -122,7 +122,7 @@ class GraphEdgeSpec extends Specification {
         graph.edges.first().two == 'step2'
     }
 
-    def 'can add/get edge with edge(VertexSpec, VertexSpec, Closure)'() {
+    def 'can add/get edge with edge(ConfigSpec, ConfgiSpec, Closure)'() {
         when:
         Edge result
         graph.with {

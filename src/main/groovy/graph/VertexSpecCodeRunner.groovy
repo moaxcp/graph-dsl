@@ -53,7 +53,7 @@ class VertexSpecCodeRunner {
      * Creates edges where the vertex is edge.one and each name in names is edge.two.
      * @param names of vertices to connect to.
      */
-    void connectsTo(VertexNameSpec... names) {
+    void connectsTo(NameSpec... names) {
         VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsTo:names*.name)
         spec.apply(graph)
     }
@@ -62,9 +62,9 @@ class VertexSpecCodeRunner {
      * Applies the specs to graph and adds edges using {@link #connectsTo(String...)}.
      * @param specs  specs to apply to graph and connectTo.
      */
-    void connectsTo(VertexSpec... specs) {
+    void connectsTo(ConfigSpec... specs) {
         specs.each {
-            it.apply(graph)
+            VertexSpec.from(it).apply(graph)
         }
         connectsTo(specs*.name as String[])
     }
@@ -82,7 +82,7 @@ class VertexSpecCodeRunner {
      * Creates edges where the vertex is edge.two and each name in names is edge.one.
      * @param names of vetices to connect to.
      */
-    void connectsFrom(VertexNameSpec... names) {
+    void connectsFrom(NameSpec... names) {
         VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsFrom:names*.name)
         spec.apply(graph)
     }
@@ -91,9 +91,9 @@ class VertexSpecCodeRunner {
      * Applies the specs to graph and adds edges using {@link #connectsFrom(String...)}.
      * @param specs  specs to apply to graph and connectFrom.
      */
-    void connectsFrom(VertexSpec... specs) {
+    void connectsFrom(ConfigSpec... specs) {
         specs.each {
-            it.apply(graph)
+            VertexSpec.from(it).apply(graph)
         }
         connectsFrom(specs*.name as String[])
     }
