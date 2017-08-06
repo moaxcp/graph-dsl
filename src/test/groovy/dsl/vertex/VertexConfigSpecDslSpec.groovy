@@ -1,25 +1,27 @@
-package dsl
+package dsl.vertex
 
 import graph.Graph
 import spock.lang.Specification
+
 import static graph.Graph.graph
 
-class VertexDslSpec extends Specification {
-    def 'add a vertex with a string'() {
+class VertexConfigSpecDslSpec extends Specification {
+
+    def 'add a vertex with a ConfigSpec with Closure'() {
         given:
         Graph graph = graph {
-            vertex 'A'
+            vertex A {}
         }
 
         expect:
         graph.vertices.size() == 1
-        graph.vertex('A').name == 'A'
+        graph.vertices.A.name == 'A'
     }
 
-    def 'add a vertex with a VertexNameSpec'() {
+    def 'add a vertex with a ConfigSpec with Map and Closure'() {
         given:
         Graph graph = graph {
-            vertex A
+            vertex A([:]) {}
         }
 
         expect:

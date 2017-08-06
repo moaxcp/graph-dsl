@@ -92,18 +92,17 @@ class EdgeSpec {
             edge = e
         }
 
+        graph.vertex(one)
+        graph.vertex(two)
+
         if (renameOne) {
             graph.vertex(renameOne)
             edge.one = renameOne
-        } else {
-            graph.vertex(one)
         }
 
         if (renameTwo) {
             graph.vertex(renameTwo)
             edge.two = renameTwo
-        } else {
-            graph.vertex(two)
         }
 
         if (traitsSet) {
@@ -157,7 +156,10 @@ class EdgeSpec {
      * @return the resulting EdgeSpec
      */
     static EdgeSpec newInstance(Map<String, ?> map) {
-        EdgeSpec spec = new EdgeSpec(one:map.one, two:map.two, renameOne:map.renameOne, renameTwo:map.renameTwo)
+        String renameOne = map.renameOne instanceof NameSpec ? map.renameOne.name : map.renameOne
+        String renameTwo = map.renameTwo instanceof NameSpec ? map.renameTwo.name : map.renameTwo
+
+        EdgeSpec spec = new EdgeSpec(one:map.one, two:map.two, renameOne:renameOne, renameTwo:renameTwo)
         if (map.traits) {
             spec.traits(map.traits as Class[])
         }
