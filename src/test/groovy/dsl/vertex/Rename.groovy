@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 import static graph.Graph.graph
 
-class VertexRename extends Specification {
+class Rename extends Specification {
 
     def 'rename method with String'() {
         given:

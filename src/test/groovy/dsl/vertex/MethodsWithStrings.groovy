@@ -8,7 +8,7 @@ import static graph.Graph.graph
 /**
  * These tests cover vertex string methods from within the dsl entry point (static graph method).
  */
-class VertexStringDslSpec extends Specification {
+class MethodsWithStrings extends Specification {
     def 'add a vertex'() {
         given:
         Graph graph = graph {

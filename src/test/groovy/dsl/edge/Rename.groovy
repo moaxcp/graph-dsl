@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 import static graph.Graph.graph
 
-class EdgeRename extends Specification {
+class Rename extends Specification {
     def 'renameOne in map'() {
         given:
         Graph graph = graph {

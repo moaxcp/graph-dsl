@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 import static graph.Graph.graph
 
-class VertexMapDslSpec extends Specification {
+class MethodsWithMap extends Specification {
     def 'add a vertex with Map'() {
         given:
         Graph graph = graph {

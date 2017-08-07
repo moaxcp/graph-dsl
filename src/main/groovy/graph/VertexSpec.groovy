@@ -143,7 +143,9 @@ class VertexSpec {
      * @return
      */
     static VertexSpec newInstance(Map<String, ?> map) {
-        VertexSpec spec = new VertexSpec(name:map.name, rename:map.rename)
+        String rename = map.rename instanceof NameSpec ? map.rename.name : map.rename
+
+        VertexSpec spec = new VertexSpec(name:map.name, rename:rename)
         if (map.traits) {
             spec.traits(map.traits as Class[])
         }

@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 import static graph.Graph.graph
 
-class EdgeMethodsWithMap extends Specification {
+class MethodsWithMap extends Specification {
     def 'can add edge'() {
         given:
         Graph graph = graph {

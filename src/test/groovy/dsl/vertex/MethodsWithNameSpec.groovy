@@ -7,7 +7,7 @@ import static graph.Graph.graph
 /**
  * These tests cover vertex NameSpec methods from within the dsl entry point (static graph method).
  */
-class VertexNameSpecDslSpec extends Specification {
+class MethodsWithNameSpec extends Specification {
 
     def 'add a vertex with a NameSpec'() {
         given:

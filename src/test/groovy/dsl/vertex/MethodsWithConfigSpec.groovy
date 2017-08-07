@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 import static graph.Graph.graph
 
-class VertexConfigSpecDslSpec extends Specification {
+class MethodsWithConfigSpec extends Specification {
 
     def 'add a vertex with a ConfigSpec with Closure'() {
         given:

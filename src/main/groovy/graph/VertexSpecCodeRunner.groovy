@@ -32,6 +32,15 @@ class VertexSpecCodeRunner {
     }
 
     /**
+     * renames the vertex to newName
+     * @param newName
+     */
+    void rename(NameSpec newName) {
+        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, rename:newName.name)
+        spec.apply(graph)
+    }
+
+    /**
      * Adds traits to the vertex.
      * @param traits
      */

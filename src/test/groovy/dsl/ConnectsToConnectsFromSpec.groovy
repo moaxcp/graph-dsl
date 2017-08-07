@@ -7,38 +7,6 @@ import static graph.Graph.graph
 
 class ConnectsToConnectsFromSpec extends Specification {
 
-    def 'use connectsTo with a NameSpec'() {
-        given:
-        Graph graph = graph {
-            vertex A {
-                connectsTo B
-            }
-        }
-
-        expect:
-        graph.vertices.size() == 2
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-    }
-
-    def 'use connectsTo with two VertexNameSpec'() {
-        given:
-        Graph graph = graph {
-            vertex A {
-                connectsTo B, C
-            }
-        }
-
-        expect:
-        graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'A' && it.two == 'C' }
-    }
-
     def 'use connectsFrom with a VertexNameSpec'() {
         given:
         Graph graph = graph {

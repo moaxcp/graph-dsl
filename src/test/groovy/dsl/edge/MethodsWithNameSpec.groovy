@@ -8,7 +8,7 @@ import static graph.Graph.graph
 import static graph.Graph.graph
 import static graph.Graph.graph
 
-class EdgeMethodsWithNameSpec extends Specification {
+class MethodsWithNameSpec extends Specification {
     def 'can add edge'() {
         given:
         Graph graph = graph {
