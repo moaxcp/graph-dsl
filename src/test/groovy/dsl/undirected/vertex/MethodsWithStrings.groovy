@@ -1,4 +1,4 @@
-package dsl.vertex
+package dsl.undirected.vertex
 
 import graph.Graph
 import spock.lang.Specification

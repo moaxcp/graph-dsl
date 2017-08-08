@@ -1,4 +1,4 @@
-package dsl.edge
+package dsl.undirected.edge
 
 import graph.Graph
 import spock.lang.Specification

@@ -1,11 +1,8 @@
-package dsl.edge
+package dsl.undirected.edge
 
 import graph.Graph
 import spock.lang.Specification
 
-import static graph.Graph.graph
-import static graph.Graph.graph
-import static graph.Graph.graph
 import static graph.Graph.graph
 
 class MethodsWithNameSpec extends Specification {

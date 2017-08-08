@@ -48,9 +48,11 @@ class VertexSpec {
         if (map.traits) {
             traits(map.traits as Class[])
         }
-        if (map.connectsTo) {
-            connectsTo(map.connectsTo as String[])
+
+        map.connectsTo?.each {
+            connectsTo(it instanceof NameSpec ? it.name : it)
         }
+
         if (map.runnerCode) {
             runnerCode(map.runnerCode)
         }
