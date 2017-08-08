@@ -42,16 +42,4 @@ class VertexSpecRunnerSpec extends Specification {
         edges[0].one == 'step1'
         edges[1].one == 'step1'
     }
-
-    def 'can add with connectsFrom'() {
-        when:
-        runner.connectsFrom 'step2', 'step3'
-        def edges = graph.adjacentEdges('step1')
-
-        then:
-        graph.edges.size() == 2
-        edges.size() == 2
-        edges[0].two == 'step1'
-        edges[1].two == 'step1'
-    }
 }

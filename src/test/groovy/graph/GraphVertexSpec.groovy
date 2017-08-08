@@ -89,22 +89,6 @@ class GraphVertexSpec extends Specification {
         edgeTwo != null
     }
 
-    def 'can add edges using connectsFrom with vertex(Map)'() {
-        when:
-        graph.vertex name:'step1', connectsFrom:['step2', 'step3']
-        def edgeOne = graph.edges.find {
-            it.one == 'step2' && it.two == 'step1'
-        }
-        def edgeTwo = graph.edges.find {
-            it.one == 'step3' && it.two == 'step1'
-        }
-
-        then:
-        graph.edges.size() == 2
-        edgeOne != null
-        edgeTwo != null
-    }
-
     def 'can add/get vertex with vertex(String, Closure)'() {
         when:
         def vertex = graph.vertex 'step1', {}

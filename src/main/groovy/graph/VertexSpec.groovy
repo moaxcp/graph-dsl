@@ -21,8 +21,40 @@ class VertexSpec {
 
     private final Set<Class> traitsSet = [] as Set<Class>
     private final Set<String> connectsToSet = [] as Set<String>
-    private final Set<String> connectsFromSet = [] as Set<String>
     private Closure runnerCodeClosure
+
+    VertexSpec() {
+
+    }
+
+    /**
+     * creates a new instance of a VertexSpec using the provided Map. Valid values that can be in the Map are:
+     * <p>
+     * name - the name of the vertex to create or update<br>
+     * rename - what to rename the vertex<br>
+     * traits - list of traits to be applied to the {@link Vertex}<br>
+     * connectsTo - list of vertices to connect the {@link Vertex} to. The vertex is edge.one<br>
+     * connectsFrom - list of vertices to connect the {@link Vertex} to. The vertex is edge.two<br>
+     * runnerCode - closure to be applied to the {@link Vertex} after traits and edges are created.
+     * <p>
+     * All other values are ignored.
+     * @param map
+     * @return
+     */
+    VertexSpec(Map<String, ?> map) {
+        name = map.name
+        rename = map.rename instanceof NameSpec ? map.rename.name : map.rename
+
+        if (map.traits) {
+            traits(map.traits as Class[])
+        }
+        if (map.connectsTo) {
+            connectsTo(map.connectsTo as String[])
+        }
+        if (map.runnerCode) {
+            runnerCode(map.runnerCode)
+        }
+    }
 
     /**
      * The set of traits that should be applied to the {@link Vertex}.
@@ -38,14 +70,6 @@ class VertexSpec {
      */
     Set<String> getConnectsTo() {
         Collections.unmodifiableSet(connectsToSet)
-    }
-
-    /**
-     * The set of edges to create between the {@link Vertex} and other vertices. The {@link Vertex} will be edge.two.
-     * @return The names of vertices the {@link Vertex} should connect to.
-     */
-    Set<String> getConnectsFrom() {
-        Collections.unmodifiableSet(connectsFromSet)
     }
 
     /**
@@ -71,15 +95,6 @@ class VertexSpec {
      */
     void connectsTo(String... names) {
         connectsToSet.addAll(names)
-    }
-
-    /**
-     * Adds to the names the {@link Vertex} should connect to. In the resulting edge the vertex named by this spec
-     * will be edge.two.
-     * @param names
-     */
-    void connectsFrom(String... names) {
-        connectsFromSet.addAll(names)
     }
 
     /**
@@ -116,50 +131,13 @@ class VertexSpec {
         connectsToSet.each {
             graph.edge vertex.name, it
         }
-        connectsFromSet.each {
-            graph.edge it, vertex.name
-        }
 
         if (runnerCodeClosure) {
-            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph:graph, vertex:vertex)
+            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph: graph, vertex: vertex)
             runner.runCode(runnerCodeClosure)
         }
 
         vertex
-    }
-
-    /**
-     * creates a new instance of a VertexSpec using the provided Map. Valid values that can be in the Map are:
-     * <p>
-     * name - the name of the vertex to create or update<br>
-     * rename - what to rename the vertex<br>
-     * traits - list of traits to be applied to the {@link Vertex}<br>
-     * connectsTo - list of vertices to connect the {@link Vertex} to. The vertex is edge.one<br>
-     * connectsFrom - list of vertices to connect the {@link Vertex} to. The vertex is edge.two<br>
-     * runnerCode - closure to be applied to the {@link Vertex} after traits and edges are created.
-     * <p>
-     * All other values are ignored.
-     * @param map
-     * @return
-     */
-    static VertexSpec newInstance(Map<String, ?> map) {
-        String rename = map.rename instanceof NameSpec ? map.rename.name : map.rename
-
-        VertexSpec spec = new VertexSpec(name:map.name, rename:rename)
-        if (map.traits) {
-            spec.traits(map.traits as Class[])
-        }
-        if (map.connectsTo) {
-            spec.connectsTo(map.connectsTo as String[])
-        }
-        if (map.connectsFrom) {
-            spec.connectsFrom(map.connectsFrom as String[])
-        }
-        if (map.runnerCode) {
-            spec.runnerCode(map.runnerCode)
-        }
-
-        spec
     }
 
     /**
@@ -175,7 +153,6 @@ class VertexSpec {
 
         next.traits((traitsSet + spec.traits) as Class[])
         next.connectsTo((connectsToSet + spec.connectsTo) as String[])
-        next.connectsFrom((connectsFromSet + spec.connectsFrom) as String[])
 
         if (this.runnerCodeClosure) {
             next.runnerCode this.runnerCodeClosure << spec.runnerCodeClosure
@@ -183,12 +160,5 @@ class VertexSpec {
             next.runnerCode spec.runnerCodeClosure
         }
         next
-    }
-
-    static VertexSpec from(ConfigSpec spec) {
-        VertexSpec vspec = newInstance(name:spec.name)
-        vspec = vspec.overlay(newInstance(spec.map))
-        vspec.runnerCode spec.closure
-        vspec
     }
 }

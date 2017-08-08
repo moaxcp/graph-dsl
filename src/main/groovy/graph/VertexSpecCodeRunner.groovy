@@ -5,29 +5,15 @@ package graph
  * the closure. Method and property missing is delegated to the {@link Vertex}.
  */
 class VertexSpecCodeRunner {
-    private Graph graph
-    private Vertex vertex
-
-    /**
-     * @return the graph this {@link Vertex} has been added to.
-     */
-    Graph getGraph() {
-        graph
-    }
-
-    /**
-     * @return the vertex created by {@link VertexSpec}.
-     */
-    Vertex getVertex() {
-        vertex
-    }
+    Graph graph
+    Vertex vertex
 
     /**
      * renames the vertex to newName
      * @param newName
      */
     void rename(String newName) {
-        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, rename:newName)
+        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(name:vertex.name, rename:newName)
         spec.apply(graph)
     }
 
@@ -36,7 +22,7 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(NameSpec newName) {
-        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, rename:newName.name)
+        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(name:vertex.name, rename:newName.name)
         spec.apply(graph)
     }
 
@@ -45,7 +31,7 @@ class VertexSpecCodeRunner {
      * @param traits
      */
     void traits(Class... traits) {
-        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, traits:traits)
+        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(name:vertex.name, traits:traits)
         spec.apply(graph)
     }
 
@@ -54,7 +40,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(String... names) {
-        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsTo:names)
+        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(name:vertex.name, connectsTo:names)
         spec.apply(graph)
     }
 
@@ -63,7 +49,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(NameSpec... names) {
-        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsTo:names*.name)
+        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(name:vertex.name, connectsTo:names*.name)
         spec.apply(graph)
     }
 
@@ -73,38 +59,9 @@ class VertexSpecCodeRunner {
      */
     void connectsTo(ConfigSpec... specs) {
         specs.each {
-            VertexSpec.from(it).apply(graph)
+            graph.vertexSpecFactory.newVertexSpec(it).apply(graph)
         }
         connectsTo(specs*.name as String[])
-    }
-
-    /**
-     * Creates edges where the vertex is edge.two and each name in names is edge.one.
-     * @param names of vetices to connect to.
-     */
-    void connectsFrom(String... names) {
-        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsFrom:names)
-        spec.apply(graph)
-    }
-
-    /**
-     * Creates edges where the vertex is edge.two and each name in names is edge.one.
-     * @param names of vetices to connect to.
-     */
-    void connectsFrom(NameSpec... names) {
-        VertexSpec spec = VertexSpec.newInstance(name:vertex.name, connectsFrom:names*.name)
-        spec.apply(graph)
-    }
-
-    /**
-     * Applies the specs to graph and adds edges using {@link #connectsFrom(String...)}.
-     * @param specs  specs to apply to graph and connectFrom.
-     */
-    void connectsFrom(ConfigSpec... specs) {
-        specs.each {
-            VertexSpec.from(it).apply(graph)
-        }
-        connectsFrom(specs*.name as String[])
     }
 
     /**

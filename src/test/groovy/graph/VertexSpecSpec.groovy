@@ -72,20 +72,6 @@ class VertexSpecSpec extends Specification {
         graph.edges.find { new Edge(one:'step1', two:'step3') }
     }
 
-    def 'apply can ad edges using edgesSecond'() {
-        setup:
-        spec.name = 'step1'
-        spec.connectsFrom 'step2', 'step3'
-
-        when:
-        spec.apply(graph)
-
-        then:
-        graph.vertices.size() == 3
-        graph.edges.find { new Edge(one:'step2', two:'step1') }
-        graph.edges.find { new Edge(one:'step3', two:'step1') }
-    }
-
     def 'overlay with null'() {
         setup:
         VertexSpec first = new VertexSpec()
@@ -94,7 +80,6 @@ class VertexSpecSpec extends Specification {
         second.rename = 'step2'
         second.traits Mapping
         second.connectsTo 'step2'
-        second.connectsFrom 'step3'
         second.runnerCode {
             label = 'step1'
         }
@@ -107,7 +92,6 @@ class VertexSpecSpec extends Specification {
         result.rename == 'step2'
         result.traits == [Mapping] as Set<Class>
         result.getConnectsTo() == ['step2'] as Set<String>
-        result.connectsFrom == ['step3'] as Set<String>
         result.runnerCode != null
     }
 
@@ -118,7 +102,6 @@ class VertexSpecSpec extends Specification {
         first.rename = 'step4'
         first.traits Weight
         first.connectsTo 'step5'
-        first.connectsFrom 'step6'
         first.runnerCode {
             label = 'step7'
         }
@@ -127,7 +110,6 @@ class VertexSpecSpec extends Specification {
         second.rename = 'step2'
         second.traits Mapping
         second.connectsTo 'step2'
-        second.connectsFrom 'step3'
         second.runnerCode {
             label = 'step1'
         }
@@ -140,7 +122,6 @@ class VertexSpecSpec extends Specification {
         result.rename == 'step2'
         result.traits == [Mapping, Weight] as Set<Class>
         result.getConnectsTo() == ['step2', 'step5'] as Set<String>
-        result.connectsFrom == ['step3', 'step6'] as Set<String>
         result.runnerCode != null
     }
 }

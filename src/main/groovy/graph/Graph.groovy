@@ -28,6 +28,8 @@ class Graph {
     EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
     @PackageScope
     VertexFactory vertexFactory = new DefaultVertexFactory()
+    @PackageScope
+    VertexSpecFactory vertexSpecFactory = new UnDirectedVertexSpecFactory();
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -384,7 +386,7 @@ class Graph {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(ConfigSpec spec) {
-        VertexSpec vspec = VertexSpec.from(spec)
+        VertexSpec vspec = vertexSpecFactory.newVertexSpec(spec)
         vspec.traits(vertexTraitsSet as Class[])
         vspec.apply(this)
     }
