@@ -1,5 +1,6 @@
-package graph
+package graph.plugins.directedgraph
 
+import graph.Edge
 import groovy.transform.ToString
 
 /**

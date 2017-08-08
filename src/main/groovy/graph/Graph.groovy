@@ -140,7 +140,7 @@ class Graph {
     /**
      * Removes an {@link Edge} from edges where an edge created by the edgeFactory equals an edge in edges. Using the
      * edgeFactory ensures the edge removed matches the definition of an edge for this graph. If a plugin changes the
-     * definition of an edge, for example to {@link DirectedEdge}, this method will still work as expected. It will
+     * definition of an edge, for example to {@link graph.plugins.directedgraph.DirectedEdge}, this method will still work as expected. It will
      * remove the edge where edge.one == one and edge.two == two. Keep in mind, in the case of the base {@link Edge}
      * object edge.one can also equal two and edge.two can also equal one.
      * @param one name of first vertex
@@ -276,8 +276,23 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph. The map must contain configuration described in
-     * {@link VertexSpec#newInstance(Map)}.
+     * Creates or updates a {@link Vertex} in this graph. The map may contain configuration for the vertex. Default
+     * configuration used can be:
+     * <dl>
+     *     <dt>name</dt>
+     *     <dd>name of the vertex to create or update</dd>
+     *     <dt>rename</dt>
+     *     <dd>new name for the vertex</dd>
+     *     <dt>connectsTo</dt>
+     *     <dd>list of vertex names the vertex should connect to. Edges will be created with edge.one equal to the
+     *     vertex name and edge.two equals to the 'connectTo' name.</dd>
+     *     <dt>traits</dt>
+     *     <dd>groovy traits to apply on the vertex delegate</dd>
+     *     <dt>runnerCode</dt>
+     *     <dd>closure to run after the vertex has been created. This can be used to configure the vertex with more
+     *     complex operations.</dd>
+     * </dl>
+     * Additional entries may be used by plugins applied to this graph.
      * @param map  configuration of {@link Vertex}
      * @return the resulting {@link Vertex}
      */

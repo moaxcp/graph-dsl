@@ -1,4 +1,10 @@
-package graph
+package graph.plugins.directedgraph
+
+import graph.Graph
+import graph.NameSpec
+import graph.Vertex
+import graph.VertexSpec
+import graph.VertexSpecCodeRunner
 
 class DirectedVertexSpec extends VertexSpec {
     private final Set<String> connectsFromSet = [] as Set<String>
@@ -16,15 +22,15 @@ class DirectedVertexSpec extends VertexSpec {
     }
 
     /**
-     * The set of edges to create between the {@link Vertex} and other vertices. The {@link Vertex} will be edge.two.
-     * @return The names of vertices the {@link Vertex} should connect to.
+     * The set of edges to create between the {@link graph.Vertex} and other vertices. The {@link graph.Vertex} will be edge.two.
+     * @return The names of vertices the {@link graph.Vertex} should connect to.
      */
     Set<String> getConnectsFrom() {
         Collections.unmodifiableSet(connectsFromSet)
     }
 
     /**
-     * Adds to the names the {@link Vertex} should connect to. In the resulting edge the vertex named by this spec
+     * Adds to the names the {@link graph.Vertex} should connect to. In the resulting edge the vertex named by this spec
      * will be edge.two.
      * @param names
      */

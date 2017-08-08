@@ -1,7 +1,8 @@
 package graph
 
+import graph.plugins.directedgraph.DirectedEdge
+import graph.plugins.directedgraph.DirectedGraphPlugin
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class GraphSpec extends Specification {
 

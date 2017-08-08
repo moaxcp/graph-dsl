@@ -1,4 +1,7 @@
-package graph
+package graph.plugins.directedgraph
+
+import graph.Edge
+import graph.EdgeFactory
 
 /**
  * Factory for creating edges. This class returns instances of

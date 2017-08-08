@@ -6,7 +6,6 @@ import groovy.transform.PackageScope
  * Specification class that helps vertex methods in {@link Graph} objects. VertexSpec is used to collect the details
  * of an update or create.
  */
-@PackageScope
 class VertexSpec {
 
     /**

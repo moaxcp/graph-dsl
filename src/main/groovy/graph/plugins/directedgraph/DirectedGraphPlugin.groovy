@@ -1,21 +1,57 @@
-package graph
+package graph.plugins.directedgraph
+
+import graph.Edge
+import graph.Graph
+import graph.Plugin
 
 /**
- * This plugin makes a Graph behave like a directed graph.
+ * This plugin changes the behavior of a {@link Graph} to that of a directed graph.
+ * <p>
+ *
+ * The following modifications are made to the graph:
+ * <p>
+ * <b>members</b>
+ * <dl>
+ *     <dt>edges</dt>
+ *     <dd>All edges are converted to {@link DirectedEdge}s and all future edges will be {@link DirectedEdge}s. Any two
+ *     vertices may be connected by one or two {@link DirectedEdge}s. Two {@link DirectedEdge}s connecting any two
+ *     vertices cannot have the same direction. Direction is determined by the values of {@link DirectedEdge#getOne()}
+ *     and {@link DirectedEdge#getTwo()}. The values of one and two cannot be the same in any two {@link DirectedEdge}s.
+ *     </dd>
+ *     <dt>edgeFactory</dt>
+ *     <dd>changed to a {@link DirectedEdgeFactory} This causes all future {@link Edge}s added to the {@link Graph} to
+ *     be {@link DirectedEdge}s.</dd>
+ *     <dt>vertexSpecFactory</dt>
+ *     <dd>change to a {@link DirectedVertexSpecFactory}. This causes all future {@link VertexSpec}s used in the
+ *     {@link Graph} to be {@link DirectedVertexSpec}. The new configuration options in {@link DirectedVertexSpec} are
+ *     available for use in the vertex dsl (connectsFrom).</dd>
+ * </dl>
+ * <b>methods</b>
+ * <p>
+ * The static graph methods in this class are added to the graph with graph as the first parameter. The methods can be
+ * used in the {@link Graph} directly at runtime. traverseEdges in {@link Graph} is modified.
+ * <dl>
+ *     <dt>{@code Set<? extends Edge> inEdges(String name)}</dt>
+ *     <dd>returns the set of in-edges for a given vertex</dd>
+ *     <dt>{@code int inDegree(String name)}</dt>
+ *     <dd>returns the in-degree of a vertex</dd>
+ *     <dt>{@code Set<? extends Edge> outEdges(String name)}</dt>
+ *     <dd>returns the set of out-edges for a given vertex</dd>
+ *     <dt>{@code int outDegree(Graph graph, String name)}</dt>
+ *     <dd>returns the out-degree of a vertex</dd>
+ *     <dt>{@code Set<? extends Edge> traverseEdges(String name)}</dt>
+ *     <dd>returns the traverse-edges for traversal algorithms. For directed graph this is out-edges.</dd>
+ *     <dt>{@code Deque<String> reversePostOrderSort()}</dt>
+ *     <dd>returns vertex names in reverse-post-order</dd>
+ *     <dt>{@code void reversePostOrder(Closure closure)}</dt>
+ *     <dd>traverses the graph in reverse-post-order</dd>
+ * </dl>
  */
 class DirectedGraphPlugin implements Plugin {
 
     /**
-     * The following modifications are made to the graph:
-     * <p>
-     * members
-     * edges - converted to DirectedEdges
-     * edgeFactory - changed to a DirectedEdgeFactory
-     * <p>
-     * methods
-     * The static graph methods in this class are added to the graph with graph as the first parameter.
-     * @param graph
-     * @return
+     * Applies the plugin to a {@link graph.Graph}.
+     * @param graph  to apply plugin
      */
     void apply(Graph graph) {
         graph.replaceEdges { edge ->

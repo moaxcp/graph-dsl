@@ -1,4 +1,8 @@
-package graph
+package graph.plugins.directedgraph
+
+import graph.ConfigSpec
+import graph.VertexSpec
+import graph.VertexSpecFactory
 
 class DirectedVertexSpecFactory implements VertexSpecFactory {
     @Override
