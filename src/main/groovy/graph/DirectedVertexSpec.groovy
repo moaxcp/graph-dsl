@@ -9,8 +9,9 @@ class DirectedVertexSpec extends VertexSpec {
 
     DirectedVertexSpec(Map<String, ?> map) {
         super(map)
-        if (map.connectsFrom) {
-            connectsFrom(map.connectsFrom as String[])
+
+        map.connectsFrom?.each {
+            connectsFrom(it instanceof NameSpec ? it.name : it)
         }
     }
 
