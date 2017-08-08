@@ -45,7 +45,7 @@ class GraphSpec extends Specification {
         given:
         ConfigSpec spec = new Graph().step1()
         expect:
-        spec.name =='step1'
+        spec.map.name =='step1'
     }
 
     def 'dynamic property returns NameSpec with name set'() {
@@ -62,7 +62,8 @@ class GraphSpec extends Specification {
         ConfigSpec spec = new Graph().step1(x:'y')
 
         then:
-        spec.name == 'step1'
+        spec.map.name == 'step1'
+        spec.map.x == 'y'
     }
 
     def 'dynamic method with closure returns ConfigSpec'() {
@@ -70,7 +71,7 @@ class GraphSpec extends Specification {
         ConfigSpec spec = new Graph().step1 {}
 
         then:
-        spec.name == 'step1'
+        spec.map.name == 'step1'
         spec.closure != null
     }
 
@@ -79,7 +80,7 @@ class GraphSpec extends Specification {
         ConfigSpec spec = new Graph().step1(traits:Mapping) { edgesFirst 'step2' }
 
         then:
-        spec.name == 'step1'
+        spec.map.name == 'step1'
         spec.map.traits == Mapping
         spec.closure != null
     }

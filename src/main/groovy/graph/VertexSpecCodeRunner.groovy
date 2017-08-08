@@ -61,7 +61,7 @@ class VertexSpecCodeRunner {
         specs.each {
             graph.vertexSpecFactory.newVertexSpec(it).apply(graph)
         }
-        connectsTo(specs*.name as String[])
+        connectsTo(specs*.map.name as String[])
     }
 
     /**

@@ -28,6 +28,6 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
         specs.each {
             graph.vertexSpecFactory.newVertexSpec(it).apply(graph)
         }
-        connectsFrom(specs*.name as String[])
+        connectsFrom(specs*.map.name as String[])
     }
 }

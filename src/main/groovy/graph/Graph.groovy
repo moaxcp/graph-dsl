@@ -295,7 +295,7 @@ class Graph {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(String name, Closure closure) {
-        ConfigSpec spec = new ConfigSpec(name:name, closure:closure)
+        ConfigSpec spec = new ConfigSpec(map:[name:name], closure:closure)
         vertex(spec)
     }
 
@@ -319,7 +319,8 @@ class Graph {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(String name, Map<String, ?> map) {
-        ConfigSpec spec = new ConfigSpec(name:name, map:map)
+        map.name = map.name ?: name
+        ConfigSpec spec = new ConfigSpec(map:map)
         vertex(spec)
     }
 
@@ -359,7 +360,8 @@ class Graph {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(String name, Map<String, ?> map, Closure closure) {
-        ConfigSpec spec = new ConfigSpec(name:name, map:map, closure:closure)
+        map.name = map.name ?: name
+        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
         vertex(spec)
     }
 
@@ -997,19 +999,21 @@ class Graph {
             throw new IllegalArgumentException("Confusing name 'vertex' for spec.")
         }
         if (args.size() == 0) {
-            return new ConfigSpec(name:name)
+            return new ConfigSpec(map:[name:name])
         }
 
         if (args.size() == 1 && args[0] instanceof Map) {
-            return new ConfigSpec(name:name, map:(Map) args[0])
+            args[0].name = args[0].name ?: name
+            return new ConfigSpec(map:(Map) args[0])
         }
 
         if (args.size() == 1 && args[0] instanceof Closure) {
-            return new ConfigSpec(name:name, closure:(Closure) args[0])
+            return new ConfigSpec(map:[name:name], closure:(Closure) args[0])
         }
 
         if (args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
-            return new ConfigSpec(name:name, map:(Map) args[0], closure:(Closure) args[1])
+            args[0].name = args[0].name ?: name
+            return new ConfigSpec(map:(Map) args[0], closure:(Closure) args[1])
         }
 
         throw new MissingMethodException(name, Graph, args)

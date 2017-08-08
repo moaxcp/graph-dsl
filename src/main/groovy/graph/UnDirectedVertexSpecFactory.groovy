@@ -8,8 +8,7 @@ class UnDirectedVertexSpecFactory implements VertexSpecFactory {
 
     @Override
     VertexSpec newVertexSpec(ConfigSpec spec) {
-        VertexSpec vspec = new VertexSpec(name:spec.name)
-        vspec = vspec.overlay(new VertexSpec(spec.map))
+        VertexSpec vspec = new VertexSpec(spec.map)
         vspec.runnerCode spec.closure
         vspec
     }
