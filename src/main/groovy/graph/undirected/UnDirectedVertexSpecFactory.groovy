@@ -1,4 +1,8 @@
-package graph
+package graph.undirected
+
+import graph.ConfigSpec
+import graph.VertexSpec
+import graph.VertexSpecFactory
 
 class UnDirectedVertexSpecFactory implements VertexSpecFactory {
     @Override

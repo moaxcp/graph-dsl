@@ -1,5 +1,9 @@
 package graph
 
+import graph.undirected.DefaultVertexFactory
+import graph.undirected.EdgeSpecCodeRunner
+import graph.undirected.UnDirectedEdgeFactory
+import graph.undirected.UnDirectedVertexSpecFactory
 import groovy.transform.PackageScope
 
 /**
@@ -302,9 +306,24 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is
-     * delegated to a {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure)} for details on how
-     * it modifies this graph and the {@link Vertex}.
+     * Creates or updates a {@link Vertex} in this graph with the given name. {@code closure} is used to further
+     * customize the vertex and graph. By default there are several methods provided.
+     * <p>
+     * <dl>
+     *     <dt>{@code void rename(String newName)}</dt>
+     *     <dd>renames the vertex</dd>
+     *     <dt>{@code void rename(NameSpec newName)}</dt>
+     *     <dd>renames the vertex using a NameSpec</dd>
+     *     <dt>{@code void traits(Class... traits)}</dt>
+     *     <dd>applies traits to the vertex</dd>
+     *     <dt>{@code void connectsTo(String... names)}</dt>
+     *     <dd>Connects the vertex to other vertices. If they do not exist they are created.</dd>
+     *     <dt>{@code void connectsTo(ConfigSpec... specs)}</dt>
+     *     <dd>Connects the vertex to other vertices. If they do not exist they are created. This method allows for
+     *     arbitrarily nested configurations.</dd>
+     * </dl>
+     * <p>
+     * Plugins may add more configuration methods to the passed in closure.
      * @param name  the name of the {@link Vertex} to find or create.
      * @param closure  configuration for graph and vertex
      * @return The resulting {@link Vertex}.
@@ -316,7 +335,7 @@ class Graph {
 
     /**
      * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is
-     * delegated to a {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure)} for details on how
+     * delegated to a {@link graph.undirected.VertexSpecCodeRunner} See {@link graph.undirected.VertexSpecCodeRunner#runCode(Closure)} for details on how
      * it modifies this graph and the {@link Vertex}.
      * @param name  the name of the {@link Vertex} to find or create.
      * @param closure  configuration for graph and vertex
@@ -327,8 +346,8 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given name. The map must contain configuration
-     * described in {@link VertexSpec#newInstance(Map)}.
+     * Creates or updates a {@link Vertex} in this graph with the given name. The map contains configuration
+     * described in {@link #vertex(Map)}.
      * @param name  the name of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @return The resulting {@link Vertex}.
@@ -340,8 +359,8 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given name. The map must contain configuration
-     * described in {@link VertexSpec#newInstance(Map)}.
+     * Creates or updates a {@link Vertex} in this graph with the given name. The map contains configuration
+     * described in {@link #vertex(Map)}.
      * @param name  the name of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @return The resulting {@link Vertex}.
@@ -351,10 +370,9 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph. The map must contain configuration described in
-     * {@link VertexSpec#newInstance(Map)}. The configuration given by the closure is delegated to a
-     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure)} for details on how it modifies
-     * this graph and the {@link Vertex}.
+     * Creates or updates a {@link Vertex} in this graph. The map contains configuration
+     * described in {@link #vertex(Map)}. The configuration given by the closure described in
+     * {@link #vertex(String,Closure)}.
      * @param map  configuration of {@link Vertex}
      * @param closure  configuration for graph and vertex
      * @return  The resulting {@link Vertex}.
@@ -365,10 +383,9 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph. The map must contain configuration described in
-     * {@link VertexSpec#newInstance(Map)}. The configuration given by the closure is delegated to a
-     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure)} for details on how it modifies
-     * this graph and the {@link Vertex}.
+     * Creates or updates a {@link Vertex} in this graph. The map contains configuration
+     * described in {@link #vertex(Map)}. The configuration given by the closure described in
+     * {@link #vertex(String,Closure)}.
      * @param name  the name of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @param closure  configuration for graph and vertex
@@ -381,10 +398,9 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph. The map must contain configuration described in
-     * {@link VertexSpec#newInstance(Map)}. The configuration given by the closure is delegated to a
-     * {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure)} for details on how it modifies
-     * this graph and the {@link Vertex}.
+     * Creates or updates a {@link Vertex} in this graph. The map contains configuration
+     * described in {@link #vertex(Map)}. The configuration given by the closure described in
+     * {@link #vertex(String,Closure)}.
      * @param name  the name of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @param closure  configuration for graph and vertex
@@ -395,9 +411,9 @@ class Graph {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph. The map in {@link ConfigSpec} must contain configuration
-     * described in {@link VertexSpec#newInstance(Map)}. The configuration given by the closure in {@link ConfigSpec} is
-     * delegated to a {@link VertexSpecCodeRunner} See {@link VertexSpecCodeRunner#runCode(Closure)} for details on how
+     * Creates or updates a {@link Vertex} in this graph. The map contains configuration
+     * described in {@link #vertex(Map)}. The configuration given by the closure in {@link ConfigSpec} is
+     * delegated to a {@link graph.undirected.VertexSpecCodeRunner} See {@link graph.undirected.VertexSpecCodeRunner#runCode(Closure)} for details on how
      * it modifies this graph and the {@link Vertex}.
      * @param spec  specification for vertex
      * @return The resulting {@link Vertex}.
@@ -513,9 +529,9 @@ class Graph {
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map must
      * contain configuration described in  {@link EdgeSpec#newInstance(Map)}. Specifically, it must contain entries
      * for one and two. The closure sets the runnerCode in an {@link EdgeSpec}. See
-     * {@link EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the {@link Edge} and {@link Graph}.
+     * {@link graph.undirected.EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the {@link Edge} and {@link Graph}.
      * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
-     * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
+     * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link graph.undirected.EdgeSpecCodeRunner#runCode(Closure)}.
      * @return the resulting {@link Edge}.
      */
     Edge edge(Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
@@ -549,7 +565,7 @@ class Graph {
      * @param one  {@link NameSpec} for the first {@link Vertex}.
      * @param two  {@link NameSpec} for the second {@link Vertex}.
      * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
-     * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
+     * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link graph.undirected.EdgeSpecCodeRunner#runCode(Closure)}.
      * @return the resulting {@link Edge}.
      */
     Edge edge(NameSpec one, NameSpec two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {

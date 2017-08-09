@@ -1,6 +1,6 @@
 package graph
 
-import groovy.transform.PackageScope
+import graph.undirected.VertexSpecCodeRunner
 
 /**
  * Specification class that helps vertex methods in {@link Graph} objects. VertexSpec is used to collect the details

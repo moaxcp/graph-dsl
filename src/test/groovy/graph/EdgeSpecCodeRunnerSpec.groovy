@@ -1,5 +1,6 @@
 package graph
 
+import graph.undirected.EdgeSpecCodeRunner
 import spock.lang.Specification
 
 class EdgeSpecCodeRunnerSpec extends Specification {

@@ -1,4 +1,7 @@
-package graph
+package graph.undirected
+
+import graph.Vertex
+import graph.VertexFactory
 
 /**
  * Factory for creating vertices. This factory returns instances of the

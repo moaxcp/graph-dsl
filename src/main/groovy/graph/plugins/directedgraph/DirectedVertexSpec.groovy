@@ -4,7 +4,7 @@ import graph.Graph
 import graph.NameSpec
 import graph.Vertex
 import graph.VertexSpec
-import graph.VertexSpecCodeRunner
+import graph.undirected.VertexSpecCodeRunner
 
 class DirectedVertexSpec extends VertexSpec {
     private final Set<String> connectsFromSet = [] as Set<String>

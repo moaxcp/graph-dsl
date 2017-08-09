@@ -3,7 +3,7 @@ package graph.plugins.directedgraph
 import graph.ConfigSpec
 import graph.NameSpec
 import graph.VertexSpec
-import graph.VertexSpecCodeRunner
+import graph.undirected.VertexSpecCodeRunner
 
 class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
 

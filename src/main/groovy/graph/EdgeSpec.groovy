@@ -1,5 +1,7 @@
 package graph
 
+import graph.undirected.EdgeSpecCodeRunner
+
 /**
  * Specification class that helps edge methods in {@link Graph} objects create or update {@link Edge} objects. The
  * specification describes what {@link Edge} to create or update, If one and two should be renamed, and what traits to

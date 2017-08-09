@@ -1,4 +1,10 @@
-package graph
+package graph.undirected
+
+import graph.ConfigSpec
+import graph.Graph
+import graph.NameSpec
+import graph.Vertex
+import graph.VertexSpec
 
 /**
  * Delegate of the runnerCode closure in {@link VertexSpec}. This provides methods and properties that can be used in

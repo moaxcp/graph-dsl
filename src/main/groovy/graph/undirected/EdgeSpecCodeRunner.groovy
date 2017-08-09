@@ -1,4 +1,9 @@
-package graph
+package graph.undirected
+
+import graph.Edge
+import graph.EdgeSpec
+import graph.Graph
+import graph.NameSpec
 
 /**
  * Delegate of the runnerCode closure in {@link EdgeSpec}. This provides methods and properties that can be used in
@@ -25,7 +30,7 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * Renames edge.one to renameOne. This allows edge.one to point to a different {@link Vertex}
+     * Renames edge.one to renameOne. This allows edge.one to point to a different {@link graph.Vertex}
      * @param renameOne the new name for edge.one
      */
     void renameOne(String renameOne) {
@@ -34,7 +39,7 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * Renames edge.one to renameOne.name. This allows edge.one to point to a different {@link Vertex}
+     * Renames edge.one to renameOne.name. This allows edge.one to point to a different {@link graph.Vertex}
      * @param renameOne  the new name for edge.one
      */
     void renameOne(NameSpec renameOne) {
@@ -43,7 +48,7 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * Renames edge.two to renameTwo. This allows edge.two to point to a different {@link Vertex}.
+     * Renames edge.two to renameTwo. This allows edge.two to point to a different {@link graph.Vertex}.
      * @param renameTwo the new name for edge.two
      */
     void renameTwo(String renameTwo) {
@@ -52,7 +57,7 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * Renames edge.two to renameTwo.name. This allows edge.two to point to a different {@link Vertex}
+     * Renames edge.two to renameTwo.name. This allows edge.two to point to a different {@link graph.Vertex}
      * @param renameTwo  the new name for edge.two
      */
     void renameTwo(NameSpec renameTwo) {
