@@ -29,6 +29,39 @@ class EdgeSpec {
     private final Set<Class> traitsSet = [] as Set<Class>
     private Closure runnerCodeClosure
 
+    EdgeSpec() {
+
+    }
+
+    /**
+     * Creates a new instance of an {@link EdgeSpec} using the provided Map. Valid entries that can be in the Map are:
+     * <p>
+     * one - the first vertex name in the {@link Edge}<br>
+     * two - the second vertex name in the {@link Edge}<br>
+     * renameOne - vertex name to rename one to in the {@link Edge}<br>
+     * renameTwo - vertex name to rename two to in the {@link Edge}<br>
+     * traits - list of traits to be applied to the {@link Edge}<br>
+     * runnerCode - closure to be applied to the {@link Graph} and {@link Edge} using a {@link EdgeSpecCodeRunner}
+     * </p>
+     * one and two should always exist in any EdgeSpec applied to the graph. In those cases the map should have one and
+     * two set.
+     * @param map containing list of valid values
+     * @return the resulting EdgeSpec
+     */
+    EdgeSpec(Map<String, ?> map) {
+        one = map.one
+        two = map.two
+        renameOne = map.renameOne instanceof NameSpec ? map.renameOne.name : map.renameOne
+        renameTwo = map.renameTwo instanceof NameSpec ? map.renameTwo.name : map.renameTwo
+
+        if (map.traits) {
+            traits(map.traits as Class[])
+        }
+        if (map.runnerCode) {
+            runnerCode(map.runnerCode)
+        }
+    }
+
     /**
      * The set of traits that will be applied to the {@link Edge}.
      * @return
@@ -140,35 +173,5 @@ class EdgeSpec {
         }
 
         next
-    }
-
-    /**
-     * Creates a new instance of an {@link EdgeSpec} using the provided Map. Valid entries that can be in the Map are:
-     * <p>
-     * one - the first vertex name in the {@link Edge}<br>
-     * two - the second vertex name in the {@link Edge}<br>
-     * renameOne - vertex name to rename one to in the {@link Edge}<br>
-     * renameTwo - vertex name to rename two to in the {@link Edge}<br>
-     * traits - list of traits to be applied to the {@link Edge}<br>
-     * runnerCode - closure to be applied to the {@link Graph} and {@link Edge} using a {@link EdgeSpecCodeRunner}
-     * </p>
-     * one and two should always exist in any EdgeSpec applied to the graph. In those cases the map should have one and
-     * two set.
-     * @param map containing list of valid values
-     * @return the resulting EdgeSpec
-     */
-    static EdgeSpec newInstance(Map<String, ?> map) {
-        String renameOne = map.renameOne instanceof NameSpec ? map.renameOne.name : map.renameOne
-        String renameTwo = map.renameTwo instanceof NameSpec ? map.renameTwo.name : map.renameTwo
-
-        EdgeSpec spec = new EdgeSpec(one:map.one, two:map.two, renameOne:renameOne, renameTwo:renameTwo)
-        if (map.traits) {
-            spec.traits(map.traits as Class[])
-        }
-        if (map.runnerCode) {
-            spec.runnerCode(map.runnerCode)
-        }
-
-        spec
     }
 }

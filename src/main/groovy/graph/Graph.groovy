@@ -3,6 +3,7 @@ package graph
 import graph.undirected.DefaultVertexFactory
 import graph.undirected.EdgeSpecCodeRunner
 import graph.undirected.UnDirectedEdgeFactory
+import graph.undirected.UnDirectedEdgeSpecFactory
 import graph.undirected.UnDirectedVertexSpecFactory
 import groovy.transform.PackageScope
 
@@ -33,7 +34,9 @@ class Graph {
     @PackageScope
     VertexFactory vertexFactory = new DefaultVertexFactory()
     @PackageScope
-    VertexSpecFactory vertexSpecFactory = new UnDirectedVertexSpecFactory();
+    VertexSpecFactory vertexSpecFactory = new UnDirectedVertexSpecFactory()
+    @PackageScope
+    EdgeSpecFactory edgeSpecFactory = new UnDirectedEdgeSpecFactory()
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -444,8 +447,8 @@ class Graph {
      * @return the resulting {@link Edge}.
      */
     Edge edge(String one, String two) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two)
-        edge(spec)
+        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two])
+        configEdge(spec)
     }
 
     /**
@@ -467,8 +470,8 @@ class Graph {
      * @return the resulting {@link Edge}.
      */
     Edge edge(Map<String, ?> map) {
-        EdgeSpec spec = EdgeSpec.newInstance(map)
-        edge(spec)
+        ConfigSpec spec = new ConfigSpec(map:map)
+        configEdge(spec)
     }
 
     /**
@@ -481,9 +484,10 @@ class Graph {
      * @return the resulting {@link Edge}.
      */
     Edge edge(String one, String two, Map<String, ?> map) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two)
-        spec = spec.overlay(EdgeSpec.newInstance(map))
-        edge(spec)
+        map.one = map.one ?: one
+        map.two = map.two ?: two
+        ConfigSpec spec = new ConfigSpec(map:map)
+        configEdge(spec)
     }
 
     /**
@@ -491,7 +495,7 @@ class Graph {
      * method calls {@link #edge(String,String,Map} with the names from the {@link NameSpec as params.
      * @param one  {@link NameSpec} for the first {@link Vertex}.
      * @param two  {@link NameSpec} for the second {@link Vertex}.
-     * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newVertexSpec(Map)}.
      * @return the resulting {@link Edge}.
      */
     Edge edge(NameSpec one, NameSpec two, Map<String, ?> map) {
@@ -509,8 +513,8 @@ class Graph {
      * @return the resulting {@link Edge}.
      */
     Edge edge(String one, String two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two, runnerCode:closure)
-        edge(spec)
+        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two], closure:closure)
+        configEdge(spec)
     }
 
     /**
@@ -535,9 +539,8 @@ class Graph {
      * @return the resulting {@link Edge}.
      */
     Edge edge(Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
-        EdgeSpec spec = EdgeSpec.newInstance(map)
-        spec.runnerCode closure
-        edge(spec)
+        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
+        configEdge(spec)
     }
 
     /**
@@ -553,10 +556,10 @@ class Graph {
      * @return the resulting {@link Edge}.
      */
     Edge edge(String one, String two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:one, two:two)
-        spec = spec.overlay(EdgeSpec.newInstance(map))
-        spec.runnerCode closure
-        edge(spec)
+        map.one = map.one ?: one
+        map.two = map.two ?: two
+        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
+        configEdge(spec)
     }
 
     /**
@@ -564,7 +567,7 @@ class Graph {
      * method calls {@link #edge(String,String,Map,Closure} with the names from the {@link NameSpec as params.
      * @param one  {@link NameSpec} for the first {@link Vertex}.
      * @param two  {@link NameSpec} for the second {@link Vertex}.
-     * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newVertexSpec(Map)}.
      * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link graph.undirected.EdgeSpecCodeRunner#runCode(Closure)}.
      * @return the resulting {@link Edge}.
      */
@@ -577,9 +580,11 @@ class Graph {
      * @param spec the specification for an {@link Edge}
      * @return the resulting {@link Edge}.
      */
-    Edge edge(EdgeSpec spec) {
-        spec.traits(edgeTraitsSet as Class[])
-        spec.apply(this)
+    @PackageScope
+    Edge configEdge(ConfigSpec spec) {
+        EdgeSpec espec = edgeSpecFactory.newEdgeSpec(spec)
+        espec.traits(edgeTraitsSet as Class[])
+        espec.apply(this)
     }
 
     /**
@@ -1015,9 +1020,9 @@ class Graph {
     }
 
     /**
-     * Creates a {@link VertexSpec}. The result is similar to calling {@link VertexSpec#newInstance(Map)}
+     * Creates a {@link VertexSpec}. The result is similar to calling {@link VertexSpec#newVertexSpec(Map)}
      * <pre>
-     *     VertexSpec.newInstance([name:name + args[0])
+     *     VertexSpec.newVertexSpec([name:name + args[0])
      * </pre>
      * @param name
      * @param args
