@@ -1,6 +1,6 @@
 package graph
 
-import graph.plugins.directedgraph.DirectedGraphPlugin
+import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
 import static Graph.graph
 

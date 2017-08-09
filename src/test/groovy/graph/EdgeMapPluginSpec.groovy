@@ -1,5 +1,6 @@
 package graph
 
+import graph.plugin.EdgeMapPlugin
 import spock.lang.Specification
 
 class EdgeMapPluginSpec extends Specification  {

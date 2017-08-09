@@ -1,4 +1,6 @@
-package graph
+package graph.type
+
+import graph.ConfigSpec
 
 interface VertexSpecFactory {
     VertexSpec newVertexSpec(Map<String, ?> map)

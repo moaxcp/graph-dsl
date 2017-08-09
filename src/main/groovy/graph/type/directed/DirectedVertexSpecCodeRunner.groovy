@@ -1,9 +1,9 @@
-package graph.plugins.directedgraph
+package graph.type.directed
 
 import graph.ConfigSpec
 import graph.NameSpec
-import graph.VertexSpec
-import graph.undirected.VertexSpecCodeRunner
+import graph.type.VertexSpec
+import graph.type.undirected.VertexSpecCodeRunner
 
 class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
 

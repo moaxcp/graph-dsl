@@ -1,6 +1,9 @@
-package graph
+package graph.type
 
-import graph.undirected.VertexSpecCodeRunner
+import graph.Graph
+import graph.NameSpec
+import graph.Vertex
+import graph.type.undirected.VertexSpecCodeRunner
 
 /**
  * Specification class that helps vertex methods in {@link Graph} objects. VertexSpec is used to collect the details
@@ -9,12 +12,12 @@ import graph.undirected.VertexSpecCodeRunner
 class VertexSpec {
 
     /**
-     * The name of the {@link Vertex} to create or update.
+     * The name of the {@link graph.Vertex} to create or update.
      */
     String name
 
     /**
-     * The new name to give a {@link Vertex}
+     * The new name to give a {@link graph.Vertex}
      */
     String rename
 
@@ -31,10 +34,10 @@ class VertexSpec {
      * <p>
      * name - the name of the vertex to create or update<br>
      * rename - what to rename the vertex<br>
-     * traits - list of traits to be applied to the {@link Vertex}<br>
-     * connectsTo - list of vertices to connect the {@link Vertex} to. The vertex is edge.one<br>
-     * connectsFrom - list of vertices to connect the {@link Vertex} to. The vertex is edge.two<br>
-     * runnerCode - closure to be applied to the {@link Vertex} after traits and edges are created.
+     * traits - list of traits to be applied to the {@link graph.Vertex}<br>
+     * connectsTo - list of vertices to connect the {@link graph.Vertex} to. The vertex is edge.one<br>
+     * connectsFrom - list of vertices to connect the {@link graph.Vertex} to. The vertex is edge.two<br>
+     * runnerCode - closure to be applied to the {@link graph.Vertex} after traits and edges are created.
      * <p>
      * All other values are ignored.
      * @param map
@@ -58,7 +61,7 @@ class VertexSpec {
     }
 
     /**
-     * The set of traits that should be applied to the {@link Vertex}.
+     * The set of traits that should be applied to the {@link graph.Vertex}.
      * @return
      */
     Set<Class> getTraits() {
@@ -66,8 +69,8 @@ class VertexSpec {
     }
 
     /**
-     * The set of edges to create between the {@link Vertex} and other vertices. The {@link Vertex} will be edge.one.
-     * @return The names of vertices the {@link Vertex} should connect to.
+     * The set of edges to create between the {@link graph.Vertex} and other vertices. The {@link graph.Vertex} will be edge.one.
+     * @return The names of vertices the {@link graph.Vertex} should connect to.
      */
     Set<String> getConnectsTo() {
         Collections.unmodifiableSet(connectsToSet)
@@ -82,7 +85,7 @@ class VertexSpec {
     }
 
     /**
-     * Adds to the set of traits to be applied to the {@link Vertex}.
+     * Adds to the set of traits to be applied to the {@link graph.Vertex}.
      * @param traits - added to the set
      */
     void traits(Class... traits) {
@@ -90,7 +93,7 @@ class VertexSpec {
     }
 
     /**
-     * Adds to the names the {@link Vertex} should connect to. In the resulting edge the vertex named by this spec
+     * Adds to the names the {@link graph.Vertex} should connect to. In the resulting edge the vertex named by this spec
      * will be edge.one.
      * @param names
      */
@@ -107,7 +110,7 @@ class VertexSpec {
     }
 
     /**
-     * Applies this {@link VertexSpec} to the {@link Vertex} and {@link Graph}. Members from this spec are applied in
+     * Applies this {@link VertexSpec} to the {@link graph.Vertex} and {@link graph.Graph}. Members from this spec are applied in
      * this order:
      * <p>
      * 1. renames vertex to rename if set<br>

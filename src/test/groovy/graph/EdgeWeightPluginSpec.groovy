@@ -1,6 +1,7 @@
 package graph
 
-import graph.plugins.directedgraph.DirectedGraphPlugin
+import graph.plugin.EdgeWeightPlugin
+import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
 
 class EdgeWeightPluginSpec extends Specification {

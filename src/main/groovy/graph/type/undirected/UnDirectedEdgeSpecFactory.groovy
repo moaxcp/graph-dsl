@@ -1,8 +1,8 @@
-package graph.undirected
+package graph.type.undirected
 
 import graph.ConfigSpec
-import graph.EdgeSpec
-import graph.EdgeSpecFactory
+import graph.type.EdgeSpec
+import graph.type.EdgeSpecFactory
 
 class UnDirectedEdgeSpecFactory implements EdgeSpecFactory {
     @Override

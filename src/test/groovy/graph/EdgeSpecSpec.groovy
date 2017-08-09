@@ -1,5 +1,6 @@
 package graph
 
+import graph.type.EdgeSpec
 import spock.lang.Specification
 
 class EdgeSpecSpec extends Specification {

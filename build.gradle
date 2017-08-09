@@ -63,7 +63,7 @@ jacocoTestCoverageVerification {
 
         rule {
             element = 'CLASS'
-            includes = ['graph.EdgeSpec']
+            includes = ['graph.type.EdgeSpec']
             limit {
                 minimum = 0.93
             }
@@ -75,7 +75,7 @@ jacocoTestCoverageVerification {
 
         rule {
             element = 'CLASS'
-            includes = ['graph.VertexSpec']
+            includes = ['graph.type.VertexSpec']
             limit {
                 minimum = 0.95
             }

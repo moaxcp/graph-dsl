@@ -1,4 +1,4 @@
-package graph.undirected
+package graph.type.undirected
 
 import graph.Edge
 import graph.EdgeFactory

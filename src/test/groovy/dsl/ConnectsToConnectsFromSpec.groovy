@@ -1,7 +1,7 @@
 package dsl
 
 import graph.Graph
-import graph.plugins.directedgraph.DirectedGraphPlugin
+import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
 
 import static graph.Graph.graph

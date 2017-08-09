@@ -1,10 +1,15 @@
 package graph
 
-import graph.undirected.DefaultVertexFactory
-import graph.undirected.EdgeSpecCodeRunner
-import graph.undirected.UnDirectedEdgeFactory
-import graph.undirected.UnDirectedEdgeSpecFactory
-import graph.undirected.UnDirectedVertexSpecFactory
+import graph.plugin.Plugin
+import graph.type.EdgeSpec
+import graph.type.EdgeSpecFactory
+import graph.type.VertexSpec
+import graph.type.VertexSpecFactory
+import graph.type.undirected.DefaultVertexFactory
+import graph.type.undirected.EdgeSpecCodeRunner
+import graph.type.undirected.UnDirectedEdgeFactory
+import graph.type.undirected.UnDirectedEdgeSpecFactory
+import graph.type.undirected.UnDirectedVertexSpecFactory
 import groovy.transform.PackageScope
 
 /**
@@ -21,7 +26,7 @@ import groovy.transform.PackageScope
  * of the {@link Vertex}.
  * <p>
  * Plugins may be applied to this graph to change its behavior and the behavior of the vertices and edges within this
- * graph. For more information on plugins see {@link Plugin}.
+ * graph. For more information on plugins see {@link graph.plugin.Plugin}.
  */
 class Graph {
     private final Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
@@ -147,7 +152,7 @@ class Graph {
     /**
      * Removes an {@link Edge} from edges where an edge created by the edgeFactory equals an edge in edges. Using the
      * edgeFactory ensures the edge removed matches the definition of an edge for this graph. If a plugin changes the
-     * definition of an edge, for example to {@link graph.plugins.directedgraph.DirectedEdge}, this method will still work as expected. It will
+     * definition of an edge, for example to {@link graph.type.directed.DirectedEdge}, this method will still work as expected. It will
      * remove the edge where edge.one == one and edge.two == two. Keep in mind, in the case of the base {@link Edge}
      * object edge.one can also equal two and edge.two can also equal one.
      * @param one name of first vertex
@@ -338,7 +343,7 @@ class Graph {
 
     /**
      * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is
-     * delegated to a {@link graph.undirected.VertexSpecCodeRunner} See {@link graph.undirected.VertexSpecCodeRunner#runCode(Closure)} for details on how
+     * delegated to a {@link graph.type.undirected.VertexSpecCodeRunner} See {@link graph.type.undirected.VertexSpecCodeRunner#runCode(Closure)} for details on how
      * it modifies this graph and the {@link Vertex}.
      * @param name  the name of the {@link Vertex} to find or create.
      * @param closure  configuration for graph and vertex
@@ -416,7 +421,7 @@ class Graph {
     /**
      * Creates or updates a {@link Vertex} in this graph. The map contains configuration
      * described in {@link #vertex(Map)}. The configuration given by the closure in {@link ConfigSpec} is
-     * delegated to a {@link graph.undirected.VertexSpecCodeRunner} See {@link graph.undirected.VertexSpecCodeRunner#runCode(Closure)} for details on how
+     * delegated to a {@link graph.type.undirected.VertexSpecCodeRunner} See {@link graph.type.undirected.VertexSpecCodeRunner#runCode(Closure)} for details on how
      * it modifies this graph and the {@link Vertex}.
      * @param spec  specification for vertex
      * @return The resulting {@link Vertex}.
@@ -464,9 +469,9 @@ class Graph {
 
     /**
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map must
-     * contain configuration described in {@link EdgeSpec#newInstance(Map)}. Specifically, it must contain entries
+     * contain configuration described in {@link graph.type.EdgeSpec#newInstance(Map)}. Specifically, it must contain entries
      * for one and two.
-     * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @param map  used to create an {@link graph.type.EdgeSpec}. See {@link graph.type.EdgeSpec#newInstance(Map)}.
      * @return the resulting {@link Edge}.
      */
     Edge edge(Map<String, ?> map) {
@@ -476,11 +481,11 @@ class Graph {
 
     /**
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map must
-     * contain configuration described in {@link EdgeSpec#newInstance(Map)}. If the map contains an entry for one
+     * contain configuration described in {@link graph.type.EdgeSpec#newInstance(Map)}. If the map contains an entry for one
      * or two those values will be used for the {@link Edge} instead of the parameters.
      * @param one  the name of the first {@link Vertex}.
      * @param two  the name of the second {@link Vertex}.
-     * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @param map  used to create an {@link graph.type.EdgeSpec}. See {@link graph.type.EdgeSpec#newInstance(Map)}.
      * @return the resulting {@link Edge}.
      */
     Edge edge(String one, String two, Map<String, ?> map) {
@@ -505,7 +510,7 @@ class Graph {
     /**
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
      * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
-     * will be created. The closure sets the runnerCode in an {@link EdgeSpec}. See
+     * will be created. The closure sets the runnerCode in an {@link graph.type.EdgeSpec}. See
      * {@link EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the {@link Edge} and {@link Graph}.
      * @param one  the name of the first {@link Vertex}.
      * @param two  the name of the second {@link Vertex}.
@@ -533,9 +538,9 @@ class Graph {
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map must
      * contain configuration described in  {@link EdgeSpec#newInstance(Map)}. Specifically, it must contain entries
      * for one and two. The closure sets the runnerCode in an {@link EdgeSpec}. See
-     * {@link graph.undirected.EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the {@link Edge} and {@link Graph}.
-     * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
-     * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link graph.undirected.EdgeSpecCodeRunner#runCode(Closure)}.
+     * {@link graph.type.undirected.EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the {@link Edge} and {@link Graph}.
+     * @param map  used to create an {@link graph.type.EdgeSpec}. See {@link graph.type.EdgeSpec#newInstance(Map)}.
+     * @param closure  sets the runnerCode in an {@link graph.type.EdgeSpec}. See {@link graph.type.undirected.EdgeSpecCodeRunner#runCode(Closure)}.
      * @return the resulting {@link Edge}.
      */
     Edge edge(Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
@@ -545,14 +550,14 @@ class Graph {
 
     /**
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map must
-     * contain configuration described in {@link EdgeSpec#newInstance(Map)}. If the map contains an entry for one or
+     * contain configuration described in {@link graph.type.EdgeSpec#newInstance(Map)}. If the map contains an entry for one or
      * two those values will be used for the {@link Edge} instead of the parameters. The closure sets the runnerCode in
      * an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)} for how the closure is run on the
      * {@link Edge} and {@link Graph}.
      * @param one  the name of the first {@link Vertex}.
      * @param two  the name of the second {@link Vertex}.
-     * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
-     * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
+     * @param map  used to create an {@link graph.type.EdgeSpec}. See {@link EdgeSpec#newInstance(Map)}.
+     * @param closure  sets the runnerCode in an {@link graph.type.EdgeSpec}. See {@link EdgeSpecCodeRunner#runCode(Closure)}.
      * @return the resulting {@link Edge}.
      */
     Edge edge(String one, String two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
@@ -568,7 +573,7 @@ class Graph {
      * @param one  {@link NameSpec} for the first {@link Vertex}.
      * @param two  {@link NameSpec} for the second {@link Vertex}.
      * @param map  used to create an {@link EdgeSpec}. See {@link EdgeSpec#newVertexSpec(Map)}.
-     * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link graph.undirected.EdgeSpecCodeRunner#runCode(Closure)}.
+     * @param closure  sets the runnerCode in an {@link EdgeSpec}. See {@link graph.type.undirected.EdgeSpecCodeRunner#runCode(Closure)}.
      * @return the resulting {@link Edge}.
      */
     Edge edge(NameSpec one, NameSpec two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
@@ -1010,7 +1015,7 @@ class Graph {
     }
 
     /**
-     * Creates a {@link VertexSpec}
+     * Creates a {@link graph.type.VertexSpec}
      * @param name
      * @return a {@link VertexSpec} with name set to the property name.
      */

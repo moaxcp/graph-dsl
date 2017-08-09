@@ -1,4 +1,4 @@
-package graph.plugins.directedgraph
+package graph.type.directed
 
 import graph.Edge
 import graph.EdgeFactory

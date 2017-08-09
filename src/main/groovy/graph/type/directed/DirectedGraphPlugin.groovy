@@ -1,8 +1,8 @@
-package graph.plugins.directedgraph
+package graph.type.directed
 
 import graph.Edge
 import graph.Graph
-import graph.Plugin
+import graph.plugin.Plugin
 
 /**
  * This plugin changes the behavior of a {@link Graph} to that of a directed graph.

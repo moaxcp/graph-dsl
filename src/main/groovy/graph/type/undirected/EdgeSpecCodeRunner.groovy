@@ -1,7 +1,7 @@
-package graph.undirected
+package graph.type.undirected
 
 import graph.Edge
-import graph.EdgeSpec
+import graph.type.EdgeSpec
 import graph.Graph
 import graph.NameSpec
 

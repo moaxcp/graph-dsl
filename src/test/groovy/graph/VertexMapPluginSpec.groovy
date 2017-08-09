@@ -1,5 +1,6 @@
 package graph
 
+import graph.plugin.VertexMapPlugin
 import spock.lang.Specification
 
 class VertexMapPluginSpec extends Specification {

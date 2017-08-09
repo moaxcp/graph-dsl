@@ -1,10 +1,10 @@
-package graph.plugins.directedgraph
+package graph.type.directed
 
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.VertexSpec
-import graph.undirected.VertexSpecCodeRunner
+import graph.type.VertexSpec
+import graph.type.undirected.VertexSpecCodeRunner
 
 class DirectedVertexSpec extends VertexSpec {
     private final Set<String> connectsFromSet = [] as Set<String>

@@ -1,5 +1,6 @@
 package graph
 
+import graph.type.VertexSpec
 import spock.lang.Specification
 
 class VertexSpecSpec extends Specification {

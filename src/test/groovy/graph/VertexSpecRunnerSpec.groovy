@@ -1,6 +1,6 @@
 package graph
 
-import graph.undirected.VertexSpecCodeRunner
+import graph.type.undirected.VertexSpecCodeRunner
 import spock.lang.Specification
 
 class VertexSpecRunnerSpec extends Specification {

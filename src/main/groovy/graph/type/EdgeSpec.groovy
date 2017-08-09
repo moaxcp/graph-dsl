@@ -1,6 +1,9 @@
-package graph
+package graph.type
 
-import graph.undirected.EdgeSpecCodeRunner
+import graph.Edge
+import graph.Graph
+import graph.NameSpec
+import graph.type.undirected.EdgeSpecCodeRunner
 
 /**
  * Specification class that helps edge methods in {@link Graph} objects create or update {@link Edge} objects. The
@@ -9,20 +12,20 @@ import graph.undirected.EdgeSpecCodeRunner
  */
 class EdgeSpec {
     /**
-     * Name of the first {@link Vertex} in the {@link Edge}.
+     * Name of the first {@link graph.Vertex} in the {@link graph.Edge}.
      */
     String one
     /**
-     * Name of the second {@link Vertex} in the {@link Edge}.
+     * Name of the second {@link graph.Vertex} in the {@link graph.Edge}.
      */
     String two
 
     /**
-     * New name to give one in the {@link Edge}.
+     * New name to give one in the {@link graph.Edge}.
      */
     String renameOne
     /**
-     * New name to give two in the {@link Edge}.
+     * New name to give two in the {@link graph.Edge}.
      */
     String renameTwo
 
@@ -36,12 +39,12 @@ class EdgeSpec {
     /**
      * Creates a new instance of an {@link EdgeSpec} using the provided Map. Valid entries that can be in the Map are:
      * <p>
-     * one - the first vertex name in the {@link Edge}<br>
-     * two - the second vertex name in the {@link Edge}<br>
-     * renameOne - vertex name to rename one to in the {@link Edge}<br>
-     * renameTwo - vertex name to rename two to in the {@link Edge}<br>
-     * traits - list of traits to be applied to the {@link Edge}<br>
-     * runnerCode - closure to be applied to the {@link Graph} and {@link Edge} using a {@link EdgeSpecCodeRunner}
+     * one - the first vertex name in the {@link graph.Edge}<br>
+     * two - the second vertex name in the {@link graph.Edge}<br>
+     * renameOne - vertex name to rename one to in the {@link graph.Edge}<br>
+     * renameTwo - vertex name to rename two to in the {@link graph.Edge}<br>
+     * traits - list of traits to be applied to the {@link graph.Edge}<br>
+     * runnerCode - closure to be applied to the {@link graph.Graph} and {@link graph.Edge} using a {@link EdgeSpecCodeRunner}
      * </p>
      * one and two should always exist in any EdgeSpec applied to the graph. In those cases the map should have one and
      * two set.
@@ -63,7 +66,7 @@ class EdgeSpec {
     }
 
     /**
-     * The set of traits that will be applied to the {@link Edge}.
+     * The set of traits that will be applied to the {@link graph.Edge}.
      * @return
      */
     Set<Class> getTraits() {
@@ -79,7 +82,7 @@ class EdgeSpec {
     }
 
     /**
-     * Adds to the set of traits that will be applied to the {@link Edge}.
+     * Adds to the set of traits that will be applied to the {@link graph.Edge}.
      * @param traits - added to the set
      */
     void traits(Class... traits) {
@@ -97,11 +100,11 @@ class EdgeSpec {
     /**
      * Applies this {@link EdgeSpec} to the Edge and Graph. Members from this spec are applied in this order:
      * <p>
-     * 1. creates or gets the {@link Edge} with one and two<br>
+     * 1. creates or gets the {@link graph.Edge} with one and two<br>
      * 2. creates or gets the vertices one and two point to<br>
      * 3. if renameOne is set, renames one and creates or gets the vertex<br>
      * 4. if renameTwo is set, renames two and creates or gets the vertex<br>
-     * 5. adds any traits to the edge's delegate using {@link Edge#delegateAs(Class [ ])}<br>
+     * 5. adds any traits to the edge's delegate using {@link graph.Edge#delegateAs(Class [ ])}<br>
      * 6. runs runnerCodeClosure against the graph and edge using a new {@link EdgeSpecCodeRunner}<br>
      * 7. returns the edge<br>
      * </p>

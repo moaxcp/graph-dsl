@@ -1,7 +1,7 @@
 package graph
 
-import graph.plugins.directedgraph.DirectedEdge
-import graph.plugins.directedgraph.DirectedGraphPlugin
+import graph.type.directed.DirectedEdge
+import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
 
 class DirectedGraphSpec extends Specification {
