@@ -5,7 +5,7 @@ import graph.type.EdgeSpec
 import graph.type.EdgeSpecFactory
 import graph.type.VertexSpec
 import graph.type.VertexSpecFactory
-import graph.type.undirected.DefaultVertexFactory
+import graph.type.DefaultVertexFactory
 import graph.type.undirected.EdgeSpecCodeRunner
 import graph.type.undirected.UnDirectedEdgeFactory
 import graph.type.undirected.UnDirectedEdgeSpecFactory
@@ -25,8 +25,8 @@ import groovy.transform.PackageScope
  * When traversing a graph an {@link Edge} is adjacent to a {@link Vertex} if it's one or two property equals the name
  * of the {@link Vertex}.
  * <p>
- * Plugins may be applied to this graph to change its behavior and the behavior of the vertices and edges within this
- * graph. For more information on plugins see {@link graph.plugin.Plugin}.
+ * Plugins may be applied to this graph to change its behavior and the behavior of the vertices and edges. For more
+ * information on plugins see {@link graph.plugin.Plugin}.
  */
 class Graph {
     private final Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
@@ -73,9 +73,9 @@ class Graph {
     }
 
     /**
-     * static entry point for creating a graph within a groovy script.
-     * @param c
-     * @return
+     * static entry point to the dsl.
+     * @param c  closure to execute with graph as the delegate
+     * @return the resulting graph
      */
     static Graph graph(@DelegatesTo(Graph) Closure c) {
         Graph graph = new Graph()
@@ -84,7 +84,7 @@ class Graph {
     }
 
     /**
-     * returns the vertices as an unmodifiableMap
+     * returns the vertices as an unmodifiableMap. key is the vertex name and value is the vertex.
      * @return vertices as an unmodifiableMap
      */
     Map<String, ? extends Vertex> getVertices() {
@@ -187,7 +187,7 @@ class Graph {
     }
 
     /**
-     * Applies traits to all vertices and all future vertices.
+     * Applies trait to all vertices and all future vertices.
      * @param traits to add to vertices and all future vertices
      */
     void vertexTraits(Class... traits) {
@@ -298,8 +298,8 @@ class Graph {
      *     <dt>connectsTo</dt>
      *     <dd>list of vertex names the vertex should connect to. Edges will be created with edge.one equal to the
      *     vertex name and edge.two equals to the 'connectTo' name.</dd>
-     *     <dt>traits</dt>
-     *     <dd>groovy traits to apply on the vertex delegate</dd>
+     *     <dt>trait</dt>
+     *     <dd>groovy trait to apply on the vertex delegate</dd>
      *     <dt>runnerCode</dt>
      *     <dd>closure to run after the vertex has been created. This can be used to configure the vertex with more
      *     complex operations.</dd>
@@ -322,8 +322,8 @@ class Graph {
      *     <dd>renames the vertex</dd>
      *     <dt>{@code void rename(NameSpec newName)}</dt>
      *     <dd>renames the vertex using a NameSpec</dd>
-     *     <dt>{@code void traits(Class... traits)}</dt>
-     *     <dd>applies traits to the vertex</dd>
+     *     <dt>{@code void trait(Class... trait)}</dt>
+     *     <dd>applies trait to the vertex</dd>
      *     <dt>{@code void connectsTo(String... names)}</dt>
      *     <dd>Connects the vertex to other vertices. If they do not exist they are created.</dd>
      *     <dt>{@code void connectsTo(ConfigSpec... specs)}</dt>
@@ -433,7 +433,7 @@ class Graph {
     }
 
     /**
-     * Applies traits to all edges and all future edges.
+     * Applies trait to all edges and all future edges.
      * @param traits to add to all edges and all future edges
      */
     void edgeTraits(Class... traits) {
@@ -640,7 +640,9 @@ class Graph {
      * @return set of adjacent edges.
      */
     Set<? extends Edge> adjacentEdges(String name) {
-        adjacentEdges(new NameSpec(name:name))
+        edges.findAll {
+            name == it.one || name == it.two
+        }
     }
 
     /**
@@ -649,9 +651,7 @@ class Graph {
      * @return set of adjacent edges.
      */
     Set<? extends Edge> adjacentEdges(NameSpec name) {
-        edges.findAll {
-            name.name == it.one || name.name == it.two
-        }
+        adjacentEdges(name.name)
     }
 
     /**
@@ -661,6 +661,15 @@ class Graph {
      */
     Set<? extends Edge> traverseEdges(String name) {
         adjacentEdges(name)
+    }
+
+    /**
+     * Returns edges from vertex with name that should be traversed.
+     * @param name
+     * @return
+     */
+    Set<? extends Edge> traverseEdges(NameSpec name) {
+        traverseEdges(name.name)
     }
 
     /**
@@ -694,8 +703,7 @@ class Graph {
      * @return result of the traversal
      */
     Traversal depthFirstTraversal(NameSpec root, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
-        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(root.name, specClosure)
-        traversal(this.&depthFirstTraversalConnected, spec)
+        depthFirstTraversal(root.name, specClosure)
     }
 
     /**
@@ -706,7 +714,7 @@ class Graph {
      * DepthFirstTraversalSpec in this closure to change the behavior of the depth first traversal.
      * @return resulting specification
      */
-    DepthFirstTraversalSpec depthFirstTraversalSpec(String root = null, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
+    private DepthFirstTraversalSpec depthFirstTraversalSpec(String root = null, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
         DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()
         spec.root = root
         specClosure.delegate = spec
@@ -721,7 +729,7 @@ class Graph {
      * in the spec it defaults to the result of calling {@link #getUnvisitedVertexName(Map)} with spec.colors.
      * @param spec the {@link TraversalSpec} to configure with defaults.
      */
-    void setupSpec(TraversalSpec spec) {
+    private void setupSpec(TraversalSpec spec) {
         spec.colors = spec.colors ?: makeColorMap()
         spec.root = spec.root ?: getUnvisitedVertexName(spec.colors)
     }
@@ -734,7 +742,7 @@ class Graph {
      * BreadthFirstTraversalSpec in this closure to change the behavior of the depth first traversal.
      * @return resulting specification
      */
-    BreadthFirstTraversalSpec breadthFirstTraversalSpec(String root = null, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
+    private BreadthFirstTraversalSpec breadthFirstTraversalSpec(String root = null, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
         BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()
         spec.root = root
         specClosure.delegate = spec
@@ -753,7 +761,7 @@ class Graph {
      * @param spec
      * @return null or a Traversal value
      */
-    Traversal traversal(traversalConnected, TraversalSpec spec) {
+    protected Traversal traversal(traversalConnected, TraversalSpec spec) {
         spec.roots = [] as Set
         while (spec.root) {
             Traversal traversal = traversalConnected(spec)
@@ -776,7 +784,7 @@ class Graph {
      * @param spec the DepthFirstTraversalSpec
      * @return null or a Traversal value
      */
-    Traversal depthFirstTraversalConnected(DepthFirstTraversalSpec spec) {
+    private Traversal depthFirstTraversalConnected(DepthFirstTraversalSpec spec) {
         def root = spec.root
         if (spec.preorder && spec.preorder(vertices[root]) == Traversal.STOP) {
             spec.colors[root] = TraversalColor.GREY
@@ -952,8 +960,7 @@ class Graph {
     }
 
     Traversal breadthFirstTraversal(NameSpec root, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
-        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(root.name, specClosure)
-        traversal(this.&breadthFirstTraversalConnected, spec)
+        breadthFirstTraversal(root.name, specClosure)
     }
 
     /**
@@ -966,7 +973,7 @@ class Graph {
      * @param spec the BreadthFirstTraversalSpec
      * @return null or a Traversal value
      */
-    Traversal breadthFirstTraversalConnected(BreadthFirstTraversalSpec spec) {
+    private Traversal breadthFirstTraversalConnected(BreadthFirstTraversalSpec spec) {
         if (!vertices[spec.root]) {
             throw new IllegalArgumentException("Could not find $spec.root in graph")
         }

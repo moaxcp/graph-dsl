@@ -1,4 +1,4 @@
-package graph
+package graph.trait
 
 /**
  * Adds a value to {@link Vertex} and {@link Edge} delegates.

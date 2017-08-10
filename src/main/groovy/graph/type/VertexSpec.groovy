@@ -34,10 +34,10 @@ class VertexSpec {
      * <p>
      * name - the name of the vertex to create or update<br>
      * rename - what to rename the vertex<br>
-     * traits - list of traits to be applied to the {@link graph.Vertex}<br>
+     * trait - list of trait to be applied to the {@link graph.Vertex}<br>
      * connectsTo - list of vertices to connect the {@link graph.Vertex} to. The vertex is edge.one<br>
      * connectsFrom - list of vertices to connect the {@link graph.Vertex} to. The vertex is edge.two<br>
-     * runnerCode - closure to be applied to the {@link graph.Vertex} after traits and edges are created.
+     * runnerCode - closure to be applied to the {@link graph.Vertex} after trait and edges are created.
      * <p>
      * All other values are ignored.
      * @param map
@@ -61,7 +61,7 @@ class VertexSpec {
     }
 
     /**
-     * The set of traits that should be applied to the {@link graph.Vertex}.
+     * The set of trait that should be applied to the {@link graph.Vertex}.
      * @return
      */
     Set<Class> getTraits() {
@@ -85,7 +85,7 @@ class VertexSpec {
     }
 
     /**
-     * Adds to the set of traits to be applied to the {@link graph.Vertex}.
+     * Adds to the set of trait to be applied to the {@link graph.Vertex}.
      * @param traits - added to the set
      */
     void traits(Class... traits) {
@@ -114,7 +114,7 @@ class VertexSpec {
      * this order:
      * <p>
      * 1. renames vertex to rename if set<br>
-     * 2. applies traits to the vertex<br>
+     * 2. applies trait to the vertex<br>
      * 3. creates edges between the vertex and connectsTo where the vertex is edge.one<br>
      * 4. creates edges between the vertex and connectsFrom where the vertex is edge.two<br>
      * @param graph

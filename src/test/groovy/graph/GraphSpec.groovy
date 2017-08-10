@@ -1,5 +1,6 @@
 package graph
 
+import graph.trait.Mapping
 import graph.type.directed.DirectedEdge
 import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification

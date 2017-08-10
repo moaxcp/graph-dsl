@@ -1,4 +1,4 @@
-package graph.type.undirected
+package graph.type
 
 import graph.Vertex
 import graph.VertexFactory

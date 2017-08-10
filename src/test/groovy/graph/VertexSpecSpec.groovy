@@ -1,5 +1,7 @@
 package graph
 
+import graph.trait.Mapping
+import graph.trait.Weight
 import graph.type.VertexSpec
 import spock.lang.Specification
 

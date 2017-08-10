@@ -1,6 +1,7 @@
 package graph
 
 import graph.plugin.EdgeWeightPlugin
+import graph.trait.Weight
 import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
 

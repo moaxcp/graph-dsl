@@ -33,7 +33,7 @@ class VertexSpecCodeRunner {
     }
 
     /**
-     * Adds traits to the vertex.
+     * Adds trait to the vertex.
      * @param traits
      */
     void traits(Class... traits) {

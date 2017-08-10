@@ -1,4 +1,4 @@
-package graph
+package graph.trait
 
 /**
  * Delegates propertyMissing methods to a map.

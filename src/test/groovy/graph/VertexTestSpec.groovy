@@ -1,5 +1,7 @@
 package graph
 
+import graph.trait.Value
+import graph.trait.Weight
 import spock.lang.Specification
 
 class VertexTestSpec extends Specification {

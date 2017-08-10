@@ -1,5 +1,7 @@
 package graph
 
+import graph.trait.Mapping
+import graph.trait.Weight
 import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
 import static Graph.graph

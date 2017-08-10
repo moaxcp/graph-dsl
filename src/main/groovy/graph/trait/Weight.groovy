@@ -1,4 +1,4 @@
-package graph
+package graph.trait
 
 /**
  * Adds a weight attribute to {@link Vertex} and {@link Edge} objects.

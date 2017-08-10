@@ -25,7 +25,7 @@ class Edge {
     }
 
     /**
-     * applies traits to the delegate.
+     * applies trait to the delegate.
      * @param traits
      * @return
      */

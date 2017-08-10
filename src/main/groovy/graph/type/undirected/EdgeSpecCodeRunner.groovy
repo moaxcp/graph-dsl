@@ -66,7 +66,7 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * Adds traits to the edge.
+     * Adds trait to the edge.
      * @param traits
      */
     void traits(Class... traits) {

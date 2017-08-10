@@ -7,7 +7,7 @@ import graph.type.undirected.EdgeSpecCodeRunner
 
 /**
  * Specification class that helps edge methods in {@link Graph} objects create or update {@link Edge} objects. The
- * specification describes what {@link Edge} to create or update, If one and two should be renamed, and what traits to
+ * specification describes what {@link Edge} to create or update, If one and two should be renamed, and what trait to
  * apply to the {@link Edge}. runnerCode is a closure that will be run using an {@link EdgeSpecCodeRunner}.
  */
 class EdgeSpec {
@@ -43,7 +43,7 @@ class EdgeSpec {
      * two - the second vertex name in the {@link graph.Edge}<br>
      * renameOne - vertex name to rename one to in the {@link graph.Edge}<br>
      * renameTwo - vertex name to rename two to in the {@link graph.Edge}<br>
-     * traits - list of traits to be applied to the {@link graph.Edge}<br>
+     * trait - list of trait to be applied to the {@link graph.Edge}<br>
      * runnerCode - closure to be applied to the {@link graph.Graph} and {@link graph.Edge} using a {@link EdgeSpecCodeRunner}
      * </p>
      * one and two should always exist in any EdgeSpec applied to the graph. In those cases the map should have one and
@@ -66,7 +66,7 @@ class EdgeSpec {
     }
 
     /**
-     * The set of traits that will be applied to the {@link graph.Edge}.
+     * The set of trait that will be applied to the {@link graph.Edge}.
      * @return
      */
     Set<Class> getTraits() {
@@ -82,7 +82,7 @@ class EdgeSpec {
     }
 
     /**
-     * Adds to the set of traits that will be applied to the {@link graph.Edge}.
+     * Adds to the set of trait that will be applied to the {@link graph.Edge}.
      * @param traits - added to the set
      */
     void traits(Class... traits) {
@@ -104,7 +104,7 @@ class EdgeSpec {
      * 2. creates or gets the vertices one and two point to<br>
      * 3. if renameOne is set, renames one and creates or gets the vertex<br>
      * 4. if renameTwo is set, renames two and creates or gets the vertex<br>
-     * 5. adds any traits to the edge's delegate using {@link graph.Edge#delegateAs(Class [ ])}<br>
+     * 5. adds any trait to the edge's delegate using {@link graph.Edge#delegateAs(Class [ ])}<br>
      * 6. runs runnerCodeClosure against the graph and edge using a new {@link EdgeSpecCodeRunner}<br>
      * 7. returns the edge<br>
      * </p>
@@ -124,6 +124,7 @@ class EdgeSpec {
 
         if (edge) {
             if (renameOne || renameTwo) {
+                //need to delete and re-add edge to reset hashcode in LinkedHash.
                 graph.deleteEdge(edge.one, edge.two)
             }
         } else {
@@ -147,6 +148,7 @@ class EdgeSpec {
             edge.delegateAs(this.traitsSet as Class[])
         }
 
+        //todo not sure this class should be here since addEdge is @PackageScope. May be better to not use LinkedHashMap for edges.
         graph.addEdge(edge)
 
         if (runnerCodeClosure) {

@@ -1,5 +1,6 @@
 package graph
 
+import graph.trait.Mapping
 import spock.lang.Specification
 
 class GraphEdgeSpec extends Specification {
