@@ -9,8 +9,8 @@ import graph.trait.Mapping
 class EdgeMapPlugin implements Plugin {
 
     /**
-     * applies the {@link Mapping} trait to all edges in the graph. Creates a new {@link graph.EdgeFactory} that will add
-     * the {@link Mapping} trait to any new edges created.
+     * applies the {@link Mapping} trait to all edges in the graph. Creates a new {@link graph.EdgeFactory} that will
+     * add the {@link Mapping} trait to any new edges created.
      * @param graph this plugin is applied to.
      */
     @Override

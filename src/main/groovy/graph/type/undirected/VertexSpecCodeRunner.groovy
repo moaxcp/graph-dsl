@@ -11,8 +11,29 @@ import graph.type.VertexSpec
  * the closure. Method and property missing is delegated to the {@link Vertex}.
  */
 class VertexSpecCodeRunner {
-    Graph graph
-    Vertex vertex
+    private Graph graph
+    private Vertex vertex
+
+    VertexSpecCodeRunner(Graph graph, Vertex vertex) {
+        this.graph = graph
+        this.vertex = vertex
+    }
+
+    /**
+     * Gets the graph the {@link Vertex} has been added to. This can be used inside the runnerCode to access the graph.
+     * @return the graph the {@link Vertex} has been added to.
+     */
+    Graph getGraph() {
+        graph
+    }
+
+    /**
+     * Gets the {@link Vertex} that has been added. This can be used inside the runnerCode to access the vertex.
+     * @return the vertex that has been added.
+     */
+    Vertex getVertex() {
+        return vertex
+    }
 
     /**
      * renames the vertex to newName

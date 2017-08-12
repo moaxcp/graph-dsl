@@ -13,6 +13,11 @@ class EdgeSpecCodeRunner {
     private Graph graph
     private Edge edge
 
+    EdgeSpecCodeRunner(Graph graph, Edge edge) {
+        this.graph = graph
+        this.edge = edge
+    }
+
     /**
      * Gets the graph the {@link Edge} has been added to. This can be used inside the runnerCode to access the graph.
      * @return the graph the {@link Edge} has been added to.
@@ -21,6 +26,7 @@ class EdgeSpecCodeRunner {
         graph
     }
 
+    //todo edge returned should not be able to set one or two. A trait can be applied to prevent this. This is an issue on all edge methods.
     /**
      * Gets the {@link Edge} that has been added. This can be used inside the runnerCode to access the edge.
      * @return the edge that has been added.

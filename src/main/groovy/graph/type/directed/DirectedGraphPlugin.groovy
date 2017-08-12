@@ -59,7 +59,7 @@ class DirectedGraphPlugin implements Plugin {
         }
 
         graph.edgeFactory = new DirectedEdgeFactory()
-        graph.vertexSpecFactory = new DirectedVertexSpecFactory();
+        graph.vertexSpecFactory = new DirectedVertexSpecFactory()
 
         graph.metaClass.inEdges = this.&inEdges.curry(graph)
         graph.metaClass.inDegree = this.&inDegree.curry(graph)

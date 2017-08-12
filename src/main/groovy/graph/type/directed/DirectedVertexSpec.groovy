@@ -6,13 +6,23 @@ import graph.Vertex
 import graph.type.VertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
 
+/**
+ * Provides configuration for a directed graph vertex.
+ */
 class DirectedVertexSpec extends VertexSpec {
     private final Set<String> connectsFromSet = [] as Set<String>
 
+    /**
+     * creates a new DirectedVertexSpec.
+     */
     DirectedVertexSpec() {
 
     }
 
+    /**
+     * Creates a new DirectedVertexSpec from map.
+     * @param map
+     */
     DirectedVertexSpec(Map<String, ?> map) {
         super(map)
 
@@ -22,7 +32,8 @@ class DirectedVertexSpec extends VertexSpec {
     }
 
     /**
-     * The set of edges to create between the {@link graph.Vertex} and other vertices. The {@link graph.Vertex} will be edge.two.
+     * The set of edges to create between the {@link graph.Vertex} and other vertices. The {@link graph.Vertex} will be
+     * edge.two.
      * @return The names of vertices the {@link graph.Vertex} should connect to.
      */
     Set<String> getConnectsFrom() {
@@ -38,6 +49,12 @@ class DirectedVertexSpec extends VertexSpec {
         connectsFromSet.addAll(names)
     }
 
+    /**
+     * Applies this specification to the graph. If runnerCode is set It will be run with a
+     * {@link DirectedVertexSpecCodeRunner}.
+     * @param graph
+     * @return
+     */
     Vertex apply(Graph graph) {
         if (!name) {
             throw new IllegalArgumentException('!name failed. Name must be groovy truth.')
@@ -59,13 +76,18 @@ class DirectedVertexSpec extends VertexSpec {
         }
 
         if (runnerCode) {
-            VertexSpecCodeRunner runner = new DirectedVertexSpecCodeRunner(graph: graph, vertex: vertex)
+            VertexSpecCodeRunner runner = new DirectedVertexSpecCodeRunner(graph, vertex)
             runner.runCode(runnerCode)
         }
 
         vertex
     }
 
+    /**
+     * Overlays this specification with spec.
+     * @param spec
+     * @return
+     */
     VertexSpec overlay(DirectedVertexSpec spec) {
         VertexSpec next = new DirectedVertexSpec()
         next.name = spec.name ?: name

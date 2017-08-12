@@ -12,7 +12,7 @@ class EdgeSpecCodeRunnerSpec extends Specification {
 
     def setup() {
         edge = graph.edge('step1', 'step2')
-        runner = new EdgeSpecCodeRunner(graph:graph, edge:edge)
+        runner = new EdgeSpecCodeRunner(graph, edge)
     }
 
     def 'can renameOne'() {

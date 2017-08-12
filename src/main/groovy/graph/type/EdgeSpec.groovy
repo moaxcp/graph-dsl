@@ -44,7 +44,8 @@ class EdgeSpec {
      * renameOne - vertex name to rename one to in the {@link graph.Edge}<br>
      * renameTwo - vertex name to rename two to in the {@link graph.Edge}<br>
      * trait - list of trait to be applied to the {@link graph.Edge}<br>
-     * runnerCode - closure to be applied to the {@link graph.Graph} and {@link graph.Edge} using a {@link EdgeSpecCodeRunner}
+     * runnerCode - closure to be applied to the {@link graph.Graph} and {@link graph.Edge} using a
+     * {@link EdgeSpecCodeRunner}
      * </p>
      * one and two should always exist in any EdgeSpec applied to the graph. In those cases the map should have one and
      * two set.
@@ -148,11 +149,14 @@ class EdgeSpec {
             edge.delegateAs(this.traitsSet as Class[])
         }
 
-        //todo not sure this class should be here since addEdge is @PackageScope. May be better to not use LinkedHashMap for edges.
+        /*
+         * todo not sure this class should be here since addEdge is @PackageScope. May be better to not use
+         * LinkedHashMap for edges.
+         */
         graph.addEdge(edge)
 
         if (runnerCodeClosure) {
-            EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph:graph, edge:edge)
+            EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph, edge)
             runner.runCode(runnerCodeClosure)
         }
 

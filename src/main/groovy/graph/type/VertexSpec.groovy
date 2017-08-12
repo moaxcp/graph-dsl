@@ -25,6 +25,9 @@ class VertexSpec {
     private final Set<String> connectsToSet = [] as Set<String>
     private Closure runnerCodeClosure
 
+    /**
+     * Creates a new {@link VertexSpec}.
+     */
     VertexSpec() {
 
     }
@@ -69,7 +72,8 @@ class VertexSpec {
     }
 
     /**
-     * The set of edges to create between the {@link graph.Vertex} and other vertices. The {@link graph.Vertex} will be edge.one.
+     * The set of edges to create between the {@link graph.Vertex} and other vertices. The {@link graph.Vertex} will be
+     * edge.one.
      * @return The names of vertices the {@link graph.Vertex} should connect to.
      */
     Set<String> getConnectsTo() {
@@ -110,8 +114,8 @@ class VertexSpec {
     }
 
     /**
-     * Applies this {@link VertexSpec} to the {@link graph.Vertex} and {@link graph.Graph}. Members from this spec are applied in
-     * this order:
+     * Applies this {@link VertexSpec} to the {@link graph.Vertex} and {@link graph.Graph}. Members from this spec are
+     * applied in this order:
      * <p>
      * 1. renames vertex to rename if set<br>
      * 2. applies trait to the vertex<br>
@@ -137,7 +141,7 @@ class VertexSpec {
         }
 
         if (runnerCodeClosure) {
-            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph: graph, vertex: vertex)
+            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph, vertex)
             runner.runCode(runnerCodeClosure)
         }
 

@@ -12,7 +12,7 @@ class VertexSpecRunnerSpec extends Specification {
 
     def setup() {
         vertex = graph.vertex('step1')
-        runner = new VertexSpecCodeRunner(graph:graph, vertex:vertex)
+        runner = new VertexSpecCodeRunner(graph, vertex)
     }
 
     def 'can rename'() {
