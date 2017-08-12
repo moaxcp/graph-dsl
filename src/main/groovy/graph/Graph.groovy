@@ -662,8 +662,8 @@ class Graph {
     /**
      * returns the name of first unvisited child vertex with a parent matching parentName.
      *
-     * @param parentName the name of the parent vertex to start searching from
-     * @param colors a map of vertex name entries with the value of the TraversalColor
+     * @param parentName  the name of the parent vertex to start searching from
+     * @param colors  a map of vertex name entries with the value of the TraversalColor
      * @return the name of the first unvisited child vertex
      */
     String getUnvisitedChildName(String parentName, Map<String, TraversalColor> colors) {
@@ -681,12 +681,23 @@ class Graph {
         parentName == edge.one ? edge.two : edge.one
     }
 
+    /**
+     * returns the name of first unvisited child vertex with a parent matching parentName.
+     * @param spec  the name of the parent vertex to start searching from
+     * @param colors  a map of vertex name entries with the value of the TraversalColor
+     * @return the name of the first unvisited child vertex
+     */
     String getUnvisitedChildName(NameSpec spec, Map<String, TraversalColor> colors) {
         getUnvisitedChildName(spec.name, colors)
     }
 
+    /**
+     * returns the name of first unvisited child vertex with a parent matching parentName.
+     * @param spec  configuration containing a name for the parent and TraversalColors for each vertex
+     * @return the name of the first unvisited child vertex
+     */
     String getUnvisitedChildName(ConfigSpec spec) {
-        getUnvisitedChildName(spec.name, spec.map)
+        getUnvisitedChildName((String) spec.map.name, spec.map)
     }
 
     /**
@@ -874,20 +885,12 @@ class Graph {
     }
 
     /**
-     * executes closure on each {@link Vertex} in breadth first order. See {@link #breadthFirstTraversal} for details.
-     * @param closure
-     */
-    void eachBfs(Closure closure) {
-        eachBfs(null, closure)
-    }
-
-    /**
      * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}. See
      * {@link #breadthFirstTraversal} for details.
-     * @param root
-     * @param closure
+     * @param root  vertex to start breadth first traversal
+     * @param closure  execute on each {@link Vertex}
      */
-    void eachBfs(String root, Closure closure) {
+    void eachBfs(String root = null, Closure closure) {
         breadthFirstTraversal {
             delegate.root = root
             visit { vertex ->
@@ -898,23 +901,22 @@ class Graph {
     }
 
     /**
-     * Executes closure on each {@link Vertex} in breadth first order. If the closure returns true the {@link Vertex} is
-     * returned.
-     * @param closure closure to execute on each {@link Vertex}
-     * @return first {@link Vertex} where closure returns true
+     * executes closure on each {@link Vertex} in breadth first order. See {@link #breadthFirstTraversal} for details.
+     * @param root  vertex to start breadth first traversal
+     * @param closure  execute on each {@link Vertex}
      */
-    Vertex findBfs(Closure closure) {
-        findBfs(null, closure)
+    void eachBfs(NameSpec root, Closure closure) {
+        eachBfs(root.name, closure)
     }
 
     /**
      * Executes closure on each {@link Vertex} in breadth first order starting at root. If the closure returns true the
      * {@link Vertex} is returned.
-     * @param root where to start breadth first traversal
-     * @param closure closure to execute on each {@link Vertex}
+     * @param root  vertex to start breadth first traversal
+     * @param closure  execute on each {@link Vertex}
      * @return first {@link Vertex} where closure returns true
      */
-    Vertex findBfs(String root, Closure closure) {
+    Vertex findBfs(String root = null, Closure closure) {
         Vertex result = null
         breadthFirstTraversal {
             delegate.root = root
@@ -929,25 +931,25 @@ class Graph {
     }
 
     /**
-     * Executes closure on each vertex in breadth first order. object is the initial value passed to the closure. Each
-     * returned value from the closure is passed to the next call.
-     * @param object
-     * @param closure
-     * @return object returned from the final call to closure.
+     * Executes closure on each {@link Vertex} in breadth first order starting at root. If the closure returns true the
+     * {@link Vertex} is returned.
+     * @param root  vertex to start breadth first traversal
+     * @param closure  execute on each {@link Vertex}
+     * @return first {@link Vertex} where closure returns true
      */
-    Object injectBfs(Object object, Closure closure) {
-        injectBfs(null, object, closure)
+    Vertex findBfs(NameSpec root, Closure closure) {
+        findBfs(root.name, closure)
     }
 
     /**
      * Executes closure on each vertex in breadth first order starting at root. object is the initial value passed to
      * the closure. Each returned value from the closure is passed to the next call.
-     * @param root
-     * @param object
-     * @param closure
+     * @param root  vertex to start breadth first traversal
+     * @param object  initial value passed to the closure
+     * @param closure  execute on each {@link Vertex}
      * @return object returned from the final call to closure.
      */
-    Object injectBfs(String root, Object object, Closure closure) {
+    Object injectBfs(String root = null, Object object, Closure closure) {
         Object result = object
         breadthFirstTraversal {
             delegate.root = root
@@ -959,23 +961,32 @@ class Graph {
     }
 
     /**
-     * Runs closure on each vertex in breadth first order. The vertices where closure returns true are returned.
-     * @param closure to run on each vertex
-     * @return the vertices where closure returns true
+     * Executes closure on each vertex in breadth first order starting at root. object is the initial value passed to
+     * the closure. Each returned value from the closure is passed to the next call.
+     * @param root  vertex to start breadth first traversal
+     * @param object  initial value passed to the closure
+     * @param closure  execute on each {@link Vertex}
+     * @return object returned from the final call to closure.
      */
-    List<? extends Vertex> findAllBfs(Closure closure) {
-        findAllBfs(null, closure)
+    Object injectBfs(NameSpec root, Object object, Closure closure) {
+        injectBfs(root.name, object, closure)
     }
 
     /**
      * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are
      * returned.
-     * @param root the vertex to start from
-     * @param closure to run on each vertex
+     * @param root  vertex to start breadth first traversal
+     * @param closure  execute on each {@link Vertex}
      * @return the vertices where closure returns true
      */
-    List<? extends Vertex> findAllBfs(String root, Closure closure) {
-        (List<? extends Vertex>) injectBfs(root, []) { result, vertex ->
+    List<? extends Vertex> findAllBfs(String root = null, Closure closure) {
+        Closure inject = null
+        if(root) {
+            inject = this.&injectBfs.curry(root)
+        } else {
+            inject = this.&injectBfs
+        }
+        (List<? extends Vertex>) inject([]) { result, vertex ->
             if (closure(vertex)) {
                 result << vertex
             }
@@ -983,25 +994,47 @@ class Graph {
         }
     }
 
+
     /**
-     * Runs closure on each vertex in breadth first order collecting the result.
-     * @param closure to run on each vertex
-     * @return the results from closure
+     * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are
+     * returned.
+     * @param root  vertex to start breadth first traversal
+     * @param closure  execute on each {@link Vertex}
+     * @return the vertices where closure returns true
      */
-    List<? extends Vertex> collectBfs(Closure closure) {
-        collectBfs(null, closure)
+    List<? extends Vertex> findAllBfs(NameSpec root, Closure closure) {
+        findAllBfs(root.name, closure)
     }
 
     /**
-     * Runs closure on each vertex in breadth first order, starting at root, collecting the result.
-     * @param root vertex to start at
-     * @param closure to run on each vertex
-     * @return the results from closure
+     * Runs closure on each vertex in breadth first order, starting at root, collecting returned values from the
+     * closure.
+     * @param root  vertex to start breadth first traversal
+     * @param closure  execute on each {@link Vertex}
+     * @return values returned from each execution of closure
      */
-    List<? extends Vertex> collectBfs(String root, Closure closure) {
-        (List<? extends Vertex>) injectBfs(root, []) { result, vertex ->
+    List<?> collectBfs(String root = null, Closure closure) {
+        Closure inject = null
+        if(root) {
+            inject = this.&injectBfs.curry(root)
+        } else {
+            inject = this.&injectBfs
+        }
+        (List<? extends Vertex>) inject([]) { result, vertex ->
             result << closure(vertex)
         }
+    }
+
+
+    /**
+     * Runs closure on each vertex in breadth first order, starting at root, collecting returned values from the
+     * closure.
+     * @param root  vertex to start breadth first traversal
+     * @param closure  execute on each {@link Vertex}
+     * @return values returned from each execution of closure
+     */
+    List<?> collectBfs(NameSpec root, Closure closure) {
+        collectBfs(root.name, closure)
     }
 
     /**
