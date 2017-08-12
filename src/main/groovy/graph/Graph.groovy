@@ -214,9 +214,8 @@ class Graph {
      * @throws {@link IllegalArgumentException} When name is null or empty.
      */
     Vertex vertex(String name) {
-        VertexSpec next = VertexSpec.newInstance(name:name)
-        next.traits(vertexTraitsSet as Class[])
-        next.apply(this)
+        ConfigSpec spec = new ConfigSpec(map:[name:name])
+        vertex(spec)
     }
 
     /**
@@ -442,8 +441,8 @@ class Graph {
         } else {
             spec.map.traits = new ArrayList(vertexTraitsSet)
         }
-        VertexSpec vspec = vertexSpecFactory.newVertexSpec(spec)
-        vspec.apply(this)
+        VertexSpec vspec = vertexSpecFactory.newVertexSpec(this, spec)
+        vspec.apply()
     }
 
     /**

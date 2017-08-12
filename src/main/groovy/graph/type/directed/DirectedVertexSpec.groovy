@@ -16,11 +16,26 @@ class DirectedVertexSpec extends VertexSpec {
      * Creates a new DirectedVertexSpec from map.
      * @param map
      */
-    DirectedVertexSpec(Map<String, ?> map) {
-        super(map)
+    DirectedVertexSpec(Graph graph, Map<String, ?> map) {
+        super(graph, map)
+        init(map)
+    }
 
+    private void init(Map<String, ?> map) {
         map.connectsFrom?.each {
             connectsFromSet.addAll((String) (it instanceof NameSpec ? it.name : it))
+        }
+    }
+
+    DirectedVertexSpec(Graph graph, Map<String, ?> map, Closure closure) {
+        super(graph, map, closure)
+        init(map)
+    }
+
+    void applyClosure() {
+        if (closure) {
+            VertexSpecCodeRunner runner = new DirectedVertexSpecCodeRunner(graph, vertex)
+            runner.runCode(closure)
         }
     }
 
@@ -30,31 +45,17 @@ class DirectedVertexSpec extends VertexSpec {
      * @param graph
      * @return
      */
-    Vertex apply(Graph graph) {
-        if (!name) {
-            throw new IllegalArgumentException('!name failed. Name must be groovy truth.')
-        }
-        Vertex vertex = graph.vertices[name] ?: graph.vertexFactory.newVertex(name)
-        graph.addVertex(vertex)
+    Vertex apply() {
 
-        if (rename) {
-            graph.rename(name, rename)
-        }
-        if (traits) {
-            vertex.delegateAs(traits as Class[])
-        }
-        connectsTo.each {
-            graph.edge vertex.name, it
-        }
+        applyVertex()
+        applyRename()
+        applyTraits()
+        applyConnectsTo()
         connectsFromSet.each {
             graph.edge it, vertex.name
         }
 
-        if (runnerCode) {
-            VertexSpecCodeRunner runner = new DirectedVertexSpecCodeRunner(graph, vertex)
-            runner.runCode(runnerCode)
-        }
-
+        applyClosure()
         vertex
     }
 }

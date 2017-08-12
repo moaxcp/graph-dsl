@@ -20,7 +20,7 @@ class GraphVertexSpec extends Specification {
         graph.vertex ''
 
         then:
-        thrown IllegalArgumentException
+        thrown IllegalStateException
     }
 
     def 'can add/get with vertex(String)'() {

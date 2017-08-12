@@ -1,6 +1,7 @@
 package graph.type.directed
 
 import graph.ConfigSpec
+import graph.Graph
 import graph.type.VertexSpec
 import graph.type.VertexSpecFactory
 
@@ -15,8 +16,8 @@ class DirectedVertexSpecFactory implements VertexSpecFactory {
      * @return
      */
     @Override
-    VertexSpec newVertexSpec(Map<String, ?> map) {
-        new DirectedVertexSpec(map)
+    VertexSpec newVertexSpec(Graph graph, Map<String, ?> map) {
+        new DirectedVertexSpec(graph, map)
     }
 
     /**
@@ -25,9 +26,7 @@ class DirectedVertexSpecFactory implements VertexSpecFactory {
      * @return
      */
     @Override
-    VertexSpec newVertexSpec(ConfigSpec spec) {
-        VertexSpec vspec = new DirectedVertexSpec(spec.map)
-        vspec.runnerCode spec.closure
-        vspec
+    VertexSpec newVertexSpec(Graph graph, ConfigSpec spec) {
+        new DirectedVertexSpec(graph, spec.map, spec.closure)
     }
 }

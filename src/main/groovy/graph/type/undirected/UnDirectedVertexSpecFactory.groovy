@@ -1,6 +1,7 @@
 package graph.type.undirected
 
 import graph.ConfigSpec
+import graph.Graph
 import graph.type.VertexSpec
 import graph.type.VertexSpecFactory
 
@@ -15,8 +16,8 @@ class UnDirectedVertexSpecFactory implements VertexSpecFactory {
      * @return
      */
     @Override
-    VertexSpec newVertexSpec(Map<String, ?> map) {
-        new VertexSpec(map)
+    VertexSpec newVertexSpec(Graph graph, Map<String, ?> map) {
+        new VertexSpec(graph, map)
     }
 
     /**
@@ -25,11 +26,7 @@ class UnDirectedVertexSpecFactory implements VertexSpecFactory {
      * @return
      */
     @Override
-    VertexSpec newVertexSpec(ConfigSpec spec) {
-        VertexSpec vspec = new VertexSpec(spec.map)
-        if(!vspec.runnerCode) {
-            vspec.runnerCode spec.closure
-        }
-        vspec
+    VertexSpec newVertexSpec(Graph graph, ConfigSpec spec) {
+        new VertexSpec(graph, spec.map, spec.closure)
     }
 }

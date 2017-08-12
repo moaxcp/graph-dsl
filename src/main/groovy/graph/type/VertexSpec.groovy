@@ -9,10 +9,10 @@ import graph.type.undirected.VertexSpecCodeRunner
 /*
  * TODO refactoring for ConfigSpec.
  * VertexSpec will be a single use object Once it is applied it should be discarded
- * 1. create VertexSpec with map
+ * 1. create VertexSpec with graph, map
  *      this organizes the map into values for the Vertex
  *
- * 2. create Vertex with map and closure
+ * 2. create Vertex with graph, map and closure
  *      organizes map and sets codeRunner
  *
  * 3. remove codeRunner as an option from the map
@@ -34,17 +34,10 @@ import graph.type.undirected.VertexSpecCodeRunner
  * of an update or create.
  */
 class VertexSpec {
-
-    /**
-     * The name of the {@link graph.Vertex} to create or update.
-     */
-    String name
-
-    /**
-     * The new name to give a {@link graph.Vertex}
-     */
-    String rename
-
+    private Graph graph
+    private Vertex vertex
+    private String name
+    private String rename
     private final Set<Class> traitsSet = [] as Set<Class>
     private final Set<String> connectsToSet = [] as Set<String>
     private Closure runnerCodeClosure
@@ -63,71 +56,75 @@ class VertexSpec {
      * @param map
      * @return
      */
-    VertexSpec(Map<String, ?> map) {
+    VertexSpec(Graph graph, Map<String, ?> map) {
+        this.graph = graph
         name = map.name
         rename = map.rename instanceof NameSpec ? map.rename.name : map.rename
 
-        if (map.traits) {
-            traits(map.traits as Class[])
+        map.traits?.each{
+            traitsSet.add((Class) it)
         }
 
         map.connectsTo?.each {
-            connectsTo((String) (it instanceof NameSpec ? it.name : it))
-        }
-
-        if (map.runnerCode) {
-            runnerCode(map.runnerCode)
+            connectsToSet.add((String) (it instanceof NameSpec ? it.name : it))
         }
     }
 
-    /**
-     * The set of trait that should be applied to the {@link graph.Vertex}.
-     * @return
-     */
-    Set<Class> getTraits() {
-        traitsSet
+    VertexSpec(Graph graph, Map<String, ?> map, Closure closure) {
+        this(graph, map)
+        runnerCodeClosure = closure
     }
 
-    /**
-     * The set of edges to create between the {@link graph.Vertex} and other vertices. The {@link graph.Vertex} will be
-     * edge.one.
-     * @return The names of vertices the {@link graph.Vertex} should connect to.
-     */
-    Set<String> getConnectsTo() {
-        Collections.unmodifiableSet(connectsToSet)
+    Graph getGraph() {
+        graph
     }
 
-    /**
-     * The runnerCode. This will be run against a VertexSpecCodeRunner
-     * @return
-     */
-    Closure getRunnerCode() {
-        this.runnerCodeClosure
+    Vertex getVertex() {
+        vertex
     }
 
-    /**
-     * Adds to the set of trait to be applied to the {@link graph.Vertex}.
-     * @param traits - added to the set
-     */
-    void traits(Class... traits) {
-        this.traitsSet.addAll(traits)
+    Set<String> getConnectsToSet() {
+        connectsToSet
     }
 
-    /**
-     * Adds to the names the {@link graph.Vertex} should connect to. In the resulting edge the vertex named by this spec
-     * will be edge.one.
-     * @param names
-     */
-    void connectsTo(String... names) {
-        connectsToSet.addAll(names)
+    Closure getClosure() {
+        runnerCodeClosure
     }
 
-    /**
-     * Sets the runnerCode closure.
-     * @param runnerCode
-     */
-    void runnerCode(Closure runnerCode) {
-        this.runnerCodeClosure = runnerCode
+    void applyVertex() {
+        if(vertex) {
+            throw new IllegalStateException("already ran spec")
+        }
+        if (!name) {
+            throw new IllegalStateException('!name failed. Name must be groovy truth.')
+        }
+        vertex = graph.vertices[name] ?: graph.vertexFactory.newVertex(name)
+        graph.addVertex(vertex)
+    }
+
+    void applyRename() {
+        if (rename) {
+            graph.rename(name, rename)
+        }
+    }
+
+    void applyTraits() {
+        if (traitsSet) {
+            vertex.delegateAs(traitsSet as Class[])
+        }
+    }
+
+    void applyConnectsTo() {
+        connectsToSet.each {
+            graph.edge vertex.name, it
+        }
+    }
+
+    void applyClosure() {
+        if (runnerCodeClosure) {
+            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph, vertex)
+            runner.runCode(runnerCodeClosure)
+        }
     }
 
     /**
@@ -140,28 +137,12 @@ class VertexSpec {
      * 4. creates edges between the vertex and connectsFrom where the vertex is edge.two<br>
      * @param graph
      */
-    Vertex apply(Graph graph) {
-        if (!name) {
-            throw new IllegalArgumentException('!name failed. Name must be groovy truth.')
-        }
-        Vertex vertex = graph.vertices[name] ?: graph.vertexFactory.newVertex(name)
-        graph.addVertex(vertex)
-
-        if (rename) {
-            graph.rename(name, rename)
-        }
-        if (traitsSet) {
-            vertex.delegateAs(traitsSet as Class[])
-        }
-        connectsToSet.each {
-            graph.edge vertex.name, it
-        }
-
-        if (runnerCodeClosure) {
-            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph, vertex)
-            runner.runCode(runnerCodeClosure)
-        }
-
+    Vertex apply() {
+        applyVertex()
+        applyRename()
+        applyTraits()
+        applyConnectsTo()
+        applyClosure()
         vertex
     }
 }
