@@ -42,20 +42,6 @@ class VertexSpec {
     private final Set<String> connectsToSet = [] as Set<String>
     private Closure runnerCodeClosure
 
-    /**
-     * creates a new instance of a VertexSpec using the provided Map. Valid values that can be in the Map are:
-     * <p>
-     * name - the name of the vertex to create or update<br>
-     * rename - what to rename the vertex<br>
-     * trait - list of trait to be applied to the {@link graph.Vertex}<br>
-     * connectsTo - list of vertices to connect the {@link graph.Vertex} to. The vertex is edge.one<br>
-     * connectsFrom - list of vertices to connect the {@link graph.Vertex} to. The vertex is edge.two<br>
-     * runnerCode - closure to be applied to the {@link graph.Vertex} after trait and edges are created.
-     * <p>
-     * All other values are ignored.
-     * @param map
-     * @return
-     */
     VertexSpec(Graph graph, Map<String, ?> map) {
         this.graph = graph
         name = map.name
@@ -127,16 +113,6 @@ class VertexSpec {
         }
     }
 
-    /**
-     * Applies this {@link VertexSpec} to the {@link graph.Vertex} and {@link graph.Graph}. Members from this spec are
-     * applied in this order:
-     * <p>
-     * 1. renames vertex to rename if set<br>
-     * 2. applies trait to the vertex<br>
-     * 3. creates edges between the vertex and connectsTo where the vertex is edge.one<br>
-     * 4. creates edges between the vertex and connectsFrom where the vertex is edge.two<br>
-     * @param graph
-     */
     Vertex apply() {
         applyVertex()
         applyRename()

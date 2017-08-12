@@ -1,5 +1,6 @@
-package graph
+package graph.plugin
 
+import graph.Graph
 import graph.plugin.EdgeWeightPlugin
 import graph.trait.Weight
 import graph.type.directed.DirectedGraphPlugin

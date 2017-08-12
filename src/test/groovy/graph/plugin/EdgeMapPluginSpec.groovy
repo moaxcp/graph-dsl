@@ -1,5 +1,6 @@
-package graph
+package graph.plugin
 
+import graph.Graph
 import graph.plugin.EdgeMapPlugin
 import graph.trait.Mapping
 import spock.lang.Specification

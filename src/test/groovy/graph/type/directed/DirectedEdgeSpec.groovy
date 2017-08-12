@@ -1,4 +1,4 @@
-package graph
+package graph.type.directed
 
 import graph.type.directed.DirectedEdge
 import spock.lang.Specification

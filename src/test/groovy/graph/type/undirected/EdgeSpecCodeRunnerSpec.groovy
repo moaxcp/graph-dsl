@@ -1,5 +1,7 @@
-package graph
+package graph.type.undirected
 
+import graph.Edge
+import graph.Graph
 import graph.trait.Mapping
 import graph.trait.Weight
 import graph.type.undirected.EdgeSpecCodeRunner

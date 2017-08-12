@@ -40,8 +40,8 @@ class EdgeSpecCodeRunner {
      * @param renameOne the new name for edge.one
      */
     void renameOne(String renameOne) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, renameOne:renameOne)
-        spec.apply(graph)
+        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, renameOne:renameOne])
+        spec.apply()
     }
 
     /**
@@ -49,8 +49,8 @@ class EdgeSpecCodeRunner {
      * @param renameOne  the new name for edge.one
      */
     void renameOne(NameSpec renameOne) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, renameOne:renameOne.name)
-        spec.apply(graph)
+        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, renameOne:renameOne.name])
+        spec.apply()
     }
 
     /**
@@ -58,8 +58,8 @@ class EdgeSpecCodeRunner {
      * @param renameTwo the new name for edge.two
      */
     void renameTwo(String renameTwo) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, renameTwo:renameTwo)
-        spec.apply(graph)
+        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, renameTwo:renameTwo])
+        spec.apply()
     }
 
     /**
@@ -67,8 +67,8 @@ class EdgeSpecCodeRunner {
      * @param renameTwo  the new name for edge.two
      */
     void renameTwo(NameSpec renameTwo) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, renameTwo:renameTwo.name)
-        spec.apply(graph)
+        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, renameTwo:renameTwo.name])
+        spec.apply()
     }
 
     /**
@@ -76,8 +76,8 @@ class EdgeSpecCodeRunner {
      * @param traits
      */
     void traits(Class... traits) {
-        EdgeSpec spec = EdgeSpec.newInstance(one:edge.one, two:edge.two, traits:traits)
-        spec.apply(graph)
+        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, traits:traits])
+        spec.apply()
     }
 
     /**

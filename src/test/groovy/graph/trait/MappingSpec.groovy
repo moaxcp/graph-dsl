@@ -1,5 +1,7 @@
-package graph
+package graph.trait
 
+import graph.Edge
+import graph.Vertex
 import graph.trait.Mapping
 import spock.lang.Specification
 

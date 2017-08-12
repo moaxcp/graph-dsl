@@ -1,5 +1,8 @@
-package graph
+package graph.type
 
+import graph.Edge
+import graph.Graph
+import graph.Vertex
 import graph.trait.Mapping
 import graph.trait.Weight
 import graph.type.VertexSpec

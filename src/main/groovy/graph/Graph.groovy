@@ -650,8 +650,8 @@ class Graph {
         } else {
             spec.map.traits = new ArrayList(edgeTraitsSet)
         }
-        EdgeSpec espec = edgeSpecFactory.newEdgeSpec(spec)
-        espec.apply(this)
+        EdgeSpec espec = edgeSpecFactory.newEdgeSpec(this, spec)
+        espec.apply()
     }
 
     /**
