@@ -175,10 +175,12 @@ class EdgeSpec {
         next.renameOne = spec.renameOne ?: renameOne
         next.renameTwo = spec.renameTwo ?: renameTwo
         next.traits((traitsSet + spec.traits) as Class[])
-        if (this.runnerCodeClosure) {
+        if (this.runnerCodeClosure && spec.runnerCodeClosure) {
             next.runnerCode this.runnerCodeClosure << spec.runnerCodeClosure
-        } else {
+        } else if(spec.runnerCodeClosure) {
             next.runnerCode spec.runnerCodeClosure
+        } else {
+            next.runnerCode runnerCodeClosure
         }
 
         next

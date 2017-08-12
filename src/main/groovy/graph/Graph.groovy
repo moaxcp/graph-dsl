@@ -437,8 +437,12 @@ class Graph {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(ConfigSpec spec) {
+        if(spec.map.traits) {
+            spec.map.traits.addAll(vertexTraitsSet)
+        } else {
+            spec.map.traits = new ArrayList(vertexTraitsSet)
+        }
         VertexSpec vspec = vertexSpecFactory.newVertexSpec(spec)
-        vspec.traits(vertexTraitsSet as Class[])
         vspec.apply(this)
     }
 
@@ -642,8 +646,12 @@ class Graph {
      */
     @PackageScope
     Edge configEdge(ConfigSpec spec) {
+        if(spec.map.traits) {
+            spec.map.traits.addAll(edgeTraitsSet)
+        } else {
+            spec.map.traits = new ArrayList(edgeTraitsSet)
+        }
         EdgeSpec espec = edgeSpecFactory.newEdgeSpec(spec)
-        espec.traits(edgeTraitsSet as Class[])
         espec.apply(this)
     }
 

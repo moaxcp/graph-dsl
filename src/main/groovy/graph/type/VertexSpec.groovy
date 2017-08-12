@@ -5,6 +5,30 @@ import graph.NameSpec
 import graph.Vertex
 import graph.type.undirected.VertexSpecCodeRunner
 
+
+/*
+ * TODO refactoring for ConfigSpec.
+ * VertexSpec will be a single use object Once it is applied it should be discarded
+ * 1. create VertexSpec with map
+ *      this organizes the map into values for the Vertex
+ *
+ * 2. create Vertex with map and closure
+ *      organizes map and sets codeRunner
+ *
+ * 3. remove codeRunner as an option from the map
+ *      If you want it you should use a closure in the ConfigSpec
+ *
+ * 4. apply map
+ *      This creates the Vertex from the map
+ *
+ * 5. apply codeRunner
+ *      Runs the closure against the vertex and graph
+ *
+ * 6. remove all other methods.
+ *
+ * This optimizes reuse in other types of graphs. Types can reuse the apply
+ * methods as needed. This makes it easier to test as well.
+ */
 /**
  * Specification class that helps vertex methods in {@link Graph} objects. VertexSpec is used to collect the details
  * of an update or create.
@@ -24,13 +48,6 @@ class VertexSpec {
     private final Set<Class> traitsSet = [] as Set<Class>
     private final Set<String> connectsToSet = [] as Set<String>
     private Closure runnerCodeClosure
-
-    /**
-     * Creates a new {@link VertexSpec}.
-     */
-    VertexSpec() {
-
-    }
 
     /**
      * creates a new instance of a VertexSpec using the provided Map. Valid values that can be in the Map are:
@@ -55,7 +72,7 @@ class VertexSpec {
         }
 
         map.connectsTo?.each {
-            connectsTo(it instanceof NameSpec ? it.name : it)
+            connectsTo((String) (it instanceof NameSpec ? it.name : it))
         }
 
         if (map.runnerCode) {
@@ -146,27 +163,5 @@ class VertexSpec {
         }
 
         vertex
-    }
-
-    /**
-     * Creates a new {@link VertexSpec} from members in this {@link VertexSpec} and the spec param. Members in the spec
-     * param override the members in this. The runnerCode closure is appended if set.
-     * @param spec
-     * @return A new spec
-     */
-    VertexSpec overlay(VertexSpec spec) {
-        VertexSpec next = new VertexSpec()
-        next.name = spec.name ?: name
-        next.rename = spec.rename ?: rename
-
-        next.traits((traitsSet + spec.traits) as Class[])
-        next.connectsTo((connectsToSet + spec.connectsTo) as String[])
-
-        if (this.runnerCodeClosure) {
-            next.runnerCode this.runnerCodeClosure << spec.runnerCodeClosure
-        } else {
-            next.runnerCode spec.runnerCodeClosure
-        }
-        next
     }
 }

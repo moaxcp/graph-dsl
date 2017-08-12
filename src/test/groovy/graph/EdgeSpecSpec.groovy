@@ -158,7 +158,7 @@ class EdgeSpecSpec extends Specification {
         spec.two == 'b'
     }
 
-    def 'overlay with null'() {
+    def 'overlay with first empty'() {
         setup:
         EdgeSpec first = new EdgeSpec()
         EdgeSpec second = new EdgeSpec()
@@ -167,7 +167,60 @@ class EdgeSpecSpec extends Specification {
         second.renameOne = 'step3'
         second.renameTwo = 'step4'
         second.traits Mapping
-        second.runnerCode {}
+        second.runnerCode { label = 'connect' }
+
+        when:
+        EdgeSpec result = first.overlay(second)
+
+        then:
+        result.one == 'step1'
+        result.two == 'step2'
+        result.renameOne == 'step3'
+        result.renameTwo == 'step4'
+        result.traits == [Mapping] as Set<Class>
+        result.runnerCode != null
+    }
+
+    def 'overlay with second empty'() {
+        setup:
+        EdgeSpec first = new EdgeSpec()
+        EdgeSpec second = new EdgeSpec()
+        first.one = 'step1'
+        first.two = 'step2'
+        first.renameOne = 'step3'
+        first.renameTwo = 'step4'
+        first.traits Mapping
+        first.runnerCode { label = 'connect' }
+
+        when:
+        EdgeSpec result = first.overlay(second)
+
+        then:
+        result.one == 'step1'
+        result.two == 'step2'
+        result.renameOne == 'step3'
+        result.renameTwo == 'step4'
+        result.traits == [Mapping] as Set<Class>
+        result.runnerCode != null
+    }
+
+    def 'overlay with values'() {
+        setup:
+        EdgeSpec first = new EdgeSpec()
+        EdgeSpec second = new EdgeSpec()
+        first.one = 'stepa'
+        first.two = 'stepb'
+        first.renameOne = 'stepc'
+        first.renameTwo = 'stepd'
+        first.traits Mapping
+        first.runnerCode { label = 'connect' }
+
+        second.one = 'step1'
+        second.two = 'step2'
+        second.renameOne = 'step3'
+        second.renameTwo = 'step4'
+        second.traits Mapping
+        second.runnerCode { label = 'connect' }
 
         when:
         EdgeSpec result = first.overlay(second)

@@ -1,6 +1,7 @@
 package dsl.undirected.vertex
 
 import graph.Graph
+import graph.trait.Mapping
 import spock.lang.Specification
 
 import static graph.Graph.graph

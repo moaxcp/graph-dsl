@@ -27,7 +27,9 @@ class UnDirectedVertexSpecFactory implements VertexSpecFactory {
     @Override
     VertexSpec newVertexSpec(ConfigSpec spec) {
         VertexSpec vspec = new VertexSpec(spec.map)
-        vspec.runnerCode spec.closure
+        if(!vspec.runnerCode) {
+            vspec.runnerCode spec.closure
+        }
         vspec
     }
 }
