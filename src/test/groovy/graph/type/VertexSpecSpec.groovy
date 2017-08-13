@@ -34,6 +34,18 @@ class VertexSpecSpec extends Specification {
         graph.vertices[vertex.name] == vertex
     }
 
+    def 'apply cannot be run twice'() {
+        setup:
+        VertexSpec spec = new VertexSpec(graph, [name:'step1'])
+
+        when:
+        Vertex vertex = spec.apply()
+        spec.apply()
+
+        then:
+        thrown IllegalStateException
+    }
+
     def 'apply can rename vertex'() {
         setup:
         graph.vertex 'step1'

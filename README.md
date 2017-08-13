@@ -280,6 +280,23 @@ If there are any issues contact me moaxcp@gmail.com.
 ## x.x.x
 
 * [#93](https://github.com/moaxcp/graph-dsl/issues/93)
+* runnerCode can no longer be set in map parameters to vertex and edge methods
+
+This release includes a major refactor in how graphs are built. Configurations for vertex and edge methods have been 
+refactored to use NameSpec and ConfigSpec object. A NameSpec is a wrapper for a string. It represents the name of 
+something. A ConfigSpec is a wrapper around a map and closure. It represents the configuration for something. NameSpec
+and ConfigSpec are a common interface for graph types to share. VertexSpec and EdgeSpec are now controlled by the graph
+type. Types can add new properties and methods for use in a ConfigSpec. An example of this is connectsFrom in a 
+directed graph. Graph types can override methods like connectsTo and connectsFrom to perform checks before adding
+edges. This will be important when the DAG type is added.
+
+For the first time packages have been introduced to the project.
+
+plugin - these are plugins which add functionality not related to specific types of graphs
+trait - these are traits which can be used on vertices and edges
+type - these are types of graphs and related classes
+
+With this release adding new plugins and types will become easier. Directed graph is a good example.
 
 ## 0.17.0
 

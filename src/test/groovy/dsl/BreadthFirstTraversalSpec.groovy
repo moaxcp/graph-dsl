@@ -35,7 +35,7 @@ class BreadthFirstTraversalSpec extends Specification {
         names == ['A', 'B', 'D', 'E', 'C']
     }
 
-    def 'breadth first traversal with VertexNameSpec root'() {
+    def 'breadth first traversal with NameSpec root'() {
         given:
         def names = []
         graph.with {
@@ -66,7 +66,7 @@ class BreadthFirstTraversalSpec extends Specification {
         names == ['A', 'B', 'D', 'E', 'C']
     }
 
-    def 'breadth first traversal with VertexNameSpec root param'() {
+    def 'breadth first traversal with NameSpec root param'() {
         given:
         def names = []
         graph.with {

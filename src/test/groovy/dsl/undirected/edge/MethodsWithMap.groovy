@@ -35,4 +35,34 @@ class MethodsWithMap extends Specification {
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
+
+    def 'add edge with one and two params and one and two set in map'() {
+        given:
+        Graph graph = graph {
+            edge('A', 'B', [one:'A', two:'B'])
+        }
+
+        expect:
+        graph.vertices.size() == 2
+        graph.edges.size() == 1
+        graph.vertices.A.name == 'A'
+        graph.vertices.B.name == 'B'
+        graph.edges.first().one == 'A'
+        graph.edges.first().two == 'B'
+    }
+
+    def 'add edge with one and two params and one and two set in map with closure'() {
+        given:
+        Graph graph = graph {
+            edge('A', 'B', [one:'A', two:'B']) {}
+        }
+
+        expect:
+        graph.vertices.size() == 2
+        graph.edges.size() == 1
+        graph.vertices.A.name == 'A'
+        graph.vertices.B.name == 'B'
+        graph.edges.first().one == 'A'
+        graph.edges.first().two == 'B'
+    }
 }

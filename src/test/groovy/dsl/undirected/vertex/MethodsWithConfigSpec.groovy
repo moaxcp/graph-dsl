@@ -28,4 +28,26 @@ class MethodsWithConfigSpec extends Specification {
         graph.vertices.size() == 1
         graph.vertices.A.name == 'A'
     }
+
+    def ' create using name and map with map containing name'() {
+        given:
+        Graph graph = graph {
+            vertex A(name:'B')
+        }
+
+        expect:
+        graph.vertices.size() == 1
+        graph.vertices.B.name == 'B'
+    }
+
+    def ' create using name, map, and closure with map containing name'() {
+        given:
+        Graph graph = graph {
+            vertex A(name:'B') {}
+        }
+
+        expect:
+        graph.vertices.size() == 1
+        graph.vertices.B.name == 'B'
+    }
 }

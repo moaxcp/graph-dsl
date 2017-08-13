@@ -28,4 +28,26 @@ class MethodsWithMap extends Specification {
         graph.vertices.size() == 1
         graph.vertices.A.name == 'A'
     }
+
+    def 'add with name param and name set in map'() {
+        given:
+        Graph graph = graph {
+            vertex('A', [name:'A'])
+        }
+
+        expect:
+        graph.vertices.size() == 1
+        graph.vertices.A.name == 'A'
+    }
+
+    def 'add with name param and name set in map with closure'() {
+        given:
+        Graph graph = graph {
+            vertex('A', [name:'A']) {}
+        }
+
+        expect:
+        graph.vertices.size() == 1
+        graph.vertices.A.name == 'A'
+    }
 }
