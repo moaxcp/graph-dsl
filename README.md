@@ -1,14 +1,15 @@
 # graph-dsl
 
-A groovy dsl for creating and traversing extensible graphs. The graph can be extended with plugins and traits which 
-allow developers to create a graph with the desired behavior and values for their algorithm. For project build status 
-check the [wiki](https://github.com/moaxcp/graph-dsl/wiki).
+A groovy dsl for creating and traversing graphs. Graphs can be extended with plugins and traits which 
+allow developers to create a graph with the desired behavior and values for their algorithm.
+
+[![Build Status](https://travis-ci.org/moaxcp/graph-dsl.svg?branch=master)](https://travis-ci.org/moaxcp/graph-dsl)
 
 # Usage
 
 ```groovy
 #!/usr/bin/env groovy
-@Grab(group='com.github.moaxcp', module='graph-dsl', version='0.15.0')
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
 ```
 
 ## Creating a graph
@@ -29,31 +30,40 @@ This example of a graph creates two vertices named 'step1' and 'step2' as well a
 structure is held in a map of named Vertex objects and a set of Edge objects. Each Edge contains the names of the two
 vertices it connects.
 
+## dsl policy
+
 There are a few rules the dsl follows as it is being processed:
 
-1. At the end of an operation all referenced vertices are created if they don't exist.
+1. All referenced vertices are created if they don't exist.
 2. If an edge or vertex already exists it will be reused by and operation.
 
-This gives the developer flexibility to create and modify the graph in many different ways.
+Future rules:
+
+3. Changing name in Vertex renames the vertex in the graph
+4. Changing one or two in Edge moves the edge to different vertices. The vertices will be created if they do not exist.
+5. delegates in Vertex and Edge are read-only
+
+## extending the graph
+
+Developers can use the dsl to create new algorithms based on graphs like this workflow between step1 and step2.
 
 ```groovy
 def workQueue = new LinkedList()
 graph {
-    edge (A, B) {
-        traits Mapping, Weight
-        queue = workQueue
+    apply EdgeWeightPlugin, VertexMapPlugin
+    
+    edge (step1, step2) {
         weight { queue.size() }
     }
     
-    vertex A(traits:Mapping) {
+    vertex step1 {
         action = {
             println "processing"
             workQueue << "work"
         }
     }
     
-    vertex B {
-        traits Mapping
+    vertex step2 {
         action = {
             println "done processing ${workQueue.poll()}"
         }
@@ -61,11 +71,18 @@ graph {
 }
 ```
 
-In this graph the edge method creates the vertices A and B as well as an edge. It also configures the edge to have a
-queue and a weight that is the size of the queue. The vertices A and B are also configured to perform an action. A adds
-work to the queue and B processes the work.
+In this script the edge method first creates step1 and step2. Then it creates and edge between the two vertices. It then
+configures the edge with the Mapping and Weight traits. Mapping allows the edge to have extra properties like a queue.
+Weight affects the behavior of traversals.
 
-The Default behavior of a graph is that of an undirected graph. These graphs have a set of edges where only one edge
+Next, the script finds step1 and configures it with the Mapping trait and an action closure which adds "work" to the
+workQueue.
+
+Finally, step2 is configured with an action which processes "work".
+
+## directed graphs
+
+The Default behavior of a graph is undirected. These graphs have a set of edges where only one edge
 can connect any two vertices. An undirected graph can be changed to a directed graph at any time using 
 `DirectedGraphPlugin`.
 
@@ -76,6 +93,8 @@ graph {
     //lots of code
 }
 ```
+
+## traits
 
 Traits can be added to all edges and vertices using `edgeTraits` and `vertexTraits`.
 
@@ -120,12 +139,13 @@ graph {
 }
 ```
 
+`depthFirstTraversal` provides preorder and postorder methods.
+
 ## Functional search methods
 
-There are functional search methods build on the depthFirstTraversal and breadthFirstTraversal method. These methods 
+There are functional search methods built on the depthFirstTraversal and breadthFirstTraversal method. These methods 
 follow the standard names in groovy: each, find, inject, findAll, collect. The methods can specify which type of 
-search to perform such as `eachBfs` or `eachDfs`. When a search type is not specified the methods default to depth 
-first search.
+search to perform such as `eachBfs` or `eachDfs`.
 
 ```groovy
 eachBfs {
@@ -168,6 +188,10 @@ graph {
 forward edges, and cross edges. There is also a new Graph called forest that gets created. 
 `EdgeClassification.forrest` contains the forrest created by tree edges. It uses the vertex and edge objects
 from the original graph object.
+
+Calling `classifyEdges` on an undirected graph will result in two classifications for each edge. The first classification
+is what the edge would be in a directed graph. The second classification is always back-edge. This is because edges in 
+an undirected graph are considered bi-directional in `classifyEdges`.
 
 # Plugins
 
@@ -279,7 +303,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 ## x.x.x
 
-* [#93](https://github.com/moaxcp/graph-dsl/issues/93)
+* [#93](https://github.com/moaxcp/graph-dsl/issues/89) NameSpec and ConfigSpec
 * runnerCode can no longer be set in map parameters to vertex and edge methods
 
 This release includes a major refactor in how graphs are built. Configurations for vertex and edge methods have been 
@@ -287,16 +311,24 @@ refactored to use NameSpec and ConfigSpec object. A NameSpec is a wrapper for a 
 something. A ConfigSpec is a wrapper around a map and closure. It represents the configuration for something. NameSpec
 and ConfigSpec are a common interface for graph types to share. VertexSpec and EdgeSpec are now controlled by the graph
 type. Types can add new properties and methods for use in a ConfigSpec. An example of this is connectsFrom in a 
-directed graph. Graph types can override methods like connectsTo and connectsFrom to perform checks before adding
-edges. This will be important when the DAG type is added.
+directed graph. `connectsFrom` can only be used after applying `DirectedGraphPlugin`. Graph types can override methods 
+like connectsTo and connectsFrom to perform checks before adding edges. This will be important when the DAG type is 
+added.
 
 For the first time packages have been introduced to the project.
 
-plugin - these are plugins which add functionality not related to specific types of graphs
-trait - these are traits which can be used on vertices and edges
-type - these are types of graphs and related classes
+<dl>
+  <dt>plugin</dt>
+  <dd>these are plugins which add functionality not related to specific types of graphs</dd>
+  <dt>trait</dt>
+  <dd>these are traits which can be used on vertices and edges</dd>
+  <dt>type</dt>
+  <dd>these are types of graphs and related classes</dd>
+</dl>
 
-With this release adding new plugins and types will become easier. Directed graph is a good example.
+Factories for EdgeSpec and VertexSpec are now used by Graph. This allows plugins to add new behavior to the edge and 
+vertex methods. New attributes and methods can be added to the ConfigSpec used in these methods. DirectedGraphPlugin
+uses this to add connectsFrom to the map and closure in the ConfigSpec.
 
 ## 0.17.0
 
