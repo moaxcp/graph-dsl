@@ -1,7 +1,9 @@
 package graph
 
+/**
+ * Specification for a configuration.
+ */
 class ConfigSpec {
-    String name
     Map map = [:]
     Closure closure
 }

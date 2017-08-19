@@ -1,5 +1,6 @@
 package graph
 
+import graph.trait.Weight
 import spock.lang.Specification
 
 class EdgeTestSpec extends Specification {

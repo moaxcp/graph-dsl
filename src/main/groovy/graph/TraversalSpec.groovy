@@ -28,7 +28,6 @@ class TraversalSpec {
         root = spec.name
     }
 
-
     def propertyMissing(String name) {
         new NameSpec(name:name)
     }

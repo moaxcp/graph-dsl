@@ -1,47 +1,17 @@
 package dsl
 
 import graph.Graph
+import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
 
 import static graph.Graph.graph
 
 class ConnectsToConnectsFromSpec extends Specification {
 
-    def 'use connectsTo with a NameSpec'() {
-        given:
-        Graph graph = graph {
-            vertex A {
-                connectsTo B
-            }
-        }
-
-        expect:
-        graph.vertices.size() == 2
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-    }
-
-    def 'use connectsTo with two VertexNameSpec'() {
-        given:
-        Graph graph = graph {
-            vertex A {
-                connectsTo B, C
-            }
-        }
-
-        expect:
-        graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'A' && it.two == 'C' }
-    }
-
     def 'use connectsFrom with a VertexNameSpec'() {
         given:
         Graph graph = graph {
+            apply DirectedGraphPlugin
             vertex A {
                 connectsFrom B
             }
@@ -57,6 +27,7 @@ class ConnectsToConnectsFromSpec extends Specification {
     def 'use connectsFrom with two VertexNameSpec'() {
         given:
         Graph graph = graph {
+            apply DirectedGraphPlugin
             vertex A {
                 connectsFrom B, C
             }
@@ -108,6 +79,7 @@ class ConnectsToConnectsFromSpec extends Specification {
     def 'use connectsFrom with a VertexSpec'() {
         given:
         Graph graph = graph {
+            apply DirectedGraphPlugin
             vertex A {
                 connectsFrom B {}
             }
@@ -123,6 +95,7 @@ class ConnectsToConnectsFromSpec extends Specification {
     def 'use nested connectsFrom with a VertexSpec'() {
         given:
         Graph graph = graph {
+            apply DirectedGraphPlugin
             vertex A {
                 connectsFrom B {
                     connectsFrom C
