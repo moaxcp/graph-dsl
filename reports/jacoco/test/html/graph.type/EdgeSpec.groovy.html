@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EdgeSpec.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph.type</a> &gt; <span class="el_source">EdgeSpec.groovy</span></div><h1>EdgeSpec.groovy</h1><pre class="source lang-java linenums">package graph.type
+
+import graph.Edge
+import graph.Graph
+import graph.NameSpec
+import graph.type.undirected.EdgeSpecCodeRunner
+
+/**
+ * Specification class that helps edge methods in {@link Graph} objects create or update {@link Edge} objects. The
+ * specification describes what {@link Edge} to create or update, If one and two should be renamed, and what trait to
+ * apply to the {@link Edge}. runnerCode is a closure that will be run using an {@link EdgeSpecCodeRunner}.
+ */
+class EdgeSpec {
+
+    private Graph graph
+    private Edge edge
+    private String one
+    private String two
+    private String renameOne
+    private String renameTwo
+<span class="fc" id="L21">    private final Set&lt;Class&gt; traitsSet = [] as Set&lt;Class&gt;</span>
+    private Closure runnerCodeClosure
+
+    EdgeSpec(Graph graph, Map&lt;String, ?&gt; map) {
+<span class="fc" id="L25">        this.graph = graph</span>
+<span class="fc" id="L26">        one = map.one</span>
+<span class="fc" id="L27">        two = map.two</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        renameOne = map.renameOne instanceof NameSpec ? map.renameOne.name : map.renameOne</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        renameTwo = map.renameTwo instanceof NameSpec ? map.renameTwo.name : map.renameTwo</span>
+
+<span class="fc" id="L31">        map.traits?.each {</span>
+<span class="pc" id="L32">            traitsSet.add((Class) it)</span>
+        }
+    }
+
+    EdgeSpec(Graph graph, Map&lt;String, ?&gt; map, Closure closure) {
+<span class="fc" id="L37">        this(graph, map)</span>
+<span class="fc" id="L38">        runnerCodeClosure = closure</span>
+    }
+
+    Graph getGraph() {
+<span class="nc" id="L42">        graph</span>
+    }
+
+    Edge getEdge() {
+<span class="nc" id="L46">        edge</span>
+    }
+
+    void initEdgeAndSetupVertices() {
+<span class="fc bfc" id="L50" title="All 4 branches covered.">        if (!one) {</span>
+<span class="fc" id="L51">            throw new IllegalArgumentException('!one failed. one must be groovy truth.')</span>
+        }
+<span class="pc bpc" id="L53" title="2 of 4 branches missed.">        if (!two) {</span>
+<span class="nc" id="L54">            throw new IllegalArgumentException('!two failed. two must be groovy truth.')</span>
+        }
+<span class="fc" id="L56">        Edge e = graph.edgeFactory.newEdge(one, two)</span>
+<span class="pc" id="L57">        edge = graph.edges.find { it == e }</span>
+
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (edge) {</span>
+<span class="fc bfc" id="L60" title="All 6 branches covered.">            if (renameOne || renameTwo) {</span>
+                //need to delete and re-add edge to reset hashcode in LinkedHash.
+<span class="fc" id="L62">                graph.deleteEdge(edge.one, edge.two)</span>
+            }
+        } else {
+<span class="fc" id="L65">            edge = e</span>
+        }
+<span class="fc" id="L67">        graph.vertex(one)</span>
+<span class="fc" id="L68">        graph.vertex(two)</span>
+    }
+
+    void initRenameOne() {
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (renameOne) {</span>
+<span class="fc" id="L73">            graph.vertex(renameOne)</span>
+<span class="fc" id="L74">            edge.one = renameOne</span>
+        }
+    }
+
+    void initRenameTwo() {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (renameTwo) {</span>
+<span class="fc" id="L80">            graph.vertex(renameTwo)</span>
+<span class="fc" id="L81">            edge.two = renameTwo</span>
+        }
+    }
+
+    void applyTraits() {
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (traitsSet) {</span>
+<span class="fc" id="L87">            edge.delegateAs(this.traitsSet as Class[])</span>
+        }
+    }
+
+    void applyClosure() {
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (runnerCodeClosure) {</span>
+<span class="fc" id="L93">            EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph, edge)</span>
+<span class="fc" id="L94">            runner.runCode(runnerCodeClosure)</span>
+        }
+    }
+
+    Edge apply() {
+<span class="fc" id="L99">        initEdgeAndSetupVertices()</span>
+<span class="fc" id="L100">        initRenameOne()</span>
+<span class="fc" id="L101">        initRenameTwo()</span>
+<span class="fc" id="L102">        applyTraits()</span>
+
+        /*
+         * todo not sure this class should be here since addEdge is @PackageScope. May be better to not use
+         * LinkedHashMap for edges.
+         */
+<span class="fc" id="L108">        graph.addEdge(edge)</span>
+
+<span class="fc" id="L110">        applyClosure()</span>
+
+<span class="pc" id="L112">        edge</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

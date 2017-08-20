@@ -1,1 +1,6 @@
 graph
+graph.plugin
+graph.trait
+graph.type
+graph.type.directed
+graph.type.undirected

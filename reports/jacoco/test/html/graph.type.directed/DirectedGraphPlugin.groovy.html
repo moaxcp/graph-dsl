@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DirectedGraphPlugin.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph.type.directed</a> &gt; <span class="el_source">DirectedGraphPlugin.groovy</span></div><h1>DirectedGraphPlugin.groovy</h1><pre class="source lang-java linenums">package graph.type.directed
+
+import graph.Edge
+import graph.Graph
+import graph.plugin.Plugin
+
+/**
+ * This plugin changes the behavior of a {@link Graph} to that of a directed graph.
+ * &lt;p&gt;
+ *
+ * The following modifications are made to the graph:
+ * &lt;p&gt;
+ * &lt;b&gt;members&lt;/b&gt;
+ * &lt;dl&gt;
+ *     &lt;dt&gt;edges&lt;/dt&gt;
+ *     &lt;dd&gt;All edges are converted to {@link DirectedEdge}s and all future edges will be {@link DirectedEdge}s. Any two
+ *     vertices may be connected by one or two {@link DirectedEdge}s. Two {@link DirectedEdge}s connecting any two
+ *     vertices cannot have the same direction. Direction is determined by the values of {@link DirectedEdge#getOne()}
+ *     and {@link DirectedEdge#getTwo()}. The values of one and two cannot be the same in any two {@link DirectedEdge}s.
+ *     &lt;/dd&gt;
+ *     &lt;dt&gt;edgeFactory&lt;/dt&gt;
+ *     &lt;dd&gt;changed to a {@link DirectedEdgeFactory} This causes all future {@link Edge}s added to the {@link Graph} to
+ *     be {@link DirectedEdge}s.&lt;/dd&gt;
+ *     &lt;dt&gt;vertexSpecFactory&lt;/dt&gt;
+ *     &lt;dd&gt;change to a {@link DirectedVertexSpecFactory}. This causes all future {@link VertexSpec}s used in the
+ *     {@link Graph} to be {@link DirectedVertexSpec}. The new configuration options in {@link DirectedVertexSpec} are
+ *     available for use in the vertex dsl (connectsFrom).&lt;/dd&gt;
+ * &lt;/dl&gt;
+ * &lt;b&gt;methods&lt;/b&gt;
+ * &lt;p&gt;
+ * The static graph methods in this class are added to the graph with graph as the first parameter. The methods can be
+ * used in the {@link Graph} directly at runtime. traverseEdges in {@link Graph} is modified.
+ * &lt;dl&gt;
+ *     &lt;dt&gt;{@code Set&lt;? extends Edge&gt; inEdges(String name)}&lt;/dt&gt;
+ *     &lt;dd&gt;returns the set of in-edges for a given vertex&lt;/dd&gt;
+ *     &lt;dt&gt;{@code int inDegree(String name)}&lt;/dt&gt;
+ *     &lt;dd&gt;returns the in-degree of a vertex&lt;/dd&gt;
+ *     &lt;dt&gt;{@code Set&lt;? extends Edge&gt; outEdges(String name)}&lt;/dt&gt;
+ *     &lt;dd&gt;returns the set of out-edges for a given vertex&lt;/dd&gt;
+ *     &lt;dt&gt;{@code int outDegree(Graph graph, String name)}&lt;/dt&gt;
+ *     &lt;dd&gt;returns the out-degree of a vertex&lt;/dd&gt;
+ *     &lt;dt&gt;{@code Set&lt;? extends Edge&gt; traverseEdges(String name)}&lt;/dt&gt;
+ *     &lt;dd&gt;returns the traverse-edges for traversal algorithms. For directed graph this is out-edges.&lt;/dd&gt;
+ *     &lt;dt&gt;{@code Deque&lt;String&gt; reversePostOrderSort()}&lt;/dt&gt;
+ *     &lt;dd&gt;returns vertex names in reverse-post-order&lt;/dd&gt;
+ *     &lt;dt&gt;{@code void reversePostOrder(Closure closure)}&lt;/dt&gt;
+ *     &lt;dd&gt;traverses the graph in reverse-post-order&lt;/dd&gt;
+ * &lt;/dl&gt;
+ */
+class DirectedGraphPlugin implements Plugin {
+
+    /**
+     * Applies the plugin to a {@link graph.Graph}.
+     * @param graph  to apply plugin
+     */
+    void apply(Graph graph) {
+<span class="fc" id="L57">        graph.replaceEdges { edge -&gt;</span>
+<span class="pc" id="L58">            new DirectedEdge(one:edge.one, two:edge.two, delegate:edge.delegate)</span>
+        }
+
+<span class="fc" id="L61">        graph.edgeFactory = new DirectedEdgeFactory()</span>
+<span class="fc" id="L62">        graph.vertexSpecFactory = new DirectedVertexSpecFactory()</span>
+
+<span class="fc" id="L64">        graph.metaClass.inEdges = this.&amp;inEdges.curry(graph)</span>
+<span class="fc" id="L65">        graph.metaClass.inDegree = this.&amp;inDegree.curry(graph)</span>
+<span class="fc" id="L66">        graph.metaClass.outEdges = this.&amp;outEdges.curry(graph)</span>
+<span class="fc" id="L67">        graph.metaClass.outDegree = this.&amp;outDegree.curry(graph)</span>
+<span class="fc" id="L68">        graph.metaClass.traverseEdges = this.&amp;traverseEdges.curry(graph)</span>
+<span class="fc" id="L69">        graph.metaClass.reversePostOrderSort = this.&amp;reversePostOrderSort.curry(graph)</span>
+<span class="fc" id="L70">        graph.metaClass.reversePostOrder = this.&amp;reversePostOrder.curry(graph)</span>
+    }
+
+    /**
+     * Returns in edges from vertex with name in graph.
+     * @param graph
+     * @param name
+     * @return
+     */
+    static Set&lt;? extends Edge&gt; inEdges(Graph graph, String name) {
+<span class="pc" id="L80">        graph.@edges.findAll {</span>
+<span class="pc" id="L81">            name == it.two</span>
+        }
+    }
+
+    /**
+     * returns number of in edges from vertex with name in graph.
+     * @param graph
+     * @param name
+     * @return
+     */
+    static int inDegree(Graph graph, String name) {
+<span class="pc" id="L92">        graph.inEdges(name).size()</span>
+    }
+
+    /**
+     * returns out edges with vertex name in graph.
+     * @param graph
+     * @param name
+     * @return
+     */
+    static Set&lt;? extends Edge&gt; outEdges(Graph graph, String name) {
+<span class="pc" id="L102">        graph.@edges.findAll {</span>
+<span class="pc" id="L103">            name == it.one</span>
+        }
+    }
+
+    /**
+     * returns number of out edges with vertex name in graph.
+     * @param graph
+     * @param name
+     * @return
+     */
+    static int outDegree(Graph graph, String name) {
+<span class="pc" id="L114">        graph.outEdges(name).size()</span>
+    }
+
+    /**
+     * returns out edges with vertex name in graph. This method replaces adjacentEdges in {@link Graph}.
+     * @param graph
+     * @param name
+     * @return
+     */
+    static Set&lt;? extends Edge&gt; traverseEdges(Graph graph, String name) {
+<span class="pc" id="L124">        graph.outEdges(name)</span>
+    }
+
+    /**
+     * Returns the names of vertices sorted in reverse post order for the given graph.
+     * @param graph
+     * @return
+     */
+    static Deque&lt;String&gt; reversePostOrderSort(Graph graph) {
+<span class="fc" id="L133">        Deque&lt;String&gt; deque = [] as LinkedList&lt;String&gt;</span>
+<span class="fc" id="L134">        graph.depthFirstTraversal {</span>
+<span class="pc" id="L135">            postorder { vertex -&gt;</span>
+<span class="pc" id="L136">                deque.addFirst(vertex.name)</span>
+            }
+        }
+<span class="pc" id="L139">        deque</span>
+    }
+
+    /**
+     * Runs the given closure on each vertex in graph in reverse post order.
+     * @param graph
+     * @param closure
+     */
+    static void reversePostOrder(Graph graph, Closure closure) {
+<span class="fc" id="L148">        Deque&lt;String&gt; deque = graph.reversePostOrderSort()</span>
+<span class="fc" id="L149">        deque.each {</span>
+<span class="pc" id="L150">            closure(graph.@vertices[it])</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

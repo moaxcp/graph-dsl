@@ -22,7 +22,7 @@
 <html>
 <head>
 
-<title>graph (graph-dsl 0.17.0 API)</title>
+<title>graph (graph-dsl 0.18.0 API)</title>
 <meta name="keywords" content="graph package">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" title="Style">
@@ -31,7 +31,7 @@
 <script type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="graph (graph-dsl 0.17.0 API)";
+    parent.document.title="graph (graph-dsl 0.18.0 API)";
 }
 </script>
 <noscript>
@@ -96,14 +96,6 @@ function windowTitle()
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="Plugin.html" title="class in graph">
-                                    Plugin
-                                </a></strong>
-                            </td>
-                            <td>Main interface for all <a href='../graph/Graph.html' title='Graph'>Graph</a> plugins. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
                                 <strong><a href="VertexFactory.html" title="class in graph">
                                     VertexFactory
                                 </a></strong>
@@ -118,48 +110,6 @@ function windowTitle()
         </div>
     
 
-
-    <div class="summary">
-        <ul class="blockList">
-            <li class="blockList">
-                <table border="0" cellpadding="3" cellspacing="0" summary="Trait Summary">
-                    <caption><span>Trait Summary</span><span class="tabEnd">&nbsp;</span></caption>
-                    <tbody>
-                    <tr>
-                        <th class="colFirst" scope="col">Trait</th>
-                        <th class="colLast" scope="col">Description</th>
-                    </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="Mapping.html" title="class in graph">
-                                    Mapping
-                                </a></strong>
-                            </td>
-                            <td>Delegates propertyMissing methods to a map.</td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="Value.html" title="class in graph">
-                                    Value
-                                </a></strong>
-                            </td>
-                            <td>Adds a value to <a href='../graph/Vertex.html' title='Vertex'>Vertex</a> and <a href='../graph/Edge.html' title='Edge'>Edge</a> delegates.</td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="Weight.html" title="class in graph">
-                                    Weight
-                                </a></strong>
-                            </td>
-                            <td>Adds a weight attribute to <a href='../graph/Vertex.html' title='Vertex'>Vertex</a> and <a href='../graph/Edge.html' title='Edge'>Edge</a> objects.</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </li>
-            </ul>
-        </div>
-    
 
 
     <div class="summary">
@@ -182,11 +132,11 @@ function windowTitle()
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="DefaultVertexFactory.html" title="class in graph">
-                                    DefaultVertexFactory
+                                <strong><a href="ConfigSpec.html" title="class in graph">
+                                    ConfigSpec
                                 </a></strong>
                             </td>
-                            <td>Factory for creating vertices. </td>
+                            <td>Specification for a configuration.</td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
@@ -195,30 +145,6 @@ function windowTitle()
                                 </a></strong>
                             </td>
                             <td>Specification for a DepthFirstTraversal. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="DirectedEdge.html" title="class in graph">
-                                    DirectedEdge
-                                </a></strong>
-                            </td>
-                            <td>Represents a directed edge in a grpah. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="DirectedEdgeFactory.html" title="class in graph">
-                                    DirectedEdgeFactory
-                                </a></strong>
-                            </td>
-                            <td>Factory for creating edges. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="DirectedGraphPlugin.html" title="class in graph">
-                                    DirectedGraphPlugin
-                                </a></strong>
-                            </td>
-                            <td>This plugin makes a Graph behave like a directed graph.</td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
@@ -238,43 +164,19 @@ function windowTitle()
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="EdgeMapPlugin.html" title="class in graph">
-                                    EdgeMapPlugin
-                                </a></strong>
-                            </td>
-                            <td>Applies the <a href='../graph/Mapping.html' title='Mapping'>Mapping</a> trait to all edges. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="EdgeSpec.html" title="class in graph">
-                                    EdgeSpec
-                                </a></strong>
-                            </td>
-                            <td>Specification class that helps edge methods in <a href='../graph/Graph.html' title='Graph'>Graph</a> objects create or update <a href='../graph/Edge.html' title='Edge'>Edge</a> objects. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="EdgeSpecCodeRunner.html" title="class in graph">
-                                    EdgeSpecCodeRunner
-                                </a></strong>
-                            </td>
-                            <td>Delegate of the runnerCode closure in <a href='../graph/EdgeSpec.html' title='EdgeSpec'>EdgeSpec</a>. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="EdgeWeightPlugin.html" title="class in graph">
-                                    EdgeWeightPlugin
-                                </a></strong>
-                            </td>
-                            <td>Plugin to add <a href='../graph/Weight.html' title='Weight'>Weight</a> support to the edges of a <a href='../graph/Graph.html' title='Graph'>Graph</a>.</td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
                                 <strong><a href="Graph.html" title="class in graph">
                                     Graph
                                 </a></strong>
                             </td>
                             <td>An implementation of a Graph. </td>
+                        </tr>
+<tr class="altColor">
+                            <td class="colOne">
+                                <strong><a href="NameSpec.html" title="class in graph">
+                                    NameSpec
+                                </a></strong>
+                            </td>
+                            <td>Specification for a name.</td>
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
@@ -286,43 +188,11 @@ function windowTitle()
                         </tr>
 <tr class="altColor">
                             <td class="colOne">
-                                <strong><a href="UnDirectedEdgeFactory.html" title="class in graph">
-                                    UnDirectedEdgeFactory
-                                </a></strong>
-                            </td>
-                            <td>Creates <a href='../graph/Edge.html' title='Edge'>Edge</a> objects for <a href='../graph/Graph.html' title='Graph'>Graph</a>.</td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
                                 <strong><a href="Vertex.html" title="class in graph">
                                     Vertex
                                 </a></strong>
                             </td>
                             <td>A vertex in the graph. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="VertexMapPlugin.html" title="class in graph">
-                                    VertexMapPlugin
-                                </a></strong>
-                            </td>
-                            <td>Applies the <a href='../graph/Mapping.html' title='Mapping'>Mapping</a> trait to all vertices. </td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="VertexNameSpec.html" title="class in graph">
-                                    VertexNameSpec
-                                </a></strong>
-                            </td>
-                            <td></td>
-                        </tr>
-<tr class="altColor">
-                            <td class="colOne">
-                                <strong><a href="VertexSpecCodeRunner.html" title="class in graph">
-                                    VertexSpecCodeRunner
-                                </a></strong>
-                            </td>
-                            <td>Delegate of the runnerCode closure in <a href='../graph/VertexSpec.html' title='VertexSpec'>VertexSpec</a>. </td>
                         </tr>
 
                     </tbody>
