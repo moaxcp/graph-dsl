@@ -79,7 +79,7 @@ public class GraphDepthFirstSpec extends Specification {
             vertex 'step1'
         }
         Closure c = {
-            root new VertexNameSpec(name:'step1')
+            root new NameSpec(name:'step1')
             colors = ['step1' : graph.Graph.TraversalColor.WHITE]
             preorder {
                 //do nothing

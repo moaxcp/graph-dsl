@@ -62,7 +62,7 @@ class GraphTraversalMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
+        def childName = graph.getUnvisitedChildName('step1', colors)
 
         then:
         childName == 'step3'
@@ -84,7 +84,7 @@ class GraphTraversalMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
+        def childName = graph.getUnvisitedChildName('step1', colors)
 
         then:
         childName == 'step3'
@@ -106,7 +106,7 @@ class GraphTraversalMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
+        def childName = graph.getUnvisitedChildName('step1', colors)
 
         then:
         childName == 'step3'
@@ -128,7 +128,7 @@ class GraphTraversalMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
+        def childName = graph.getUnvisitedChildName('step1', colors)
 
         then:
         childName == 'step3'
@@ -150,7 +150,7 @@ class GraphTraversalMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
+        def childName = graph.getUnvisitedChildName('step1', colors)
 
         then:
         childName == 'step2'
@@ -170,7 +170,7 @@ class GraphTraversalMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName(colors, 'step1')
+        def childName = graph.getUnvisitedChildName('step1', colors)
 
         then:
         childName == null

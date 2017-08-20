@@ -1,8 +1,9 @@
 package graph
 
-import spock.lang.Ignore
+import graph.trait.Mapping
+import graph.type.directed.DirectedEdge
+import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class GraphSpec extends Specification {
 
@@ -42,55 +43,53 @@ class GraphSpec extends Specification {
         graph.vertices.size() == 1
     }
 
-    @Unroll
-    def 'dynamic method returns VertexSpec with name set'() {
+    def 'dynamic method returns ConfigSpec with name set'() {
+        given:
+        ConfigSpec spec = new Graph().step1()
         expect:
-        spec instanceof VertexSpec
-        spec.name =='step1'
-
-        where:
-        spec << [new Graph().step1(), new Graph().step2(name:'step1')]
+        spec.map.name =='step1'
     }
 
-    def 'dynamic property returns VertexNameSpec with name set'() {
+    def 'dynamic property returns NameSpec with name set'() {
         setup:
-        def spec = new Graph().step1
+        NameSpec spec = new Graph().step1
 
         expect:
-        spec instanceof VertexNameSpec
+        spec instanceof NameSpec
         spec.name == 'step1'
     }
 
-    def 'dynamic method with Map returns VertexSpec'() {
+    def 'dynamic method with Map returns ConfigSpec'() {
         when:
-        VertexSpec spec = new Graph().step1(x:'y')
+        ConfigSpec spec = new Graph().step1(x:'y')
 
         then:
-        spec.name == 'step1'
+        spec.map.name == 'step1'
+        spec.map.x == 'y'
     }
 
-    def 'dynamic method with closure returns VertexSpec'() {
+    def 'dynamic method with closure returns ConfigSpec'() {
         when:
-        VertexSpec spec = new Graph().step1 {}
+        ConfigSpec spec = new Graph().step1 {}
 
         then:
-        spec.name == 'step1'
-        spec.runnerCode != null
+        spec.map.name == 'step1'
+        spec.closure != null
     }
 
-    def 'dynamic method with map and closure returns VertexSpec'() {
+    def 'dynamic method with map and closure returns ConfigSpec'() {
         when:
-        VertexSpec spec = new Graph().step1(traits:Mapping) { edgesFirst 'step2' }
+        ConfigSpec spec = new Graph().step1(traits:Mapping) { edgesFirst 'step2' }
 
         then:
-        spec.name == 'step1'
-        spec.traits == [Mapping] as Set<Class>
-        spec.runnerCode != null
+        spec.map.name == 'step1'
+        spec.map.traits == Mapping
+        spec.closure != null
     }
 
     def 'missingMethod with name vertex is illegal'() {
         when:
-        VertexSpec spec = new Graph().methodMissing('vertex', [])
+        ConfigSpec spec = new Graph().methodMissing('vertex', [])
 
         then:
         thrown IllegalArgumentException

@@ -1,5 +1,7 @@
 package graph
 
+import graph.trait.Mapping
+import graph.trait.Weight
 import spock.lang.Specification
 
 /**
@@ -18,7 +20,7 @@ class GraphVertexSpec extends Specification {
         graph.vertex ''
 
         then:
-        thrown IllegalArgumentException
+        thrown IllegalStateException
     }
 
     def 'can add/get with vertex(String)'() {
@@ -87,35 +89,6 @@ class GraphVertexSpec extends Specification {
         graph.edges.size() == 2
         edgeOne != null
         edgeTwo != null
-    }
-
-    def 'can add edges using connectsFrom with vertex(Map)'() {
-        when:
-        graph.vertex name:'step1', connectsFrom:['step2', 'step3']
-        def edgeOne = graph.edges.find {
-            it.one == 'step2' && it.two == 'step1'
-        }
-        def edgeTwo = graph.edges.find {
-            it.one == 'step3' && it.two == 'step1'
-        }
-
-        then:
-        graph.edges.size() == 2
-        edgeOne != null
-        edgeTwo != null
-    }
-
-    def 'can configure vertex traits with VertexSpec.runnerCode(Closure) in vertex(Map)'() {
-        when:
-        Vertex vertex = graph.vertex name:'step1', traits:[Mapping, Weight],
-            runnerCode:{
-                label = 'the first step'
-                weight { 100 }
-            }
-
-        then:
-        vertex.label == 'the first step'
-        vertex.getWeight() == 100
     }
 
     def 'can add/get vertex with vertex(String, Closure)'() {

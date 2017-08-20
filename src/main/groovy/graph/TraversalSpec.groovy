@@ -24,12 +24,11 @@ class TraversalSpec {
      * Sets the root of this traversal using the name from spec.
      * @param spec  for name of root
      */
-    void root(VertexNameSpec spec) {
+    void root(NameSpec spec) {
         root = spec.name
     }
 
-
     def propertyMissing(String name) {
-        new VertexNameSpec(name:name)
+        new NameSpec(name:name)
     }
 }
