@@ -32,12 +32,15 @@ vertices it connects.
 
 ## dsl policy
 
-There are a few rules the dsl follows as it is being processed:
+There are a few rules the dsl follows as it is being processed.
 
 1. All referenced vertices are created if they don't exist.
 2. If an edge or vertex already exists it will be reused by and operation.
 
 Future rules:
+
+These rules will address the api leak with Vertex or Edge. When these objects are returned or in scope some properties
+may be changed which will break the graph. These rules will address those issues.
 
 3. Changing name in Vertex renames the vertex in the graph
 4. Changing one or two in Edge moves the edge to different vertices. The vertices will be created if they do not exist.
@@ -301,7 +304,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
-## x.x.x
+## 0.18.0
 
 * [#93](https://github.com/moaxcp/graph-dsl/issues/89) NameSpec and ConfigSpec
 * runnerCode can no longer be set in map parameters to vertex and edge methods
