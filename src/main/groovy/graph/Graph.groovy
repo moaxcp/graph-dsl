@@ -210,6 +210,10 @@ class Graph {
         type(Class.forName((String) properties.'implementation-class'))
     }
 
+    void type(NameSpec typeName) {
+        type(typeName.name)
+    }
+
     /**
      * Applies trait to all vertices and all future vertices.
      * @param traits to add to vertices and all future vertices

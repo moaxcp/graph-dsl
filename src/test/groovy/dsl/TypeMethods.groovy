@@ -1,6 +1,7 @@
 package dsl
 
 import graph.Graph
+import static graph.Graph.graph
 import graph.type.directed.DirectedGraphType
 import spock.lang.Specification
 
@@ -8,23 +9,31 @@ class TypeMethods extends Specification {
 
     def 'can change type of Graph with Class'() {
         given:
-        Graph graph = new Graph()
+        Graph graph = graph {
+            type DirectedGraphType
+        }
 
-        when:
-        graph.type(DirectedGraphType)
-
-        then:
+        expect:
         graph.types.contains(DirectedGraphType)
     }
 
     def 'can change type of Graph with String'() {
         given:
-        Graph graph = new Graph()
+        Graph graph = graph {
+            type 'directed-graph'
+        }
 
-        when:
-        graph.type('directed-graph')
+        expect:
+        graph.types.contains(DirectedGraphType)
+    }
 
-        then:
+    def 'can change type of Graph with NameSpec'() {
+        given:
+        Graph graph = graph {
+            type directed-graph
+        }
+
+        expect:
         graph.types.contains(DirectedGraphType)
     }
 }

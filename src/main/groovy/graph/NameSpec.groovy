@@ -5,4 +5,8 @@ package graph
  */
 class NameSpec {
     String name
+
+    NameSpec minus(NameSpec other) {
+        new NameSpec(name:name + '-' + other.name)
+    }
 }
