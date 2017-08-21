@@ -204,6 +204,12 @@ class Graph {
         type.apply(this)
     }
 
+    void type(String typeName) {
+        Properties properties = new Properties()
+        properties.load(getClass().getResourceAsStream("/META-INF/graph-types/${typeName}.properties"))
+        type(Class.forName((String) properties.'implementation-class'))
+    }
+
     /**
      * Applies trait to all vertices and all future vertices.
      * @param traits to add to vertices and all future vertices
