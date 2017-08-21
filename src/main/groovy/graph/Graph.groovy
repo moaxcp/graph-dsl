@@ -3,6 +3,7 @@ package graph
 import graph.plugin.Plugin
 import graph.type.EdgeSpec
 import graph.type.EdgeSpecFactory
+import graph.type.Type
 import graph.type.VertexSpec
 import graph.type.VertexSpecFactory
 import graph.type.DefaultVertexFactory
@@ -34,6 +35,7 @@ class Graph {
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
     private final Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
     private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
+    private final Set<? extends Type> types = [] as LinkedHashSet<? extends Type>
     @PackageScope
     EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
     @PackageScope
@@ -170,6 +172,10 @@ class Graph {
         Collections.unmodifiableSet(plugins)
     }
 
+    Set<? extends Type> getTypes() {
+        Collections.unmodifiableSet(types)
+    }
+
     /**
      * Creates and applies a {@link Plugin} to this graph.
      * @param pluginClass - the {@link Plugin} to create and apply to this graph.
@@ -184,6 +190,18 @@ class Graph {
         plugins << pluginClass
         Plugin plugin = pluginClass.newInstance()
         plugin.apply(this)
+    }
+
+    void type(Class typeClass) {
+        if (types.contains(typeClass)) {
+            throw new IllegalArgumentException("$typeClass.name is already applied.")
+        }
+        if (!typeClass.interfaces.contains(Type)) {
+            throw new IllegalArgumentException("$typeClass.name does not implement Plugin")
+        }
+        types << typeClass
+        Type type = typeClass.newInstance()
+        type.apply(this)
     }
 
     /**

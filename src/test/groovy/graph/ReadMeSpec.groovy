@@ -2,7 +2,7 @@ package graph
 
 import graph.trait.Mapping
 import graph.trait.Weight
-import graph.type.directed.DirectedGraphPlugin
+import graph.type.directed.DirectedGraphType
 import spock.lang.Specification
 import static Graph.graph
 
@@ -36,7 +36,7 @@ class ReadMeSpec extends Specification {
     def 'usage 3'() {
         when:
         def graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex A {
                 connectsTo 'B', 'D', 'E'
                 connectsFrom 'D'
@@ -71,7 +71,7 @@ class ReadMeSpec extends Specification {
     def 'main readme example'() {
         when:
         Graph graph = Graph.graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex a {
                 connectsTo 'b', 'd'
                 connectsFrom 'd'

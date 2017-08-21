@@ -1,15 +1,13 @@
 package graph.type.directed
 
 import graph.Graph
-import graph.type.directed.DirectedEdge
-import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
 
 class DirectedGraphSpec extends Specification {
     def graph = new Graph()
 
     def setup() {
-        graph.apply DirectedGraphPlugin
+        graph.type DirectedGraphType
     }
 
     def 'can get out edges'() {
