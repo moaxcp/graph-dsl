@@ -26,14 +26,4 @@ class TypeMethods extends Specification {
         expect:
         graph.types.contains(DirectedGraphType)
     }
-
-    def 'can change type of Graph with NameSpec'() {
-        given:
-        Graph graph = graph {
-            type directed-graph
-        }
-
-        expect:
-        graph.types.contains(DirectedGraphType)
-    }
 }

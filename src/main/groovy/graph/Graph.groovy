@@ -192,6 +192,12 @@ class Graph {
         plugin.apply(this)
     }
 
+    void apply(String pluginName) {
+        Properties properties = new Properties()
+        properties.load(getClass().getResourceAsStream("/META-INF/graph-plugins/${pluginName}.properties"))
+        apply(Class.forName((String) properties.'implementation-class'))
+    }
+
     void type(Class typeClass) {
         if (types.contains(typeClass)) {
             throw new IllegalArgumentException("$typeClass.name is already applied.")
@@ -208,10 +214,6 @@ class Graph {
         Properties properties = new Properties()
         properties.load(getClass().getResourceAsStream("/META-INF/graph-types/${typeName}.properties"))
         type(Class.forName((String) properties.'implementation-class'))
-    }
-
-    void type(NameSpec typeName) {
-        type(typeName.name)
     }
 
     /**
