@@ -3,6 +3,7 @@ package graph.type.directed
 import graph.Edge
 import graph.Graph
 import graph.plugin.Plugin
+import graph.type.Type
 
 /**
  * This plugin changes the behavior of a {@link Graph} to that of a directed graph.
@@ -47,7 +48,7 @@ import graph.plugin.Plugin
  *     <dd>traverses the graph in reverse-post-order</dd>
  * </dl>
  */
-class DirectedGraphPlugin implements Plugin {
+class DirectedGraphType implements Type {
 
     /**
      * Applies the plugin to a {@link graph.Graph}.

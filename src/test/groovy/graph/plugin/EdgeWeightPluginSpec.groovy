@@ -1,9 +1,8 @@
 package graph.plugin
 
 import graph.Graph
-import graph.plugin.EdgeWeightPlugin
 import graph.trait.Weight
-import graph.type.directed.DirectedGraphPlugin
+import graph.type.directed.DirectedGraphType
 import spock.lang.Specification
 
 class EdgeWeightPluginSpec extends Specification {
@@ -80,7 +79,7 @@ class EdgeWeightPluginSpec extends Specification {
         graph.edge ('step1', 'step3') {
             weight { 2 }
         }
-        graph.apply DirectedGraphPlugin
+        graph.type DirectedGraphType
 
         when:
         def edges = graph.traverseEdges('step1')
@@ -94,7 +93,7 @@ class EdgeWeightPluginSpec extends Specification {
     def 'new edges after applying DirectedGraphPlugin traverseEdges sorts edges by weight'() {
         setup:
         graph.apply EdgeWeightPlugin
-        graph.apply DirectedGraphPlugin
+        graph.type DirectedGraphType
         graph.edge ('step1', 'step4') {
             weight { 3 }
         }
