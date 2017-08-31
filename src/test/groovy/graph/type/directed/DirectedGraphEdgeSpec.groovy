@@ -1,8 +1,6 @@
 package graph.type.directed
 
 import graph.Graph
-import graph.type.directed.DirectedEdge
-import graph.type.directed.DirectedGraphPlugin
 import spock.lang.Specification
 
 class DirectedGraphEdgeSpec extends Specification {
@@ -10,7 +8,7 @@ class DirectedGraphEdgeSpec extends Specification {
     def graph = new Graph()
 
     def setup() {
-        graph.apply DirectedGraphPlugin
+        graph.type DirectedGraphType
     }
 
     def 'can get DirectedEdge from newEdge'() {
@@ -35,7 +33,7 @@ class DirectedGraphEdgeSpec extends Specification {
         graph.edge 'step1', 'step2'
 
         when:
-        graph.apply DirectedGraphPlugin
+        graph.type DirectedGraphType
 
         then:
         graph.edges.every {
@@ -49,7 +47,7 @@ class DirectedGraphEdgeSpec extends Specification {
         graph.edge 'step1', 'step2'
 
         when:
-        graph.apply DirectedGraphPlugin
+        graph.type DirectedGraphType
 
         and:
         graph.edge 'step2', 'step3'

@@ -1,6 +1,6 @@
 package dsl.directed
 
-import graph.type.directed.DirectedGraphPlugin
+import graph.type.directed.DirectedGraphType
 import graph.Graph
 import spock.lang.Specification
 
@@ -10,7 +10,7 @@ class MethodsWithConnectsFrom extends Specification {
     def 'create edge using connectsFrom in map with NameSpec'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex A (connectsFrom:B)
         }
 
@@ -24,7 +24,7 @@ class MethodsWithConnectsFrom extends Specification {
     def 'create edge using connectsFrom in map with string'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex A (connectsFrom:'B')
         }
 
@@ -37,7 +37,7 @@ class MethodsWithConnectsFrom extends Specification {
     def 'create two edges using connectsFrom in map with NameSpec'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex A (connectsFrom:[B, C])
         }
 
@@ -53,7 +53,7 @@ class MethodsWithConnectsFrom extends Specification {
     def 'create two edges using connectsFrom in map with string'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex A (connectsFrom:['B', 'C'])
         }
 
@@ -69,7 +69,7 @@ class MethodsWithConnectsFrom extends Specification {
     def 'create edge using connectsFrom in closure with NameSpec'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex(A) {
                 connectsFrom B
             }
@@ -85,7 +85,7 @@ class MethodsWithConnectsFrom extends Specification {
     def 'create edge using connectsFrom in closure with string'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex(A) {
                 connectsFrom 'B'
             }
@@ -100,7 +100,7 @@ class MethodsWithConnectsFrom extends Specification {
     def 'create two edges using connectsFrom in closure with NameSpec'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex(A) {
                 connectsFrom B, C
             }
@@ -118,7 +118,7 @@ class MethodsWithConnectsFrom extends Specification {
     def 'create two edges using connectsFrom in closure with string'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex(A) {
                 connectsFrom 'B', 'C'
             }

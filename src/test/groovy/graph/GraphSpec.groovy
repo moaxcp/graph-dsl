@@ -2,7 +2,7 @@ package graph
 
 import graph.trait.Mapping
 import graph.type.directed.DirectedEdge
-import graph.type.directed.DirectedGraphPlugin
+import graph.plugin.EdgeWeightPlugin
 import spock.lang.Specification
 
 class GraphSpec extends Specification {
@@ -10,10 +10,10 @@ class GraphSpec extends Specification {
     def 'can only apply Plugin once'() {
         setup:
         def graph = new Graph()
-        graph.apply DirectedGraphPlugin
+        graph.apply EdgeWeightPlugin
 
         when:
-        graph.apply DirectedGraphPlugin
+        graph.apply EdgeWeightPlugin
 
         then:
         thrown IllegalArgumentException

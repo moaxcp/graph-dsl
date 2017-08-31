@@ -1,7 +1,7 @@
 package dsl
 
 import graph.Graph
-import graph.type.directed.DirectedGraphPlugin
+import graph.type.directed.DirectedGraphType
 import spock.lang.Specification
 
 import static graph.Graph.graph
@@ -11,7 +11,7 @@ class ConnectsToConnectsFromSpec extends Specification {
     def 'use connectsFrom with a VertexNameSpec'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex A {
                 connectsFrom B
             }
@@ -27,7 +27,7 @@ class ConnectsToConnectsFromSpec extends Specification {
     def 'use connectsFrom with two VertexNameSpec'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex A {
                 connectsFrom B, C
             }
@@ -79,7 +79,7 @@ class ConnectsToConnectsFromSpec extends Specification {
     def 'use connectsFrom with a VertexSpec'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex A {
                 connectsFrom B {}
             }
@@ -95,7 +95,7 @@ class ConnectsToConnectsFromSpec extends Specification {
     def 'use nested connectsFrom with a VertexSpec'() {
         given:
         Graph graph = graph {
-            apply DirectedGraphPlugin
+            type DirectedGraphType
             vertex A {
                 connectsFrom B {
                     connectsFrom C
