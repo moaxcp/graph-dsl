@@ -304,6 +304,18 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
+## 0.19.0
+
+* [#91](https://github.com/moaxcp/graph-dsl/issues/91) Plugins should be called Type
+ 
+This change adds names for types of graphs and plugins. Instead of the developers needing to import and use classes
+they can simply use a name.
+
+```
+type 'directed-graph'
+plugin 'edge-map'
+```
+
 ## 0.18.0
 
 * [#93](https://github.com/moaxcp/graph-dsl/issues/89) NameSpec and ConfigSpec
