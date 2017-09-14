@@ -316,7 +316,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
-## x.x.x
+## 0.20.0
 
 * [#98](https://github.com/moaxcp/graph-dsl/issues/98)
 
