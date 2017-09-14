@@ -100,11 +100,11 @@ Finally, step2 is configured with an action which processes "work".
 
 The Default behavior of a graph is undirected. These graphs have a set of edges where only one edge
 can connect any two vertices. An undirected graph can be changed to a directed graph at any time using 
-`DirectedGraphPlugin`.
+`DirectedGraphType`.
 
 ```groovy
 //lots of code
-apply DirectedGraphPlugin
+type 'directed-graph'
 //lots of code
 ```
 
@@ -122,7 +122,7 @@ vertexTraits Mapping
 Once a graph is created there is a dsl for depthFirstTraversal and breadthFirstTraversal.
 
 ```groovy
-apply DirectedGraphPlugin
+type 'directed-graph'
 vertex A {
     connectsTo B, D, E
     connectsFrom D
@@ -201,6 +201,20 @@ Calling `classifyEdges` on an undirected graph will result in two classification
 is what the edge would be in a directed graph. The second classification is always back-edge. This is because edges in 
 an undirected graph are considered bi-directional in `classifyEdges`.
 
+#Types
+
+## DirectedGraphType
+
+```groovy
+type 'directed-graph'
+```
+
+The DirectedGraphType changes the behavior of a graph to that of a directed graph. In a directed graph edges
+become directional. Only two edges can exist between any two vertices. In that case, the edges need to go in
+opposite directions.
+
+Traversal methods will only follow out edges from a vertex.
+
 # Plugins
 
 Plugins provide graphs with extra functionality. They can:
@@ -209,13 +223,6 @@ Plugins provide graphs with extra functionality. They can:
 2. modify the factories so they create different edges and vertices 
 3. perform meta-programming on the graph to change or add methods
 
-## DirectedGraphPlugin
-
-The DirectedGraphPlugin changes the behavior of a graph to that of a directed graph. In a directed graph edges 
-become directional. Only two edges can exist between any two vertices. In that case, the edges need to go in 
-opposite directions.
-
-Traversal methods will only follow out edges from a vertex.
 
 ## EdgeWeightPlugin
 
