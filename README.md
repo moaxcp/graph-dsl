@@ -7,28 +7,42 @@ allow developers to create a graph with the desired behavior and values for thei
 
 # Usage
 
+There are two entry points into the dsl: The `graph` method, and `BaseScript`.
+
+## BaseScript
+
+`BaseScript` is a transformation which allows developers to change the base script class for the current script. By
+changing the script to `DslScript` a new `Graph` becomes the delegate of the script.
+
 ```groovy
 #!/usr/bin/env groovy
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
-```
-
-## Creating a graph
-
-The entry-point to the dsl is the `Graph.graph(Closure)` method. This method applies the closure to a new Graph object 
-and returns it. 
-
-```groovy
-def graph = graph {
-    edge step1, step2
-}
+@groovy.transform.BaseScript DslScript graph
+edge step1, step2
 assert graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
 assert graph.edges.size() == 1
 assert graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
 ```
 
-This example of a graph creates two vertices named 'step1' and 'step2' as well as an edge between them. The basic graph 
+This example of a graph creates two vertices named 'step1' and 'step2' as well as an edge between them. The basic graph
 structure is held in a map of named Vertex objects and a set of Edge objects. Each Edge contains the names of the two
 vertices it connects.
+
+The same graph can be created using the `graph` method.
+
+## graph method
+
+The entry-point to the dsl is the `Graph.graph(Closure)` method. This method applies the closure to a new Graph object 
+and returns it. 
+
+```groovy
+#!/usr/bin/env groovy
+@Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
+import static graph.Graph.*
+def graph = graph {
+    edge step1, step2
+}
+```
 
 ## dsl policy
 
@@ -52,24 +66,23 @@ Developers can use the dsl to create new algorithms based on graphs like this wo
 
 ```groovy
 def workQueue = new LinkedList()
-graph {
-    apply EdgeWeightPlugin, VertexMapPlugin
-    
-    edge (step1, step2) {
-        weight { queue.size() }
+
+apply EdgeWeightPlugin, VertexMapPlugin
+
+edge (step1, step2) {
+    weight { queue.size() }
+}
+
+vertex step1 {
+    action = {
+        println "processing"
+        workQueue << "work"
     }
-    
-    vertex step1 {
-        action = {
-            println "processing"
-            workQueue << "work"
-        }
-    }
-    
-    vertex step2 {
-        action = {
-            println "done processing ${workQueue.poll()}"
-        }
+}
+
+vertex step2 {
+    action = {
+        println "done processing ${workQueue.poll()}"
     }
 }
 ```
@@ -87,14 +100,12 @@ Finally, step2 is configured with an action which processes "work".
 
 The Default behavior of a graph is undirected. These graphs have a set of edges where only one edge
 can connect any two vertices. An undirected graph can be changed to a directed graph at any time using 
-`DirectedGraphPlugin`.
+`DirectedGraphType`.
 
 ```groovy
-graph {
-    //lots of code
-    apply DirectedGraphPlugin
-    //lots of code
-}
+//lots of code
+type 'directed-graph'
+//lots of code
 ```
 
 ## traits
@@ -102,10 +113,8 @@ graph {
 Traits can be added to all edges and vertices using `edgeTraits` and `vertexTraits`.
 
 ```groovy
-graph {
-    edgeTraits Mapping, Weight
-    vertexTraits Mapping
-}
+edgeTraits Mapping, Weight
+vertexTraits Mapping
 ```
 
 ## Traversing a graph
@@ -113,31 +122,29 @@ graph {
 Once a graph is created there is a dsl for depthFirstTraversal and breadthFirstTraversal.
 
 ```groovy
-graph {
-    apply DirectedGraphPlugin
-    vertex A {
-        connectsTo B, D, E
-        connectsFrom D
+type 'directed-graph'
+vertex A {
+    connectsTo B, D, E
+    connectsFrom D
+}
+
+vertex D {
+    connectsTo C, E
+    connectsFrom B
+}
+
+edge B, C
+depthFirstTraversal {
+    root A
+    preorder { vertex ->
+        println vertex.name
     }
-    
-    vertex D {
-        connectsTo C, E
-        connectsFrom B
-    }
-    
-    edge B, C
-    depthFirstTraversal {
-        root A
-        preorder { vertex ->
-            println vertex.name
-        }
-    }
-    
-    breadthFirstTraversal {
-        root A
-        visit { vertex ->
-            println "bft $vertex.name"
-        }
+}
+
+breadthFirstTraversal {
+    root A
+    visit { vertex ->
+        println "bft $vertex.name"
     }
 }
 ```
@@ -179,11 +186,9 @@ Depth first traversal supports edge classification where an edge is classified a
 To classify edges use the `classifyEdges(Closure)` method.
 
 ```groovy
-graph {
-    //setup graph
-    classifyEdges { from, to, edgeType ->
-        println "$from $to is $edgeType"
-    }
+//setup graph
+classifyEdges { from, to, edgeType ->
+    println "$from $to is $edgeType"
 }
 ```
 
@@ -196,6 +201,20 @@ Calling `classifyEdges` on an undirected graph will result in two classification
 is what the edge would be in a directed graph. The second classification is always back-edge. This is because edges in 
 an undirected graph are considered bi-directional in `classifyEdges`.
 
+#Types
+
+## DirectedGraphType
+
+```groovy
+type 'directed-graph'
+```
+
+The DirectedGraphType changes the behavior of a graph to that of a directed graph. In a directed graph edges
+become directional. Only two edges can exist between any two vertices. In that case, the edges need to go in
+opposite directions.
+
+Traversal methods will only follow out edges from a vertex.
+
 # Plugins
 
 Plugins provide graphs with extra functionality. They can:
@@ -204,13 +223,6 @@ Plugins provide graphs with extra functionality. They can:
 2. modify the factories so they create different edges and vertices 
 3. perform meta-programming on the graph to change or add methods
 
-## DirectedGraphPlugin
-
-The DirectedGraphPlugin changes the behavior of a graph to that of a directed graph. In a directed graph edges 
-become directional. Only two edges can exist between any two vertices. In that case, the edges need to go in 
-opposite directions.
-
-Traversal methods will only follow out edges from a vertex.
 
 ## EdgeWeightPlugin
 
@@ -303,6 +315,12 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## 0.20.0
+
+* [#98](https://github.com/moaxcp/graph-dsl/issues/98)
+
+Adding DslScript which can be used with @BaseScript to make a new Graph object the delegate of the current script.
 
 ## 0.19.0
 
