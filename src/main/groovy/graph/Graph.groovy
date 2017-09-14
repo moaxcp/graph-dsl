@@ -2,15 +2,11 @@ package graph
 
 import graph.plugin.Plugin
 import graph.type.EdgeSpec
-import graph.type.EdgeSpecFactory
 import graph.type.Type
 import graph.type.VertexSpec
-import graph.type.VertexSpecFactory
-import graph.type.DefaultVertexFactory
 import graph.type.undirected.EdgeSpecCodeRunner
-import graph.type.undirected.UnDirectedEdgeFactory
-import graph.type.undirected.UnDirectedEdgeSpecFactory
-import graph.type.undirected.UnDirectedVertexSpecFactory
+
+import graph.type.undirected.UndirectedGraphType
 import groovy.transform.PackageScope
 
 /**
@@ -30,20 +26,13 @@ import groovy.transform.PackageScope
  * information on plugins see {@link graph.plugin.Plugin}.
  */
 class Graph {
-    private final Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
+    private Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
     private final Set<Class> vertexTraitsSet = [] as LinkedHashSet<Class>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
     private final Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
     private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
-    private final Set<? extends Type> types = [] as LinkedHashSet<? extends Type>
-    @PackageScope
-    EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
-    @PackageScope
-    VertexFactory vertexFactory = new DefaultVertexFactory()
-    @PackageScope
-    VertexSpecFactory vertexSpecFactory = new UnDirectedVertexSpecFactory()
-    @PackageScope
-    EdgeSpecFactory edgeSpecFactory = new UnDirectedEdgeSpecFactory()
+    private Type type = new UndirectedGraphType()
+
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -131,7 +120,6 @@ class Graph {
      * Replaces edges with results of running edges.collect(closure)
      * @param closure to run on each edge
      */
-    @PackageScope
     void replaceEdges(Closure closure) {
         List replace = edges.collect(closure)
         edges.clear()
@@ -142,13 +130,26 @@ class Graph {
      * Replaces set of edges used by Graph with the given set.
      * @param set to replace set of edges
      */
-    @PackageScope
     void replaceEdgesSet(Set<? extends Edge> set) {
         if (!set.empty) {
             throw new IllegalArgumentException('set must be empty.')
         }
         set.addAll(edges)
         edges = set
+    }
+
+    void replaceVertices(Closure closure) {
+        Map<String, ? extends Vertex> replace = vertices.collectEntries(closure) as Map<String, Vertex>
+        vertices.clear()
+        vertices.putAll(replace)
+    }
+
+    void replaceVerticesMap(Map<String, ? extends Vertex> map) {
+        if(!map.empty) {
+            throw new IllegalArgumentException('map must be empty.')
+        }
+        map.addAll(vertices)
+        vertices = map
     }
 
     /**
