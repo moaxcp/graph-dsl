@@ -45,7 +45,7 @@ class DirectedVertexSpec extends VertexSpec {
      * @param graph
      * @return
      */
-    Vertex apply() {
+    Vertex setup() {
 
         applyVertex()
         applyRename()

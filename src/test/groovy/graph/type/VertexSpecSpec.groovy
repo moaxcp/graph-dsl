@@ -5,7 +5,6 @@ import graph.Graph
 import graph.Vertex
 import graph.trait.Mapping
 import graph.trait.Weight
-import graph.type.VertexSpec
 import spock.lang.Specification
 
 class VertexSpecSpec extends Specification {
@@ -17,7 +16,7 @@ class VertexSpecSpec extends Specification {
         VertexSpec spec = new VertexSpec(graph, [name:''])
 
         when:
-        spec.apply()
+        spec.setup()
 
         then:
         thrown IllegalStateException
@@ -28,7 +27,7 @@ class VertexSpecSpec extends Specification {
         VertexSpec spec = new VertexSpec(graph, [name:'step1'])
 
         when:
-        Vertex vertex = spec.apply()
+        Vertex vertex = spec.setup()
 
         then:
         graph.vertices[vertex.name] == vertex
@@ -39,8 +38,8 @@ class VertexSpecSpec extends Specification {
         VertexSpec spec = new VertexSpec(graph, [name:'step1'])
 
         when:
-        Vertex vertex = spec.apply()
-        spec.apply()
+        Vertex vertex = spec.setup()
+        spec.setup()
 
         then:
         thrown IllegalStateException
@@ -52,7 +51,7 @@ class VertexSpecSpec extends Specification {
         VertexSpec spec = new VertexSpec(graph, [name:'step1', rename:'step2'])
 
         when:
-        Vertex vertex = spec.apply()
+        Vertex vertex = spec.setup()
 
         then:
         graph.vertices.size() == 1
@@ -65,7 +64,7 @@ class VertexSpecSpec extends Specification {
         VertexSpec spec = new VertexSpec(graph, [name:'step1', traits:[Mapping, Weight]])
 
         when:
-        Vertex vertex = spec.apply()
+        Vertex vertex = spec.setup()
 
         then:
         graph.vertices.size() == 1
@@ -78,7 +77,7 @@ class VertexSpecSpec extends Specification {
         VertexSpec spec = new VertexSpec(graph, [name:'step1', connectsTo:['step2', 'step3']])
 
         when:
-        spec.apply()
+        spec.setup()
 
         then:
         graph.vertices.size() == 3

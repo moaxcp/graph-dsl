@@ -3,8 +3,6 @@ package graph.type
 import graph.Edge
 import graph.Graph
 import graph.trait.Mapping
-import graph.trait.Weight
-import graph.type.EdgeSpec
 import spock.lang.Specification
 
 class EdgeSpecSpec extends Specification {
@@ -14,7 +12,7 @@ class EdgeSpecSpec extends Specification {
     def 'cannot apply without one'() {
         when:
         EdgeSpec spec = new EdgeSpec(graph, [one:null])
-        spec.apply()
+        spec.setup()
 
         then:
         thrown IllegalArgumentException
@@ -23,7 +21,7 @@ class EdgeSpecSpec extends Specification {
     def 'cannot apply without two'() {
         when:
         EdgeSpec spec = new EdgeSpec(graph, [two:null])
-        spec.apply()
+        spec.setup()
 
         then:
         thrown IllegalArgumentException
@@ -36,7 +34,7 @@ class EdgeSpecSpec extends Specification {
 
         when:
         EdgeSpec spec = new EdgeSpec(graph, [one:'step1', two:'step2'])
-        spec.apply()
+        spec.setup()
 
         then:
         graph.edges.size() == 1
@@ -48,7 +46,7 @@ class EdgeSpecSpec extends Specification {
     def 'can add vertices and edge'() {
         when:
         EdgeSpec spec = new EdgeSpec(graph, [one:'step1', two:'step2'])
-        spec.apply()
+        spec.setup()
 
         then:
         graph.vertices.size() == 2
@@ -64,7 +62,7 @@ class EdgeSpecSpec extends Specification {
 
         when:
         EdgeSpec spec = new EdgeSpec(graph, [one:'step1', two:'step2', renameOne:'step4'])
-        spec.apply()
+        spec.setup()
 
         then:
         graph.vertices.size() == 3
@@ -80,7 +78,7 @@ class EdgeSpecSpec extends Specification {
 
         when:
         EdgeSpec spec = new EdgeSpec(graph, [one:'step1', two:'step2', renameTwo:'step4'])
-        spec.apply()
+        spec.setup()
 
         then:
         graph.vertices.size() == 3
@@ -96,7 +94,7 @@ class EdgeSpecSpec extends Specification {
         def edge = graph.edge('step1', 'step2')
 
         when:
-        spec.apply()
+        spec.setup()
 
         then:
         edge.delegate instanceof Mapping
@@ -108,7 +106,7 @@ class EdgeSpecSpec extends Specification {
         EdgeSpec spec = new EdgeSpec(graph, [one:'step1', two:'step2'], {ran = true})
 
         when:
-        spec.apply()
+        spec.setup()
 
         then:
         ran

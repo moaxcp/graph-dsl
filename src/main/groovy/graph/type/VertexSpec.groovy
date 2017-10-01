@@ -18,15 +18,15 @@ import graph.type.undirected.VertexSpecCodeRunner
  * 3. remove codeRunner as an option from the map
  *      If you want it you should use a closure in the ConfigSpec
  *
- * 4. apply map
+ * 4. setup map
  *      This creates the Vertex from the map
  *
- * 5. apply codeRunner
+ * 5. setup codeRunner
  *      Runs the closure against the vertex and graph
  *
  * 6. remove all other methods.
  *
- * This optimizes reuse in other types of graphs. Types can reuse the apply
+ * This optimizes reuse in other types of graphs. Types can reuse the setup
  * methods as needed. This makes it easier to test as well.
  */
 /**
@@ -69,10 +69,6 @@ class VertexSpec {
         vertex
     }
 
-    Set<String> getConnectsToSet() {
-        connectsToSet
-    }
-
     Closure getClosure() {
         runnerCodeClosure
     }
@@ -84,8 +80,7 @@ class VertexSpec {
         if (!name) {
             throw new IllegalStateException('!name failed. Name must be groovy truth.')
         }
-        vertex = graph.vertices[name] ?: graph.vertexFactory.newVertex(name)
-        graph.addVertex(vertex)
+        vertex = graph.vertices[name] ?: graph.newVertex(name)
     }
 
     void applyRename() {
@@ -113,12 +108,11 @@ class VertexSpec {
         }
     }
 
-    Vertex apply() {
+    Vertex setup() {
         applyVertex()
         applyRename()
         applyTraits()
         applyConnectsTo()
-        applyClosure()
         vertex
     }
 }

@@ -21,8 +21,8 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(String... names) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsFrom:names])
-        spec.apply()
+        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, connectsFrom:names])
+        spec.setup()
     }
 
     /**
@@ -30,17 +30,17 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(NameSpec... names) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsFrom:names*.name])
-        spec.apply()
+        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, connectsFrom:names*.name])
+        spec.setup()
     }
 
     /**
      * Applies the specs to graph and adds edges using {@link #connectsFrom(String ...)}.
-     * @param specs specs to apply to graph and connectFrom.
+     * @param specs specs to setup to graph and connectFrom.
      */
     void connectsFrom(ConfigSpec... specs) {
         specs.each {
-            graph.vertexSpecFactory.newVertexSpec(graph, it).apply()
+            graph.newVertexSpec(graph, it).setup()
         }
         connectsFrom(specs*.map.name as String[])
     }

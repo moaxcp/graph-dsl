@@ -6,7 +6,7 @@ import graph.type.Type
 import graph.type.VertexSpec
 import graph.type.undirected.EdgeSpecCodeRunner
 
-import graph.type.undirected.UndirectedGraphType
+import graph.type.undirected.GraphType
 import groovy.transform.PackageScope
 
 /**
@@ -18,20 +18,21 @@ import groovy.transform.PackageScope
  * are a few styles that may be used to express vertices and edges in this Graph. See the edge and vertex methods for
  * more details.
  * <p>
- * The default behavior is that of an undirected graph. There can only be one {@link Edge} between any two vertices.
- * When traversing a graph an {@link Edge} is adjacent to a {@link Vertex} if it's one or two property equals the name
- * of the {@link Vertex}.
+ * All graphs have a {@link type.Type}. All Vertex, Edge, VertexSpec, and EdgeSpec objects must be created by the Type.
+ * This is to ensure the {@link Graph} always has the behavior specified by the {@link type.Type}.
+ * <p>
+ * The default behavior is that of an undirected graph. This is implemented by {@link GraphType}.
  * <p>
  * Plugins may be applied to this graph to change its behavior and the behavior of the vertices and edges. For more
  * information on plugins see {@link graph.plugin.Plugin}.
  */
-class Graph {
+class Graph implements GroovyInterceptable {
     private Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
     private final Set<Class> vertexTraitsSet = [] as LinkedHashSet<Class>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
     private final Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
     private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
-    private Type type = new UndirectedGraphType()
+    private Type type = new GraphType()
 
 
     /**
@@ -145,10 +146,10 @@ class Graph {
     }
 
     void replaceVerticesMap(Map<String, ? extends Vertex> map) {
-        if(!map.empty) {
+        if(!map.isEmpty()) {
             throw new IllegalArgumentException('map must be empty.')
         }
-        map.addAll(vertices)
+        map.putAll(vertices)
         vertices = map
     }
 
@@ -162,7 +163,7 @@ class Graph {
      * @param two name of second vertex
      */
     void deleteEdge(String one, String two) {
-        edges.remove(edgeFactory.newEdge(one, two))
+        edges.remove(type.newEdge(one, two))
     }
 
     /**
@@ -173,13 +174,9 @@ class Graph {
         Collections.unmodifiableSet(plugins)
     }
 
-    Set<? extends Type> getTypes() {
-        Collections.unmodifiableSet(types)
-    }
-
     /**
      * Creates and applies a {@link Plugin} to this graph.
-     * @param pluginClass - the {@link Plugin} to create and apply to this graph.
+     * @param pluginClass - the {@link Plugin} to create and setup to this graph.
      */
     void apply(Class pluginClass) {
         if (plugins.contains(pluginClass)) {
@@ -200,21 +197,21 @@ class Graph {
     }
 
     void type(Class typeClass) {
-        if (types.contains(typeClass)) {
-            throw new IllegalArgumentException("$typeClass.name is already applied.")
+        if(!Type.isAssignableFrom(typeClass)) {
+            throw new IllegalArgumentException("$typeClass.name does not implement Type")
         }
-        if (!typeClass.interfaces.contains(Type)) {
-            throw new IllegalArgumentException("$typeClass.name does not implement Plugin")
-        }
-        types << typeClass
-        Type type = typeClass.newInstance()
-        type.apply(this)
+        type = (Type) typeClass.newInstance()
+        type.convert(this)
     }
 
     void type(String typeName) {
         Properties properties = new Properties()
         properties.load(getClass().getResourceAsStream("/META-INF/graph-types/${typeName}.properties"))
         type(Class.forName((String) properties.'implementation-class'))
+    }
+
+    Type getType() {
+        return type
     }
 
     /**
@@ -329,7 +326,7 @@ class Graph {
      *     <dd>list of vertex names the vertex should connect to. Edges will be created with edge.one equal to the
      *     vertex name and edge.two equals to the 'connectTo' name.</dd>
      *     <dt>trait</dt>
-     *     <dd>groovy trait to apply on the vertex delegate</dd>
+     *     <dd>groovy trait to setup on the vertex delegate</dd>
      *     <dt>runnerCode</dt>
      *     <dd>closure to run after the vertex has been created. This can be used to configure the vertex with more
      *     complex operations. See {@link #vertex(String,Closure)} for a detailed description of methods availiable
@@ -467,13 +464,18 @@ class Graph {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(ConfigSpec spec) {
-        if(spec.map.traits) {
-            spec.map.traits.addAll(vertexTraitsSet)
-        } else {
-            spec.map.traits = new ArrayList(vertexTraitsSet)
+        if(!vertices[(String) spec.map.name]) {
+            if (spec.map.traits) {
+                spec.map.traits.addAll(vertexTraitsSet)
+            } else {
+                spec.map.traits = new ArrayList(vertexTraitsSet)
+            }
         }
-        VertexSpec vspec = vertexSpecFactory.newVertexSpec(this, spec)
-        vspec.apply()
+        VertexSpec vspec = type.newVertexSpec(this, spec)
+        Vertex vertex = vspec.setup()
+        vertices.put(vertex.name, vertex)
+        vspec.applyClosure()
+        vertex
     }
 
     /**
@@ -676,13 +678,17 @@ class Graph {
      */
     @PackageScope
     Edge configEdge(ConfigSpec spec) {
-        if(spec.map.traits) {
-            spec.map.traits.addAll(edgeTraitsSet)
-        } else {
-            spec.map.traits = new ArrayList(edgeTraitsSet)
+        if(!edges.find { it == type.newEdge((String) spec.map.one, (String) spec.map.two) }) {
+            if (spec.map.traits) {
+                spec.map.traits.addAll(edgeTraitsSet)
+            } else {
+                spec.map.traits = new ArrayList(edgeTraitsSet)
+            }
         }
-        EdgeSpec espec = edgeSpecFactory.newEdgeSpec(this, spec)
-        espec.apply()
+        EdgeSpec espec = type.newEdgeSpec(this, spec)
+        Edge edge = espec.setup()
+        edges.add(edge)
+        espec.applyClosure()
     }
 
     /**
@@ -1171,6 +1177,11 @@ class Graph {
     @SuppressWarnings('Instanceof')
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
+        MetaMethod method = type.metaClass.getMetaMethod(name, args)
+        if(method != null && (method.declaringClass.theClass == Type || method.declaringClass.theClass.interfaces.contains(Type))) {
+            return method.invoke(type, args)
+        }
+
         if (name == 'vertex') {
             throw new IllegalArgumentException("Confusing name 'vertex' for spec.")
         }

@@ -40,8 +40,8 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(String newName) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, rename:newName])
-        spec.apply()
+        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, rename:newName])
+        spec.setup()
     }
 
     /**
@@ -49,8 +49,8 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(NameSpec newName) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, rename:newName.name])
-        spec.apply()
+        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, rename:newName.name])
+        spec.setup()
     }
 
     /**
@@ -58,8 +58,8 @@ class VertexSpecCodeRunner {
      * @param traits
      */
     void traits(Class... traits) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, traits:traits])
-        spec.apply()
+        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, traits:traits])
+        spec.setup()
     }
 
     /**
@@ -67,8 +67,8 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(String... names) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsTo:names])
-        spec.apply()
+        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, connectsTo:names])
+        spec.setup()
     }
 
     /**
@@ -76,17 +76,17 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(NameSpec... names) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsTo:names*.name])
-        spec.apply()
+        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, connectsTo:names*.name])
+        spec.setup()
     }
 
     /**
      * Applies the specs to graph and adds edges using {@link #connectsTo(String...)}.
-     * @param specs  specs to apply to graph and connectTo.
+     * @param specs  specs to setup to graph and connectTo.
      */
     void connectsTo(ConfigSpec... specs) {
         specs.each {
-            graph.vertexSpecFactory.newVertexSpec(graph, it).apply()
+            graph.newVertexSpec(graph, it).setup()
         }
         connectsTo(specs*.map.name as String[])
     }

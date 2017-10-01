@@ -6,12 +6,12 @@ import graph.Graph
 import graph.Vertex
 
 /**
- * Classes implementing this interface are able to change the behavior of a {@link graph.Graph}.
- * A Type may all {@link graph.Vertex} and {@link graph.Edge} objects in {@link Type#apply(Graph)}
- * to implement the type of behavior needed. It must also provide factories for new vertices and
- * edges added to the graph. A Type may add new properties and methods to {@link EdgeSpec} and
- * {@link VertexSpec}. All Vertex, Edge, VertexSpec, and EdgeSpec objects must be created by a Type
- * in {@link graph.Graph}.
+ * Classes implementing this interface are able to change the behavior of a {@link graph.Graph}. A Type can change the
+ * base class of all {@link graph.Vertex} and {@link graph.Edge} objects to implement the  behavior needed but a Type
+ * should not add traits to delegates. A Type is required to provide factories for {@link Edge}, {@link Vertex},
+ * {@link EdgeSpec}, and {@link VertexSpec}. Subclasses can be returned by these factory methods which allow different
+ * behavior in the graph. For instance {@link Edge} methods can return {@link DirectedEdge} objects and {@link VertexSpec}
+ * methods can return {@link DirectedVertexSpec} objects.
  */
 interface Type {
     /**
@@ -60,6 +60,8 @@ interface Type {
      * @return the new {@link VertexSpec}
      */
     VertexSpec newVertexSpec(Graph graph, ConfigSpec spec)
+
+    boolean canConvert(Graph graph)
 
     /**
      * Converts the type of behavior of a {@link graph.Graph}.

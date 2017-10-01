@@ -1,9 +1,10 @@
 package graph.type.directed
 
+import graph.ConfigSpec
 import graph.Edge
 import graph.Graph
-import graph.plugin.Plugin
-import graph.type.Type
+import graph.type.VertexSpec
+import graph.type.undirected.GraphType
 
 /**
  * This plugin changes the behavior of a {@link Graph} to that of a directed graph.
@@ -48,27 +49,43 @@ import graph.type.Type
  *     <dd>traverses the graph in reverse-post-order</dd>
  * </dl>
  */
-class DirectedGraphType implements Type {
+class DirectedGraphType extends GraphType {
 
     /**
-     * Applies the plugin to a {@link graph.Graph}.
-     * @param graph  to apply plugin
+     * Returns a new DirectedEdge with the given parameters.
+     * @param one
+     * @param two
+     * @return a new DirectedEdge
      */
-    void apply(Graph graph) {
-        graph.replaceEdges { edge ->
-            new DirectedEdge(one:edge.one, two:edge.two, delegate:edge.delegate)
-        }
+    @Override
+    Edge newEdge(String one, String two) {
+        new DirectedEdge(one:one, two:two)
+    }
 
-        graph.edgeFactory = new DirectedEdgeFactory()
-        graph.vertexSpecFactory = new DirectedVertexSpecFactory()
+    /**
+     * Creates a new {@link VertexSpec} from map.
+     * @param map
+     * @return
+     */
+    @Override
+    VertexSpec newVertexSpec(Graph graph, Map<String, ?> map) {
+        new DirectedVertexSpec(graph, map)
+    }
 
-        graph.metaClass.inEdges = this.&inEdges.curry(graph)
-        graph.metaClass.inDegree = this.&inDegree.curry(graph)
-        graph.metaClass.outEdges = this.&outEdges.curry(graph)
-        graph.metaClass.outDegree = this.&outDegree.curry(graph)
-        graph.metaClass.traverseEdges = this.&traverseEdges.curry(graph)
-        graph.metaClass.reversePostOrderSort = this.&reversePostOrderSort.curry(graph)
-        graph.metaClass.reversePostOrder = this.&reversePostOrder.curry(graph)
+    /**
+     * Creates a new {@link VertexSpec} from spec.
+     * @param spec
+     * @return
+     */
+    @Override
+    VertexSpec newVertexSpec(Graph graph, ConfigSpec spec) {
+        new DirectedVertexSpec(graph, spec.map, spec.closure)
+    }
+
+    @Override
+    boolean canConvert(Graph graph) {
+        //todo only two edges can be between any two vertices
+        return true
     }
 
     /**
@@ -77,8 +94,8 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static Set<? extends Edge> inEdges(Graph graph, String name) {
-        graph.@edges.findAll {
+    Set<? extends Edge> inEdges(Graph graph, String name) {
+        graph.edges.findAll {
             name == it.two
         }
     }
@@ -89,7 +106,7 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static int inDegree(Graph graph, String name) {
+    int inDegree(Graph graph, String name) {
         graph.inEdges(name).size()
     }
 
@@ -99,8 +116,8 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static Set<? extends Edge> outEdges(Graph graph, String name) {
-        graph.@edges.findAll {
+    Set<? extends Edge> outEdges(Graph graph, String name) {
+        graph.edges.findAll {
             name == it.one
         }
     }
@@ -111,7 +128,7 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static int outDegree(Graph graph, String name) {
+    int outDegree(Graph graph, String name) {
         graph.outEdges(name).size()
     }
 
@@ -121,7 +138,7 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static Set<? extends Edge> traverseEdges(Graph graph, String name) {
+    Set<? extends Edge> traverseEdges(Graph graph, String name) {
         graph.outEdges(name)
     }
 
@@ -130,7 +147,7 @@ class DirectedGraphType implements Type {
      * @param graph
      * @return
      */
-    static Deque<String> reversePostOrderSort(Graph graph) {
+    Deque<String> reversePostOrderSort(Graph graph) {
         Deque<String> deque = [] as LinkedList<String>
         graph.depthFirstTraversal {
             postorder { vertex ->
@@ -145,7 +162,7 @@ class DirectedGraphType implements Type {
      * @param graph
      * @param closure
      */
-    static void reversePostOrder(Graph graph, Closure closure) {
+    void reversePostOrder(Graph graph, Closure closure) {
         Deque<String> deque = graph.reversePostOrderSort()
         deque.each {
             closure(graph.@vertices[it])

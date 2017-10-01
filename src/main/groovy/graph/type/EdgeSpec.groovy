@@ -8,7 +8,7 @@ import graph.type.undirected.EdgeSpecCodeRunner
 /**
  * Specification class that helps edge methods in {@link Graph} objects create or update {@link Edge} objects. The
  * specification describes what {@link Edge} to create or update, If one and two should be renamed, and what trait to
- * apply to the {@link Edge}. runnerCode is a closure that will be run using an {@link EdgeSpecCodeRunner}.
+ * setup to the {@link Edge}. runnerCode is a closure that will be run using an {@link EdgeSpecCodeRunner}.
  */
 class EdgeSpec {
 
@@ -53,7 +53,7 @@ class EdgeSpec {
         if (!two) {
             throw new IllegalArgumentException('!two failed. two must be groovy truth.')
         }
-        Edge e = graph.edgeFactory.newEdge(one, two)
+        Edge e = graph.newEdge(one, two)
         edge = graph.edges.find { it == e }
 
         if (edge) {
@@ -95,20 +95,11 @@ class EdgeSpec {
         }
     }
 
-    Edge apply() {
+    Edge setup() {
         initEdgeAndSetupVertices()
         initRenameOne()
         initRenameTwo()
         applyTraits()
-
-        /*
-         * todo not sure this class should be here since addEdge is @PackageScope. May be better to not use
-         * LinkedHashMap for edges.
-         */
-        graph.addEdge(edge)
-
-        applyClosure()
-
         edge
     }
 }
