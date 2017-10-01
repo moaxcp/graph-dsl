@@ -39,7 +39,7 @@ class VertexSpec {
     private String name
     private String rename
     private final Set<Class> traitsSet = [] as Set<Class>
-    private final Set<String> connectsToSet = [] as Set<String>
+    final Set<String> connectsToSet = [] as Set<String>
     private Closure runnerCodeClosure
 
     VertexSpec(Graph graph, Map<String, ?> map) {

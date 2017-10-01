@@ -74,8 +74,8 @@ class GraphType implements Type {
 
         graph.replaceEdgesSet(new LinkedHashSet<? extends Edge>())
 
-        graph.replaceVertices { Vertex vertex ->
-            newVertex(vertex.name, vertex.delegate)
+        graph.replaceVertices { String name, Vertex vertex ->
+            [vertex.name, newVertex(vertex.name, vertex.delegate)]
         }
 
         graph.replaceVerticesMap(new LinkedHashMap<String, ? extends Vertex>())

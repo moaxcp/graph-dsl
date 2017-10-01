@@ -689,6 +689,7 @@ class Graph implements GroovyInterceptable {
         Edge edge = espec.setup()
         edges.add(edge)
         espec.applyClosure()
+        edge
     }
 
     /**
