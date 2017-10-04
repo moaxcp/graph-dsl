@@ -7,7 +7,7 @@ import graph.trait.Weight
 import graph.type.undirected.EdgeSpecCodeRunner
 import spock.lang.Specification
 
-class EdgeSpecCodeRunnerSpec extends Specification {
+class GraphEdgeSpecCodeRunnerSpec extends Specification {
     Graph graph = new Graph()
     EdgeSpecCodeRunner runner
     Edge edge

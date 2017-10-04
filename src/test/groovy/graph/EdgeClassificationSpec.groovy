@@ -97,7 +97,8 @@ class EdgeClassificationSpec extends Specification {
         def fromCheck
         def toCheck
         def typeCheck
-        edgeClassification.forrest.addVertex(graph.vertex('B'))
+        graph.vertex('B')
+        edgeClassification.forrest.vertex('B')
 
         when:
         edgeClassification.addEdge(graph, graph.edge('A', 'B'), 'A', 'B', BLACK) { from, to, type ->

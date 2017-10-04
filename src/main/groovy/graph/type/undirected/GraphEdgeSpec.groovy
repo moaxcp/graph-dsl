@@ -1,16 +1,16 @@
-package graph.type
+package graph.type.undirected
 
 import graph.Edge
+import graph.EdgeSpec
 import graph.Graph
 import graph.NameSpec
-import graph.type.undirected.EdgeSpecCodeRunner
 
 /**
  * Specification class that helps edge methods in {@link Graph} objects create or update {@link Edge} objects. The
  * specification describes what {@link Edge} to create or update, If one and two should be renamed, and what trait to
  * setup to the {@link Edge}. runnerCode is a closure that will be run using an {@link EdgeSpecCodeRunner}.
  */
-class EdgeSpec {
+class  GraphEdgeSpec extends EdgeSpec {
 
     private Graph graph
     private Edge edge
@@ -21,7 +21,7 @@ class EdgeSpec {
     private final Set<Class> traitsSet = [] as Set<Class>
     private Closure runnerCodeClosure
 
-    EdgeSpec(Graph graph, Map<String, ?> map) {
+    GraphEdgeSpec(Graph graph, Map<String, ?> map) {
         this.graph = graph
         one = map.one
         two = map.two
@@ -33,7 +33,7 @@ class EdgeSpec {
         }
     }
 
-    EdgeSpec(Graph graph, Map<String, ?> map, Closure closure) {
+    GraphEdgeSpec(Graph graph, Map<String, ?> map, Closure closure) {
         this(graph, map)
         runnerCodeClosure = closure
     }
@@ -88,7 +88,7 @@ class EdgeSpec {
         }
     }
 
-    void applyClosure() {
+    Edge applyClosure() {
         if (runnerCodeClosure) {
             EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph, edge)
             runner.runCode(runnerCodeClosure)

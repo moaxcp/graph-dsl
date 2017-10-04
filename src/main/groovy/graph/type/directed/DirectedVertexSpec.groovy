@@ -3,13 +3,13 @@ package graph.type.directed
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.type.VertexSpec
+import graph.type.undirected.GraphVertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
 
 /**
  * Provides configuration for a directed graph vertex.
  */
-class DirectedVertexSpec extends VertexSpec {
+class DirectedVertexSpec extends GraphVertexSpec {
     private final Set<String> connectsFromSet = [] as Set<String>
 
     /**
@@ -47,7 +47,7 @@ class DirectedVertexSpec extends VertexSpec {
      */
     Vertex setup() {
 
-        applyVertex()
+        findVertex()
         applyRename()
         applyTraits()
         applyConnectsTo()

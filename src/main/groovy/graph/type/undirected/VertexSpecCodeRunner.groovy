@@ -4,10 +4,9 @@ import graph.ConfigSpec
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.type.VertexSpec
 
 /**
- * Delegate of the runnerCode closure in {@link VertexSpec}. This provides methods and properties that can be used in
+ * Delegate of the runnerCode closure in {@link GraphVertexSpec}. This provides methods and properties that can be used in
  * the closure. Method and property missing is delegated to the {@link Vertex}.
  */
 class VertexSpecCodeRunner {
@@ -40,7 +39,7 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(String newName) {
-        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, rename:newName])
+        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, rename:newName])
         spec.setup()
     }
 
@@ -49,7 +48,7 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(NameSpec newName) {
-        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, rename:newName.name])
+        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, rename:newName.name])
         spec.setup()
     }
 
@@ -58,7 +57,7 @@ class VertexSpecCodeRunner {
      * @param traits
      */
     void traits(Class... traits) {
-        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, traits:traits])
+        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, traits:traits])
         spec.setup()
     }
 
@@ -67,7 +66,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(String... names) {
-        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, connectsTo:names])
+        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, connectsTo:names])
         spec.setup()
     }
 
@@ -76,7 +75,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(NameSpec... names) {
-        VertexSpec spec = graph.newVertexSpec(graph, [name:vertex.name, connectsTo:names*.name])
+        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, connectsTo:names*.name])
         spec.setup()
     }
 
@@ -86,7 +85,9 @@ class VertexSpecCodeRunner {
      */
     void connectsTo(ConfigSpec... specs) {
         specs.each {
-            graph.newVertexSpec(graph, it).setup()
+            GraphVertexSpec vspec = graph.newVertexSpec(it)
+            vspec.setup()
+            vspec.applyClosure()
         }
         connectsTo(specs*.map.name as String[])
     }

@@ -4,21 +4,22 @@ import graph.ConfigSpec
 import graph.Edge
 import graph.Graph
 import graph.Vertex
-import graph.type.EdgeSpec
 import graph.type.Type
-import graph.type.VertexSpec
 
 /**
  * Implements an undirected graph. There can only be one {@link Edge} between any two vertices. When traversing a graph
  * an {@link Edge} is adjacent to a {@link Vertex} if it's one or two property equals the name of the {@link Vertex}.
  */
 class GraphType implements Type {
+
+    Graph graph
+
     @Override
     Edge newEdge(String one, String two, Object delegate = null) {
         if(delegate) {
             new Edge(one:one, two:two, delegate:delegate)
         } else {
-            new Edge(one: one, two: two)
+            new Edge(one:one, two:two)
         }
     }
 
@@ -32,27 +33,27 @@ class GraphType implements Type {
     }
 
     @Override
-    EdgeSpec newEdgeSpec(Graph graph, Map<String, ?> map) {
-        new EdgeSpec(graph, map)
+    GraphEdgeSpec newEdgeSpec(Map<String, ?> map) {
+        new GraphEdgeSpec(graph, map)
     }
 
     @Override
-    EdgeSpec newEdgeSpec(Graph graph, ConfigSpec spec) {
-        new EdgeSpec(graph, spec.map, spec.closure)
+    GraphEdgeSpec newEdgeSpec(ConfigSpec spec) {
+        new GraphEdgeSpec(graph, spec.map, spec.closure)
     }
 
     @Override
-    VertexSpec newVertexSpec(Graph graph, Map<String, ?> map) {
-        new VertexSpec(graph, map)
+    GraphVertexSpec newVertexSpec(Map<String, ?> map) {
+        new GraphVertexSpec(graph, map)
     }
 
     @Override
-    VertexSpec newVertexSpec(Graph graph, ConfigSpec spec) {
-        new VertexSpec(graph, spec.map, spec.closure)
+    GraphVertexSpec newVertexSpec(ConfigSpec spec) {
+        new GraphVertexSpec(graph, spec.map, spec.closure)
     }
 
     @Override
-    boolean canConvert(Graph graph) {
+    boolean canConvert() {
         if(graph.edges.size() == 0) {
             return true
         }
@@ -64,8 +65,8 @@ class GraphType implements Type {
     }
 
     @Override
-    void convert(Graph graph) {
-        if(!canConvert(graph)) {
+    void convert() {
+        if(!canConvert()) {
             throw new IllegalArgumentException("Cannot convert to ${getClass().getSimpleName()}")
         }
         graph.replaceEdges { Edge edge ->

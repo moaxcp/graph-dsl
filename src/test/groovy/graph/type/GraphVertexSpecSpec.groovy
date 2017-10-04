@@ -5,15 +5,16 @@ import graph.Graph
 import graph.Vertex
 import graph.trait.Mapping
 import graph.trait.Weight
+import graph.type.undirected.GraphVertexSpec
 import spock.lang.Specification
 
-class VertexSpecSpec extends Specification {
+class GraphVertexSpecSpec extends Specification {
 
     Graph graph = new Graph()
 
     def 'apply throws exception on invalid name'() {
         setup:
-        VertexSpec spec = new VertexSpec(graph, [name:''])
+        GraphVertexSpec spec = new GraphVertexSpec(graph, [name:''])
 
         when:
         spec.setup()
@@ -24,7 +25,7 @@ class VertexSpecSpec extends Specification {
 
     def 'apply can add vertex'() {
         setup:
-        VertexSpec spec = new VertexSpec(graph, [name:'step1'])
+        GraphVertexSpec spec = new GraphVertexSpec(graph, [name:'step1'])
 
         when:
         Vertex vertex = spec.setup()
@@ -35,7 +36,7 @@ class VertexSpecSpec extends Specification {
 
     def 'apply cannot be run twice'() {
         setup:
-        VertexSpec spec = new VertexSpec(graph, [name:'step1'])
+        GraphVertexSpec spec = new GraphVertexSpec(graph, [name:'step1'])
 
         when:
         Vertex vertex = spec.setup()
@@ -48,7 +49,7 @@ class VertexSpecSpec extends Specification {
     def 'apply can rename vertex'() {
         setup:
         graph.vertex 'step1'
-        VertexSpec spec = new VertexSpec(graph, [name:'step1', rename:'step2'])
+        GraphVertexSpec spec = new GraphVertexSpec(graph, [name:'step1', rename:'step2'])
 
         when:
         Vertex vertex = spec.setup()
@@ -61,7 +62,7 @@ class VertexSpecSpec extends Specification {
 
     def 'apply can add traits'() {
         setup:
-        VertexSpec spec = new VertexSpec(graph, [name:'step1', traits:[Mapping, Weight]])
+        GraphVertexSpec spec = new GraphVertexSpec(graph, [name:'step1', traits:[Mapping, Weight]])
 
         when:
         Vertex vertex = spec.setup()
@@ -74,7 +75,7 @@ class VertexSpecSpec extends Specification {
 
     def 'apply can add edges using edgesFirst'() {
         setup:
-        VertexSpec spec = new VertexSpec(graph, [name:'step1', connectsTo:['step2', 'step3']])
+        GraphVertexSpec spec = new GraphVertexSpec(graph, [name:'step1', connectsTo:['step2', 'step3']])
 
         when:
         spec.setup()

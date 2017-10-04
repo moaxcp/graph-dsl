@@ -1,15 +1,14 @@
-package graph.type
+package graph.type.undirected
 
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.type.undirected.VertexSpecCodeRunner
-
+import graph.VertexSpec
 
 /*
  * TODO refactoring for ConfigSpec.
- * VertexSpec will be a single use object Once it is applied it should be discarded
- * 1. create VertexSpec with graph, map
+ * GraphVertexSpec will be a single use object Once it is applied it should be discarded
+ * 1. create GraphVertexSpec with graph, map
  *      this organizes the map into values for the Vertex
  *
  * 2. create Vertex with graph, map and closure
@@ -30,10 +29,10 @@ import graph.type.undirected.VertexSpecCodeRunner
  * methods as needed. This makes it easier to test as well.
  */
 /**
- * Specification class that helps vertex methods in {@link Graph} objects. VertexSpec is used to collect the details
+ * Specification class that helps vertex methods in {@link Graph} objects. GraphVertexSpec is used to collect the details
  * of an update or create.
  */
-class VertexSpec {
+class GraphVertexSpec extends VertexSpec {
     private Graph graph
     private Vertex vertex
     private String name
@@ -42,7 +41,7 @@ class VertexSpec {
     final Set<String> connectsToSet = [] as Set<String>
     private Closure runnerCodeClosure
 
-    VertexSpec(Graph graph, Map<String, ?> map) {
+    GraphVertexSpec(Graph graph, Map<String, ?> map) {
         this.graph = graph
         name = map.name
         rename = map.rename instanceof NameSpec ? map.rename.name : map.rename
@@ -56,7 +55,7 @@ class VertexSpec {
         }
     }
 
-    VertexSpec(Graph graph, Map<String, ?> map, Closure closure) {
+    GraphVertexSpec(Graph graph, Map<String, ?> map, Closure closure) {
         this(graph, map)
         runnerCodeClosure = closure
     }
@@ -73,7 +72,7 @@ class VertexSpec {
         runnerCodeClosure
     }
 
-    void applyVertex() {
+    void findVertex() {
         if(vertex) {
             throw new IllegalStateException("already ran spec")
         }
@@ -84,8 +83,10 @@ class VertexSpec {
     }
 
     void applyRename() {
-        if (rename) {
+        if(graph.vertices[name] && rename) {
             graph.rename(name, rename)
+        } else if(rename) {
+            vertex.name = rename
         }
     }
 
@@ -109,7 +110,7 @@ class VertexSpec {
     }
 
     Vertex setup() {
-        applyVertex()
+        findVertex()
         applyRename()
         applyTraits()
         applyConnectsTo()

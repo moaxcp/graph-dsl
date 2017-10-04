@@ -1,9 +1,9 @@
 package graph
 
 import graph.plugin.Plugin
-import graph.type.EdgeSpec
 import graph.type.Type
-import graph.type.VertexSpec
+import graph.type.undirected.GraphEdgeSpec
+import graph.type.undirected.GraphVertexSpec
 import graph.type.undirected.EdgeSpecCodeRunner
 
 import graph.type.undirected.GraphType
@@ -18,7 +18,7 @@ import groovy.transform.PackageScope
  * are a few styles that may be used to express vertices and edges in this Graph. See the edge and vertex methods for
  * more details.
  * <p>
- * All graphs have a {@link type.Type}. All Vertex, Edge, VertexSpec, and EdgeSpec objects must be created by the Type.
+ * All graphs have a {@link type.Type}. All Vertex, Edge, GraphVertexSpec, and GraphEdgeSpec objects must be created by the Type.
  * This is to ensure the {@link Graph} always has the behavior specified by the {@link type.Type}.
  * <p>
  * The default behavior is that of an undirected graph. This is implemented by {@link GraphType}.
@@ -32,8 +32,12 @@ class Graph implements GroovyInterceptable {
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
     private final Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
     private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
-    private Type type = new GraphType()
+    private Type type
 
+    Graph() {
+        type = new GraphType()
+        type.graph = this
+    }
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -201,7 +205,8 @@ class Graph implements GroovyInterceptable {
             throw new IllegalArgumentException("$typeClass.name does not implement Type")
         }
         type = (Type) typeClass.newInstance()
-        type.convert(this)
+        type.graph = this
+        type.convert()
     }
 
     void type(String typeName) {
@@ -288,8 +293,8 @@ class Graph implements GroovyInterceptable {
      * @param newName  for updated vertex
      */
     void rename(String name, String newName) {
-        if (!newName) {
-            throw new IllegalArgumentException('newName is null or empty.')
+        if (!name || !newName) {
+            throw new IllegalArgumentException('name or newName is null or empty.')
         }
         Vertex vertex = vertex(name)
         vertices.remove(vertex.name)
@@ -471,7 +476,7 @@ class Graph implements GroovyInterceptable {
                 spec.map.traits = new ArrayList(vertexTraitsSet)
             }
         }
-        VertexSpec vspec = type.newVertexSpec(this, spec)
+        GraphVertexSpec vspec = type.newVertexSpec(spec)
         Vertex vertex = vspec.setup()
         vertices.put(vertex.name, vertex)
         vspec.applyClosure()
@@ -685,7 +690,7 @@ class Graph implements GroovyInterceptable {
                 spec.map.traits = new ArrayList(edgeTraitsSet)
             }
         }
-        EdgeSpec espec = type.newEdgeSpec(this, spec)
+        GraphEdgeSpec espec = type.newEdgeSpec(spec)
         Edge edge = espec.setup()
         edges.add(edge)
         espec.applyClosure()
@@ -1157,9 +1162,9 @@ class Graph implements GroovyInterceptable {
     }
 
     /**
-     * Creates a {@link graph.type.VertexSpec}
+     * Creates a {@link GraphVertexSpec}
      * @param name
-     * @return a {@link VertexSpec} with name set to the property name.
+     * @return a {@link graph.type.undirected.GraphVertexSpec} with name set to the property name.
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
@@ -1167,19 +1172,19 @@ class Graph implements GroovyInterceptable {
     }
 
     /**
-     * Creates a {@link VertexSpec}. The result is similar to calling {@link VertexSpec#newVertexSpec(Map)}
+     * Creates a {@link graph.type.undirected.GraphVertexSpec}. The result is similar to calling {@link graph.type.undirected.GraphVertexSpec#newVertexSpec(Map)}
      * <pre>
-     *     VertexSpec.newVertexSpec([name:name + args[0])
+     *     GraphVertexSpec.newVertexSpec([name:name + args[0])
      * </pre>
      * @param name
      * @param args
-     * @return a {@link VertexSpec}
+     * @return a {@link GraphVertexSpec}
      */
     @SuppressWarnings('Instanceof')
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
         MetaMethod method = type.metaClass.getMetaMethod(name, args)
-        if(method != null && (method.declaringClass.theClass == Type || method.declaringClass.theClass.interfaces.contains(Type))) {
+        if(method != null && (method.declaringClass.theClass == Type || Type.isAssignableFrom(method.declaringClass.theClass))) {
             return method.invoke(type, args)
         }
 

@@ -3,7 +3,7 @@ package graph.type.directed
 import graph.ConfigSpec
 import graph.Edge
 import graph.Graph
-import graph.type.VertexSpec
+import graph.type.undirected.GraphVertexSpec
 import graph.type.undirected.GraphType
 
 /**
@@ -24,7 +24,7 @@ import graph.type.undirected.GraphType
  *     <dd>changed to a {@link DirectedEdgeFactory} This causes all future {@link Edge}s added to the {@link Graph} to
  *     be {@link DirectedEdge}s.</dd>
  *     <dt>vertexSpecFactory</dt>
- *     <dd>change to a {@link DirectedVertexSpecFactory}. This causes all future {@link VertexSpec}s used in the
+ *     <dd>change to a {@link DirectedVertexSpecFactory}. This causes all future {@link graph.type.undirected.GraphVertexSpec}s used in the
  *     {@link Graph} to be {@link DirectedVertexSpec}. The new configuration options in {@link DirectedVertexSpec} are
  *     available for use in the vertex dsl (connectsFrom).</dd>
  * </dl>
@@ -58,32 +58,36 @@ class DirectedGraphType extends GraphType {
      * @return a new DirectedEdge
      */
     @Override
-    Edge newEdge(String one, String two) {
-        new DirectedEdge(one:one, two:two)
+    Edge newEdge(String one, String two, Object delegate = null) {
+        if(delegate) {
+            new DirectedEdge(one:one, two:two, delegate:delegate)
+        } else {
+            new DirectedEdge(one:one, two:two)
+        }
     }
 
     /**
-     * Creates a new {@link VertexSpec} from map.
+     * Creates a new {@link graph.type.undirected.GraphVertexSpec} from map.
      * @param map
      * @return
      */
     @Override
-    VertexSpec newVertexSpec(Graph graph, Map<String, ?> map) {
+    GraphVertexSpec newVertexSpec(Map<String, ?> map) {
         new DirectedVertexSpec(graph, map)
     }
 
     /**
-     * Creates a new {@link VertexSpec} from spec.
+     * Creates a new {@link graph.type.undirected.GraphVertexSpec} from spec.
      * @param spec
      * @return
      */
     @Override
-    VertexSpec newVertexSpec(Graph graph, ConfigSpec spec) {
+    GraphVertexSpec newVertexSpec(ConfigSpec spec) {
         new DirectedVertexSpec(graph, spec.map, spec.closure)
     }
 
     @Override
-    boolean canConvert(Graph graph) {
+    boolean canConvert() {
         //todo only two edges can be between any two vertices
         return true
     }
@@ -94,7 +98,7 @@ class DirectedGraphType extends GraphType {
      * @param name
      * @return
      */
-    Set<? extends Edge> inEdges(Graph graph, String name) {
+    Set<? extends Edge> inEdges(String name) {
         graph.edges.findAll {
             name == it.two
         }
@@ -106,7 +110,7 @@ class DirectedGraphType extends GraphType {
      * @param name
      * @return
      */
-    int inDegree(Graph graph, String name) {
+    int inDegree(String name) {
         graph.inEdges(name).size()
     }
 
@@ -116,7 +120,7 @@ class DirectedGraphType extends GraphType {
      * @param name
      * @return
      */
-    Set<? extends Edge> outEdges(Graph graph, String name) {
+    Set<? extends Edge> outEdges(String name) {
         graph.edges.findAll {
             name == it.one
         }
@@ -128,7 +132,7 @@ class DirectedGraphType extends GraphType {
      * @param name
      * @return
      */
-    int outDegree(Graph graph, String name) {
+    int outDegree(String name) {
         graph.outEdges(name).size()
     }
 
@@ -138,7 +142,7 @@ class DirectedGraphType extends GraphType {
      * @param name
      * @return
      */
-    Set<? extends Edge> traverseEdges(Graph graph, String name) {
+    Set<? extends Edge> traverseEdges(String name) {
         graph.outEdges(name)
     }
 
@@ -147,7 +151,7 @@ class DirectedGraphType extends GraphType {
      * @param graph
      * @return
      */
-    Deque<String> reversePostOrderSort(Graph graph) {
+    Deque<String> reversePostOrderSort() {
         Deque<String> deque = [] as LinkedList<String>
         graph.depthFirstTraversal {
             postorder { vertex ->
@@ -162,7 +166,7 @@ class DirectedGraphType extends GraphType {
      * @param graph
      * @param closure
      */
-    void reversePostOrder(Graph graph, Closure closure) {
+    void reversePostOrder(Closure closure) {
         Deque<String> deque = graph.reversePostOrderSort()
         deque.each {
             closure(graph.@vertices[it])
