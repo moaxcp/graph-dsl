@@ -39,8 +39,7 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(String newName) {
-        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, rename:newName])
-        spec.setup()
+        graph.newVertexSpec([name:vertex.name, rename:newName]).apply()
     }
 
     /**
@@ -48,8 +47,7 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(NameSpec newName) {
-        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, rename:newName.name])
-        spec.setup()
+        graph.newVertexSpec([name:vertex.name, rename:newName.name]).apply()
     }
 
     /**
@@ -57,8 +55,7 @@ class VertexSpecCodeRunner {
      * @param traits
      */
     void traits(Class... traits) {
-        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, traits:traits])
-        spec.setup()
+        graph.newVertexSpec([name:vertex.name, traits:traits]).apply()
     }
 
     /**
@@ -66,8 +63,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(String... names) {
-        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, connectsTo:names])
-        spec.setup()
+        graph.newVertexSpec([name:vertex.name, connectsTo:names]).apply()
     }
 
     /**
@@ -75,19 +71,16 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(NameSpec... names) {
-        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, connectsTo:names*.name])
-        spec.setup()
+        graph.newVertexSpec([name:vertex.name, connectsTo:names*.name]).apply()
     }
 
     /**
      * Applies the specs to graph and adds edges using {@link #connectsTo(String...)}.
-     * @param specs  specs to setup to graph and connectTo.
+     * @param specs  specs to apply to graph and connectTo.
      */
     void connectsTo(ConfigSpec... specs) {
         specs.each {
-            GraphVertexSpec vspec = graph.newVertexSpec(it)
-            vspec.setup()
-            vspec.applyClosure()
+            graph.newVertexSpec(it).apply()
         }
         connectsTo(specs*.map.name as String[])
     }

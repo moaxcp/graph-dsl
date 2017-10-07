@@ -4,7 +4,7 @@ import graph.Graph
 import graph.trait.Mapping
 
 /**
- * Applies the {@link Mapping} trait to all edges. All future edges will also setup the {@link Mapping} trait.
+ * Applies the {@link Mapping} trait to all edges. All future edges will also apply the {@link Mapping} trait.
  */
 class EdgeMapPlugin implements Plugin {
 

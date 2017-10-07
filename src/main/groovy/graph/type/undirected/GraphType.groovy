@@ -2,8 +2,10 @@ package graph.type.undirected
 
 import graph.ConfigSpec
 import graph.Edge
+import graph.EdgeSpec
 import graph.Graph
 import graph.Vertex
+import graph.VertexSpec
 import graph.type.Type
 
 /**
@@ -33,23 +35,23 @@ class GraphType implements Type {
     }
 
     @Override
-    GraphEdgeSpec newEdgeSpec(Map<String, ?> map) {
-        new GraphEdgeSpec(graph, map)
+    EdgeSpec newEdgeSpec(Map<String, ?> map) {
+        new EdgeSpec(graph, map)
     }
 
     @Override
-    GraphEdgeSpec newEdgeSpec(ConfigSpec spec) {
-        new GraphEdgeSpec(graph, spec.map, spec.closure)
+    EdgeSpec newEdgeSpec(ConfigSpec spec) {
+        new EdgeSpec(graph, spec.map, spec.closure)
     }
 
     @Override
-    GraphVertexSpec newVertexSpec(Map<String, ?> map) {
-        new GraphVertexSpec(graph, map)
+    VertexSpec newVertexSpec(Map<String, ?> map) {
+        new VertexSpec(graph, map)
     }
 
     @Override
-    GraphVertexSpec newVertexSpec(ConfigSpec spec) {
-        new GraphVertexSpec(graph, spec.map, spec.closure)
+    VertexSpec newVertexSpec(ConfigSpec spec) {
+        new VertexSpec(graph, spec.map, spec.closure)
     }
 
     @Override
@@ -80,5 +82,14 @@ class GraphType implements Type {
         }
 
         graph.replaceVerticesMap(new LinkedHashMap<String, ? extends Vertex>())
+    }
+
+    /**
+     * Returns edges from vertex with name that should be traversed.
+     * @param name
+     * @return
+     */
+    Set<? extends Edge> traverseEdges(String name) {
+        graph.adjacentEdges(name)
     }
 }

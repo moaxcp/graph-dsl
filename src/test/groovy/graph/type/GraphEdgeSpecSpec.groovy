@@ -1,9 +1,11 @@
 package graph.type
 
 import graph.Edge
+import graph.EdgeSpec
 import graph.Graph
+import graph.GraphEdgeSpec
 import graph.trait.Mapping
-import graph.type.undirected.GraphEdgeSpec
+
 import spock.lang.Specification
 
 class GraphEdgeSpecSpec extends Specification {
@@ -12,20 +14,18 @@ class GraphEdgeSpecSpec extends Specification {
 
     def 'cannot apply without one'() {
         when:
-        GraphEdgeSpec spec = new GraphEdgeSpec(graph, [one:null])
-        spec.setup()
+        new EdgeSpec(graph, [one:null]).apply()
 
         then:
-        thrown IllegalArgumentException
+        thrown IllegalStateException
     }
 
     def 'cannot apply without two'() {
         when:
-        GraphEdgeSpec spec = new GraphEdgeSpec(graph, [two:null])
-        spec.setup()
+        new EdgeSpec(graph, [two:null]).apply()
 
         then:
-        thrown IllegalArgumentException
+        thrown IllegalStateException
     }
 
     def 'can add edge between vertices'() {
@@ -34,8 +34,7 @@ class GraphEdgeSpecSpec extends Specification {
         graph.vertex('step2')
 
         when:
-        GraphEdgeSpec spec = new GraphEdgeSpec(graph, [one:'step1', two:'step2'])
-        spec.setup()
+        new EdgeSpec(graph, [one:'step1', two:'step2']).apply()
 
         then:
         graph.edges.size() == 1
@@ -46,8 +45,7 @@ class GraphEdgeSpecSpec extends Specification {
 
     def 'can add vertices and edge'() {
         when:
-        GraphEdgeSpec spec = new GraphEdgeSpec(graph, [one:'step1', two:'step2'])
-        spec.setup()
+        new EdgeSpec(graph, [one:'step1', two:'step2']).apply()
 
         then:
         graph.vertices.size() == 2
@@ -62,8 +60,7 @@ class GraphEdgeSpecSpec extends Specification {
         graph.edge('step1', 'step2')
 
         when:
-        GraphEdgeSpec spec = new GraphEdgeSpec(graph, [one:'step1', two:'step2', renameOne:'step4'])
-        spec.setup()
+        new EdgeSpec(graph, [one:'step1', two:'step2', renameOne:'step4']).apply()
 
         then:
         graph.vertices.size() == 3
@@ -78,8 +75,7 @@ class GraphEdgeSpecSpec extends Specification {
         graph.edge('step1', 'step2')
 
         when:
-        GraphEdgeSpec spec = new GraphEdgeSpec(graph, [one:'step1', two:'step2', renameTwo:'step4'])
-        spec.setup()
+        new EdgeSpec(graph, [one:'step1', two:'step2', renameTwo:'step4']).apply()
 
         then:
         graph.vertices.size() == 3
@@ -91,11 +87,11 @@ class GraphEdgeSpecSpec extends Specification {
 
     def 'can add traits in apply'() {
         setup:
-        GraphEdgeSpec spec = new GraphEdgeSpec(graph, [one:'step1', two:'step2', traits:Mapping])
+        EdgeSpec spec = new EdgeSpec(graph, [one:'step1', two:'step2', traits:Mapping])
         def edge = graph.edge('step1', 'step2')
 
         when:
-        spec.setup()
+        spec.apply()
 
         then:
         edge.delegate instanceof Mapping
@@ -104,10 +100,10 @@ class GraphEdgeSpecSpec extends Specification {
     def 'apply runs runnerCode'() {
         setup:
         def ran = false
-        GraphEdgeSpec spec = new GraphEdgeSpec(graph, [one:'step1', two:'step2'], {ran = true})
+        EdgeSpec spec = new EdgeSpec(graph, [one:'step1', two:'step2'], {ran = true})
 
         when:
-        spec.setup()
+        spec.apply()
 
         then:
         ran

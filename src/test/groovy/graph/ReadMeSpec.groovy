@@ -77,11 +77,6 @@ class ReadMeSpec extends Specification {
                 connectsFrom 'd'
             }
 
-            vertex renameMe {
-                rename 'b'
-                connectsTo 'c', 'd'
-            }
-
             vertex d([connectsTo:'c']) {
                 connectsTo 'e'
             }

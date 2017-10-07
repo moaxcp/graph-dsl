@@ -4,7 +4,6 @@ import graph.ConfigSpec
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.type.undirected.GraphVertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
 
 /**
@@ -21,8 +20,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(String... names) {
-        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, connectsFrom:names])
-        spec.setup()
+        graph.newVertexSpec([name:vertex.name, connectsFrom:names]).apply()
     }
 
     /**
@@ -30,19 +28,16 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(NameSpec... names) {
-        GraphVertexSpec spec = graph.newVertexSpec([name:vertex.name, connectsFrom:names*.name])
-        spec.setup()
+        graph.newVertexSpec([name:vertex.name, connectsFrom:names*.name]).apply()
     }
 
     /**
      * Applies the specs to graph and adds edges using {@link #connectsFrom(String ...)}.
-     * @param specs specs to setup to graph and connectFrom.
+     * @param specs specs to apply to graph and connectFrom.
      */
     void connectsFrom(ConfigSpec... specs) {
         specs.each {
-            GraphVertexSpec vspec = graph.newVertexSpec(it)
-            vspec.setup()
-            vspec.applyClosure()
+            graph.newVertexSpec(it).apply()
         }
         connectsFrom(specs*.map.name as String[])
     }

@@ -3,7 +3,6 @@ package graph.type.directed
 import graph.ConfigSpec
 import graph.Edge
 import graph.Graph
-import graph.type.undirected.GraphVertexSpec
 import graph.type.undirected.GraphType
 
 /**
@@ -67,12 +66,12 @@ class DirectedGraphType extends GraphType {
     }
 
     /**
-     * Creates a new {@link graph.type.undirected.GraphVertexSpec} from map.
+     * Creates a new {@link graph.type.directed.DirectedVertexSpec} from map.
      * @param map
      * @return
      */
     @Override
-    GraphVertexSpec newVertexSpec(Map<String, ?> map) {
+    DirectedVertexSpec newVertexSpec(Map<String, ?> map) {
         new DirectedVertexSpec(graph, map)
     }
 
@@ -82,7 +81,7 @@ class DirectedGraphType extends GraphType {
      * @return
      */
     @Override
-    GraphVertexSpec newVertexSpec(ConfigSpec spec) {
+    DirectedVertexSpec newVertexSpec(ConfigSpec spec) {
         new DirectedVertexSpec(graph, spec.map, spec.closure)
     }
 

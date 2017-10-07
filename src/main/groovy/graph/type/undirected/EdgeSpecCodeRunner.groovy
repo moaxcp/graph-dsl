@@ -5,7 +5,7 @@ import graph.Graph
 import graph.NameSpec
 
 /**
- * Delegate of the runnerCode closure in {@link GraphEdgeSpec}. This provides methods and properties that can be used in
+ * Delegate of the runnerCode closure in {@link EdgeSpec}. This provides methods and properties that can be used in
  * the closure. Method and property missing is delegated to the {@link Edge}
  */
 class EdgeSpecCodeRunner {
@@ -39,8 +39,7 @@ class EdgeSpecCodeRunner {
      * @param renameOne the new name for edge.one
      */
     void renameOne(String renameOne) {
-        GraphEdgeSpec spec = graph.newEdgeSpec([one:edge.one, two:edge.two, renameOne:renameOne])
-        spec.setup()
+        graph.newEdgeSpec([one:edge.one, two:edge.two, renameOne:renameOne]).apply()
     }
 
     /**
@@ -48,8 +47,7 @@ class EdgeSpecCodeRunner {
      * @param renameOne  the new name for edge.one
      */
     void renameOne(NameSpec renameOne) {
-        GraphEdgeSpec spec = graph.newEdgeSpec([one:edge.one, two:edge.two, renameOne:renameOne.name])
-        spec.setup()
+        graph.newEdgeSpec([one:edge.one, two:edge.two, renameOne:renameOne.name]).apply()
     }
 
     /**
@@ -57,8 +55,7 @@ class EdgeSpecCodeRunner {
      * @param renameTwo the new name for edge.two
      */
     void renameTwo(String renameTwo) {
-        GraphEdgeSpec spec = graph.newEdgeSpec([one:edge.one, two:edge.two, renameTwo:renameTwo])
-        spec.setup()
+        graph.newEdgeSpec([one:edge.one, two:edge.two, renameTwo:renameTwo]).apply()
     }
 
     /**
@@ -66,8 +63,7 @@ class EdgeSpecCodeRunner {
      * @param renameTwo  the new name for edge.two
      */
     void renameTwo(NameSpec renameTwo) {
-        GraphEdgeSpec spec = graph.newEdgeSpec([one:edge.one, two:edge.two, renameTwo:renameTwo.name])
-        spec.setup()
+        graph.newEdgeSpec([one:edge.one, two:edge.two, renameTwo:renameTwo.name]).apply()
     }
 
     /**
@@ -75,8 +71,7 @@ class EdgeSpecCodeRunner {
      * @param traits
      */
     void traits(Class... traits) {
-        GraphEdgeSpec spec = graph.newEdgeSpec([one:edge.one, two:edge.two, traits:traits])
-        spec.setup()
+        graph.newEdgeSpec([one:edge.one, two:edge.two, traits:traits]).apply()
     }
 
     /**

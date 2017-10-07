@@ -2,8 +2,7 @@ package graph
 
 import graph.plugin.Plugin
 import graph.type.Type
-import graph.type.undirected.GraphEdgeSpec
-import graph.type.undirected.GraphVertexSpec
+
 import graph.type.undirected.EdgeSpecCodeRunner
 
 import graph.type.undirected.GraphType
@@ -180,7 +179,7 @@ class Graph implements GroovyInterceptable {
 
     /**
      * Creates and applies a {@link Plugin} to this graph.
-     * @param pluginClass - the {@link Plugin} to create and setup to this graph.
+     * @param pluginClass - the {@link Plugin} to create and apply to this graph.
      */
     void apply(Class pluginClass) {
         if (plugins.contains(pluginClass)) {
@@ -331,7 +330,7 @@ class Graph implements GroovyInterceptable {
      *     <dd>list of vertex names the vertex should connect to. Edges will be created with edge.one equal to the
      *     vertex name and edge.two equals to the 'connectTo' name.</dd>
      *     <dt>trait</dt>
-     *     <dd>groovy trait to setup on the vertex delegate</dd>
+     *     <dd>groovy trait to apply on the vertex delegate</dd>
      *     <dt>runnerCode</dt>
      *     <dd>closure to run after the vertex has been created. This can be used to configure the vertex with more
      *     complex operations. See {@link #vertex(String,Closure)} for a detailed description of methods availiable
@@ -476,11 +475,8 @@ class Graph implements GroovyInterceptable {
                 spec.map.traits = new ArrayList(vertexTraitsSet)
             }
         }
-        GraphVertexSpec vspec = type.newVertexSpec(spec)
-        Vertex vertex = vspec.setup()
-        vertices.put(vertex.name, vertex)
-        vspec.applyClosure()
-        vertex
+        VertexSpec vspec = type.newVertexSpec(spec)
+        vspec.apply()
     }
 
     /**
@@ -690,11 +686,7 @@ class Graph implements GroovyInterceptable {
                 spec.map.traits = new ArrayList(edgeTraitsSet)
             }
         }
-        GraphEdgeSpec espec = type.newEdgeSpec(spec)
-        Edge edge = espec.setup()
-        edges.add(edge)
-        espec.applyClosure()
-        edge
+        type.newEdgeSpec(spec).apply()
     }
 
     /**
@@ -768,15 +760,6 @@ class Graph implements GroovyInterceptable {
      */
     Set<? extends Edge> adjacentEdges(NameSpec name) {
         adjacentEdges(name.name)
-    }
-
-    /**
-     * Returns edges from vertex with name that should be traversed.
-     * @param name
-     * @return
-     */
-    Set<? extends Edge> traverseEdges(String name) {
-        adjacentEdges(name)
     }
 
     /**
