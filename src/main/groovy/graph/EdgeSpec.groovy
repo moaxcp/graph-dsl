@@ -33,6 +33,9 @@ class EdgeSpec {
     }
 
     protected init() {
+        if(edge) {
+            throw new IllegalStateException('Edge already created.')
+        }
         Edge created = graph.newEdge(one, two)
         Edge existing = graph.edges.find { it == created }
         edgePresentInGraph = existing != null

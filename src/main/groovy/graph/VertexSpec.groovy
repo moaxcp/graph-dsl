@@ -47,6 +47,9 @@ class VertexSpec {
     }
 
     void init() {
+        if(vertex) {
+            throw new IllegalStateException('vertex already created.')
+        }
         if(!graph.vertices[name]) {
             name = rename ?: name
             rename = null
