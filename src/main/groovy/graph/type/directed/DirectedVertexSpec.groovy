@@ -46,7 +46,6 @@ class DirectedVertexSpec extends VertexSpec {
         init()
         checkConditions()
         applyRename()
-        applyTraits()
         applyConnectsTo()
         applyConnectsFrom()
         addVertex(vertex)

@@ -11,7 +11,6 @@ class VertexSpec {
     private Vertex vertex
     private String name
     private String rename
-    private final Set<Class> traitsSet = [] as Set<Class>
     final Set<String> connectsToSet = [] as Set<String>
     private Closure runnerCodeClosure
 
@@ -23,10 +22,6 @@ class VertexSpec {
 
         name = map.name
         rename = map.rename instanceof NameSpec ? map.rename.name : map.rename
-
-        map.traits?.each{
-            traitsSet.add((Class) it)
-        }
 
         map.connectsTo?.each {
             connectsToSet.add((String) (it instanceof NameSpec ? it.name : it))
@@ -80,12 +75,6 @@ class VertexSpec {
         }
     }
 
-    void applyTraits() {
-        if (traitsSet) {
-            vertex.delegateAs(traitsSet as Class[])
-        }
-    }
-
     void applyConnectsTo() {
         connectsToSet.each {
             graph.edge vertex.name, it
@@ -107,7 +96,6 @@ class VertexSpec {
         init()
         checkConditions()
         applyRename()
-        applyTraits()
         applyConnectsTo()
         addVertex(vertex)
         applyClosure()

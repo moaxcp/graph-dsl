@@ -51,14 +51,6 @@ class VertexSpecCodeRunner {
     }
 
     /**
-     * Adds trait to the vertex.
-     * @param traits
-     */
-    void traits(Class... traits) {
-        graph.newVertexSpec([name:vertex.name, traits:traits]).apply()
-    }
-
-    /**
      * Creates edges where the vertex is edge.one and each name in names is edge.two.
      * @param names of vertices to connect to.
      */

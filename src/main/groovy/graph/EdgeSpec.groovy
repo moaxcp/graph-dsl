@@ -11,7 +11,6 @@ class EdgeSpec {
     private String two
     private String renameOne
     private String renameTwo
-    private final Set<Class> traitsSet = [] as Set<Class>
     private Closure runnerCodeClosure
 
     EdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
@@ -24,10 +23,6 @@ class EdgeSpec {
         two = map.two
         renameOne = map.renameOne instanceof NameSpec ? map.renameOne.name : map.renameOne
         renameTwo = map.renameTwo instanceof NameSpec ? map.renameTwo.name : map.renameTwo
-
-        map.traits?.each {
-            traitsSet.add((Class) it)
-        }
 
         runnerCodeClosure = closure
     }

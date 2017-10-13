@@ -67,14 +67,6 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * Adds trait to the edge.
-     * @param traits
-     */
-    void traits(Class... traits) {
-        graph.newEdgeSpec([one:edge.one, two:edge.two, traits:traits]).apply()
-    }
-
-    /**
      * Calls the missing method on the {@link Edge}.
      * @param name
      * @param args
