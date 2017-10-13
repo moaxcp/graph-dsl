@@ -1,10 +1,47 @@
 package graph
 
-import graph.trait.Weight
 import spock.lang.Specification
 
 class EdgeTestSpec extends Specification {
-    def edge = new Edge(one: 'step1', two: 'step2')
+    Edge edge = new Edge(one: 'step1', two: 'step2')
+
+    def 'constructor sets properties'() {
+        expect:
+        edge.one == 'step1'
+        edge.two == 'step2'
+    }
+
+    def 'unset properties throw MissingPropertyException'() {
+        when:
+        edge.weight == null
+
+        then:
+        thrown MissingPropertyException
+    }
+
+    def 'method is missing on delegate'() {
+        when:
+        edge.methodThatDoesNotExistOnEdge()
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def 'method is defined on delegate'() {
+        given:
+        edge.method = { return 20 }
+
+        when:
+        def result = edge.method()
+
+        then:
+        result == 20
+    }
+
+    def 'toString is added by transform'() {
+        expect:
+        edge.toString() == 'graph.Edge(one:step1, two:step2)'
+    }
 
     def 'equals with null'() {
         when:
@@ -32,7 +69,7 @@ class EdgeTestSpec extends Specification {
 
     def 'equals with both vertices different'() {
         when:
-        def edge2 = new Edge(one: 'step4', two: 'step3')
+        Edge edge2 = new Edge(one: 'step4', two: 'step3')
 
         then:
         edge != edge2
@@ -63,40 +100,5 @@ class EdgeTestSpec extends Specification {
 
         then:
         edge == edge2
-    }
-
-    def 'method is missing on delegate'() {
-        when:
-        edge.methodThatDoesNotExistOnEdge()
-
-        then:
-        thrown MissingMethodException
-    }
-
-    def 'property is missing on delegate'() {
-        when:
-        edge.length = 10
-
-        then:
-        thrown MissingPropertyException
-    }
-
-    def 'can add traits to delegate'() {
-        when:
-        edge.delegateAs(Weight)
-
-        then:
-        edge.delegate instanceof Weight
-    }
-
-    def 'can use method from delegate'() {
-        when:
-        edge.delegateAs(Weight)
-        edge.weight {
-            10
-        }
-
-        then:
-        edge.weight == 10
     }
 }

@@ -4,8 +4,6 @@ import graph.Edge
 import graph.Graph
 import graph.Vertex
 import graph.VertexSpec
-import graph.trait.Mapping
-import graph.trait.Weight
 import spock.lang.Specification
 
 class VertexSpecSpec extends Specification {
@@ -58,19 +56,6 @@ class VertexSpecSpec extends Specification {
         graph.vertices.size() == 1
         vertex.name == 'step2'
         graph.vertices[vertex.name] == vertex
-    }
-
-    def 'apply can add traits'() {
-        setup:
-        VertexSpec spec = new VertexSpec(graph, [name:'step1', traits:[Mapping, Weight]])
-
-        when:
-        Vertex vertex = spec.apply()
-
-        then:
-        graph.vertices.size() == 1
-        vertex.delegate instanceof Mapping
-        vertex.delegate instanceof Weight
     }
 
     def 'apply can add edges using edgesFirst'() {

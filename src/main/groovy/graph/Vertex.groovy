@@ -12,53 +12,33 @@ import groovy.transform.ToString
 @EqualsAndHashCode(excludes = ['delegate'])
 class Vertex {
     String name
-    Object delegate = new Object()
+    Map delegate = [:]
 
     @PackageScope
     void setName(String name) {
         this.name = name
     }
 
-    /**
-     * Wraps the delegate in the given trait and assigns delegate to the result.
-     * @param traits vararg of trait to wrap the delegate in.
-     * @return this
-     */
-    Vertex delegateAs(Class<?>... traits) {
-        delegate = delegate.withTraits(traits)
-        this
-    }
-
-    /**
-     * calls method on delegate.
-     * @param name of method
-     * @param args for method
-     * @return the results returned from the delegate
-     */
-    @SuppressWarnings('NoDef')
-    def methodMissing(String name, args) {
-        delegate.invokeMethod(name, args)
-    }
-
-    /**
-     * returns property from delegate.
-     * @param name of the property to return
-     * @return the property of the delegate
-     */
-    @SuppressWarnings('NoDef')
-    def propertyMissing(String name) {
-        delegate[name]
-    }
-
-    /**
-     * sets the property on delegate.
-     * @param name of the property to set
-     * @param value to set the property to
-     * @return the value
-     */
-    @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
         delegate[name] = value
+    }
+
+    def propertyMissing(String name) {
+        if(delegate[name] instanceof Closure) {
+            return ((Closure)delegate[name]).call()
+        }
+        if(delegate[name]) {
+            return delegate[name]
+        } else {
+            throw new MissingPropertyException("could not find property $name")
+        }
+    }
+
+    def methodMissing(String name, args) {
+        if(delegate[name] instanceof Closure) {
+            return ((Closure)delegate[name]).call(args)
+        }
+        throw new MissingMethodException(name, this.class, args)
     }
 
     /**

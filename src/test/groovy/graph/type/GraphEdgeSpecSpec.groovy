@@ -3,8 +3,6 @@ package graph.type
 import graph.Edge
 import graph.EdgeSpec
 import graph.Graph
-import graph.GraphEdgeSpec
-import graph.trait.Mapping
 
 import spock.lang.Specification
 
@@ -83,18 +81,6 @@ class GraphEdgeSpecSpec extends Specification {
         graph.edges.size() == 1
         graph.edges.first().one == 'step1'
         graph.edges.first().two == 'step4'
-    }
-
-    def 'can add traits in apply'() {
-        setup:
-        EdgeSpec spec = new EdgeSpec(graph, [one:'step1', two:'step2', traits:Mapping])
-        def edge = graph.edge('step1', 'step2')
-
-        when:
-        spec.apply()
-
-        then:
-        edge.delegate instanceof Mapping
     }
 
     def 'apply runs runnerCode'() {

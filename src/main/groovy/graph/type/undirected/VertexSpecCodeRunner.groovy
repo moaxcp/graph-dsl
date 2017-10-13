@@ -103,7 +103,11 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-        vertex[name]
+        if(vertex[name]) {
+            vertex[name]
+        } else {
+            throw new MissingPropertyException("Missing ${vertex[name]}")
+        }
     }
 
     /**

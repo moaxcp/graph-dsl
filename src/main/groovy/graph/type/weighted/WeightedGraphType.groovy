@@ -12,16 +12,17 @@ class WeightedGraphType extends GraphType {
             if(a == b) {
                 return 0
             }
-            def weightA, weightB
+            def weightA = 0
             try {
-                weightA = a.weight
+                weightA = a.weight ?: 0
             } catch(MissingPropertyException e) {
-                weightA = 0
+
             }
+            def weightB = 0
             try {
-                weightB = b.weight
+                weightB = b.weight ?: 0
             } catch(MissingPropertyException e) {
-                weightB = 0
+
             }
 
             if(weightA.compareTo(weightB) < 0) {

@@ -1,10 +1,7 @@
 package dsl.weighted
 
 import graph.Graph
-import graph.trait.Mapping
-import graph.trait.Weight
 import spock.lang.Specification
-
 import static graph.Graph.graph
 
 class EdgeWeightOrder extends Specification {
@@ -30,9 +27,8 @@ class EdgeWeightOrder extends Specification {
         given:
         Graph graph = graph {
             type 'weighted-graph'
-            edgeTraits(Weight)
-            edge A, B
-            edge C, A
+            edge (A, B) { weight = 0 }
+            edge (C, A) { weight = 0 }
         }
 
         when:
@@ -49,16 +45,9 @@ class EdgeWeightOrder extends Specification {
         given:
         Graph graph = graph {
             type 'weighted-graph'
-            edgeTraits(Weight)
-            edge (A, B) {
-                weight { 3 }
-            }
-            edge (A, C) {
-                weight { 1 }
-            }
-            edge (A, D) {
-                weight { 2 }
-            }
+            edge (A, B) { weight = 3 }
+            edge (A, C) { weight = 1 }
+            edge (A, D) { weight = 2 }
         }
 
         when:

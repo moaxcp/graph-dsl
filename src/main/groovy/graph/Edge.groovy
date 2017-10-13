@@ -4,15 +4,13 @@ import groovy.transform.PackageScope
 import groovy.transform.ToString
 
 /**
- * An edge between two vertices. This class uses a delegate when methods
- * and properties are missing. Traits should be applied to the delegate
- * using delegateAs().
+ * An edge between two vertices. Edge is also a Map.
  */
 @ToString(includeNames=true, excludes='delegate')
 class Edge {
     String one
     String two
-    Object delegate = new Object()
+    Map delegate = [:]
 
     @PackageScope
     void setOne(String one) {
@@ -24,14 +22,36 @@ class Edge {
         this.two = two
     }
 
-    /**
-     * applies trait to the delegate.
-     * @param traits
-     * @return
-     */
-    Edge delegateAs(Class<?>... traits) {
-        delegate = delegate.withTraits(traits)
-        this
+    def propertyMissing(String name, value) {
+        delegate[name] = value
+    }
+
+    def propertyMissing(String name) {
+        if(delegate[name] instanceof Closure) {
+            return ((Closure)delegate[name]).call()
+        }
+        if(delegate[name]) {
+            return delegate[name]
+        } else {
+            throw new MissingPropertyException("could not find property $name")
+        }
+    }
+
+    def methodMissing(String name, args) {
+        if(delegate[name] instanceof Closure) {
+            return ((Closure)delegate[name]).call(args)
+        }
+        throw new MissingMethodException(name, this.class, args)
+    }
+
+    Object getAt(String name) {
+        if(name == 'one') {
+            return one
+        }
+        if(name == 'two') {
+            return two
+        }
+        delegate[name]
     }
 
     /**
@@ -60,38 +80,6 @@ class Edge {
     @Override
     int hashCode() {
         one.hashCode() + two.hashCode()
-    }
-
-    /**
-     * calls method on delegate.
-     * @param name
-     * @param args
-     * @return
-     */
-    @SuppressWarnings('NoDef')
-    def methodMissing(String name, args) {
-        delegate.invokeMethod(name, args)
-    }
-
-    /**
-     * returns property from delegate.
-     * @param name
-     * @return
-     */
-    @SuppressWarnings('NoDef')
-    def propertyMissing(String name) {
-        delegate[name]
-    }
-
-    /**
-     * sets property on delegate.
-     * @param name
-     * @param value
-     * @return
-     */
-    @SuppressWarnings('NoDef')
-    def propertyMissing(String name, value) {
-        delegate[name] = value
     }
 
     /**

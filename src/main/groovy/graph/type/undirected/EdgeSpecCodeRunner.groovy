@@ -92,7 +92,11 @@ class EdgeSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-        edge[name]
+        if(edge[name]) {
+            edge[name]
+        } else {
+            throw new MissingPropertyException("Missing ${edge[name]}")
+        }
     }
 
     /**

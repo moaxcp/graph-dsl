@@ -1,6 +1,5 @@
 package graph
 
-import graph.plugin.Plugin
 import graph.type.Type
 
 import graph.type.undirected.EdgeSpecCodeRunner
@@ -27,10 +26,7 @@ import groovy.transform.PackageScope
  */
 class Graph implements GroovyInterceptable {
     private Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
-    private final Set<Class> vertexTraitsSet = [] as LinkedHashSet<Class>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
-    private final Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
-    private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
     private Type type
 
     Graph() {
@@ -169,36 +165,6 @@ class Graph implements GroovyInterceptable {
         edges.remove(type.newEdge(one, two))
     }
 
-    /**
-     * returns plugins as an unmodifiable set
-     * @return plugins as an unmodifiable set
-     */
-    Set<? extends Plugin> getPlugins() {
-        Collections.unmodifiableSet(plugins)
-    }
-
-    /**
-     * Creates and applies a {@link Plugin} to this graph.
-     * @param pluginClass - the {@link Plugin} to create and apply to this graph.
-     */
-    void apply(Class pluginClass) {
-        if (plugins.contains(pluginClass)) {
-            throw new IllegalArgumentException("$pluginClass.name is already applied.")
-        }
-        if (!pluginClass.interfaces.contains(Plugin)) {
-            throw new IllegalArgumentException("$pluginClass.name does not implement Plugin")
-        }
-        plugins << pluginClass
-        Plugin plugin = pluginClass.newInstance()
-        plugin.apply(this)
-    }
-
-    void apply(String pluginName) {
-        Properties properties = new Properties()
-        properties.load(getClass().getResourceAsStream("/META-INF/graph-plugins/${pluginName}.properties"))
-        apply(Class.forName((String) properties.'implementation-class'))
-    }
-
     void type(Class typeClass) {
         if(!Type.isAssignableFrom(typeClass)) {
             throw new IllegalArgumentException("$typeClass.name does not implement Type")
@@ -216,17 +182,6 @@ class Graph implements GroovyInterceptable {
 
     Type getType() {
         return type
-    }
-
-    /**
-     * Applies trait to all vertices and all future vertices.
-     * @param traits to add to vertices and all future vertices
-     */
-    void vertexTraits(Class... traits) {
-        vertices.each { name, vertex ->
-            vertex.delegateAs(traits)
-        }
-        vertexTraitsSet.addAll(traits)
     }
 
     /**
@@ -468,26 +423,7 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(ConfigSpec spec) {
-        if(!vertices[(String) spec.map.name]) {
-            if (spec.map.traits) {
-                spec.map.traits.addAll(vertexTraitsSet)
-            } else {
-                spec.map.traits = new ArrayList(vertexTraitsSet)
-            }
-        }
-        VertexSpec vspec = type.newVertexSpec(spec)
-        vspec.apply()
-    }
-
-    /**
-     * Applies trait to all edges and all future edges.
-     * @param traits to add to all edges and all future edges
-     */
-    void edgeTraits(Class... traits) {
-        edges.each { edge ->
-            edge.delegateAs(traits)
-        }
-        edgeTraitsSet.addAll(traits)
+        type.newVertexSpec(spec).apply()
     }
 
     /**
@@ -679,13 +615,6 @@ class Graph implements GroovyInterceptable {
      */
     @PackageScope
     Edge configEdge(ConfigSpec spec) {
-        if(!edges.find { it == type.newEdge((String) spec.map.one, (String) spec.map.two) }) {
-            if (spec.map.traits) {
-                spec.map.traits.addAll(edgeTraitsSet)
-            } else {
-                spec.map.traits = new ArrayList(edgeTraitsSet)
-            }
-        }
         type.newEdgeSpec(spec).apply()
     }
 

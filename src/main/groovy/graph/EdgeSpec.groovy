@@ -99,12 +99,6 @@ class EdgeSpec {
         }
     }
 
-    protected void applyTraits() {
-        if (traitsSet) {
-            edge.delegateAs(this.traitsSet as Class[])
-        }
-    }
-
     protected void applyClosure() {
         if (runnerCodeClosure) {
             EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph, edge)
@@ -122,7 +116,6 @@ class EdgeSpec {
         setupGraph()
         initRenameOne()
         initRenameTwo()
-        applyTraits()
         addEdge()
         applyClosure()
         edge
