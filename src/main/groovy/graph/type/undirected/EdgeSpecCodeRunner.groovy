@@ -5,7 +5,7 @@ import graph.Graph
 import graph.NameSpec
 
 /**
- * Delegate of the runnerCode closure in {@link EdgeSpec}. This provides methods and properties that can be used in
+ * Delegate of the runnerCode closure in {@link graph.EdgeSpec}. This provides methods and properties that can be used in
  * the closure. Method and property missing is delegated to the {@link Edge}
  */
 class EdgeSpecCodeRunner {

@@ -6,13 +6,13 @@ import graph.type.undirected.VertexSpecCodeRunner
  * Specification class that helps vertex methods in {@link Graph} objects. GraphVertexSpec is used to collect the details
  * of an update or create.
  */
-class VertexSpec {
-    private Graph graph
-    private Vertex vertex
+abstract class VertexSpec {
+    Graph graph
+    Vertex vertex
     private String name
     private String rename
-    final Set<String> connectsToSet = [] as Set<String>
-    private Closure runnerCodeClosure
+    private final Set<String> connectsToSet = [] as Set<String>
+    Closure runnerCodeClosure
 
     VertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         if (this.graph) {
@@ -41,7 +41,7 @@ class VertexSpec {
         return runnerCodeClosure
     }
 
-    void init() {
+    protected void init() {
         if(vertex) {
             throw new IllegalStateException('vertex already created.')
         }
@@ -69,24 +69,19 @@ class VertexSpec {
         }
     }
 
-    void applyRename() {
+    protected void applyRename() {
         if(rename) {
             graph.rename(name, rename)
         }
     }
 
-    void applyConnectsTo() {
+    protected void applyConnectsTo() {
         connectsToSet.each {
             graph.edge vertex.name, it
         }
     }
 
-    void applyClosure() {
-        if (runnerCodeClosure) {
-            VertexSpecCodeRunner runner = new VertexSpecCodeRunner(graph, vertex)
-            runner.runCode(runnerCodeClosure)
-        }
-    }
+    protected abstract void applyClosure()
 
     protected void addVertex(Vertex vertex) {
         graph.addVertex(vertex)

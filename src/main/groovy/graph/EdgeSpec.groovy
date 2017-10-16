@@ -1,17 +1,15 @@
 package graph
 
-import graph.type.undirected.EdgeSpecCodeRunner
-
-class EdgeSpec {
-    private Graph graph
-    private Edge edge
+abstract class EdgeSpec {
+    Graph graph
+    Edge edge
     private boolean edgePresentInGraph
 
     private String one
     private String two
     private String renameOne
     private String renameTwo
-    private Closure runnerCodeClosure
+    Closure runnerCodeClosure
 
     EdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         if (this.graph) {
@@ -94,12 +92,7 @@ class EdgeSpec {
         }
     }
 
-    protected void applyClosure() {
-        if (runnerCodeClosure) {
-            EdgeSpecCodeRunner runner = new EdgeSpecCodeRunner(graph, edge)
-            runner.runCode(runnerCodeClosure)
-        }
-    }
+    protected abstract void applyClosure()
 
     protected void addEdge() {
         graph.addEdge(edge)

@@ -4,18 +4,21 @@ import graph.Graph
 import graph.NameSpec
 import graph.Vertex
 import graph.VertexSpec
+import graph.type.undirected.UndirectedVertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
+import groovy.transform.PackageScope
 
 /**
  * Provides configuration for a directed graph vertex.
  */
-class DirectedVertexSpec extends VertexSpec {
+class DirectedVertexSpec extends UndirectedVertexSpec {
     private final Set<String> connectsFromSet = [] as Set<String>
 
     /**
      * Creates a new DirectedVertexSpec from map.
      * @param map
      */
+    @PackageScope
     DirectedVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph, map, closure)
         map.connectsFrom?.each {
@@ -23,13 +26,13 @@ class DirectedVertexSpec extends VertexSpec {
         }
     }
 
-    void applyConnectsFrom() {
+    protected void applyConnectsFrom() {
         connectsFromSet.each {
             graph.edge it, vertex.name
         }
     }
 
-    void applyClosure() {
+    protected void applyClosure() {
         if (runnerCodeClosure) {
             VertexSpecCodeRunner runner = new DirectedVertexSpecCodeRunner(graph, vertex)
             runner.runCode(runnerCodeClosure)

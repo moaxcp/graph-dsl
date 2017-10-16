@@ -197,15 +197,12 @@ class GraphVertexSpec extends Specification {
     def 'cannot rename vertex to a false name'() {
         setup:
         graph.vertex 'step1'
-        graph.vertex 'step2'
-        graph.vertex 'step3'
-        graph.vertex 'step4'
-        graph.edge 'step1', 'step2'
-        graph.edge 'step1', 'step3'
-        graph.edge 'step4', 'step1'
 
         when:
         graph.rename 'step1', ''
+
+        and:
+        graph.rename 'step1', null
 
         then:
         thrown IllegalArgumentException

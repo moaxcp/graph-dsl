@@ -179,4 +179,15 @@ class GraphSpec extends Specification {
         then:
         thrown IllegalArgumentException
     }
+
+    def 'cannot replace vertices map unless empty'() {
+        setup:
+        Graph graph = new Graph()
+
+        when:
+        graph.replaceVerticesMap([step1:new Vertex(name:'step1')])
+
+        then:
+        thrown IllegalArgumentException
+    }
 }

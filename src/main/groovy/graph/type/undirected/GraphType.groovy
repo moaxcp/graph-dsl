@@ -2,8 +2,8 @@ package graph.type.undirected
 
 import graph.ConfigSpec
 import graph.Edge
-import graph.EdgeSpec
 import graph.Graph
+import graph.EdgeSpec
 import graph.Vertex
 import graph.VertexSpec
 import graph.type.Type
