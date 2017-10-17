@@ -36,22 +36,22 @@ class GraphType implements Type {
 
     @Override
     EdgeSpec newEdgeSpec(Map<String, ?> map) {
-        new EdgeSpec(graph, map)
+        new UndirectedEdgeSpec(graph, map)
     }
 
     @Override
     EdgeSpec newEdgeSpec(ConfigSpec spec) {
-        new EdgeSpec(graph, spec.map, spec.closure)
+        new UndirectedEdgeSpec(graph, spec.map, spec.closure)
     }
 
     @Override
     VertexSpec newVertexSpec(Map<String, ?> map) {
-        new VertexSpec(graph, map)
+        new UndirectedVertexSpec(graph, map)
     }
 
     @Override
     VertexSpec newVertexSpec(ConfigSpec spec) {
-        new VertexSpec(graph, spec.map, spec.closure)
+        new UndirectedVertexSpec(graph, spec.map, spec.closure)
     }
 
     @Override

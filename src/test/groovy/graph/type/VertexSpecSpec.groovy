@@ -4,6 +4,7 @@ import graph.Edge
 import graph.Graph
 import graph.Vertex
 import graph.VertexSpec
+import graph.type.undirected.UndirectedVertexSpec
 import spock.lang.Specification
 
 class VertexSpecSpec extends Specification {
@@ -12,7 +13,7 @@ class VertexSpecSpec extends Specification {
 
     def 'apply throws exception on invalid name'() {
         setup:
-        VertexSpec spec = new VertexSpec(graph, [name:''])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [name:''])
 
         when:
         spec.apply()
@@ -23,7 +24,7 @@ class VertexSpecSpec extends Specification {
 
     def 'apply can add vertex'() {
         setup:
-        VertexSpec spec = new VertexSpec(graph, [name:'step1'])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [name:'step1'])
 
         when:
         Vertex vertex = spec.apply()
@@ -34,7 +35,7 @@ class VertexSpecSpec extends Specification {
 
     def 'apply cannot be run twice'() {
         setup:
-        VertexSpec spec = new VertexSpec(graph, [name:'step1'])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [name:'step1'])
 
         when:
         Vertex vertex = spec.apply()
@@ -47,7 +48,7 @@ class VertexSpecSpec extends Specification {
     def 'apply can rename vertex'() {
         setup:
         graph.vertex 'step1'
-        VertexSpec spec = new VertexSpec(graph, [name:'step1', rename:'step2'])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [name:'step1', rename:'step2'])
 
         when:
         Vertex vertex = spec.apply()
@@ -60,7 +61,7 @@ class VertexSpecSpec extends Specification {
 
     def 'apply can add edges using edgesFirst'() {
         setup:
-        VertexSpec spec = new VertexSpec(graph, [name:'step1', connectsTo:['step2', 'step3']])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [name:'step1', connectsTo:['step2', 'step3']])
 
         when:
         spec.apply()

@@ -1,11 +1,10 @@
 package graph.type.undirected
 
 import graph.Graph
-import graph.VertexSpec
-import groovy.transform.PackageScope
+import graph.type.AbstractVertexSpec
 
-class UndirectedVertexSpec extends VertexSpec {
-    @PackageScope
+class UndirectedVertexSpec extends AbstractVertexSpec {
+
     UndirectedVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph, map, closure)
     }

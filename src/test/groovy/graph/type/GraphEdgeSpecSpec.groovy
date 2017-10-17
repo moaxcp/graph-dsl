@@ -3,7 +3,7 @@ package graph.type
 import graph.Edge
 import graph.EdgeSpec
 import graph.Graph
-
+import graph.type.undirected.UndirectedEdgeSpec
 import spock.lang.Specification
 
 class GraphEdgeSpecSpec extends Specification {
@@ -12,7 +12,7 @@ class GraphEdgeSpecSpec extends Specification {
 
     def 'cannot apply without one'() {
         when:
-        new EdgeSpec(graph, [one:null]).apply()
+        new UndirectedEdgeSpec(graph, [one:null]).apply()
 
         then:
         thrown IllegalStateException
@@ -20,7 +20,7 @@ class GraphEdgeSpecSpec extends Specification {
 
     def 'cannot apply without two'() {
         when:
-        new EdgeSpec(graph, [two:null]).apply()
+        new UndirectedEdgeSpec(graph, [two:null]).apply()
 
         then:
         thrown IllegalStateException
@@ -32,7 +32,7 @@ class GraphEdgeSpecSpec extends Specification {
         graph.vertex('step2')
 
         when:
-        new EdgeSpec(graph, [one:'step1', two:'step2']).apply()
+        new UndirectedEdgeSpec(graph, [one:'step1', two:'step2']).apply()
 
         then:
         graph.edges.size() == 1
@@ -43,7 +43,7 @@ class GraphEdgeSpecSpec extends Specification {
 
     def 'can add vertices and edge'() {
         when:
-        new EdgeSpec(graph, [one:'step1', two:'step2']).apply()
+        new UndirectedEdgeSpec(graph, [one:'step1', two:'step2']).apply()
 
         then:
         graph.vertices.size() == 2
@@ -58,7 +58,7 @@ class GraphEdgeSpecSpec extends Specification {
         graph.edge('step1', 'step2')
 
         when:
-        new EdgeSpec(graph, [one:'step1', two:'step2', renameOne:'step4']).apply()
+        new UndirectedEdgeSpec(graph, [one:'step1', two:'step2', renameOne:'step4']).apply()
 
         then:
         graph.vertices.size() == 3
@@ -73,7 +73,7 @@ class GraphEdgeSpecSpec extends Specification {
         graph.edge('step1', 'step2')
 
         when:
-        new EdgeSpec(graph, [one:'step1', two:'step2', renameTwo:'step4']).apply()
+        new UndirectedEdgeSpec(graph, [one:'step1', two:'step2', renameTwo:'step4']).apply()
 
         then:
         graph.vertices.size() == 3
@@ -86,7 +86,7 @@ class GraphEdgeSpecSpec extends Specification {
     def 'apply runs runnerCode'() {
         setup:
         def ran = false
-        EdgeSpec spec = new EdgeSpec(graph, [one:'step1', two:'step2'], {ran = true})
+        EdgeSpec spec = new UndirectedEdgeSpec(graph, [one:'step1', two:'step2'], {ran = true})
 
         when:
         spec.apply()

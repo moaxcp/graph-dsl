@@ -1,11 +1,10 @@
 package graph.type.undirected
 
-import graph.EdgeSpec
 import graph.Graph
-import groovy.transform.PackageScope
+import graph.type.AbstractEdgeSpec
 
-class UndirectedEdgeSpec extends EdgeSpec {
-    @PackageScope
+class UndirectedEdgeSpec extends AbstractEdgeSpec {
+
     UndirectedEdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph, map, closure)
     }
