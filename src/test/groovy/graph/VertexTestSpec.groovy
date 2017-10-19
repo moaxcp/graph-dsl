@@ -62,21 +62,26 @@ class VertexTestSpec extends Specification {
         vertex == compare
     }
 
-    def 'method is missing on delegate'() {
-        when:
-        vertex.methodThatDoesNotExistonVertex()
-
-        then:
-        thrown MissingMethodException
+    def 'toString is added by transform'() {
+        given:
+        vertex.name = 'step1'
+        expect:
+        vertex.toString() == 'graph.Vertex(name:step1)'
     }
 
-    def 'can use method from delegate'() {
-        when:
-        vertex.weight = {
-            10
-        }
+    def 'getAt with name'() {
+        given:
+        vertex.name = 'step1'
 
-        then:
-        vertex.weight() == 10
+        expect:
+        vertex['name'] == 'step1'
+    }
+
+    def 'getAt with delegate'() {
+        given:
+        vertex.key = 'value'
+
+        expect:
+        vertex['key'] == 'value'
     }
 }

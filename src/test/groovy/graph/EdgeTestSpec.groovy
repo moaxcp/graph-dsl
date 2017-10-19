@@ -19,25 +19,6 @@ class EdgeTestSpec extends Specification {
         thrown MissingPropertyException
     }
 
-    def 'method is missing on delegate'() {
-        when:
-        edge.methodThatDoesNotExistOnEdge()
-
-        then:
-        thrown MissingMethodException
-    }
-
-    def 'method is defined on delegate'() {
-        given:
-        edge.method = { return 20 }
-
-        when:
-        def result = edge.method()
-
-        then:
-        result == 20
-    }
-
     def 'toString is added by transform'() {
         expect:
         edge.toString() == 'graph.Edge(one:step1, two:step2)'
@@ -100,5 +81,29 @@ class EdgeTestSpec extends Specification {
 
         then:
         edge == edge2
+    }
+
+    def 'getAt with one'() {
+        when:
+        edge.one = 'step1'
+
+        then:
+        edge['one'] == 'step1'
+    }
+
+    def 'getAt with two'() {
+        when:
+        edge.two = 'step2'
+
+        then:
+        edge['two'] == 'step2'
+    }
+
+    def 'getAt with delegate'() {
+        when:
+        edge.key = 'value'
+
+        then:
+        edge['key'] == 'value'
     }
 }
