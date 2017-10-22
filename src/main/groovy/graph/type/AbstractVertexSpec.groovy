@@ -5,6 +5,10 @@ import graph.NameSpec
 import graph.Vertex
 import graph.VertexSpec
 
+/**
+ * Base implementation of a VertexSpec. Type packages can inherit this class to implement default methods in
+ * VertexSpec.
+ */
 abstract class AbstractVertexSpec extends VertexSpec {
     Vertex vertex
     String name
@@ -12,7 +16,7 @@ abstract class AbstractVertexSpec extends VertexSpec {
     final Set<String> connectsToSet = [] as Set<String>
     Closure runnerCodeClosure
 
-    AbstractVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
+    protected AbstractVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph)
 
         name = map.name
@@ -25,10 +29,10 @@ abstract class AbstractVertexSpec extends VertexSpec {
     }
 
     protected void init() {
-        if(vertex) {
+        if (vertex) {
             throw new IllegalStateException('vertex already created.')
         }
-        if(!graph.vertices[name]) {
+        if (!graph.vertices[name]) {
             name = rename ?: name
             rename = null
         }
@@ -39,21 +43,21 @@ abstract class AbstractVertexSpec extends VertexSpec {
         if (!name) {
             throw new IllegalStateException('!name failed. Name must be groovy truth.')
         }
-        if(!graph) {
+        if (!graph) {
             throw new IllegalStateException('graph is not set.')
         }
-        if(!vertex) {
-            throw new IllegalStateException("already ran spec")
+        if (!vertex) {
+            throw new IllegalStateException('already ran spec')
         }
-        if(rename) {
-            if(graph.vertices[rename]) {
+        if (rename) {
+            if (graph.vertices[rename]) {
                 throw new IllegalStateException('renamed vertex already exists')
             }
         }
     }
 
     protected void applyRename() {
-        if(rename) {
+        if (rename) {
             graph.rename(name, rename)
         }
     }

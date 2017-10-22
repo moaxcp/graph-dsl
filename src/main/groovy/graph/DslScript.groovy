@@ -23,20 +23,22 @@ package graph
  * assert graph.vertices.B.name == 'B'
  * </code></pre>
  */
+@SuppressWarnings('AbstractClassWithoutAbstractMethod')
+@SuppressWarnings('NoWildcardImports')
 abstract class DslScript extends Script {
-    Graph graph
-    DslScript() {
-        graph = new Graph()
-    }
+    Graph graph = new Graph()
 
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
         graph."$name"
     }
 
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
         graph."$name" = value
     }
 
+    @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
         graph.invokeMethod name, args
     }

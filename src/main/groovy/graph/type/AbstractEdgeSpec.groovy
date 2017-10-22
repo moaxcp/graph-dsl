@@ -5,6 +5,9 @@ import graph.EdgeSpec
 import graph.Graph
 import graph.NameSpec
 
+/**
+ * Base implementation of an EdgeSpec. Type packages can inherit this class to implement default methods in EdgeSpec.
+ */
 abstract class AbstractEdgeSpec extends EdgeSpec {
     Edge edge
     boolean edgePresentInGraph
@@ -15,7 +18,7 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     String renameTwo
     Closure runnerCodeClosure
 
-    AbstractEdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
+    protected AbstractEdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph)
 
         one = map.one
@@ -27,14 +30,14 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     }
 
     protected init() {
-        if(edge) {
+        if (edge) {
             throw new IllegalStateException('Edge already created.')
         }
         Edge created = graph.newEdge(one, two)
         Edge existing = graph.edges.find { it == created }
         edgePresentInGraph = existing != null
 
-        if(!edgePresentInGraph) {
+        if (!edgePresentInGraph) {
             one = renameOne ?: one
             two = renameTwo ?: two
             renameOne = null

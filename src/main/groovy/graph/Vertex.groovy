@@ -20,7 +20,7 @@ class Vertex extends PropertyDelegator {
     }
 
     Object getAt(String name) {
-        if(name == 'name') {
+        if (name == 'name') {
             return this.name
         }
         delegate[name]

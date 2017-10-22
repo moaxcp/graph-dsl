@@ -6,12 +6,12 @@ import graph.NameSpec
 import graph.Vertex
 
 /**
- * Delegate of the runnerCode closure in {@link GraphVertexSpec}. This provides methods and properties that can be used in
- * the closure. Method and property missing is delegated to the {@link Vertex}.
+ * Delegate of the runnerCode closure in {@link GraphVertexSpec}. This provides methods and properties that can be used
+ * in the closure. Method and property missing is delegated to the {@link Vertex}.
  */
 class VertexSpecCodeRunner {
-    private Graph graph
-    private Vertex vertex
+    private final Graph graph
+    private final Vertex vertex
 
     VertexSpecCodeRunner(Graph graph, Vertex vertex) {
         this.graph = graph
@@ -31,7 +31,7 @@ class VertexSpecCodeRunner {
      * @return the vertex that has been added.
      */
     Vertex getVertex() {
-        return vertex
+        vertex
     }
 
     /**
@@ -95,7 +95,7 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-        if(vertex[name]) {
+        if (vertex[name]) {
             vertex[name]
         } else {
             throw new MissingPropertyException("Missing ${vertex[name]}")

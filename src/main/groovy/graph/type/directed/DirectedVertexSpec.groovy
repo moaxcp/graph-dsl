@@ -3,7 +3,6 @@ package graph.type.directed
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.VertexSpec
 import graph.type.undirected.UndirectedVertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
 import groovy.transform.PackageScope

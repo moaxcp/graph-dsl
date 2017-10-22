@@ -5,12 +5,12 @@ import graph.Graph
 import graph.NameSpec
 
 /**
- * Delegate of the runnerCode closure in {@link graph.EdgeSpec}. This provides methods and properties that can be used in
- * the closure. Method and property missing is delegated to the {@link Edge}
+ * Delegate of the runnerCode closure in {@link graph.EdgeSpec}. This provides methods and properties that can be used
+ * in the closure. Method and property missing is delegated to the {@link Edge}
  */
 class EdgeSpecCodeRunner {
-    private Graph graph
-    private Edge edge
+    private final Graph graph
+    private final Edge edge
 
     EdgeSpecCodeRunner(Graph graph, Edge edge) {
         this.graph = graph
@@ -25,7 +25,8 @@ class EdgeSpecCodeRunner {
         graph
     }
 
-    //todo edge returned should not be able to set one or two. A trait can be applied to prevent this. This is an issue on all edge methods.
+    //todo edge returned should not be able to set one or two. A trait can be applied to prevent this.
+    // This is an issue on all edge methods.
     /**
      * Gets the {@link Edge} that has been added. This can be used inside the runnerCode to access the edge.
      * @return the edge that has been added.
@@ -84,7 +85,7 @@ class EdgeSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-        if(edge[name]) {
+        if (edge[name]) {
             edge[name]
         } else {
             throw new MissingPropertyException("Missing ${edge[name]}")

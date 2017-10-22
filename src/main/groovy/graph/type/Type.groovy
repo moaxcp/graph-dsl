@@ -13,8 +13,9 @@ import graph.VertexSpec
  * base class of all {@link graph.Vertex} and {@link graph.Edge} objects to implement the  behavior needed but a Type
  * should not add traits to delegates. A Type is required to provide factories for {@link Edge}, {@link Vertex},
  * {@link EdgeSpec}, and {@link VertexSpec}. Subclasses can be returned by these factory methods which allow different
- * behavior in the graph. For instance {@link Edge} methods can return {@link DirectedEdge} objects and {@link graph.type.undirected.GraphVertexSpec}
- * methods can return {@link DirectedVertexSpec} objects.
+ * behavior in the graph. For instance {@link Edge} methods can return {@link graph.type.directed.DirectedEdge} objects
+ * and {@link graph.type.undirected.UndirectedVertexSpec} methods can return
+ * {@link graph.type.directed.DirectedVertexSpec} objects.
  */
 interface Type {
 

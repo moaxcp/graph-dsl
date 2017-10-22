@@ -3,6 +3,9 @@ package graph.type.undirected
 import graph.Graph
 import graph.type.AbstractEdgeSpec
 
+/**
+ * Implements an EdgeSpec for an undirected graph.
+ */
 class UndirectedEdgeSpec extends AbstractEdgeSpec {
 
     UndirectedEdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {

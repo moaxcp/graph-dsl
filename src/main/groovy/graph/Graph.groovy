@@ -16,13 +16,10 @@ import groovy.transform.PackageScope
  * are a few styles that may be used to express vertices and edges in this Graph. See the edge and vertex methods for
  * more details.
  * <p>
- * All graphs have a {@link type.Type}. All Vertex, Edge, GraphVertexSpec, and GraphEdgeSpec objects must be created by the Type.
- * This is to ensure the {@link Graph} always has the behavior specified by the {@link type.Type}.
+ * All graphs have a {@link graph.type.Type}. All Vertex, Edge, VertexSpec, and EdgeSpec objects must be created by
+ * the Type. This is to ensure the {@link Graph} always has the behavior specified by the {@link graph.type.Type}.
  * <p>
  * The default behavior is that of an undirected graph. This is implemented by {@link GraphType}.
- * <p>
- * Plugins may be applied to this graph to change its behavior and the behavior of the vertices and edges. For more
- * information on plugins see {@link graph.plugin.Plugin}.
  */
 class Graph implements GroovyInterceptable {
     private Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
@@ -145,7 +142,7 @@ class Graph implements GroovyInterceptable {
     }
 
     void replaceVerticesMap(Map<String, ? extends Vertex> map) {
-        if(!map.isEmpty()) {
+        if (!map.isEmpty()) {
             throw new IllegalArgumentException('map must be empty.')
         }
         map.putAll(vertices)
@@ -166,7 +163,7 @@ class Graph implements GroovyInterceptable {
     }
 
     void type(Class typeClass) {
-        if(!Type.isAssignableFrom(typeClass)) {
+        if (!Type.isAssignableFrom(typeClass)) {
             throw new IllegalArgumentException("$typeClass.name does not implement Type")
         }
         type = (Type) typeClass.newInstance()
@@ -177,11 +174,11 @@ class Graph implements GroovyInterceptable {
     void type(String typeName) {
         Properties properties = new Properties()
         properties.load(getClass().getResourceAsStream("/META-INF/graph-types/${typeName}.properties"))
-        type(Class.forName((String) properties.'implementation-class'))
+        type(this.class.classLoader.loadClass((String) properties.'implementation-class'))
     }
 
     Type getType() {
-        return type
+        type
     }
 
     /**
@@ -814,6 +811,7 @@ class Graph implements GroovyInterceptable {
      * @param spec the DepthFirstTraversalSpec
      * @return null or a Traversal value
      */
+    @SuppressWarnings('NoDef')
     private Traversal depthFirstTraversalConnected(DepthFirstTraversalSpec spec) {
         def root = spec.root
         if (spec.preorder && spec.preorder(vertices[root]) == Traversal.STOP) {
@@ -943,7 +941,7 @@ class Graph implements GroovyInterceptable {
      */
     List<? extends Vertex> findAllBfs(String root = null, Closure closure) {
         Closure inject = null
-        if(root) {
+        if (root) {
             inject = this.&injectBfs.curry(root)
         } else {
             inject = this.&injectBfs
@@ -955,7 +953,6 @@ class Graph implements GroovyInterceptable {
             result
         }
     }
-
 
     /**
      * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are
@@ -977,7 +974,7 @@ class Graph implements GroovyInterceptable {
      */
     List<?> collectBfs(String root = null, Closure closure) {
         Closure inject = null
-        if(root) {
+        if (root) {
             inject = this.&injectBfs.curry(root)
         } else {
             inject = this.&injectBfs
@@ -986,7 +983,6 @@ class Graph implements GroovyInterceptable {
             result << closure(vertex)
         }
     }
-
 
     /**
      * Runs closure on each vertex in breadth first order, starting at root, collecting returned values from the
@@ -1025,6 +1021,7 @@ class Graph implements GroovyInterceptable {
      * @param spec the BreadthFirstTraversalSpec
      * @return null or a Traversal value
      */
+    @SuppressWarnings('NoDef')
     private Traversal breadthFirstTraversalConnected(BreadthFirstTraversalSpec spec) {
         if (!vertices[spec.root]) {
             throw new IllegalArgumentException("Could not find $spec.root in graph")
@@ -1084,19 +1081,18 @@ class Graph implements GroovyInterceptable {
     }
 
     /**
-     * Creates a {@link graph.type.undirected.GraphVertexSpec}. The result is similar to calling {@link graph.type.undirected.GraphVertexSpec#newVertexSpec(Map)}
-     * <pre>
-     *     GraphVertexSpec.newVertexSpec([name:name + args[0])
-     * </pre>
+     * If the missing method is in the assigned {@link Type} the method will be called on type. Otherwise a
+     * {@link ConfigSpec} is created and returned.
      * @param name
      * @param args
-     * @return a {@link GraphVertexSpec}
+     * @return result of calling method on Type or a ConfigSpec
      */
     @SuppressWarnings('Instanceof')
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
         MetaMethod method = type.metaClass.getMetaMethod(name, args)
-        if(method != null && (method.declaringClass.theClass == Type || Type.isAssignableFrom(method.declaringClass.theClass))) {
+        if (method != null &&
+                (method.declaringClass.theClass == Type || Type.isAssignableFrom(method.declaringClass.theClass))) {
             return method.invoke(type, args)
         }
 

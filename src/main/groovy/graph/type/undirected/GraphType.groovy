@@ -18,7 +18,7 @@ class GraphType implements Type {
 
     @Override
     Edge newEdge(String one, String two, Object delegate = null) {
-        if(delegate) {
+        if (delegate) {
             new Edge(one:one, two:two, delegate:delegate)
         } else {
             new Edge(one:one, two:two)
@@ -27,10 +27,10 @@ class GraphType implements Type {
 
     @Override
     Vertex newVertex(String name, Object delegate = null) {
-        if(delegate) {
+        if (delegate) {
             new Vertex(name:name, delegate:delegate)
         } else {
-            new Vertex(name: name)
+            new Vertex(name:name)
         }
     }
 
@@ -56,20 +56,20 @@ class GraphType implements Type {
 
     @Override
     boolean canConvert() {
-        if(graph.edges.size() == 0) {
+        if (graph.edges.size() == 0) {
             return true
         }
-        Set<Edge> edges = new HashSet<>()
-        return !graph.edges.find { Edge current ->
+        Set<Edge> edges = [] as Set
+        !graph.edges.find { Edge current ->
             Edge edge = new Edge(one:current.one, two:current.two)
-            return !edges.add(edge)
+            !edges.add(edge)
         }
     }
 
     @Override
     void convert() {
-        if(!canConvert()) {
-            throw new IllegalArgumentException("Cannot convert to ${getClass().getSimpleName()}")
+        if (!canConvert()) {
+            throw new IllegalArgumentException("Cannot convert to ${getClass().simpleName}")
         }
         graph.replaceEdges { Edge edge ->
             newEdge(edge.one, edge.two, edge.delegate)
@@ -81,7 +81,7 @@ class GraphType implements Type {
             [vertex.name, newVertex(vertex.name, vertex.delegate)]
         }
 
-        graph.replaceVerticesMap(new LinkedHashMap<String, ? extends Vertex>())
+        graph.replaceVerticesMap([:])
     }
 
     /**

@@ -3,6 +3,9 @@ package graph.type.undirected
 import graph.Graph
 import graph.type.AbstractVertexSpec
 
+/**
+ * Implements a VertexSpec for an undirected graph.
+ */
 class UndirectedVertexSpec extends AbstractVertexSpec {
 
     UndirectedVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {

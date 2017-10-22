@@ -1,13 +1,13 @@
 package graph
 
 /**
- * Specification class that helps vertex methods in {@link Graph} objects. GraphVertexSpec is used to collect the details
- * of an update or create.
+ * Specification class that helps vertex methods in {@link Graph} objects. GraphVertexSpec is used to collect the
+ * details of an update or create.
  */
 abstract class VertexSpec {
     Graph graph
 
-    VertexSpec(Graph graph) {
+    protected VertexSpec(Graph graph) {
         if (this.graph) {
             throw new IllegalArgumentException('Graph already set.')
         }

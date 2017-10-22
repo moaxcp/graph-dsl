@@ -28,6 +28,7 @@ class TraversalSpec {
         root = spec.name
     }
 
+    @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
         new NameSpec(name:name)
     }
