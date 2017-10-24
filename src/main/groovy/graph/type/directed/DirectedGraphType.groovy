@@ -49,7 +49,7 @@ class DirectedGraphType extends GraphType {
     }
 
     /**
-     * Creates a new {@link graph.type.undirected.GraphVertexSpec} from spec.
+     * Creates a new {@link graph.type.directed.DirectedVertexSpec} from spec.
      * @param spec
      * @return
      */
@@ -60,8 +60,14 @@ class DirectedGraphType extends GraphType {
 
     @Override
     boolean canConvert() {
-        //todo only two edges can be between any two vertices
-        true
+        if (graph.edges.size() == 0) {
+            return true
+        }
+        Set edges = [] as Set
+        !graph.edges.find { Edge current ->
+            Edge edge = new DirectedEdge(one:current.one, two:current.two)
+            !edges.add(edge)
+        }
     }
 
     /**
