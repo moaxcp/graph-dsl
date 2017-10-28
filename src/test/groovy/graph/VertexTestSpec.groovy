@@ -1,7 +1,5 @@
 package graph
 
-import graph.trait.Value
-import graph.trait.Weight
 import spock.lang.Specification
 
 class VertexTestSpec extends Specification {
@@ -16,34 +14,12 @@ class VertexTestSpec extends Specification {
         vertex.name == 'step1'
     }
 
-    def 'can add weight to vertex'() {
-        when:
-        def weightedVertex = vertex.withTraits(Weight)
-        weightedVertex.weight { -> 5 }
-
-        then:
-        weightedVertex.weight == 5
-    }
-
     def 'can add value to vertex'() {
         when:
-        def valuedVertex = vertex.withTraits(Value)
-        valuedVertex.value = ['work1', 'work2']
+        vertex.value = ['work1', 'work2']
 
         then:
-        valuedVertex.value == ['work1', 'work2']
-    }
-
-    def 'can get weight from value'() {
-        when:
-        def traitVertex = vertex.withTraits(Weight, Value)
-        traitVertex.value = ['work1', 'work2']
-        traitVertex.weight {
-            value.size()
-        }
-
-        then:
-        traitVertex.weight == 2
+        vertex.value == ['work1', 'work2']
     }
 
     def 'vertex equals null is false'() {
@@ -78,49 +54,34 @@ class VertexTestSpec extends Specification {
     }
 
     def 'vertex equals equal vertex is true'() {
-        setup:
+        given:
         vertex.name = 'step1'
         def compare = new Vertex(name: 'step1')
 
-        when:
-        def equals = vertex == compare
-
-        then:
-        equals
+        expect:
+        vertex == compare
     }
 
-    def 'method is missing on delegate'() {
-        when:
-        vertex.methodThatDoesNotExistonVertex()
-
-        then:
-        thrown MissingMethodException
+    def 'toString is added by transform'() {
+        given:
+        vertex.name = 'step1'
+        expect:
+        vertex.toString() == 'graph.Vertex(name:step1)'
     }
 
-    def 'property is missing on delegate'() {
-        when:
-        vertex.length = 10
+    def 'getAt with name'() {
+        given:
+        vertex.name = 'step1'
 
-        then:
-        thrown MissingPropertyException
+        expect:
+        vertex['name'] == 'step1'
     }
 
-    def 'can add traits to delegate'() {
-        when:
-        vertex.delegateAs(Weight)
+    def 'getAt with delegate'() {
+        given:
+        vertex.key = 'value'
 
-        then:
-        vertex.delegate instanceof Weight
-    }
-
-    def 'can use method from delegate'() {
-        when:
-        vertex.delegateAs(Weight)
-        vertex.weight {
-            10
-        }
-
-        then:
-        vertex.weight == 10
+        expect:
+        vertex['key'] == 'value'
     }
 }

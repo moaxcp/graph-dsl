@@ -2,8 +2,6 @@ package graph.type.undirected
 
 import graph.Graph
 import graph.Vertex
-import graph.trait.Mapping
-import graph.trait.Weight
 import graph.type.undirected.VertexSpecCodeRunner
 import spock.lang.Specification
 
@@ -25,15 +23,6 @@ class VertexSpecRunnerSpec extends Specification {
         vertex.name == 'step2'
         graph.vertices.size() == 1
         graph.vertices['step2'].name == 'step2'
-    }
-
-    def 'can add traits'() {
-        when:
-        runner.traits Mapping, Weight
-
-        then:
-        vertex.delegate instanceof Mapping
-        vertex.delegate instanceof Weight
     }
 
     def 'can add with connectsTo'() {

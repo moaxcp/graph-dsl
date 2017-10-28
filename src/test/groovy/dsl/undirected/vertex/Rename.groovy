@@ -31,6 +31,17 @@ class Rename extends Specification {
         graph.vertices.B.name == 'B'
     }
 
+    def 'rename method null name'() {
+        when:
+        Graph graph = graph {
+            vertex A
+            rename null, 'B'
+        }
+
+        then:
+        thrown IllegalArgumentException
+    }
+
     def 'rename in map with string'() {
         given:
         Graph graph = graph {
@@ -77,5 +88,19 @@ class Rename extends Specification {
         expect:
         graph.vertices.size() == 1
         graph.vertices.B.name == 'B'
+    }
+
+    def 'rename in spec to vertex that already exists'() {
+        when:
+        Graph graph = graph {
+            vertex(A)
+            vertex(B)
+            vertex(B) {
+                rename A
+            }
+        }
+
+        then:
+        thrown IllegalStateException
     }
 }

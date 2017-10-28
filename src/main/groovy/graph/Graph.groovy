@@ -1,16 +1,10 @@
 package graph
 
-import graph.plugin.Plugin
-import graph.type.EdgeSpec
-import graph.type.EdgeSpecFactory
 import graph.type.Type
-import graph.type.VertexSpec
-import graph.type.VertexSpecFactory
-import graph.type.DefaultVertexFactory
+
 import graph.type.undirected.EdgeSpecCodeRunner
-import graph.type.undirected.UnDirectedEdgeFactory
-import graph.type.undirected.UnDirectedEdgeSpecFactory
-import graph.type.undirected.UnDirectedVertexSpecFactory
+
+import graph.type.undirected.GraphType
 import groovy.transform.PackageScope
 
 /**
@@ -22,28 +16,20 @@ import groovy.transform.PackageScope
  * are a few styles that may be used to express vertices and edges in this Graph. See the edge and vertex methods for
  * more details.
  * <p>
- * The default behavior is that of an undirected graph. There can only be one {@link Edge} between any two vertices.
- * When traversing a graph an {@link Edge} is adjacent to a {@link Vertex} if it's one or two property equals the name
- * of the {@link Vertex}.
+ * All graphs have a {@link graph.type.Type}. All Vertex, Edge, VertexSpec, and EdgeSpec objects must be created by
+ * the Type. This is to ensure the {@link Graph} always has the behavior specified by the {@link graph.type.Type}.
  * <p>
- * Plugins may be applied to this graph to change its behavior and the behavior of the vertices and edges. For more
- * information on plugins see {@link graph.plugin.Plugin}.
+ * The default behavior is that of an undirected graph. This is implemented by {@link GraphType}.
  */
-class Graph {
-    private final Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
-    private final Set<Class> vertexTraitsSet = [] as LinkedHashSet<Class>
+class Graph implements GroovyInterceptable {
+    private Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
-    private final Set<Class> edgeTraitsSet = [] as LinkedHashSet<Class>
-    private final Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
-    private final Set<? extends Type> types = [] as LinkedHashSet<? extends Type>
-    @PackageScope
-    EdgeFactory edgeFactory = new UnDirectedEdgeFactory()
-    @PackageScope
-    VertexFactory vertexFactory = new DefaultVertexFactory()
-    @PackageScope
-    VertexSpecFactory vertexSpecFactory = new UnDirectedVertexSpecFactory()
-    @PackageScope
-    EdgeSpecFactory edgeSpecFactory = new UnDirectedEdgeSpecFactory()
+    private Type type
+
+    Graph() {
+        type = new GraphType()
+        type.graph = this
+    }
 
     /**
      * An enum defining traversal status. A value from this enum can be returned
@@ -131,7 +117,6 @@ class Graph {
      * Replaces edges with results of running edges.collect(closure)
      * @param closure to run on each edge
      */
-    @PackageScope
     void replaceEdges(Closure closure) {
         List replace = edges.collect(closure)
         edges.clear()
@@ -142,13 +127,26 @@ class Graph {
      * Replaces set of edges used by Graph with the given set.
      * @param set to replace set of edges
      */
-    @PackageScope
     void replaceEdgesSet(Set<? extends Edge> set) {
         if (!set.empty) {
             throw new IllegalArgumentException('set must be empty.')
         }
         set.addAll(edges)
         edges = set
+    }
+
+    void replaceVertices(Closure closure) {
+        Map<String, ? extends Vertex> replace = vertices.collectEntries(closure) as Map<String, Vertex>
+        vertices.clear()
+        vertices.putAll(replace)
+    }
+
+    void replaceVerticesMap(Map<String, ? extends Vertex> map) {
+        if (!map.isEmpty()) {
+            throw new IllegalArgumentException('map must be empty.')
+        }
+        map.putAll(vertices)
+        vertices = map
     }
 
     /**
@@ -161,70 +159,26 @@ class Graph {
      * @param two name of second vertex
      */
     void deleteEdge(String one, String two) {
-        edges.remove(edgeFactory.newEdge(one, two))
-    }
-
-    /**
-     * returns plugins as an unmodifiable set
-     * @return plugins as an unmodifiable set
-     */
-    Set<? extends Plugin> getPlugins() {
-        Collections.unmodifiableSet(plugins)
-    }
-
-    Set<? extends Type> getTypes() {
-        Collections.unmodifiableSet(types)
-    }
-
-    /**
-     * Creates and applies a {@link Plugin} to this graph.
-     * @param pluginClass - the {@link Plugin} to create and apply to this graph.
-     */
-    void apply(Class pluginClass) {
-        if (plugins.contains(pluginClass)) {
-            throw new IllegalArgumentException("$pluginClass.name is already applied.")
-        }
-        if (!pluginClass.interfaces.contains(Plugin)) {
-            throw new IllegalArgumentException("$pluginClass.name does not implement Plugin")
-        }
-        plugins << pluginClass
-        Plugin plugin = pluginClass.newInstance()
-        plugin.apply(this)
-    }
-
-    void apply(String pluginName) {
-        Properties properties = new Properties()
-        properties.load(getClass().getResourceAsStream("/META-INF/graph-plugins/${pluginName}.properties"))
-        apply(Class.forName((String) properties.'implementation-class'))
+        edges.remove(type.newEdge(one, two))
     }
 
     void type(Class typeClass) {
-        if (types.contains(typeClass)) {
-            throw new IllegalArgumentException("$typeClass.name is already applied.")
+        if (!Type.isAssignableFrom(typeClass)) {
+            throw new IllegalArgumentException("$typeClass.name does not implement Type")
         }
-        if (!typeClass.interfaces.contains(Type)) {
-            throw new IllegalArgumentException("$typeClass.name does not implement Plugin")
-        }
-        types << typeClass
-        Type type = typeClass.newInstance()
-        type.apply(this)
+        type = (Type) typeClass.newInstance()
+        type.graph = this
+        type.convert()
     }
 
     void type(String typeName) {
         Properties properties = new Properties()
         properties.load(getClass().getResourceAsStream("/META-INF/graph-types/${typeName}.properties"))
-        type(Class.forName((String) properties.'implementation-class'))
+        type(this.class.classLoader.loadClass((String) properties.'implementation-class'))
     }
 
-    /**
-     * Applies trait to all vertices and all future vertices.
-     * @param traits to add to vertices and all future vertices
-     */
-    void vertexTraits(Class... traits) {
-        vertices.each { name, vertex ->
-            vertex.delegateAs(traits)
-        }
-        vertexTraitsSet.addAll(traits)
+    Type getType() {
+        type
     }
 
     /**
@@ -290,8 +244,8 @@ class Graph {
      * @param newName  for updated vertex
      */
     void rename(String name, String newName) {
-        if (!newName) {
-            throw new IllegalArgumentException('newName is null or empty.')
+        if (!name || !newName) {
+            throw new IllegalArgumentException('name or newName is null or empty.')
         }
         Vertex vertex = vertex(name)
         vertices.remove(vertex.name)
@@ -466,24 +420,7 @@ class Graph {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(ConfigSpec spec) {
-        if(spec.map.traits) {
-            spec.map.traits.addAll(vertexTraitsSet)
-        } else {
-            spec.map.traits = new ArrayList(vertexTraitsSet)
-        }
-        VertexSpec vspec = vertexSpecFactory.newVertexSpec(this, spec)
-        vspec.apply()
-    }
-
-    /**
-     * Applies trait to all edges and all future edges.
-     * @param traits to add to all edges and all future edges
-     */
-    void edgeTraits(Class... traits) {
-        edges.each { edge ->
-            edge.delegateAs(traits)
-        }
-        edgeTraitsSet.addAll(traits)
+        type.newVertexSpec(spec).apply()
     }
 
     /**
@@ -675,13 +612,7 @@ class Graph {
      */
     @PackageScope
     Edge configEdge(ConfigSpec spec) {
-        if(spec.map.traits) {
-            spec.map.traits.addAll(edgeTraitsSet)
-        } else {
-            spec.map.traits = new ArrayList(edgeTraitsSet)
-        }
-        EdgeSpec espec = edgeSpecFactory.newEdgeSpec(this, spec)
-        espec.apply()
+        type.newEdgeSpec(spec).apply()
     }
 
     /**
@@ -755,15 +686,6 @@ class Graph {
      */
     Set<? extends Edge> adjacentEdges(NameSpec name) {
         adjacentEdges(name.name)
-    }
-
-    /**
-     * Returns edges from vertex with name that should be traversed.
-     * @param name
-     * @return
-     */
-    Set<? extends Edge> traverseEdges(String name) {
-        adjacentEdges(name)
     }
 
     /**
@@ -889,6 +811,7 @@ class Graph {
      * @param spec the DepthFirstTraversalSpec
      * @return null or a Traversal value
      */
+    @SuppressWarnings('NoDef')
     private Traversal depthFirstTraversalConnected(DepthFirstTraversalSpec spec) {
         def root = spec.root
         if (spec.preorder && spec.preorder(vertices[root]) == Traversal.STOP) {
@@ -1018,7 +941,7 @@ class Graph {
      */
     List<? extends Vertex> findAllBfs(String root = null, Closure closure) {
         Closure inject = null
-        if(root) {
+        if (root) {
             inject = this.&injectBfs.curry(root)
         } else {
             inject = this.&injectBfs
@@ -1030,7 +953,6 @@ class Graph {
             result
         }
     }
-
 
     /**
      * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are
@@ -1052,7 +974,7 @@ class Graph {
      */
     List<?> collectBfs(String root = null, Closure closure) {
         Closure inject = null
-        if(root) {
+        if (root) {
             inject = this.&injectBfs.curry(root)
         } else {
             inject = this.&injectBfs
@@ -1061,7 +983,6 @@ class Graph {
             result << closure(vertex)
         }
     }
-
 
     /**
      * Runs closure on each vertex in breadth first order, starting at root, collecting returned values from the
@@ -1100,6 +1021,7 @@ class Graph {
      * @param spec the BreadthFirstTraversalSpec
      * @return null or a Traversal value
      */
+    @SuppressWarnings('NoDef')
     private Traversal breadthFirstTraversalConnected(BreadthFirstTraversalSpec spec) {
         if (!vertices[spec.root]) {
             throw new IllegalArgumentException("Could not find $spec.root in graph")
@@ -1149,9 +1071,9 @@ class Graph {
     }
 
     /**
-     * Creates a {@link graph.type.VertexSpec}
+     * Creates a {@link GraphVertexSpec}
      * @param name
-     * @return a {@link VertexSpec} with name set to the property name.
+     * @return a {@link graph.type.undirected.GraphVertexSpec} with name set to the property name.
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
@@ -1159,17 +1081,21 @@ class Graph {
     }
 
     /**
-     * Creates a {@link VertexSpec}. The result is similar to calling {@link VertexSpec#newVertexSpec(Map)}
-     * <pre>
-     *     VertexSpec.newVertexSpec([name:name + args[0])
-     * </pre>
+     * If the missing method is in the assigned {@link Type} the method will be called on type. Otherwise a
+     * {@link ConfigSpec} is created and returned.
      * @param name
      * @param args
-     * @return a {@link VertexSpec}
+     * @return result of calling method on Type or a ConfigSpec
      */
     @SuppressWarnings('Instanceof')
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
+        MetaMethod method = type.metaClass.getMetaMethod(name, args)
+        if (method != null &&
+                (method.declaringClass.theClass == Type || Type.isAssignableFrom(method.declaringClass.theClass))) {
+            return method.invoke(type, args)
+        }
+
         if (name == 'vertex') {
             throw new IllegalArgumentException("Confusing name 'vertex' for spec.")
         }

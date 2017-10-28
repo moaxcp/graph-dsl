@@ -1,10 +1,28 @@
 package graph
 
-import graph.trait.Weight
 import spock.lang.Specification
 
 class EdgeTestSpec extends Specification {
-    def edge = new Edge(one: 'step1', two: 'step2')
+    Edge edge = new Edge(one: 'step1', two: 'step2')
+
+    def 'constructor sets properties'() {
+        expect:
+        edge.one == 'step1'
+        edge.two == 'step2'
+    }
+
+    def 'unset properties throw MissingPropertyException'() {
+        when:
+        edge.weight == null
+
+        then:
+        thrown MissingPropertyException
+    }
+
+    def 'toString is added by transform'() {
+        expect:
+        edge.toString() == 'graph.Edge(one:step1, two:step2)'
+    }
 
     def 'equals with null'() {
         when:
@@ -32,7 +50,7 @@ class EdgeTestSpec extends Specification {
 
     def 'equals with both vertices different'() {
         when:
-        def edge2 = new Edge(one: 'step4', two: 'step3')
+        Edge edge2 = new Edge(one: 'step4', two: 'step3')
 
         then:
         edge != edge2
@@ -65,38 +83,27 @@ class EdgeTestSpec extends Specification {
         edge == edge2
     }
 
-    def 'method is missing on delegate'() {
+    def 'getAt with one'() {
         when:
-        edge.methodThatDoesNotExistOnEdge()
+        edge.one = 'step1'
 
         then:
-        thrown MissingMethodException
+        edge['one'] == 'step1'
     }
 
-    def 'property is missing on delegate'() {
+    def 'getAt with two'() {
         when:
-        edge.length = 10
+        edge.two = 'step2'
 
         then:
-        thrown MissingPropertyException
+        edge['two'] == 'step2'
     }
 
-    def 'can add traits to delegate'() {
+    def 'getAt with delegate'() {
         when:
-        edge.delegateAs(Weight)
+        edge.key = 'value'
 
         then:
-        edge.delegate instanceof Weight
-    }
-
-    def 'can use method from delegate'() {
-        when:
-        edge.delegateAs(Weight)
-        edge.weight {
-            10
-        }
-
-        then:
-        edge.weight == 10
+        edge['key'] == 'value'
     }
 }

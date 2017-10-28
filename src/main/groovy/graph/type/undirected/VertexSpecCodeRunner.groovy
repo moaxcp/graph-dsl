@@ -4,15 +4,14 @@ import graph.ConfigSpec
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.type.VertexSpec
 
 /**
- * Delegate of the runnerCode closure in {@link VertexSpec}. This provides methods and properties that can be used in
- * the closure. Method and property missing is delegated to the {@link Vertex}.
+ * Delegate of the runnerCode closure in {@link GraphVertexSpec}. This provides methods and properties that can be used
+ * in the closure. Method and property missing is delegated to the {@link Vertex}.
  */
 class VertexSpecCodeRunner {
-    private Graph graph
-    private Vertex vertex
+    private final Graph graph
+    private final Vertex vertex
 
     VertexSpecCodeRunner(Graph graph, Vertex vertex) {
         this.graph = graph
@@ -32,7 +31,7 @@ class VertexSpecCodeRunner {
      * @return the vertex that has been added.
      */
     Vertex getVertex() {
-        return vertex
+        vertex
     }
 
     /**
@@ -40,8 +39,7 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(String newName) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, rename:newName])
-        spec.apply()
+        graph.newVertexSpec([name:vertex.name, rename:newName]).apply()
     }
 
     /**
@@ -49,17 +47,7 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(NameSpec newName) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, rename:newName.name])
-        spec.apply()
-    }
-
-    /**
-     * Adds trait to the vertex.
-     * @param traits
-     */
-    void traits(Class... traits) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, traits:traits])
-        spec.apply()
+        graph.newVertexSpec([name:vertex.name, rename:newName.name]).apply()
     }
 
     /**
@@ -67,8 +55,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(String... names) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsTo:names])
-        spec.apply()
+        graph.newVertexSpec([name:vertex.name, connectsTo:names]).apply()
     }
 
     /**
@@ -76,8 +63,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(NameSpec... names) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsTo:names*.name])
-        spec.apply()
+        graph.newVertexSpec([name:vertex.name, connectsTo:names*.name]).apply()
     }
 
     /**
@@ -86,7 +72,7 @@ class VertexSpecCodeRunner {
      */
     void connectsTo(ConfigSpec... specs) {
         specs.each {
-            graph.vertexSpecFactory.newVertexSpec(graph, it).apply()
+            graph.newVertexSpec(it).apply()
         }
         connectsTo(specs*.map.name as String[])
     }
@@ -109,7 +95,11 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-        vertex[name]
+        if (vertex[name]) {
+            vertex[name]
+        } else {
+            throw new MissingPropertyException("Missing ${vertex[name]}")
+        }
     }
 
     /**

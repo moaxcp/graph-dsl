@@ -4,11 +4,10 @@ import graph.ConfigSpec
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.type.VertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
 
 /**
- * Delegate for {@link VertexSpec#runnerCode}.
+ * Delegate for {@link GraphVertexSpec#runnerCode}.
  */
 class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
 
@@ -21,8 +20,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(String... names) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsFrom:names])
-        spec.apply()
+        graph.newVertexSpec([name:vertex.name, connectsFrom:names]).apply()
     }
 
     /**
@@ -30,8 +28,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(NameSpec... names) {
-        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsFrom:names*.name])
-        spec.apply()
+        graph.newVertexSpec([name:vertex.name, connectsFrom:names*.name]).apply()
     }
 
     /**
@@ -40,7 +37,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      */
     void connectsFrom(ConfigSpec... specs) {
         specs.each {
-            graph.vertexSpecFactory.newVertexSpec(graph, it).apply()
+            graph.newVertexSpec(it).apply()
         }
         connectsFrom(specs*.map.name as String[])
     }

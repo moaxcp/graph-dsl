@@ -1,7 +1,5 @@
 package graph
 
-import graph.trait.Mapping
-import graph.trait.Weight
 import graph.type.directed.DirectedGraphType
 import spock.lang.Specification
 import static Graph.graph
@@ -12,7 +10,7 @@ class ReadMeSpec extends Specification {
 
     }
 
-    def 'usage 1'() {
+    def 'graph method'() {
         when:
         def graph = graph {
             edge step1, step2
@@ -20,17 +18,7 @@ class ReadMeSpec extends Specification {
         then:
         graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
         graph.edges.size() == 1
-        graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
-    }
-
-    def 'usage 2'() {
-        when:
-        def graph = graph {
-
-        }
-
-        then:
-        true
+        graph.edges.first() == new Edge(one: 'step1', two: 'step2') //edge was created!
     }
 
     def 'usage 3'() {
@@ -77,11 +65,6 @@ class ReadMeSpec extends Specification {
                 connectsFrom 'd'
             }
 
-            vertex renameMe {
-                rename 'b'
-                connectsTo 'c', 'd'
-            }
-
             vertex d([connectsTo:'c']) {
                 connectsTo 'e'
             }
@@ -94,64 +77,5 @@ class ReadMeSpec extends Specification {
 
         then:
         graph != null
-    }
-
-    def '0.13.0 added codeRunner to VertexSpec'() {
-        when:
-        def graph = Graph.graph {
-            vertex step1 {
-                traits Mapping
-                message = 'hello from step1'
-                queue = [] as LinkedList
-                traits Weight
-                weight { queue.size() }
-            }
-        }
-        def vertex = graph.findBfs { it.name == 'step1' }
-
-        then:
-        graph != null
-        vertex != null
-        vertex.delegate instanceof Mapping
-        vertex.delegate instanceof Weight
-        graph.vertex('step1').message == 'hello from step1'
-        graph.vertex('step1').weight == 0
-    }
-
-    def '0.14.0 added codeRunner to EdgeSpec'() {
-        when:
-        def graph = Graph.graph {
-            edge (step1, step2) {
-                traits Mapping
-                message = "hello from edge between $one and $two"
-                queue = [] as LinkedList
-                traits Weight
-                weight { queue.size() }
-            }
-        }
-        def edge = graph.edges.first()
-
-        then:
-        graph != null
-        edge != null
-        edge.delegate instanceof Mapping
-        edge.delegate instanceof Weight
-        edge.message == "hello from edge between step1 and step2"
-        edge.weight == 0
-    }
-
-    def 'test traits'() {
-        setup:
-        def object = new Object()
-
-        when:
-        object = object.withTraits(Mapping)
-        object.key = 'value'
-        object = object.withTraits(Weight)
-        object.weight { 100 }
-
-        then:
-        object.key == 'value'
-        object.weight == 100
     }
 }

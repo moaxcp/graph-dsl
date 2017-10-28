@@ -1,7 +1,5 @@
 package graph
 
-import graph.trait.Mapping
-import graph.trait.Weight
 import spock.lang.Specification
 
 /**
@@ -65,16 +63,6 @@ class GraphVertexSpec extends Specification {
         result.is expected
     }
 
-    def 'can add traits with vertex(Map)'() {
-        when:
-        def vertex = graph.vertex name:'step1', traits: [Mapping, Weight]
-
-        then:
-        vertex.name == 'step1'
-        vertex.delegate instanceof Mapping
-        vertex.delegate instanceof Weight
-    }
-
     def 'can add edges using connectsTo with vertex(Map)'() {
         when:
         graph.vertex name:'step1', connectsTo:['step2', 'step3']
@@ -110,21 +98,6 @@ class GraphVertexSpec extends Specification {
 
         then:
         result.is expected
-    }
-
-    def 'can configure traits in vertex(String, Closure)'() {
-        when:
-        Vertex vertex = graph.vertex('step1') {
-            traits Mapping
-            key = 'value'
-            traits Weight
-            weight { 100 }
-        }
-
-        then:
-        vertex.delegate instanceof Mapping
-        vertex.key == 'value'
-        vertex.weight == 100
     }
 
     def 'can add/get vertex with vertex(String, Map)'() {
@@ -224,15 +197,12 @@ class GraphVertexSpec extends Specification {
     def 'cannot rename vertex to a false name'() {
         setup:
         graph.vertex 'step1'
-        graph.vertex 'step2'
-        graph.vertex 'step3'
-        graph.vertex 'step4'
-        graph.edge 'step1', 'step2'
-        graph.edge 'step1', 'step3'
-        graph.edge 'step4', 'step1'
 
         when:
         graph.rename 'step1', ''
+
+        and:
+        graph.rename 'step1', null
 
         then:
         thrown IllegalArgumentException
@@ -257,20 +227,5 @@ class GraphVertexSpec extends Specification {
 
         then:
         vertex.name == 'step1'
-    }
-
-    def 'can create Vertex with VertexSpec method'() {
-        when:
-        graph.with {
-            vertex step1(traits:Mapping) {
-                label = 'step1'
-            }
-        }
-        Vertex vertex = graph.vertices.step1
-
-        then:
-        vertex.name == 'step1'
-        vertex.delegate instanceof Mapping
-        vertex.label == 'step1'
     }
 }

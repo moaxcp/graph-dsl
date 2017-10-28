@@ -2,12 +2,10 @@ package graph.type.undirected
 
 import graph.Edge
 import graph.Graph
-import graph.trait.Mapping
-import graph.trait.Weight
 import graph.type.undirected.EdgeSpecCodeRunner
 import spock.lang.Specification
 
-class EdgeSpecCodeRunnerSpec extends Specification {
+class GraphEdgeSpecCodeRunnerSpec extends Specification {
     Graph graph = new Graph()
     EdgeSpecCodeRunner runner
     Edge edge
@@ -35,17 +33,6 @@ class EdgeSpecCodeRunnerSpec extends Specification {
 
         then:
         edge.two == 'step3'
-    }
-
-    def 'can add traits'() {
-        when:
-        runner.runCode {
-            traits Mapping, Weight
-        }
-
-        then:
-        edge.delegate instanceof Mapping
-        edge.delegate instanceof Weight
     }
 
     def 'cannot setOne'() {

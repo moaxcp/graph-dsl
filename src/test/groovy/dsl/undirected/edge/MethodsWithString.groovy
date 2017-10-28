@@ -64,4 +64,24 @@ class MethodsWithString extends Specification {
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
+
+    def 'cannot add edge when one is null'() {
+        when:
+        Graph graph = graph {
+            edge(null, 'B')
+        }
+
+        then:
+        thrown IllegalStateException
+    }
+
+    def 'cannot add edge when two is null'() {
+        when:
+        Graph graph = graph {
+            edge('A', null)
+        }
+
+        then:
+        thrown IllegalStateException
+    }
 }
