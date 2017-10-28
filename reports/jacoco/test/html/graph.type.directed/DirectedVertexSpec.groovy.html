@@ -3,39 +3,38 @@
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.type.VertexSpec
+import graph.type.undirected.UndirectedVertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
+import groovy.transform.PackageScope
 
 /**
  * Provides configuration for a directed graph vertex.
  */
-class DirectedVertexSpec extends VertexSpec {
-<span class="fc" id="L13">    private final Set&lt;String&gt; connectsFromSet = [] as Set&lt;String&gt;</span>
+class DirectedVertexSpec extends UndirectedVertexSpec {
+<span class="fc" id="L14">    private final Set&lt;String&gt; connectsFromSet = [] as Set&lt;String&gt;</span>
 
     /**
      * Creates a new DirectedVertexSpec from map.
      * @param map
      */
-    DirectedVertexSpec(Graph graph, Map&lt;String, ?&gt; map) {
-<span class="fc" id="L20">        super(graph, map)</span>
-<span class="fc" id="L21">        init(map)</span>
-    }
-
-    private void init(Map&lt;String, ?&gt; map) {
-<span class="fc" id="L25">        map.connectsFrom?.each {</span>
-<span class="pc bfc" id="L26" title="All 2 branches covered.">            connectsFromSet.addAll((String) (it instanceof NameSpec ? it.name : it))</span>
+    @PackageScope
+    DirectedVertexSpec(Graph graph, Map&lt;String, ?&gt; map, Closure closure = null) {
+<span class="fc" id="L22">        super(graph, map, closure)</span>
+<span class="fc" id="L23">        map.connectsFrom?.each {</span>
+<span class="pc bfc" id="L24" title="All 2 branches covered.">            connectsFromSet.addAll((String) (it instanceof NameSpec ? it.name : it))</span>
         }
     }
 
-    DirectedVertexSpec(Graph graph, Map&lt;String, ?&gt; map, Closure closure) {
-<span class="fc" id="L31">        super(graph, map, closure)</span>
-<span class="fc" id="L32">        init(map)</span>
+    protected void applyConnectsFrom() {
+<span class="fc" id="L29">        connectsFromSet.each {</span>
+<span class="pc" id="L30">            graph.edge it, vertex.name</span>
+        }
     }
 
-    void applyClosure() {
-<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (closure) {</span>
-<span class="fc" id="L37">            VertexSpecCodeRunner runner = new DirectedVertexSpecCodeRunner(graph, vertex)</span>
-<span class="fc" id="L38">            runner.runCode(closure)</span>
+    protected void applyClosure() {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (runnerCodeClosure) {</span>
+<span class="fc" id="L36">            VertexSpecCodeRunner runner = new DirectedVertexSpecCodeRunner(graph, vertex)</span>
+<span class="fc" id="L37">            runner.runCode(runnerCodeClosure)</span>
         }
     }
 
@@ -46,17 +45,14 @@ class DirectedVertexSpec extends VertexSpec {
      * @return
      */
     Vertex apply() {
-
-<span class="fc" id="L50">        applyVertex()</span>
-<span class="fc" id="L51">        applyRename()</span>
-<span class="fc" id="L52">        applyTraits()</span>
-<span class="fc" id="L53">        applyConnectsTo()</span>
-<span class="fc" id="L54">        connectsFromSet.each {</span>
-<span class="pc" id="L55">            graph.edge it, vertex.name</span>
-        }
-
-<span class="fc" id="L58">        applyClosure()</span>
-<span class="pc" id="L59">        vertex</span>
+<span class="fc" id="L48">        init()</span>
+<span class="fc" id="L49">        checkConditions()</span>
+<span class="fc" id="L50">        applyRename()</span>
+<span class="fc" id="L51">        applyConnectsTo()</span>
+<span class="fc" id="L52">        applyConnectsFrom()</span>
+<span class="fc" id="L53">        addVertex(vertex)</span>
+<span class="fc" id="L54">        applyClosure()</span>
+<span class="pc" id="L55">        vertex</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

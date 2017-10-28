@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractVertexSpec.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph.type</a> &gt; <span class="el_source">AbstractVertexSpec.groovy</span></div><h1>AbstractVertexSpec.groovy</h1><pre class="source lang-java linenums">package graph.type
+
+import graph.Graph
+import graph.NameSpec
+import graph.Vertex
+import graph.VertexSpec
+
+/**
+ * Base implementation of a VertexSpec. Type packages can inherit this class to implement default methods in
+ * VertexSpec.
+ */
+abstract class AbstractVertexSpec extends VertexSpec {
+    Vertex vertex
+    String name
+    String rename
+<span class="fc" id="L16">    final Set&lt;String&gt; connectsToSet = [] as Set&lt;String&gt;</span>
+    Closure runnerCodeClosure
+
+    protected AbstractVertexSpec(Graph graph, Map&lt;String, ?&gt; map, Closure closure = null) {
+<span class="fc" id="L20">        super(graph)</span>
+
+<span class="fc" id="L22">        name = map.name</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        rename = map.rename instanceof NameSpec ? map.rename.name : map.rename</span>
+
+<span class="fc" id="L25">        map.connectsTo?.each {</span>
+<span class="pc bfc" id="L26" title="All 2 branches covered.">            connectsToSet.add((String) (it instanceof NameSpec ? it.name : it))</span>
+        }
+<span class="fc" id="L28">        runnerCodeClosure = closure</span>
+    }
+
+    protected void init() {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        if (vertex) {</span>
+<span class="fc" id="L33">            throw new IllegalStateException('vertex already created.')</span>
+        }
+<span class="fc bfc" id="L35" title="All 4 branches covered.">        if (!graph.vertices[name]) {</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            name = rename ?: name</span>
+<span class="fc" id="L37">            rename = null</span>
+        }
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        vertex = graph.vertices[name] ?: graph.newVertex(name)</span>
+    }
+
+    protected void checkConditions() {
+<span class="fc bfc" id="L43" title="All 4 branches covered.">        if (!name) {</span>
+<span class="fc" id="L44">            throw new IllegalStateException('!name failed. Name must be groovy truth.')</span>
+        }
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">        if (!graph) {</span>
+<span class="nc" id="L47">            throw new IllegalStateException('graph is not set.')</span>
+        }
+<span class="pc bpc" id="L49" title="2 of 4 branches missed.">        if (!vertex) {</span>
+<span class="nc" id="L50">            throw new IllegalStateException('already ran spec')</span>
+        }
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (rename) {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            if (graph.vertices[rename]) {</span>
+<span class="fc" id="L54">                throw new IllegalStateException('renamed vertex already exists')</span>
+            }
+        }
+    }
+
+    protected void applyRename() {
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (rename) {</span>
+<span class="fc" id="L61">            graph.rename(name, rename)</span>
+        }
+    }
+
+    protected void applyConnectsTo() {
+<span class="fc" id="L66">        connectsToSet.each {</span>
+<span class="pc" id="L67">            graph.edge vertex.name, it</span>
+        }
+    }
+
+    protected abstract void applyClosure()
+
+    Vertex apply() {
+<span class="fc" id="L74">        init()</span>
+<span class="fc" id="L75">        checkConditions()</span>
+<span class="fc" id="L76">        applyRename()</span>
+<span class="fc" id="L77">        applyConnectsTo()</span>
+<span class="fc" id="L78">        addVertex(vertex)</span>
+<span class="fc" id="L79">        applyClosure()</span>
+<span class="pc" id="L80">        vertex</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

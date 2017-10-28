@@ -1,6 +1,6 @@
 graph
-graph.plugin
-graph.trait
+graph.internal
 graph.type
 graph.type.directed
 graph.type.undirected
+graph.type.weighted

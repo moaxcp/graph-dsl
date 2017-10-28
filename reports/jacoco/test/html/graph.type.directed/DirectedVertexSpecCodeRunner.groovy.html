@@ -4,16 +4,15 @@ import graph.ConfigSpec
 import graph.Graph
 import graph.NameSpec
 import graph.Vertex
-import graph.type.VertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
 
 /**
- * Delegate for {@link VertexSpec#runnerCode}.
+ * Delegate for {@link GraphVertexSpec#runnerCode}.
  */
 class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
 
     DirectedVertexSpecCodeRunner(Graph graph, Vertex vertex) {
-<span class="fc" id="L16">        super(graph, vertex)</span>
+<span class="fc" id="L15">        super(graph, vertex)</span>
     }
 
     /**
@@ -21,8 +20,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(String... names) {
-<span class="fc" id="L24">        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsFrom:names])</span>
-<span class="fc" id="L25">        spec.apply()</span>
+<span class="fc" id="L23">        graph.newVertexSpec([name:vertex.name, connectsFrom:names]).apply()</span>
     }
 
     /**
@@ -30,8 +28,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(NameSpec... names) {
-<span class="fc" id="L33">        VertexSpec spec = graph.vertexSpecFactory.newVertexSpec(graph, [name:vertex.name, connectsFrom:names*.name])</span>
-<span class="fc" id="L34">        spec.apply()</span>
+<span class="fc" id="L31">        graph.newVertexSpec([name:vertex.name, connectsFrom:names*.name]).apply()</span>
     }
 
     /**
@@ -39,10 +36,10 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param specs specs to apply to graph and connectFrom.
      */
     void connectsFrom(ConfigSpec... specs) {
-<span class="fc" id="L42">        specs.each {</span>
-<span class="pc" id="L43">            graph.vertexSpecFactory.newVertexSpec(graph, it).apply()</span>
+<span class="fc" id="L39">        specs.each {</span>
+<span class="pc" id="L40">            graph.newVertexSpec(it).apply()</span>
         }
-<span class="fc" id="L45">        connectsFrom(specs*.map.name as String[])</span>
+<span class="fc" id="L42">        connectsFrom(specs*.map.name as String[])</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

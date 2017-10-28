@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WeightedEdgeComparator.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph.type.weighted</a> &gt; <span class="el_source">WeightedEdgeComparator.groovy</span></div><h1>WeightedEdgeComparator.groovy</h1><pre class="source lang-java linenums">package graph.type.weighted
+
+import graph.Edge
+
+@SuppressWarnings('NoDef')
+@SuppressWarnings('EmptyCatchBlock')
+class WeightedEdgeComparator implements Comparator&lt;Edge&gt; {
+
+    @Override
+    int compare(Edge a, Edge b) {
+<span class="fc bfc" id="L11" title="All 2 branches covered.">        if (a == b) {</span>
+<span class="fc" id="L12">            return 0</span>
+        }
+<span class="fc" id="L14">        def weightA = 0</span>
+        try {
+<span class="pc bfc" id="L16" title="All 2 branches covered.">            weightA = a.weight ?: 0</span>
+        } catch (MissingPropertyException e) {
+            //defaults to 0
+        }
+<span class="fc" id="L20">        def weightB = 0</span>
+        try {
+<span class="pc bfc" id="L22" title="All 2 branches covered.">            weightB = b.weight ?: 0</span>
+        } catch (MissingPropertyException e) {
+            //defaults to 0
+        }
+
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (weightA &lt; weightB) {</span>
+<span class="pc" id="L28">            return -1</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        } else if (weightA &gt; weightB) {</span>
+<span class="fc" id="L30">            return 1</span>
+        }
+<span class="fc" id="L32">        int compareOne = a.one &lt;=&gt; b.one</span>
+<span class="fc" id="L33">        int compareTwo = a.two &lt;=&gt; b.two</span>
+<span class="fc bfc" id="L34" title="All 4 branches covered.">        if (compareOne != 0) {</span>
+<span class="pc" id="L35">            return compareOne</span>
+<span class="pc bpc" id="L36" title="2 of 4 branches missed.">        } else if (compareTwo != 0) {</span>
+<span class="fc" id="L37">            return compareTwo</span>
+        }
+<span class="nc" id="L39">        throw new IllegalStateException('a and be are not equals but one and two are not comparable')</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

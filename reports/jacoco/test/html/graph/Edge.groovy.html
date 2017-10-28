@@ -1,37 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Edge.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">Edge.groovy</span></div><h1>Edge.groovy</h1><pre class="source lang-java linenums">package graph
 
+import graph.internal.PropertyDelegator
 import groovy.transform.PackageScope
 import groovy.transform.ToString
 
 /**
- * An edge between two vertices. This class uses a delegate when methods
- * and properties are missing. Traits should be applied to the delegate
- * using delegateAs().
+ * An edge between two vertices. Properties may be added to Edge by setting values. Assigning a property to a
+ * {@link Closure} will make it lazy. When the property is read the value returned is the result of calling the closure.
+ * If a missing method is called on Edge and a property is set with a closure the closure will be called and the
+ * resulting value returned.
  */
-@ToString(includeNames=true, excludes='delegate')
-class Edge {
+@ToString(includeNames=true)
+class Edge extends PropertyDelegator {
     String one
     String two
-<span class="fc" id="L15">    Object delegate = new Object()</span>
 
     @PackageScope
     void setOne(String one) {
-<span class="fc" id="L19">        this.one = one</span>
+<span class="fc" id="L20">        this.one = one</span>
     }
 
     @PackageScope
     void setTwo(String two) {
-<span class="fc" id="L24">        this.two = two</span>
+<span class="fc" id="L25">        this.two = two</span>
     }
 
     /**
-     * applies trait to the delegate.
-     * @param traits
+     * Returns the property with the given name.
+     * @param name
      * @return
      */
-    Edge delegateAs(Class&lt;?&gt;... traits) {
-<span class="fc" id="L33">        delegate = delegate.withTraits(traits)</span>
-<span class="pc" id="L34">        this</span>
+    Object getAt(String name) {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (name == 'one') {</span>
+<span class="fc" id="L35">            return one</span>
+        }
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (name == 'two') {</span>
+<span class="fc" id="L38">            return two</span>
+        }
+<span class="pc" id="L40">        delegate[name]</span>
     }
 
     /**
@@ -43,14 +49,14 @@ class Edge {
     @Override
     @SuppressWarnings('Instanceof')
     boolean equals(Object o) {
-<span class="fc bfc" id="L46" title="All 4 branches covered.">        if (!(o instanceof Edge)) {</span>
-<span class="fc" id="L47">            return false</span>
+<span class="fc bfc" id="L52" title="All 4 branches covered.">        if (!(o instanceof Edge)) {</span>
+<span class="fc" id="L53">            return false</span>
         }
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (this.is(o)) {</span>
-<span class="fc" id="L50">            return true</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (this.is(o)) {</span>
+<span class="fc" id="L56">            return true</span>
         }
-<span class="fc" id="L52">        Edge rhs = (Edge) o</span>
-<span class="pc bfc" id="L53" title="All 12 branches covered.">        (one == rhs.one || one == rhs.two) &amp;&amp; (two == rhs.two || two == rhs.one)</span>
+<span class="fc" id="L58">        Edge rhs = (Edge) o</span>
+<span class="pc bfc" id="L59" title="All 12 branches covered.">        (one == rhs.one || one == rhs.two) &amp;&amp; (two == rhs.two || two == rhs.one)</span>
     }
 
     /**
@@ -59,50 +65,7 @@ class Edge {
      */
     @Override
     int hashCode() {
-<span class="pc" id="L62">        one.hashCode() + two.hashCode()</span>
-    }
-
-    /**
-     * calls method on delegate.
-     * @param name
-     * @param args
-     * @return
-     */
-    @SuppressWarnings('NoDef')
-    def methodMissing(String name, args) {
-<span class="pc" id="L73">        delegate.invokeMethod(name, args)</span>
-    }
-
-    /**
-     * returns property from delegate.
-     * @param name
-     * @return
-     */
-    @SuppressWarnings('NoDef')
-    def propertyMissing(String name) {
-<span class="pc" id="L83">        delegate[name]</span>
-    }
-
-    /**
-     * sets property on delegate.
-     * @param name
-     * @param value
-     * @return
-     */
-    @SuppressWarnings('NoDef')
-    def propertyMissing(String name, value) {
-<span class="pc" id="L94">        delegate[name] = value</span>
-    }
-
-    /**
-     * Runs the closure on this {@link Edge}.
-     * @param closure
-     * @return this {@link Edge}
-     */
-    Edge leftShift(Closure closure) {
-<span class="nc" id="L103">        Closure code = closure.rehydrate(this, this, this)</span>
-<span class="nc" id="L104">        code()</span>
-<span class="nc" id="L105">        this</span>
+<span class="pc" id="L68">        one.hashCode() + two.hashCode()</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
