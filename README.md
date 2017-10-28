@@ -295,7 +295,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
-## x.x.x
+## 0.21.0
 
 This release represents a major change in how graphs are typed. Additional functionality is no only added through a
 Type. Type is the delegate of a Graph. A graph's type provides additional methods and can change any aspect of how a
