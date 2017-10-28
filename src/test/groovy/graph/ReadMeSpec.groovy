@@ -10,7 +10,7 @@ class ReadMeSpec extends Specification {
 
     }
 
-    def 'usage 1'() {
+    def 'graph method'() {
         when:
         def graph = graph {
             edge step1, step2
@@ -18,17 +18,7 @@ class ReadMeSpec extends Specification {
         then:
         graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
         graph.edges.size() == 1
-        graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
-    }
-
-    def 'usage 2'() {
-        when:
-        def graph = graph {
-
-        }
-
-        then:
-        true
+        graph.edges.first() == new Edge(one: 'step1', two: 'step2') //edge was created!
     }
 
     def 'usage 3'() {
