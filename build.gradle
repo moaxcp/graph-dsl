@@ -25,7 +25,7 @@ description = 'A groovy dsl for creating and traversing graphs.'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-ext.groovyVersion = '2.5.0-beta-1'
+ext.groovyVersion = '2.4.12'
 
 versioneye {
     includePlugins = true
