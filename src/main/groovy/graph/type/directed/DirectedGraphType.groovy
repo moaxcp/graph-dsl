@@ -1,74 +1,73 @@
 package graph.type.directed
 
+import graph.ConfigSpec
 import graph.Edge
 import graph.Graph
-import graph.plugin.Plugin
-import graph.type.Type
+import graph.type.undirected.GraphType
 
 /**
- * This plugin changes the behavior of a {@link Graph} to that of a directed graph.
+ * This type changes the behavior of a {@link Graph} to that of a directed graph.
  * <p>
  *
  * The following modifications are made to the graph:
  * <p>
  * <b>members</b>
  * <dl>
- *     <dt>edges</dt>
+ *     <dt>{@code edges}</dt>
  *     <dd>All edges are converted to {@link DirectedEdge}s and all future edges will be {@link DirectedEdge}s. Any two
  *     vertices may be connected by one or two {@link DirectedEdge}s. Two {@link DirectedEdge}s connecting any two
  *     vertices cannot have the same direction. Direction is determined by the values of {@link DirectedEdge#getOne()}
  *     and {@link DirectedEdge#getTwo()}. The values of one and two cannot be the same in any two {@link DirectedEdge}s.
  *     </dd>
- *     <dt>edgeFactory</dt>
- *     <dd>changed to a {@link DirectedEdgeFactory} This causes all future {@link Edge}s added to the {@link Graph} to
- *     be {@link DirectedEdge}s.</dd>
- *     <dt>vertexSpecFactory</dt>
- *     <dd>change to a {@link DirectedVertexSpecFactory}. This causes all future {@link VertexSpec}s used in the
- *     {@link Graph} to be {@link DirectedVertexSpec}. The new configuration options in {@link DirectedVertexSpec} are
- *     available for use in the vertex dsl (connectsFrom).</dd>
- * </dl>
- * <b>methods</b>
- * <p>
- * The static graph methods in this class are added to the graph with graph as the first parameter. The methods can be
- * used in the {@link Graph} directly at runtime. traverseEdges in {@link Graph} is modified.
- * <dl>
- *     <dt>{@code Set<? extends Edge> inEdges(String name)}</dt>
- *     <dd>returns the set of in-edges for a given vertex</dd>
- *     <dt>{@code int inDegree(String name)}</dt>
- *     <dd>returns the in-degree of a vertex</dd>
- *     <dt>{@code Set<? extends Edge> outEdges(String name)}</dt>
- *     <dd>returns the set of out-edges for a given vertex</dd>
- *     <dt>{@code int outDegree(Graph graph, String name)}</dt>
- *     <dd>returns the out-degree of a vertex</dd>
- *     <dt>{@code Set<? extends Edge> traverseEdges(String name)}</dt>
- *     <dd>returns the traverse-edges for traversal algorithms. For directed graph this is out-edges.</dd>
- *     <dt>{@code Deque<String> reversePostOrderSort()}</dt>
- *     <dd>returns vertex names in reverse-post-order</dd>
- *     <dt>{@code void reversePostOrder(Closure closure)}</dt>
- *     <dd>traverses the graph in reverse-post-order</dd>
  * </dl>
  */
-class DirectedGraphType implements Type {
+class DirectedGraphType extends GraphType {
 
     /**
-     * Applies the plugin to a {@link graph.Graph}.
-     * @param graph  to apply plugin
+     * Returns a new DirectedEdge with the given parameters.
+     * @param one
+     * @param two
+     * @return a new DirectedEdge
      */
-    void apply(Graph graph) {
-        graph.replaceEdges { edge ->
-            new DirectedEdge(one:edge.one, two:edge.two, delegate:edge.delegate)
+    @Override
+    Edge newEdge(String one, String two, Object delegate = null) {
+        if (delegate) {
+            new DirectedEdge(one:one, two:two, delegate:delegate)
+        } else {
+            new DirectedEdge(one:one, two:two)
         }
+    }
 
-        graph.edgeFactory = new DirectedEdgeFactory()
-        graph.vertexSpecFactory = new DirectedVertexSpecFactory()
+    /**
+     * Creates a new {@link graph.type.directed.DirectedVertexSpec} from map.
+     * @param map
+     * @return
+     */
+    @Override
+    DirectedVertexSpec newVertexSpec(Map<String, ?> map) {
+        new DirectedVertexSpec(graph, map)
+    }
 
-        graph.metaClass.inEdges = this.&inEdges.curry(graph)
-        graph.metaClass.inDegree = this.&inDegree.curry(graph)
-        graph.metaClass.outEdges = this.&outEdges.curry(graph)
-        graph.metaClass.outDegree = this.&outDegree.curry(graph)
-        graph.metaClass.traverseEdges = this.&traverseEdges.curry(graph)
-        graph.metaClass.reversePostOrderSort = this.&reversePostOrderSort.curry(graph)
-        graph.metaClass.reversePostOrder = this.&reversePostOrder.curry(graph)
+    /**
+     * Creates a new {@link graph.type.directed.DirectedVertexSpec} from spec.
+     * @param spec
+     * @return
+     */
+    @Override
+    DirectedVertexSpec newVertexSpec(ConfigSpec spec) {
+        new DirectedVertexSpec(graph, spec.map, spec.closure)
+    }
+
+    @Override
+    boolean canConvert() {
+        if (graph.edges.size() == 0) {
+            return true
+        }
+        Set edges = [] as Set
+        !graph.edges.find { Edge current ->
+            Edge edge = new DirectedEdge(one:current.one, two:current.two)
+            !edges.add(edge)
+        }
     }
 
     /**
@@ -77,8 +76,8 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static Set<? extends Edge> inEdges(Graph graph, String name) {
-        graph.@edges.findAll {
+    Set<? extends Edge> inEdges(String name) {
+        graph.edges.findAll {
             name == it.two
         }
     }
@@ -89,7 +88,7 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static int inDegree(Graph graph, String name) {
+    int inDegree(String name) {
         graph.inEdges(name).size()
     }
 
@@ -99,8 +98,8 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static Set<? extends Edge> outEdges(Graph graph, String name) {
-        graph.@edges.findAll {
+    Set<? extends Edge> outEdges(String name) {
+        graph.edges.findAll {
             name == it.one
         }
     }
@@ -111,7 +110,7 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static int outDegree(Graph graph, String name) {
+    int outDegree(String name) {
         graph.outEdges(name).size()
     }
 
@@ -121,7 +120,7 @@ class DirectedGraphType implements Type {
      * @param name
      * @return
      */
-    static Set<? extends Edge> traverseEdges(Graph graph, String name) {
+    Set<? extends Edge> traverseEdges(String name) {
         graph.outEdges(name)
     }
 
@@ -130,7 +129,7 @@ class DirectedGraphType implements Type {
      * @param graph
      * @return
      */
-    static Deque<String> reversePostOrderSort(Graph graph) {
+    Deque<String> reversePostOrderSort() {
         Deque<String> deque = [] as LinkedList<String>
         graph.depthFirstTraversal {
             postorder { vertex ->
@@ -145,7 +144,7 @@ class DirectedGraphType implements Type {
      * @param graph
      * @param closure
      */
-    static void reversePostOrder(Graph graph, Closure closure) {
+    void reversePostOrder(Closure closure) {
         Deque<String> deque = graph.reversePostOrderSort()
         deque.each {
             closure(graph.@vertices[it])

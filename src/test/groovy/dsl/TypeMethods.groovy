@@ -14,7 +14,7 @@ class TypeMethods extends Specification {
         }
 
         expect:
-        graph.types.contains(DirectedGraphType)
+        graph.type instanceof DirectedGraphType
     }
 
     def 'can change type of Graph with String'() {
@@ -24,24 +24,13 @@ class TypeMethods extends Specification {
         }
 
         expect:
-        graph.types.contains(DirectedGraphType)
+        graph.type instanceof DirectedGraphType
     }
 
     def 'type must use Type interface'() {
         when:
         Graph graph = graph {
             type String
-        }
-
-        then:
-        thrown IllegalArgumentException
-    }
-
-    def 'same type cannot be used twice'() {
-        when:
-        Graph graph = graph {
-            type 'directed-graph'
-            type 'directed-graph'
         }
 
         then:

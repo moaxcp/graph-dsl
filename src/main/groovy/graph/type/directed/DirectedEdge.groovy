@@ -4,7 +4,7 @@ import graph.Edge
 import groovy.transform.ToString
 
 /**
- * Represents a directed edge in a grpah. Since these should be soted in a
+ * Represents a directed edge in a graph. Since these should be sorted in a
  * Set the equals method is overridden to allow edges in both directions between
  * two vertices.
  */

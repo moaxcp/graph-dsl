@@ -45,7 +45,7 @@ jacocoTestCoverageVerification {
             }
             limit {
                 counter = 'BRANCH'
-                minimum = 0.89
+                minimum = 0.88
             }
         }
 
@@ -63,7 +63,7 @@ jacocoTestCoverageVerification {
 
         rule {
             element = 'CLASS'
-            includes = ['graph.type.EdgeSpec']
+            includes = ['graph.type.undirected.GraphEdgeSpec']
             limit {
                 minimum = 0.93
             }
@@ -75,7 +75,7 @@ jacocoTestCoverageVerification {
 
         rule {
             element = 'CLASS'
-            includes = ['graph.type.VertexSpec']
+            includes = ['graph.type.undirected.GraphVertexSpec']
             limit {
                 minimum = 0.95
             }
@@ -204,6 +204,11 @@ nexusStaging {
 
 dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
+    testCompile( 'com.athaydes:spock-reports:1.3.2' ) {
+        transitive = false
+    }
+    testCompile 'org.slf4j:slf4j-api:1.7.13'
+    testCompile 'org.slf4j:slf4j-simple:1.7.13'
     testCompile ('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude group: 'org.codehaus.groovy', module:'groovy-all'
     }

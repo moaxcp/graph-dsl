@@ -1,17 +1,16 @@
 package graph.type.undirected
 
 import graph.Edge
-import graph.type.EdgeSpec
 import graph.Graph
 import graph.NameSpec
 
 /**
- * Delegate of the runnerCode closure in {@link EdgeSpec}. This provides methods and properties that can be used in
- * the closure. Method and property missing is delegated to the {@link Edge}
+ * Delegate of the runnerCode closure in {@link graph.EdgeSpec}. This provides methods and properties that can be used
+ * in the closure. Method and property missing is delegated to the {@link Edge}
  */
 class EdgeSpecCodeRunner {
-    private Graph graph
-    private Edge edge
+    private final Graph graph
+    private final Edge edge
 
     EdgeSpecCodeRunner(Graph graph, Edge edge) {
         this.graph = graph
@@ -26,7 +25,8 @@ class EdgeSpecCodeRunner {
         graph
     }
 
-    //todo edge returned should not be able to set one or two. A trait can be applied to prevent this. This is an issue on all edge methods.
+    //todo edge returned should not be able to set one or two. A trait can be applied to prevent this.
+    // This is an issue on all edge methods.
     /**
      * Gets the {@link Edge} that has been added. This can be used inside the runnerCode to access the edge.
      * @return the edge that has been added.
@@ -40,8 +40,7 @@ class EdgeSpecCodeRunner {
      * @param renameOne the new name for edge.one
      */
     void renameOne(String renameOne) {
-        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, renameOne:renameOne])
-        spec.apply()
+        graph.newEdgeSpec([one:edge.one, two:edge.two, renameOne:renameOne]).apply()
     }
 
     /**
@@ -49,8 +48,7 @@ class EdgeSpecCodeRunner {
      * @param renameOne  the new name for edge.one
      */
     void renameOne(NameSpec renameOne) {
-        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, renameOne:renameOne.name])
-        spec.apply()
+        graph.newEdgeSpec([one:edge.one, two:edge.two, renameOne:renameOne.name]).apply()
     }
 
     /**
@@ -58,8 +56,7 @@ class EdgeSpecCodeRunner {
      * @param renameTwo the new name for edge.two
      */
     void renameTwo(String renameTwo) {
-        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, renameTwo:renameTwo])
-        spec.apply()
+        graph.newEdgeSpec([one:edge.one, two:edge.two, renameTwo:renameTwo]).apply()
     }
 
     /**
@@ -67,17 +64,7 @@ class EdgeSpecCodeRunner {
      * @param renameTwo  the new name for edge.two
      */
     void renameTwo(NameSpec renameTwo) {
-        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, renameTwo:renameTwo.name])
-        spec.apply()
-    }
-
-    /**
-     * Adds trait to the edge.
-     * @param traits
-     */
-    void traits(Class... traits) {
-        EdgeSpec spec = graph.edgeSpecFactory.newEdgeSpec(graph, [one:edge.one, two:edge.two, traits:traits])
-        spec.apply()
+        graph.newEdgeSpec([one:edge.one, two:edge.two, renameTwo:renameTwo.name]).apply()
     }
 
     /**
@@ -98,7 +85,11 @@ class EdgeSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-        edge[name]
+        if (edge[name]) {
+            edge[name]
+        } else {
+            throw new MissingPropertyException("Missing ${edge[name]}")
+        }
     }
 
     /**

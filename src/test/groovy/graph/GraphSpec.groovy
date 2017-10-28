@@ -1,34 +1,9 @@
 package graph
 
-import graph.trait.Mapping
 import graph.type.directed.DirectedEdge
-import graph.plugin.EdgeWeightPlugin
 import spock.lang.Specification
 
 class GraphSpec extends Specification {
-
-    def 'can only apply Plugin once'() {
-        setup:
-        def graph = new Graph()
-        graph.apply EdgeWeightPlugin
-
-        when:
-        graph.apply EdgeWeightPlugin
-
-        then:
-        thrown IllegalArgumentException
-    }
-
-    def 'can only apply a Plugin'() {
-        setup:
-        def graph = new Graph()
-
-        when:
-        graph.apply String
-
-        then:
-        thrown IllegalArgumentException
-    }
 
     def 'can use graph method as expected'() {
         setup:
@@ -79,11 +54,11 @@ class GraphSpec extends Specification {
 
     def 'dynamic method with map and closure returns ConfigSpec'() {
         when:
-        ConfigSpec spec = new Graph().step1(traits:Mapping) { edgesFirst 'step2' }
+        ConfigSpec spec = new Graph().step1(key:'value') { connectsTo 'step2' }
 
         then:
         spec.map.name == 'step1'
-        spec.map.traits == Mapping
+        spec.map.key == 'value'
         spec.closure != null
     }
 
@@ -114,6 +89,14 @@ class GraphSpec extends Specification {
     def 'methodMissing with a bad argument and map throws exception'() {
         when:
         new Graph().methodMissing('noVertexSpec', [[one:'one'], 'two'])
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def 'methodMissing not inherited from type'() {
+        when:
+        new Graph().methodMissing('equals', new Graph())
 
         then:
         thrown MissingMethodException
@@ -205,43 +188,14 @@ class GraphSpec extends Specification {
         thrown IllegalArgumentException
     }
 
-    def 'edgeTraits adds traits to all old  and new edges'() {
+    def 'cannot replace vertices map unless empty'() {
         setup:
         Graph graph = new Graph()
-        graph.edge 'step1', 'step2'
-        graph.edge 'step2', 'step3'
 
         when:
-        graph.edgeTraits(Mapping)
-
-        and:
-        graph.edgeTraits(Mapping)
-        graph.edge 'step3', 'step4'
-        graph.edge 'step4', 'step5'
+        graph.replaceVerticesMap([step1:new Vertex(name:'step1')])
 
         then:
-        graph.edges.every { edge ->
-            edge.delegate instanceof Mapping
-        }
-    }
-
-    def 'vertexTraits adds traits to all old and new vertices'() {
-        setup:
-        Graph graph = new Graph()
-        graph.vertex 'step1'
-        graph.vertex 'step2'
-
-        when:
-        graph.vertexTraits(Mapping)
-
-        and:
-        graph.vertexTraits(Mapping)
-        graph.vertex 'step3'
-        graph.vertex 'step4'
-
-        then:
-        graph.vertices.every { name, vertex ->
-            vertex.delegate instanceof Mapping
-        }
+        thrown IllegalArgumentException
     }
 }

@@ -1,6 +1,5 @@
 package graph
 
-import graph.trait.Mapping
 import spock.lang.Specification
 
 class GraphEdgeSpec extends Specification {
@@ -49,14 +48,6 @@ class GraphEdgeSpec extends Specification {
 
         then:
         result.is expected
-    }
-
-    def 'can add traits with edge(Map)'() {
-        when:
-        Edge edge = graph.edge one:'step1', two:'step2', traits:Mapping
-
-        then:
-        edge.delegate instanceof Mapping
     }
 
     def 'can add/get edge with edge(String, String, Closure)'() {

@@ -1,18 +1,19 @@
 package graph
 
+import graph.internal.PropertyDelegator
 import groovy.transform.PackageScope
 import groovy.transform.ToString
 
 /**
- * An edge between two vertices. This class uses a delegate when methods
- * and properties are missing. Traits should be applied to the delegate
- * using delegateAs().
+ * An edge between two vertices. Properties may be added to Edge by setting values. Assigning a property to a
+ * {@link Closure} will make it lazy. When the property is read the value returned is the result of calling the closure.
+ * If a missing method is called on Edge and a property is set with a closure the closure will be called and the
+ * resulting value returned.
  */
-@ToString(includeNames=true, excludes='delegate')
-class Edge {
+@ToString(includeNames=true)
+class Edge extends PropertyDelegator {
     String one
     String two
-    Object delegate = new Object()
 
     @PackageScope
     void setOne(String one) {
@@ -25,13 +26,18 @@ class Edge {
     }
 
     /**
-     * applies trait to the delegate.
-     * @param traits
+     * Returns the property with the given name.
+     * @param name
      * @return
      */
-    Edge delegateAs(Class<?>... traits) {
-        delegate = delegate.withTraits(traits)
-        this
+    Object getAt(String name) {
+        if (name == 'one') {
+            return one
+        }
+        if (name == 'two') {
+            return two
+        }
+        delegate[name]
     }
 
     /**
@@ -60,48 +66,5 @@ class Edge {
     @Override
     int hashCode() {
         one.hashCode() + two.hashCode()
-    }
-
-    /**
-     * calls method on delegate.
-     * @param name
-     * @param args
-     * @return
-     */
-    @SuppressWarnings('NoDef')
-    def methodMissing(String name, args) {
-        delegate.invokeMethod(name, args)
-    }
-
-    /**
-     * returns property from delegate.
-     * @param name
-     * @return
-     */
-    @SuppressWarnings('NoDef')
-    def propertyMissing(String name) {
-        delegate[name]
-    }
-
-    /**
-     * sets property on delegate.
-     * @param name
-     * @param value
-     * @return
-     */
-    @SuppressWarnings('NoDef')
-    def propertyMissing(String name, value) {
-        delegate[name] = value
-    }
-
-    /**
-     * Runs the closure on this {@link Edge}.
-     * @param closure
-     * @return this {@link Edge}
-     */
-    Edge leftShift(Closure closure) {
-        Closure code = closure.rehydrate(this, this, this)
-        code()
-        this
     }
 }

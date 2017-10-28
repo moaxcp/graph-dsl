@@ -60,42 +60,6 @@ may be changed which will break the graph. These rules will address those issues
 4. Changing one or two in Edge moves the edge to different vertices. The vertices will be created if they do not exist.
 5. delegates in Vertex and Edge are read-only
 
-## extending the graph
-
-Developers can use the dsl to create new algorithms based on graphs like this workflow between step1 and step2.
-
-```groovy
-def workQueue = new LinkedList()
-
-apply EdgeWeightPlugin, VertexMapPlugin
-
-edge (step1, step2) {
-    weight { queue.size() }
-}
-
-vertex step1 {
-    action = {
-        println "processing"
-        workQueue << "work"
-    }
-}
-
-vertex step2 {
-    action = {
-        println "done processing ${workQueue.poll()}"
-    }
-}
-```
-
-In this script the edge method first creates step1 and step2. Then it creates and edge between the two vertices. It then
-configures the edge with the Mapping and Weight traits. Mapping allows the edge to have extra properties like a queue.
-Weight affects the behavior of traversals.
-
-Next, the script finds step1 and configures it with the Mapping trait and an action closure which adds "work" to the
-workQueue.
-
-Finally, step2 is configured with an action which processes "work".
-
 ## directed graphs
 
 The Default behavior of a graph is undirected. These graphs have a set of edges where only one edge
@@ -106,15 +70,6 @@ can connect any two vertices. An undirected graph can be changed to a directed g
 //lots of code
 type 'directed-graph'
 //lots of code
-```
-
-## traits
-
-Traits can be added to all edges and vertices using `edgeTraits` and `vertexTraits`.
-
-```groovy
-edgeTraits Mapping, Weight
-vertexTraits Mapping
 ```
 
 ## Traversing a graph
@@ -201,7 +156,33 @@ Calling `classifyEdges` on an undirected graph will result in two classification
 is what the edge would be in a directed graph. The second classification is always back-edge. This is because edges in 
 an undirected graph are considered bi-directional in `classifyEdges`.
 
-#Types
+# Edge and Vertex Properties
+
+Properties can be added to Edge and Vertex dynamically simply by assigning them.
+
+```groovy
+edge(A, B) {
+    key = 'value'
+}
+
+vertex step1, {
+    label = 'first step in process'
+}
+```
+
+# Types
+
+A graph's type determines specific behavior. A type can change a normal graph to an directed-graph. It can add wieght
+to the graph. It can change the graph to a DAG. Developers can make their own type and apply it to a graph. Types can:
+
+1. replace all edges and vertices
+2. add methods to the edge and vertex dsl
+3. change the data structures used by the graph
+4. add constraints to the structure of the graph
+
+The type of a graph may be changed at any time. An undirected-graph may be changed to a directed-graph which can be
+changed back to an undirected-graph.
+
 
 ## DirectedGraphType
 
@@ -215,46 +196,44 @@ opposite directions.
 
 Traversal methods will only follow out edges from a vertex.
 
-# Plugins
+## WeightedGraphType
 
-Plugins provide graphs with extra functionality. They can:
+```groovy
+type 'weighted-graph'
+```
 
-1. Modify all edges and vertices by adding traits or replacing them
-2. modify the factories so they create different edges and vertices 
-3. perform meta-programming on the graph to change or add methods
+WeightedGraphType is an undirected graph where edges can have weight. Traversal methods follow edges with the least
+weight.
 
+### Adding weight
 
-## EdgeWeightPlugin
+Edges can be assigned weight within the dsl.
 
-This plugin applies Weight to all edges and changes all traversal methods to follow edges in order of their weight.
+```groovy
+type 'weighted-graph'
 
-## EdgeMapPlugin
+edge A, B, [weight:10]
 
-All edges and all future edges will have the Mapping triat.
+edge (A, B) { weight = 10 }
+```
 
-Note: will probably be deleted in the future.
+Weight can be a lazy property by assigning a closure.
 
-## VertexMapPlugin
+```groovy
+type 'weighted-graph'
 
-All vertices and all future vertices will have the Mapping trait.
+edge(A, B) {
+    weight = { queue.size() }
+}
 
-Note: will probably be deleted in the future.
+## WeightedDirectedGraphType
 
-# Traits
+```groovy
+type 'weighted-directed-graph'
+```
 
-Traits are standard groovy traits that developers or plugins can apply to Vertex or Edge
-delegates. The Vertex and Edge objects call their delegate when a method or property is
-missing. This allows properties and methods to be added to a Vertex or Edge at runtime.
-
-## Mapping
-
-Allows a vertex or edge to act like a Map. When a property is missing in the delegate this
-trait will return or set the value in its map.
-
-## Weight
-
-Adds a weight property to a vertex or map. The weight is set with the `weight` method passing
-in a closure. This makes the weight lazy so it can change dynamically.
+WeightedDirectedGraphType is a directed graph where edges can have weight. Traversal methods follow edges with the least
+weight.
 
 # Getting Started With Development/Contributing
 
@@ -315,6 +294,17 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## x.x.x
+
+This release represents a major change in how graphs are typed. Additional functionality is no only added through a
+Type. Type is the delegate of a Graph. A graph's type provides additional methods and can change any aspect of how a
+graph works. Types provide a graph with edges and vertices. They define the EdgeSpec and VertexSpec which means a type
+may add new methods to the dsl for building edges and vertices.
+
+* upgraded to gradle 4.2
+* replaced plugins with type
+* edges and vertices can now add properties dynamically. This removes the need for traits.
 
 ## 0.20.0
 

@@ -13,9 +13,8 @@ class Rename extends Specification {
         }
 
         expect:
-        graph.vertices.size() == 3
+        graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
         graph.vertices.B.name == 'B'
         graph.vertices.C.name == 'C'
         graph.edges.first().one == 'C'
@@ -29,9 +28,8 @@ class Rename extends Specification {
         }
 
         expect:
-        graph.vertices.size() == 3
+        graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
         graph.vertices.B.name == 'B'
         graph.vertices.C.name == 'C'
         graph.edges.first().one == 'C'
@@ -98,10 +96,9 @@ class Rename extends Specification {
         }
 
         expect:
-        graph.vertices.size() == 3
+        graph.vertices.size() == 2
         graph.edges.size() == 1
         graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
         graph.vertices.C.name == 'C'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'C'
@@ -114,10 +111,9 @@ class Rename extends Specification {
         }
 
         expect:
-        graph.vertices.size() == 3
+        graph.vertices.size() == 2
         graph.edges.size() == 1
         graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
         graph.vertices.C.name == 'C'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'C'
@@ -174,5 +170,33 @@ class Rename extends Specification {
         graph.vertices.C.name == 'C'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'C'
+    }
+
+    def 'create edge and rename new edge to overlap'() {
+        when:
+        Graph graph = graph {
+            edge(A, B)
+            edge(A, C, [renameTwo:'B'])
+        }
+
+        then:
+        graph.vertices.size() == 2
+        graph.edges.size() == 1
+        graph.vertices.A.name == 'A'
+        graph.vertices.B.name == 'B'
+        graph.edges.first().one == 'A'
+        graph.edges.first().two == 'B'
+    }
+
+    def 'create edge and rename existing edge to overlap'() {
+        when:
+        Graph graph = graph {
+            edge(A, B)
+            edge(A, C)
+            edge(A, C, [renameTwo:'B'])
+        }
+
+        then:
+        thrown IllegalStateException
     }
 }

@@ -6,6 +6,7 @@ import groovy.transform.PackageScope
  * The results from classifyEdges in Graph.
  */
 class EdgeClassification {
+    //todo remove forrest concept or create new edges and vertices. it is adding edge subclasses to a normal graph.
     Graph forrest = new Graph()
     List<Edge> backEdges = []
     List<Edge> treeEdges = []
@@ -48,9 +49,7 @@ class EdgeClassification {
         EdgeType edgeType
         switch (toColor) {
             case Graph.TraversalColor.WHITE:
-                forrest.addVertex(graph.vertex(from))
-                forrest.addVertex(graph.vertex(to))
-                forrest.addEdge(edge)
+                forrest.edge(from, to)
                 treeEdges << edge
                 edgeType = EdgeClassification.EdgeType.TREE_EDGE
                 break
