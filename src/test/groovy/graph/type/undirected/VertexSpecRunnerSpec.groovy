@@ -2,7 +2,6 @@ package graph.type.undirected
 
 import graph.Graph
 import graph.Vertex
-import graph.type.undirected.VertexSpecCodeRunner
 import spock.lang.Specification
 
 class VertexSpecRunnerSpec extends Specification {
@@ -20,9 +19,9 @@ class VertexSpecRunnerSpec extends Specification {
         runner.rename('step2')
 
         then:
-        vertex.name == 'step2'
+        vertex.key == 'step2'
         graph.vertices.size() == 1
-        graph.vertices['step2'].name == 'step2'
+        graph.vertices['step2'].key == 'step2'
     }
 
     def 'can add with connectsTo'() {

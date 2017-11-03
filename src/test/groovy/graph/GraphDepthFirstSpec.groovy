@@ -141,13 +141,13 @@ public class GraphDepthFirstSpec extends Specification {
         spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.preorder { vertex ->
-            preorderList << vertex.name
-            if(vertex.name == 'step2') {
+            preorderList << vertex.key
+            if(vertex.key == 'step2') {
                 Graph.Traversal.STOP
             }
         }
         spec.postorder { vertex ->
-            postorderList << vertex.name
+            postorderList << vertex.key
         }
 
         when:
@@ -193,7 +193,7 @@ public class GraphDepthFirstSpec extends Specification {
         spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.preorder { vertex ->
-            preorderList << vertex.name
+            preorderList << vertex.key
         }
 
         when:
@@ -229,7 +229,7 @@ public class GraphDepthFirstSpec extends Specification {
         spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.postorder { vertex ->
-            postorderList << vertex.name
+            postorderList << vertex.key
         }
 
         when:
@@ -263,13 +263,13 @@ public class GraphDepthFirstSpec extends Specification {
         spec.root = 'step1'
         spec.colors = graph.makeColorMap()
         spec.postorder { vertex ->
-            postorderList << vertex.name
-            if(vertex.name == 'step2') {
+            postorderList << vertex.key
+            if(vertex.key == 'step2') {
                 Graph.Traversal.STOP
             }
         }
         spec.preorder { vertex ->
-            preorderList << vertex.name
+            preorderList << vertex.key
         }
 
         when:
@@ -336,7 +336,7 @@ public class GraphDepthFirstSpec extends Specification {
 
         def spec = graph.depthFirstTraversalSpec {
             preorder { vertex ->
-                if(vertex.name == 'step2') {
+                if(vertex.key == 'step2') {
                     return Graph.Traversal.STOP
                 }
             }

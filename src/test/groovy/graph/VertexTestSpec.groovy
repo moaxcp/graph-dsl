@@ -8,10 +8,10 @@ class VertexTestSpec extends Specification {
 
     def 'can set name of vertex'() {
         when:
-        vertex.name = 'step1'
+        vertex.key = 'step1'
 
         then:
-        vertex.name == 'step1'
+        vertex.key == 'step1'
     }
 
     def 'can add value to vertex'() {
@@ -32,8 +32,8 @@ class VertexTestSpec extends Specification {
 
     def 'vertex equals non-equal vertex is false'() {
         setup:
-        vertex.name = 'step1'
-        def compare = new Vertex(name: 'step2')
+        vertex.key = 'step1'
+        def compare = new Vertex(key: 'step2')
 
         when:
         def equals = vertex == compare
@@ -44,7 +44,7 @@ class VertexTestSpec extends Specification {
 
     def 'vertex equals self'() {
         setup:
-        vertex.name = 'step1'
+        vertex.key = 'step1'
 
         when:
         def equals = vertex == vertex
@@ -55,8 +55,8 @@ class VertexTestSpec extends Specification {
 
     def 'vertex equals equal vertex is true'() {
         given:
-        vertex.name = 'step1'
-        def compare = new Vertex(name: 'step1')
+        vertex.key = 'step1'
+        def compare = new Vertex(key: 'step1')
 
         expect:
         vertex == compare
@@ -64,17 +64,17 @@ class VertexTestSpec extends Specification {
 
     def 'toString is added by transform'() {
         given:
-        vertex.name = 'step1'
+        vertex.key = 'step1'
         expect:
-        vertex.toString() == 'graph.Vertex(name:step1)'
+        vertex.toString() == 'graph.Vertex(key:step1)'
     }
 
     def 'getAt with name'() {
         given:
-        vertex.name = 'step1'
+        vertex.key = 'step1'
 
         expect:
-        vertex['name'] == 'step1'
+        vertex['key'] == 'step1'
     }
 
     def 'getAt with delegate'() {

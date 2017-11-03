@@ -19,8 +19,8 @@ class ConnectsToConnectsFromSpec extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.find { it.one == 'B' && it.two == 'A' }
     }
 
@@ -35,9 +35,9 @@ class ConnectsToConnectsFromSpec extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
         graph.edges.find { it.one == 'B' && it.two == 'A' }
         graph.edges.find { it.one == 'C' && it.two == 'A' }
     }
@@ -52,8 +52,8 @@ class ConnectsToConnectsFromSpec extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
@@ -69,9 +69,9 @@ class ConnectsToConnectsFromSpec extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'B' && it.two == 'C' }
     }
@@ -87,8 +87,8 @@ class ConnectsToConnectsFromSpec extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.find { it.one == 'B' && it.two == 'A' }
     }
 
@@ -105,9 +105,9 @@ class ConnectsToConnectsFromSpec extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
         graph.edges.find { it.one == 'B' && it.two == 'A' }
         graph.edges.find { it.one == 'C' && it.two == 'B' }
     }

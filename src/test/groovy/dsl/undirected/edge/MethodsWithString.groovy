@@ -14,8 +14,8 @@ class MethodsWithString extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -29,8 +29,8 @@ class MethodsWithString extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -44,8 +44,8 @@ class MethodsWithString extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -59,8 +59,8 @@ class MethodsWithString extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }

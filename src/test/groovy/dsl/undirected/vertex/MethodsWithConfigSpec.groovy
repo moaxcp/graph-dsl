@@ -15,7 +15,7 @@ class MethodsWithConfigSpec extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add a vertex with a ConfigSpec with Map and Closure'() {
@@ -26,7 +26,7 @@ class MethodsWithConfigSpec extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def ' create using name and map with map containing name'() {
@@ -37,7 +37,7 @@ class MethodsWithConfigSpec extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.name == 'B'
+        graph.vertices.B.key == 'B'
     }
 
     def ' create using name, map, and closure with map containing name'() {
@@ -48,6 +48,6 @@ class MethodsWithConfigSpec extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.name == 'B'
+        graph.vertices.B.key == 'B'
     }
 }

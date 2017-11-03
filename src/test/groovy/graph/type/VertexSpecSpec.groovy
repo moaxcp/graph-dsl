@@ -30,7 +30,7 @@ class VertexSpecSpec extends Specification {
         Vertex vertex = spec.apply()
 
         then:
-        graph.vertices[vertex.name] == vertex
+        graph.vertices[vertex.key] == vertex
     }
 
     def 'apply cannot be run twice'() {
@@ -55,8 +55,8 @@ class VertexSpecSpec extends Specification {
 
         then:
         graph.vertices.size() == 1
-        vertex.name == 'step2'
-        graph.vertices[vertex.name] == vertex
+        vertex.key == 'step2'
+        graph.vertices[vertex.key] == vertex
     }
 
     def 'apply can add edges using edgesFirst'() {

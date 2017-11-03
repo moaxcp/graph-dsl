@@ -64,7 +64,7 @@ abstract class AbstractVertexSpec extends VertexSpec {
 
     protected void applyConnectsTo() {
         connectsToSet.each {
-            graph.edge vertex.name, it
+            graph.edge vertex.key, it
         }
     }
 

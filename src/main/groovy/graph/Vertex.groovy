@@ -12,16 +12,16 @@ import groovy.transform.ToString
 @ToString(includeNames=true)
 @EqualsAndHashCode
 class Vertex extends PropertyDelegator {
-    String name
+    Object key
 
     @PackageScope
-    void setName(String name) {
-        this.name = name
+    void setKey(Object name) {
+        this.key = name
     }
 
     Object getAt(String name) {
-        if (name == 'name') {
-            return this.name
+        if (name == 'key') {
+            return this.key
         }
         delegate[name]
     }

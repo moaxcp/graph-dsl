@@ -188,7 +188,7 @@ class Graph implements GroovyInterceptable {
      */
     @PackageScope
     boolean addVertex(Vertex vertex) {
-        vertices[vertex.name] = vertex
+        vertices[vertex.key] = vertex
     }
 
     /**
@@ -248,9 +248,9 @@ class Graph implements GroovyInterceptable {
             throw new IllegalArgumentException('name or newName is null or empty.')
         }
         Vertex vertex = vertex(name)
-        vertices.remove(vertex.name)
-        vertex.name = newName
-        vertices[vertex.name] = vertex
+        vertices.remove(vertex.key)
+        vertex.key = newName
+        vertices[vertex.key] = vertex
         adjacentEdges(name).each {
             if (it.one == name) {
                 it.one = newName

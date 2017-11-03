@@ -15,8 +15,8 @@ class MethodsWithNameSpec extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -30,8 +30,8 @@ class MethodsWithNameSpec extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -45,8 +45,8 @@ class MethodsWithNameSpec extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -60,8 +60,8 @@ class MethodsWithNameSpec extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -77,9 +77,9 @@ class MethodsWithNameSpec extends Specification {
         expect:
         graph.vertices.size() == 3
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -95,9 +95,9 @@ class MethodsWithNameSpec extends Specification {
         expect:
         graph.vertices.size() == 3
         graph.edges.size() == 1
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }

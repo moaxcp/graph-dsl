@@ -62,7 +62,7 @@ class GraphEdgeSpecSpec extends Specification {
 
         then:
         graph.vertices.size() == 3
-        graph.vertices.step4.name == 'step4'
+        graph.vertices.step4.key == 'step4'
         graph.edges.size() == 1
         graph.edges.first().one == 'step4'
         graph.edges.first().two == 'step2'
@@ -77,7 +77,7 @@ class GraphEdgeSpecSpec extends Specification {
 
         then:
         graph.vertices.size() == 3
-        graph.vertices.step4.name == 'step4'
+        graph.vertices.step4.key == 'step4'
         graph.edges.size() == 1
         graph.edges.first().one == 'step1'
         graph.edges.first().two == 'step4'

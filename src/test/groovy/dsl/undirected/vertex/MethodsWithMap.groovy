@@ -14,7 +14,7 @@ class MethodsWithMap extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add a vertex with Map and closure'() {
@@ -25,7 +25,7 @@ class MethodsWithMap extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add with name param and name set in map'() {
@@ -36,7 +36,7 @@ class MethodsWithMap extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add with name param and name set in map with closure'() {
@@ -47,6 +47,6 @@ class MethodsWithMap extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 }

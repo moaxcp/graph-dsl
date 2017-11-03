@@ -12,16 +12,16 @@ import groovy.transform.ToString
  */
 @ToString(includeNames=true)
 class Edge extends PropertyDelegator {
-    String one
-    String two
+    Object one
+    Object two
 
     @PackageScope
-    void setOne(String one) {
+    void setOne(Object one) {
         this.one = one
     }
 
     @PackageScope
-    void setTwo(String two) {
+    void setTwo(Object two) {
         this.two = two
     }
 

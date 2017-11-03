@@ -16,7 +16,7 @@ class Rename extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.name == 'B'
+        graph.vertices.B.key == 'B'
     }
 
     def 'rename method with NameSpec'() {
@@ -28,7 +28,7 @@ class Rename extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.name == 'B'
+        graph.vertices.B.key == 'B'
     }
 
     def 'rename method null name'() {
@@ -50,7 +50,7 @@ class Rename extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.name == 'B'
+        graph.vertices.B.key == 'B'
     }
 
     def 'rename in map with NameSpec'() {
@@ -61,7 +61,7 @@ class Rename extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.name == 'B'
+        graph.vertices.B.key == 'B'
     }
 
     def 'rename in closure with string'() {
@@ -74,7 +74,7 @@ class Rename extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.name == 'B'
+        graph.vertices.B.key == 'B'
     }
 
     def 'rename in closure with NameSpec'() {
@@ -87,7 +87,7 @@ class Rename extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.name == 'B'
+        graph.vertices.B.key == 'B'
     }
 
     def 'rename in spec to vertex that already exists'() {

@@ -133,7 +133,7 @@ class DirectedGraphType extends GraphType {
         Deque<String> deque = [] as LinkedList<String>
         graph.depthFirstTraversal {
             postorder { vertex ->
-                deque.addFirst(vertex.name)
+                deque.addFirst(vertex.key)
             }
         }
         deque

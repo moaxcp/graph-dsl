@@ -28,9 +28,9 @@ class GraphType implements Type {
     @Override
     Vertex newVertex(String name, Object delegate = null) {
         if (delegate) {
-            new Vertex(name:name, delegate:delegate)
+            new Vertex(key:name, delegate:delegate)
         } else {
-            new Vertex(name:name)
+            new Vertex(key:name)
         }
     }
 
@@ -78,7 +78,7 @@ class GraphType implements Type {
         graph.replaceEdgesSet(new LinkedHashSet<? extends Edge>())
 
         graph.replaceVertices { String name, Vertex vertex ->
-            [vertex.name, newVertex(vertex.name, vertex.delegate)]
+            [vertex.key, newVertex(vertex.key, vertex.delegate)]
         }
 
         graph.replaceVerticesMap([:])

@@ -20,7 +20,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(String... names) {
-        graph.newVertexSpec([name:vertex.name, connectsFrom:names]).apply()
+        graph.newVertexSpec([name:vertex.key, connectsFrom:names]).apply()
     }
 
     /**
@@ -28,7 +28,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(NameSpec... names) {
-        graph.newVertexSpec([name:vertex.name, connectsFrom:names*.name]).apply()
+        graph.newVertexSpec([name:vertex.key, connectsFrom:names*.name]).apply()
     }
 
     /**

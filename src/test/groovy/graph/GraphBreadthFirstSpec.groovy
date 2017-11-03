@@ -53,7 +53,7 @@ class GraphBreadthFirstSpec extends Specification {
         spec.root = 'A'
         spec.colors = graph.makeColorMap()
         spec.visit { vertex ->
-            visitList << vertex.name
+            visitList << vertex.key
         }
 
         when:
@@ -87,10 +87,10 @@ class GraphBreadthFirstSpec extends Specification {
         spec.colors = graph.makeColorMap()
         def visitList = []
         spec.visit { vertex ->
-            if(vertex.name == 'E') {
+            if(vertex.key == 'E') {
                 return Graph.Traversal.STOP
             }
-            visitList << vertex.name
+            visitList << vertex.key
         }
 
         when:
@@ -111,8 +111,8 @@ class GraphBreadthFirstSpec extends Specification {
         spec.colors = graph.makeColorMap()
         def visitList = []
         spec.visit { vertex ->
-            visitList << vertex.name
-            if(vertex.name == 'A') {
+            visitList << vertex.key
+            if(vertex.key == 'A') {
                 return Graph.Traversal.STOP
             }
         }
@@ -135,7 +135,7 @@ class GraphBreadthFirstSpec extends Specification {
         when:
         def traversal = graph.breadthFirstTraversal {
             visit { vertex ->
-                visitList << vertex.name
+                visitList << vertex.key
             }
         }
 
@@ -151,7 +151,7 @@ class GraphBreadthFirstSpec extends Specification {
         def traversal = graph.breadthFirstTraversal {
             root = 'E'
             visit { vertex ->
-                visitList << vertex.name
+                visitList << vertex.key
             }
         }
 

@@ -39,7 +39,7 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(String newName) {
-        graph.newVertexSpec([name:vertex.name, rename:newName]).apply()
+        graph.newVertexSpec([name:vertex.key, rename:newName]).apply()
     }
 
     /**
@@ -47,7 +47,7 @@ class VertexSpecCodeRunner {
      * @param newName
      */
     void rename(NameSpec newName) {
-        graph.newVertexSpec([name:vertex.name, rename:newName.name]).apply()
+        graph.newVertexSpec([name:vertex.key, rename:newName.name]).apply()
     }
 
     /**
@@ -55,7 +55,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(String... names) {
-        graph.newVertexSpec([name:vertex.name, connectsTo:names]).apply()
+        graph.newVertexSpec([name:vertex.key, connectsTo:names]).apply()
     }
 
     /**
@@ -63,7 +63,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(NameSpec... names) {
-        graph.newVertexSpec([name:vertex.name, connectsTo:names*.name]).apply()
+        graph.newVertexSpec([name:vertex.key, connectsTo:names*.name]).apply()
     }
 
     /**

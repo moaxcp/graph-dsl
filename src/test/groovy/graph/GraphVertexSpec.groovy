@@ -28,7 +28,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.name == 'step1'
+        vertex.key == 'step1'
     }
 
     def 'can get with second call to vertex(String)'() {
@@ -49,7 +49,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.name == 'step1'
+        vertex.key == 'step1'
     }
 
     def 'can get with second call to vertex(Map)'() {
@@ -86,7 +86,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.name == 'step1'
+        vertex.key == 'step1'
     }
 
     def 'can get with second call to vertex(String, Closure)'() {
@@ -107,7 +107,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.name == 'step1'
+        vertex.key == 'step1'
     }
 
     def 'can get with second call to vertex(String, Map)'() {
@@ -128,7 +128,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.name == 'step1'
+        vertex.key == 'step1'
     }
 
     def 'can get with second call to vertex(Map, Closure)'() {
@@ -149,7 +149,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.name == 'step1'
+        vertex.key == 'step1'
     }
 
     def 'can get with second call to vertex(String, Map, Closure)'() {
@@ -168,7 +168,7 @@ class GraphVertexSpec extends Specification {
         graph.vertex 'step1'
 
         when:
-        graph.vertices.step2 = new Vertex(name: 'step2')
+        graph.vertices.step2 = new Vertex(key: 'step2')
 
         then:
         thrown(UnsupportedOperationException)
@@ -214,10 +214,10 @@ class GraphVertexSpec extends Specification {
 
         then:
         vertices == [
-                new Vertex(name:'step1'),
-                new Vertex(name:'step2'),
-                new Vertex(name:'step3'),
-                new Vertex(name:'step4')
+                new Vertex(key:'step1'),
+                new Vertex(key:'step2'),
+                new Vertex(key:'step3'),
+                new Vertex(key:'step4')
         ] as Set<Vertex>
     }
 
@@ -226,6 +226,6 @@ class GraphVertexSpec extends Specification {
         def vertex = graph.vertex graph.step1
 
         then:
-        vertex.name == 'step1'
+        vertex.key == 'step1'
     }
 }
