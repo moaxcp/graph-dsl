@@ -12,10 +12,10 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     Edge edge
     boolean edgePresentInGraph
 
-    String one
-    String two
-    String renameOne
-    String renameTwo
+    Object one
+    Object two
+    Object changeOne
+    Object changeTwo
     Closure runnerCodeClosure
 
     protected AbstractEdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
@@ -23,8 +23,8 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
 
         one = map.one
         two = map.two
-        renameOne = map.renameOne instanceof NameSpec ? map.renameOne.name : map.renameOne
-        renameTwo = map.renameTwo instanceof NameSpec ? map.renameTwo.name : map.renameTwo
+        changeOne = map.changeOne instanceof NameSpec ? map.changeOne.name : map.changeOne
+        changeTwo = map.changeTwo instanceof NameSpec ? map.changeTwo.name : map.changeTwo
 
         runnerCodeClosure = closure
     }
@@ -38,10 +38,10 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
         edgePresentInGraph = existing != null
 
         if (!edgePresentInGraph) {
-            one = renameOne ?: one
-            two = renameTwo ?: two
-            renameOne = null
-            renameTwo = null
+            one = changeOne ?: one
+            two = changeTwo ?: two
+            changeOne = null
+            changeTwo = null
             created.one = one
             created.two = two
             existing = graph.edges.find { it == created }
@@ -64,8 +64,8 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
         if (!edge) {
             throw new IllegalStateException('edge is not set created.')
         }
-        if (renameOne || renameTwo) {
-            Edge renamed = graph.newEdge(renameOne ?: one, renameTwo ?: two)
+        if (changeOne || changeTwo) {
+            Edge renamed = graph.newEdge(changeOne ?: one, changeTwo ?: two)
             if (graph.edges.find { it == renamed }) {
                 throw new IllegalStateException('renamed edge already exists.')
             }
@@ -73,7 +73,7 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     }
 
     protected void setupGraph() {
-        if (edgePresentInGraph && (renameOne || renameTwo)) {
+        if (edgePresentInGraph && (changeOne || changeTwo)) {
             //need to delete and re-add edge to reset hashcode in LinkedHashSet.
             graph.deleteEdge(edge.one, edge.two)
         }
@@ -83,16 +83,16 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     }
 
     protected void initRenameOne() {
-        if (renameOne) {
-            graph.vertex(renameOne)
-            edge.one = renameOne
+        if (changeOne) {
+            graph.vertex(changeOne)
+            edge.one = changeOne
         }
     }
 
     protected void initRenameTwo() {
-        if (renameTwo) {
-            graph.vertex(renameTwo)
-            edge.two = renameTwo
+        if (changeTwo) {
+            graph.vertex(changeTwo)
+            edge.two = changeTwo
         }
     }
 

@@ -16,7 +16,7 @@ class VertexSpecRunnerSpec extends Specification {
 
     def 'can rename'() {
         when:
-        runner.rename('step2')
+        runner.changeKey('step2')
 
         then:
         vertex.key == 'step2'

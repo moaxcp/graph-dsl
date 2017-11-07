@@ -2,7 +2,6 @@ package graph.type.undirected
 
 import graph.Edge
 import graph.Graph
-import graph.type.undirected.EdgeSpecCodeRunner
 import spock.lang.Specification
 
 class GraphEdgeSpecCodeRunnerSpec extends Specification {
@@ -18,7 +17,7 @@ class GraphEdgeSpecCodeRunnerSpec extends Specification {
     def 'can renameOne'() {
         when:
         runner.runCode {
-            renameOne 'step3'
+            changeOne 'step3'
         }
 
         then:
@@ -28,7 +27,7 @@ class GraphEdgeSpecCodeRunnerSpec extends Specification {
     def 'can renameTwo'() {
         when:
         runner.runCode {
-            renameTwo 'step3'
+            changeTwo 'step3'
         }
 
         then:

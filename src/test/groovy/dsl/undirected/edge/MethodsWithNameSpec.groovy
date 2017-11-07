@@ -66,11 +66,11 @@ class MethodsWithNameSpec extends Specification {
         graph.edges.first().two == 'B'
     }
 
-    def 'rename one in closure'() {
+    def 'change one in closure'() {
         given:
         Graph graph = graph {
             edge(C, B) {
-                renameOne A
+                changeOne A
             }
         }
 
@@ -84,11 +84,11 @@ class MethodsWithNameSpec extends Specification {
         graph.edges.first().two == 'B'
     }
 
-    def 'rename two in closure'() {
+    def 'change two in closure'() {
         given:
         Graph graph = graph {
             edge(A, C) {
-                renameTwo B
+                changeTwo B
             }
         }
 

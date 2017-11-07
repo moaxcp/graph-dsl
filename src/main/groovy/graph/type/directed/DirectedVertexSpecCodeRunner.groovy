@@ -16,11 +16,11 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
     }
 
     /**
-     * Creates edges where the vertex is edge.two and each name in names is edge.one.
-     * @param names of vetices to connect to.
+     * Creates edges where the vertex is edge.two and each key in keys is edge.one.
+     * @param keys of vetices to connect to.
      */
-    void connectsFrom(String... names) {
-        graph.newVertexSpec([name:vertex.key, connectsFrom:names]).apply()
+    void connectsFrom(Object... keys) {
+        graph.newVertexSpec([key:vertex.key, connectsFrom:keys]).apply()
     }
 
     /**
@@ -28,7 +28,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(NameSpec... names) {
-        graph.newVertexSpec([name:vertex.key, connectsFrom:names*.name]).apply()
+        graph.newVertexSpec([key:vertex.key, connectsFrom:names*.name]).apply()
     }
 
     /**
@@ -39,6 +39,6 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
         specs.each {
             graph.newVertexSpec(it).apply()
         }
-        connectsFrom(specs*.map.name as String[])
+        connectsFrom(specs*.map.key as Object[])
     }
 }

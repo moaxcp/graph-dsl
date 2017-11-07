@@ -44,7 +44,7 @@ class GraphVertexSpec extends Specification {
 
     def 'can add/get vertex with vertex(Map)'() {
         when:
-        def vertex = graph.vertex name:'step1'
+        def vertex = graph.vertex key:'step1'
 
         then:
         graph.vertices.size() == 1
@@ -54,10 +54,10 @@ class GraphVertexSpec extends Specification {
 
     def 'can get with second call to vertex(Map)'() {
         setup:
-        def expected = graph.vertex name:'step1'
+        def expected = graph.vertex key:'step1'
 
         when:
-        def result = graph.vertex name:'step1'
+        def result = graph.vertex key:'step1'
 
         then:
         result.is expected
@@ -65,7 +65,7 @@ class GraphVertexSpec extends Specification {
 
     def 'can add edges using connectsTo with vertex(Map)'() {
         when:
-        graph.vertex name:'step1', connectsTo:['step2', 'step3']
+        graph.vertex key:'step1', connectsTo:['step2', 'step3']
         def edgeOne = graph.edges.find {
             it.one == 'step1' && it.two == 'step2'
         }
@@ -79,7 +79,7 @@ class GraphVertexSpec extends Specification {
         edgeTwo != null
     }
 
-    def 'can add/get vertex with vertex(String, Closure)'() {
+    def 'can add/get vertex with vertex(Object, Closure)'() {
         when:
         def vertex = graph.vertex 'step1', {}
 
@@ -89,7 +89,7 @@ class GraphVertexSpec extends Specification {
         vertex.key == 'step1'
     }
 
-    def 'can get with second call to vertex(String, Closure)'() {
+    def 'can get with second call to vertex(Object, Closure)'() {
         setup:
         def expected = graph.vertex 'step1', {}
 
@@ -100,7 +100,7 @@ class GraphVertexSpec extends Specification {
         result.is expected
     }
 
-    def 'can add/get vertex with vertex(String, Map)'() {
+    def 'can add/get vertex with vertex(Object, Map)'() {
         when:
         def vertex = graph.vertex 'step1', [:]
 
@@ -110,7 +110,7 @@ class GraphVertexSpec extends Specification {
         vertex.key == 'step1'
     }
 
-    def 'can get with second call to vertex(String, Map)'() {
+    def 'can get with second call to vertex(Object, Map)'() {
         setup:
         def expected = graph.vertex 'step1', [:]
 
@@ -123,7 +123,7 @@ class GraphVertexSpec extends Specification {
 
     def 'can add/get vertex with vertex(Map, Closure)'() {
         when:
-        def vertex = graph.vertex(name:'step1') {}
+        def vertex = graph.vertex(key:'step1') {}
 
         then:
         graph.vertices.size() == 1
@@ -133,16 +133,16 @@ class GraphVertexSpec extends Specification {
 
     def 'can get with second call to vertex(Map, Closure)'() {
         setup:
-        def expected = graph.vertex(name:'step1') {}
+        def expected = graph.vertex(key:'step1') {}
 
         when:
-        def result = graph.vertex(name:'step1') {}
+        def result = graph.vertex(key:'step1') {}
 
         then:
         result.is expected
     }
 
-    def 'can add/get vertex with vertex(String, Map, Closure)'() {
+    def 'can add/get vertex with vertex(Object, Map, Closure)'() {
         when:
         def vertex = graph.vertex('step1', [:]) {}
 
@@ -152,7 +152,7 @@ class GraphVertexSpec extends Specification {
         vertex.key == 'step1'
     }
 
-    def 'can get with second call to vertex(String, Map, Closure)'() {
+    def 'can get with second call to vertex(Object, Map, Closure)'() {
         setup:
         def expected = graph.vertex('step1', [:]) {}
 
@@ -174,7 +174,7 @@ class GraphVertexSpec extends Specification {
         thrown(UnsupportedOperationException)
     }
 
-    def 'can rename vertex'() {
+    def 'can change key of vertex'() {
         setup:
         graph.vertex 'step1'
         graph.vertex 'step2'
@@ -185,7 +185,7 @@ class GraphVertexSpec extends Specification {
         graph.edge 'step4', 'step1'
 
         when:
-        graph.rename 'step1', 'step5'
+        graph.changeKey 'step1', 'step5'
 
         then:
         graph.vertices['step1'] == null
@@ -194,15 +194,15 @@ class GraphVertexSpec extends Specification {
         graph.adjacentEdges('step5').size() == 3
     }
 
-    def 'cannot rename vertex to a false name'() {
+    def 'cannot change vertex to a false key'() {
         setup:
         graph.vertex 'step1'
 
         when:
-        graph.rename 'step1', ''
+        graph.changeKey 'step1', ''
 
         and:
-        graph.rename 'step1', null
+        graph.changeKey 'step1', null
 
         then:
         thrown IllegalArgumentException

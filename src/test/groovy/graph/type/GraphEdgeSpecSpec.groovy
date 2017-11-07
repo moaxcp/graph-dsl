@@ -53,12 +53,12 @@ class GraphEdgeSpecSpec extends Specification {
         edge.two == 'step2'
     }
 
-    def 'can renameOne'() {
+    def 'can changeOne'() {
         setup:
         graph.edge('step1', 'step2')
 
         when:
-        new UndirectedEdgeSpec(graph, [one:'step1', two:'step2', renameOne:'step4']).apply()
+        new UndirectedEdgeSpec(graph, [one:'step1', two:'step2', changeOne:'step4']).apply()
 
         then:
         graph.vertices.size() == 3
@@ -68,12 +68,12 @@ class GraphEdgeSpecSpec extends Specification {
         graph.edges.first().two == 'step2'
     }
 
-    def 'can renameTwo'() {
+    def 'can changeTwo'() {
         setup:
         graph.edge('step1', 'step2')
 
         when:
-        new UndirectedEdgeSpec(graph, [one:'step1', two:'step2', renameTwo:'step4']).apply()
+        new UndirectedEdgeSpec(graph, [one:'step1', two:'step2', changeTwo:'step4']).apply()
 
         then:
         graph.vertices.size() == 3

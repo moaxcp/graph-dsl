@@ -32,7 +32,7 @@ class MethodsWithConfigSpec extends Specification {
     def ' create using name and map with map containing name'() {
         given:
         Graph graph = graph {
-            vertex A(name:'B')
+            vertex A(key:'B')
         }
 
         expect:
@@ -43,7 +43,7 @@ class MethodsWithConfigSpec extends Specification {
     def ' create using name, map, and closure with map containing name'() {
         given:
         Graph graph = graph {
-            vertex A(name:'B') {}
+            vertex A(key:'B') {}
         }
 
         expect:

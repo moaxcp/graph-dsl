@@ -6,10 +6,10 @@ import spock.lang.Specification
 import static graph.Graph.graph
 
 class Rename extends Specification {
-    def 'renameOne in map'() {
+    def 'changeOne in map'() {
         given:
         Graph graph = graph {
-            edge(A, B, [renameOne:'C'])
+            edge(A, B, [changeOne:'C'])
         }
 
         expect:
@@ -21,10 +21,10 @@ class Rename extends Specification {
         graph.edges.first().two == 'B'
     }
 
-    def 'renameOne in map with NameSpec'() {
+    def 'changeOne in map with NameSpec'() {
         given:
         Graph graph = graph {
-            edge(A, B, [renameOne:C])
+            edge(A, B, [changeOne:C])
         }
 
         expect:
@@ -36,11 +36,11 @@ class Rename extends Specification {
         graph.edges.first().two == 'B'
     }
 
-    def 'renameOne in closure'() {
+    def 'changeOne in closure'() {
         given:
         Graph graph = graph {
             edge(A, B) {
-                renameOne 'C'
+                changeOne 'C'
             }
         }
 
@@ -54,11 +54,11 @@ class Rename extends Specification {
         graph.edges.first().two == 'B'
     }
 
-    def 'renameOne in closure with NameSpec'() {
+    def 'changeOne in closure with NameSpec'() {
         given:
         Graph graph = graph {
             edge(A, B) {
-                renameOne C
+                changeOne C
             }
         }
 
@@ -72,11 +72,11 @@ class Rename extends Specification {
         graph.edges.first().two == 'B'
     }
 
-    def 'created edge then renameOne in map'() {
+    def 'created edge then changeOne in map'() {
         given:
         Graph graph = graph {
             edge(A, B)
-            edge(A, B, [renameOne:'C'])
+            edge(A, B, [changeOne:'C'])
         }
 
         expect:
@@ -89,10 +89,10 @@ class Rename extends Specification {
         graph.edges.first().two == 'B'
     }
 
-    def 'can renameTwo in map'() {
+    def 'can changeTwo in map'() {
         given:
         Graph graph = graph {
-            edge(A, B, [renameTwo:'C'])
+            edge(A, B, [changeTwo:'C'])
         }
 
         expect:
@@ -104,10 +104,10 @@ class Rename extends Specification {
         graph.edges.first().two == 'C'
     }
 
-    def 'can renameTwo in map with NameSpec'() {
+    def 'can changeTwo in map with NameSpec'() {
         given:
         Graph graph = graph {
-            edge(A, B, [renameTwo:C])
+            edge(A, B, [changeTwo:C])
         }
 
         expect:
@@ -119,11 +119,11 @@ class Rename extends Specification {
         graph.edges.first().two == 'C'
     }
 
-    def 'renameTwo in closure'() {
+    def 'changeTwo in closure'() {
         given:
         Graph graph = graph {
             edge(A, B) {
-                renameTwo 'C'
+                changeTwo 'C'
             }
         }
 
@@ -137,11 +137,11 @@ class Rename extends Specification {
         graph.edges.first().two == 'C'
     }
 
-    def 'renameTwo in closure with NameSpec'() {
+    def 'changeTwo in closure with NameSpec'() {
         given:
         Graph graph = graph {
             edge(A, B) {
-                renameTwo C
+                changeTwo C
             }
         }
 
@@ -155,11 +155,11 @@ class Rename extends Specification {
         graph.edges.first().two == 'C'
     }
 
-    def 'created edge then renameTwo in map'() {
+    def 'created edge then changeTwo in map'() {
         given:
         Graph graph = graph {
             edge(A, B)
-            edge(A, B, [renameTwo:'C'])
+            edge(A, B, [changeTwo:'C'])
         }
 
         expect:
@@ -172,11 +172,11 @@ class Rename extends Specification {
         graph.edges.first().two == 'C'
     }
 
-    def 'create edge and rename new edge to overlap'() {
+    def 'create edge and change new edge to overlap'() {
         when:
         Graph graph = graph {
             edge(A, B)
-            edge(A, C, [renameTwo:'B'])
+            edge(A, C, [changeTwo:'B'])
         }
 
         then:
@@ -188,12 +188,12 @@ class Rename extends Specification {
         graph.edges.first().two == 'B'
     }
 
-    def 'create edge and rename existing edge to overlap'() {
+    def 'create edge and change existing edge to overlap'() {
         when:
         Graph graph = graph {
             edge(A, B)
             edge(A, C)
-            edge(A, C, [renameTwo:'B'])
+            edge(A, C, [changeTwo:'B'])
         }
 
         then:

@@ -17,6 +17,7 @@ changing the script to `DslScript` a new `Graph` becomes the delegate of the scr
 ```groovy
 #!/usr/bin/env groovy
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
+import graph.*
 @groovy.transform.BaseScript DslScript graph
 edge step1, step2
 assert graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
@@ -294,6 +295,11 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## x.x.x
+
+In this release Vertex.name has been repalced with Vertex.key. The key may be any object that implements equals and
+hashCode.
 
 ## 0.21.0
 
