@@ -302,7 +302,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
-## x.x.x
+## 0.22.0
 
 In this release Vertex.name has been repalced with Vertex.key. The key may be any object that implements equals and
 hashCode.
