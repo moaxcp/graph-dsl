@@ -17,7 +17,7 @@ class GraphType implements Type {
     Graph graph
 
     @Override
-    Edge newEdge(String one, String two, Object delegate = null) {
+    Edge newEdge(Object one, Object two, Map delegate = null) {
 <span class="fc bfc" id="L21" title="All 2 branches covered.">        if (delegate) {</span>
 <span class="pc" id="L22">            new Edge(one:one, two:two, delegate:delegate)</span>
         } else {
@@ -26,11 +26,11 @@ class GraphType implements Type {
     }
 
     @Override
-    Vertex newVertex(String name, Object delegate = null) {
+    Vertex newVertex(Object key, Map delegate = null) {
 <span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (delegate) {</span>
-<span class="nc" id="L31">            new Vertex(name:name, delegate:delegate)</span>
+<span class="nc" id="L31">            new Vertex(key:key, delegate:delegate)</span>
         } else {
-<span class="pc" id="L33">            new Vertex(name:name)</span>
+<span class="pc" id="L33">            new Vertex(key:key)</span>
         }
     }
 
@@ -78,19 +78,19 @@ class GraphType implements Type {
 <span class="fc" id="L78">        graph.replaceEdgesSet(new LinkedHashSet&lt;? extends Edge&gt;())</span>
 
 <span class="fc" id="L80">        graph.replaceVertices { String name, Vertex vertex -&gt;</span>
-<span class="pc" id="L81">            [vertex.name, newVertex(vertex.name, vertex.delegate)]</span>
+<span class="pc" id="L81">            [vertex.key, newVertex(vertex.key, vertex.delegate)]</span>
         }
 
 <span class="fc" id="L84">        graph.replaceVerticesMap([:])</span>
     }
 
     /**
-     * Returns edges from vertex with name that should be traversed.
-     * @param name
+     * Returns edges from vertex that should be traversed.
+     * @param key
      * @return
      */
-    Set&lt;? extends Edge&gt; traverseEdges(String name) {
-<span class="pc" id="L93">        graph.adjacentEdges(name)</span>
+    Set&lt;? extends Edge&gt; traverseEdges(Object key) {
+<span class="pc" id="L93">        graph.adjacentEdges(key)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

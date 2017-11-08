@@ -30,7 +30,7 @@ class DirectedGraphType extends GraphType {
      * @return a new DirectedEdge
      */
     @Override
-    Edge newEdge(String one, String two, Object delegate = null) {
+    Edge newEdge(Object one, Object two, Map delegate = null) {
 <span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if (delegate) {</span>
 <span class="nc" id="L35">            new DirectedEdge(one:one, two:two, delegate:delegate)</span>
         } else {
@@ -71,83 +71,81 @@ class DirectedGraphType extends GraphType {
     }
 
     /**
-     * Returns in edges from vertex with name in graph.
+     * Returns in-edges of vertex
      * @param graph
-     * @param name
+     * @param key  for vertex
      * @return
      */
-    Set&lt;? extends Edge&gt; inEdges(String name) {
+    Set&lt;? extends Edge&gt; inEdges(Object key) {
 <span class="pc" id="L80">        graph.edges.findAll {</span>
-<span class="pc" id="L81">            name == it.two</span>
+<span class="pc" id="L81">            key == it.two</span>
         }
     }
 
     /**
-     * returns number of in edges from vertex with name in graph.
+     * returns number of in edges from vertex
      * @param graph
-     * @param name
+     * @param key
      * @return
      */
-    int inDegree(String name) {
-<span class="pc" id="L92">        graph.inEdges(name).size()</span>
+    int inDegree(Object key) {
+<span class="pc" id="L92">        graph.inEdges(key).size()</span>
     }
 
     /**
-     * returns out edges with vertex name in graph.
+     * returns out edges of vertex.
      * @param graph
-     * @param name
+     * @param key
      * @return
      */
-    Set&lt;? extends Edge&gt; outEdges(String name) {
+    Set&lt;? extends Edge&gt; outEdges(Object key) {
 <span class="pc" id="L102">        graph.edges.findAll {</span>
-<span class="pc" id="L103">            name == it.one</span>
+<span class="pc" id="L103">            key == it.one</span>
         }
     }
 
     /**
-     * returns number of out edges with vertex name in graph.
+     * returns number of out edges of vertex
      * @param graph
-     * @param name
+     * @param key
      * @return
      */
-    int outDegree(String name) {
-<span class="pc" id="L114">        graph.outEdges(name).size()</span>
+    int outDegree(Object key) {
+<span class="pc" id="L114">        graph.outEdges(key).size()</span>
     }
 
     /**
-     * returns out edges with vertex name in graph. This method replaces adjacentEdges in {@link Graph}.
+     * Returns out edges of graph.
      * @param graph
-     * @param name
+     * @param key
      * @return
      */
-    Set&lt;? extends Edge&gt; traverseEdges(String name) {
-<span class="pc" id="L124">        graph.outEdges(name)</span>
+    Set&lt;? extends Edge&gt; traverseEdges(Object key) {
+<span class="pc" id="L124">        graph.outEdges(key)</span>
     }
 
     /**
-     * Returns the names of vertices sorted in reverse post order for the given graph.
-     * @param graph
+     * Returns the names of vertices sorted in reverse post order.
      * @return
      */
     Deque&lt;String&gt; reversePostOrderSort() {
-<span class="fc" id="L133">        Deque&lt;String&gt; deque = [] as LinkedList&lt;String&gt;</span>
-<span class="fc" id="L134">        graph.depthFirstTraversal {</span>
-<span class="pc" id="L135">            postorder { vertex -&gt;</span>
-<span class="pc" id="L136">                deque.addFirst(vertex.name)</span>
+<span class="fc" id="L132">        Deque&lt;String&gt; deque = [] as LinkedList&lt;String&gt;</span>
+<span class="fc" id="L133">        graph.depthFirstTraversal {</span>
+<span class="pc" id="L134">            postorder { vertex -&gt;</span>
+<span class="pc" id="L135">                deque.addFirst(vertex.key)</span>
             }
         }
-<span class="pc" id="L139">        deque</span>
+<span class="pc" id="L138">        deque</span>
     }
 
     /**
-     * Runs the given closure on each vertex in graph in reverse post order.
-     * @param graph
+     * Runs the given closure on each vertex in reverse post order.
      * @param closure
      */
     void reversePostOrder(Closure closure) {
-<span class="fc" id="L148">        Deque&lt;String&gt; deque = graph.reversePostOrderSort()</span>
-<span class="fc" id="L149">        deque.each {</span>
-<span class="pc" id="L150">            closure(graph.@vertices[it])</span>
+<span class="fc" id="L146">        Deque&lt;String&gt; deque = graph.reversePostOrderSort()</span>
+<span class="fc" id="L147">        deque.each {</span>
+<span class="pc" id="L148">            closure(graph.vertices[it])</span>
         }
     }
 }

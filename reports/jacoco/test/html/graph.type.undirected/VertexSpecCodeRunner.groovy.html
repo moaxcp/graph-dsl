@@ -35,27 +35,27 @@ class VertexSpecCodeRunner {
     }
 
     /**
-     * renames the vertex to newName
-     * @param newName
+     * Changes the key for the vertex to changeKey
+     * @param newKey
      */
-    void rename(String newName) {
-<span class="fc" id="L42">        graph.newVertexSpec([name:vertex.name, rename:newName]).apply()</span>
+    void changeKey(Object newKey) {
+<span class="fc" id="L42">        graph.newVertexSpec([key:vertex.key, changeKey:newKey]).apply()</span>
     }
 
     /**
-     * renames the vertex to newName
-     * @param newName
+     * Changes the key for the vertex to changeKey
+     * @param newKey
      */
-    void rename(NameSpec newName) {
-<span class="fc" id="L50">        graph.newVertexSpec([name:vertex.name, rename:newName.name]).apply()</span>
+    void changeKey(NameSpec newKey) {
+<span class="fc" id="L50">        graph.newVertexSpec([key:vertex.key, changeKey:newKey.name]).apply()</span>
     }
 
     /**
-     * Creates edges where the vertex is edge.one and each name in names is edge.two.
-     * @param names of vertices to connect to.
+     * Creates edges where the vertex is edge.one and each key in keys is edge.two.
+     * @param vertices to connect to.
      */
-    void connectsTo(String... names) {
-<span class="fc" id="L58">        graph.newVertexSpec([name:vertex.name, connectsTo:names]).apply()</span>
+    void connectsTo(Object... keys) {
+<span class="fc" id="L58">        graph.newVertexSpec([key:vertex.key, connectsTo:keys]).apply()</span>
     }
 
     /**
@@ -63,7 +63,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(NameSpec... names) {
-<span class="fc" id="L66">        graph.newVertexSpec([name:vertex.name, connectsTo:names*.name]).apply()</span>
+<span class="fc" id="L66">        graph.newVertexSpec([key:vertex.key, connectsTo:names*.name]).apply()</span>
     }
 
     /**
@@ -74,7 +74,7 @@ class VertexSpecCodeRunner {
 <span class="fc" id="L74">        specs.each {</span>
 <span class="pc" id="L75">            graph.newVertexSpec(it).apply()</span>
         }
-<span class="fc" id="L77">        connectsTo(specs*.map.name as String[])</span>
+<span class="fc" id="L77">        connectsTo(specs*.map.key as Object[])</span>
     }
 
     /**
@@ -111,7 +111,7 @@ class VertexSpecCodeRunner {
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
 <span class="nc bnc" id="L113" title="All 2 branches missed.">        if (name == 'name') {</span>
-<span class="nc" id="L114">            throw new MissingPropertyException('Cannot set name in dsl. Consider using the rename method.')</span>
+<span class="nc" id="L114">            throw new MissingPropertyException('Cannot set name in dsl. Consider using the changeKey method.')</span>
         }
 <span class="nc" id="L116">        vertex[name] = value</span>
     }

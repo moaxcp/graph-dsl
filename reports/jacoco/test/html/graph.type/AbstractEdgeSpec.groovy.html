@@ -12,10 +12,10 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     Edge edge
     boolean edgePresentInGraph
 
-    String one
-    String two
-    String renameOne
-    String renameTwo
+    Object one
+    Object two
+    Object changeOne
+    Object changeTwo
     Closure runnerCodeClosure
 
     protected AbstractEdgeSpec(Graph graph, Map&lt;String, ?&gt; map, Closure closure = null) {
@@ -23,8 +23,8 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
 
 <span class="fc" id="L24">        one = map.one</span>
 <span class="fc" id="L25">        two = map.two</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        renameOne = map.renameOne instanceof NameSpec ? map.renameOne.name : map.renameOne</span>
-<span class="fc bfc" id="L27" title="All 2 branches covered.">        renameTwo = map.renameTwo instanceof NameSpec ? map.renameTwo.name : map.renameTwo</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        changeOne = map.changeOne instanceof NameSpec ? map.changeOne.name : map.changeOne</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">        changeTwo = map.changeTwo instanceof NameSpec ? map.changeTwo.name : map.changeTwo</span>
 
 <span class="fc" id="L29">        runnerCodeClosure = closure</span>
     }
@@ -38,10 +38,10 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
 <span class="fc" id="L38">        edgePresentInGraph = existing != null</span>
 
 <span class="fc bfc" id="L40" title="All 4 branches covered.">        if (!edgePresentInGraph) {</span>
-<span class="fc bfc" id="L41" title="All 2 branches covered.">            one = renameOne ?: one</span>
-<span class="fc bfc" id="L42" title="All 2 branches covered.">            two = renameTwo ?: two</span>
-<span class="fc" id="L43">            renameOne = null</span>
-<span class="fc" id="L44">            renameTwo = null</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            one = changeOne ?: one</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            two = changeTwo ?: two</span>
+<span class="fc" id="L43">            changeOne = null</span>
+<span class="fc" id="L44">            changeTwo = null</span>
 <span class="fc" id="L45">            created.one = one</span>
 <span class="fc" id="L46">            created.two = two</span>
 <span class="pc" id="L47">            existing = graph.edges.find { it == created }</span>
@@ -64,8 +64,8 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
 <span class="pc bpc" id="L64" title="2 of 4 branches missed.">        if (!edge) {</span>
 <span class="nc" id="L65">            throw new IllegalStateException('edge is not set created.')</span>
         }
-<span class="fc bfc" id="L67" title="All 6 branches covered.">        if (renameOne || renameTwo) {</span>
-<span class="fc bfc" id="L68" title="All 4 branches covered.">            Edge renamed = graph.newEdge(renameOne ?: one, renameTwo ?: two)</span>
+<span class="fc bfc" id="L67" title="All 6 branches covered.">        if (changeOne || changeTwo) {</span>
+<span class="fc bfc" id="L68" title="All 4 branches covered.">            Edge renamed = graph.newEdge(changeOne ?: one, changeTwo ?: two)</span>
 <span class="pc bfc" id="L69" title="All 2 branches covered.">            if (graph.edges.find { it == renamed }) {</span>
 <span class="fc" id="L70">                throw new IllegalStateException('renamed edge already exists.')</span>
             }
@@ -73,7 +73,7 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     }
 
     protected void setupGraph() {
-<span class="fc bfc" id="L76" title="All 10 branches covered.">        if (edgePresentInGraph &amp;&amp; (renameOne || renameTwo)) {</span>
+<span class="fc bfc" id="L76" title="All 10 branches covered.">        if (edgePresentInGraph &amp;&amp; (changeOne || changeTwo)) {</span>
             //need to delete and re-add edge to reset hashcode in LinkedHashSet.
 <span class="fc" id="L78">            graph.deleteEdge(edge.one, edge.two)</span>
         }
@@ -83,16 +83,16 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     }
 
     protected void initRenameOne() {
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (renameOne) {</span>
-<span class="fc" id="L87">            graph.vertex(renameOne)</span>
-<span class="fc" id="L88">            edge.one = renameOne</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (changeOne) {</span>
+<span class="fc" id="L87">            graph.vertex(changeOne)</span>
+<span class="fc" id="L88">            edge.one = changeOne</span>
         }
     }
 
     protected void initRenameTwo() {
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (renameTwo) {</span>
-<span class="fc" id="L94">            graph.vertex(renameTwo)</span>
-<span class="fc" id="L95">            edge.two = renameTwo</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (changeTwo) {</span>
+<span class="fc" id="L94">            graph.vertex(changeTwo)</span>
+<span class="fc" id="L95">            edge.two = changeTwo</span>
         }
     }
 

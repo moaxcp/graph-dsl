@@ -16,11 +16,11 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
     }
 
     /**
-     * Creates edges where the vertex is edge.two and each name in names is edge.one.
-     * @param names of vetices to connect to.
+     * Creates edges where the vertex is edge.two and each key in keys is edge.one.
+     * @param keys of vetices to connect to.
      */
-    void connectsFrom(String... names) {
-<span class="fc" id="L23">        graph.newVertexSpec([name:vertex.name, connectsFrom:names]).apply()</span>
+    void connectsFrom(Object... keys) {
+<span class="fc" id="L23">        graph.newVertexSpec([key:vertex.key, connectsFrom:keys]).apply()</span>
     }
 
     /**
@@ -28,7 +28,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      * @param names of vetices to connect to.
      */
     void connectsFrom(NameSpec... names) {
-<span class="fc" id="L31">        graph.newVertexSpec([name:vertex.name, connectsFrom:names*.name]).apply()</span>
+<span class="fc" id="L31">        graph.newVertexSpec([key:vertex.key, connectsFrom:names*.name]).apply()</span>
     }
 
     /**
@@ -39,7 +39,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
 <span class="fc" id="L39">        specs.each {</span>
 <span class="pc" id="L40">            graph.newVertexSpec(it).apply()</span>
         }
-<span class="fc" id="L42">        connectsFrom(specs*.map.name as String[])</span>
+<span class="fc" id="L42">        connectsFrom(specs*.map.key as Object[])</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
