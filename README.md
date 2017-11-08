@@ -307,7 +307,7 @@ If there are any issues contact me moaxcp@gmail.com.
 In this release Vertex.name has been repalced with Vertex.key. The key may be any object that implements equals and
 hashCode.
 
-## 0.21.0
+## 0.22.0
 
 This release represents a major change in how graphs are typed. Additional functionality is no only added through a
 Type. Type is the delegate of a Graph. A graph's type provides additional methods and can change any aspect of how a
