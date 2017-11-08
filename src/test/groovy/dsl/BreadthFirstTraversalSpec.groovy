@@ -26,7 +26,7 @@ class BreadthFirstTraversalSpec extends Specification {
             breadthFirstTraversal {
                 root = 'A'
                 visit { vertex ->
-                    names << vertex.name
+                    names << vertex.key
                 }
             }
         }
@@ -42,7 +42,7 @@ class BreadthFirstTraversalSpec extends Specification {
             breadthFirstTraversal {
                 root A
                 visit { vertex ->
-                    names << vertex.name
+                    names << vertex.key
                 }
             }
         }
@@ -57,7 +57,7 @@ class BreadthFirstTraversalSpec extends Specification {
         graph.with {
             breadthFirstTraversal('A') {
                 visit { vertex ->
-                    names << vertex.name
+                    names << vertex.key
                 }
             }
         }
@@ -72,7 +72,7 @@ class BreadthFirstTraversalSpec extends Specification {
         graph.with {
             breadthFirstTraversal(A) {
                 visit { vertex ->
-                    names << vertex.name
+                    names << vertex.key
                 }
             }
         }

@@ -30,7 +30,7 @@ class DirectedGraphType extends GraphType {
      * @return a new DirectedEdge
      */
     @Override
-    Edge newEdge(String one, String two, Object delegate = null) {
+    Edge newEdge(Object one, Object two, Map delegate = null) {
         if (delegate) {
             new DirectedEdge(one:one, two:two, delegate:delegate)
         } else {
@@ -71,83 +71,81 @@ class DirectedGraphType extends GraphType {
     }
 
     /**
-     * Returns in edges from vertex with name in graph.
+     * Returns in-edges of vertex
      * @param graph
-     * @param name
+     * @param key  for vertex
      * @return
      */
-    Set<? extends Edge> inEdges(String name) {
+    Set<? extends Edge> inEdges(Object key) {
         graph.edges.findAll {
-            name == it.two
+            key == it.two
         }
     }
 
     /**
-     * returns number of in edges from vertex with name in graph.
+     * returns number of in edges from vertex
      * @param graph
-     * @param name
+     * @param key
      * @return
      */
-    int inDegree(String name) {
-        graph.inEdges(name).size()
+    int inDegree(Object key) {
+        graph.inEdges(key).size()
     }
 
     /**
-     * returns out edges with vertex name in graph.
+     * returns out edges of vertex.
      * @param graph
-     * @param name
+     * @param key
      * @return
      */
-    Set<? extends Edge> outEdges(String name) {
+    Set<? extends Edge> outEdges(Object key) {
         graph.edges.findAll {
-            name == it.one
+            key == it.one
         }
     }
 
     /**
-     * returns number of out edges with vertex name in graph.
+     * returns number of out edges of vertex
      * @param graph
-     * @param name
+     * @param key
      * @return
      */
-    int outDegree(String name) {
-        graph.outEdges(name).size()
+    int outDegree(Object key) {
+        graph.outEdges(key).size()
     }
 
     /**
-     * returns out edges with vertex name in graph. This method replaces adjacentEdges in {@link Graph}.
+     * Returns out edges of graph.
      * @param graph
-     * @param name
+     * @param key
      * @return
      */
-    Set<? extends Edge> traverseEdges(String name) {
-        graph.outEdges(name)
+    Set<? extends Edge> traverseEdges(Object key) {
+        graph.outEdges(key)
     }
 
     /**
-     * Returns the names of vertices sorted in reverse post order for the given graph.
-     * @param graph
+     * Returns the names of vertices sorted in reverse post order.
      * @return
      */
     Deque<String> reversePostOrderSort() {
         Deque<String> deque = [] as LinkedList<String>
         graph.depthFirstTraversal {
             postorder { vertex ->
-                deque.addFirst(vertex.name)
+                deque.addFirst(vertex.key)
             }
         }
         deque
     }
 
     /**
-     * Runs the given closure on each vertex in graph in reverse post order.
-     * @param graph
+     * Runs the given closure on each vertex in reverse post order.
      * @param closure
      */
     void reversePostOrder(Closure closure) {
         Deque<String> deque = graph.reversePostOrderSort()
         deque.each {
-            closure(graph.@vertices[it])
+            closure(graph.vertices[it])
         }
     }
 }

@@ -25,7 +25,7 @@ class BreadthFirstTraversalSpec extends Specification {
         graph.breadthFirstTraversal {
             root A
             visit { vertex ->
-                names << vertex.name
+                names << vertex.key
             }
         }
 

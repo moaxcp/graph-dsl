@@ -39,7 +39,7 @@ class GraphSpec extends Specification {
         ConfigSpec spec = new Graph().step1(x:'y')
 
         then:
-        spec.map.name == 'step1'
+        spec.map.key == 'step1'
         spec.map.x == 'y'
     }
 
@@ -48,17 +48,17 @@ class GraphSpec extends Specification {
         ConfigSpec spec = new Graph().step1 {}
 
         then:
-        spec.map.name == 'step1'
+        spec.map.key == 'step1'
         spec.closure != null
     }
 
     def 'dynamic method with map and closure returns ConfigSpec'() {
         when:
-        ConfigSpec spec = new Graph().step1(key:'value') { connectsTo 'step2' }
+        ConfigSpec spec = new Graph().step1(entry:'value') { connectsTo 'step2' }
 
         then:
-        spec.map.name == 'step1'
-        spec.map.key == 'value'
+        spec.map.key == 'step1'
+        spec.map.entry == 'value'
         spec.closure != null
     }
 
@@ -193,7 +193,7 @@ class GraphSpec extends Specification {
         Graph graph = new Graph()
 
         when:
-        graph.replaceVerticesMap([step1:new Vertex(name:'step1')])
+        graph.replaceVerticesMap([step1:new Vertex(key:'step1')])
 
         then:
         thrown IllegalArgumentException

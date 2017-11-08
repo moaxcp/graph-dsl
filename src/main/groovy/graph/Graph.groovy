@@ -22,7 +22,7 @@ import groovy.transform.PackageScope
  * The default behavior is that of an undirected graph. This is implemented by {@link GraphType}.
  */
 class Graph implements GroovyInterceptable {
-    private Map<String, ? extends Vertex> vertices = [:] as LinkedHashMap<String, ? extends Vertex>
+    private Map<Object, ? extends Vertex> vertices = [:] as LinkedHashMap<Object, ? extends Vertex>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
     private Type type
 
@@ -75,24 +75,24 @@ class Graph implements GroovyInterceptable {
      * returns the vertices as an unmodifiableMap. key is the vertex name and value is the vertex.
      * @return vertices as an unmodifiableMap
      */
-    Map<String, ? extends Vertex> getVertices() {
+    Map<Object, ? extends Vertex> getVertices() {
         Collections.unmodifiableMap(vertices)
     }
 
     /**
-     * Removes the {@link Vertex} from vertices with the matching name. If the Vertex has adjacentEdges it cannot be
+     * Removes the {@link Vertex} from vertices with the matching key. If the Vertex has adjacentEdges it cannot be
      * deleted and IllegalStateException will be thrown.
-     * @param name name of {@link Vertex} to delete from this graph
-     * @throws IllegalStateException if named vertex has adjacentEdges.
+     * @param key  key of {@link Vertex} to delete from this graph
+     * @throws IllegalStateException if key vertex has adjacentEdges.
      * @see {@link #adjacentEdges}
      */
-    void delete(String name) {
-        if (adjacentEdges(name)) {
+    void delete(Object key) {
+        if (adjacentEdges(key)) {
             throw new IllegalStateException(
-                    "Cannot delete $name. There are edges that connect to it. Try deleting those first."
+                    "Cannot delete $key. There are edges that connect to it. Try deleting those first."
             )
         }
-        vertices.remove(name)
+        vertices.remove(key)
     }
 
     /**
@@ -188,17 +188,17 @@ class Graph implements GroovyInterceptable {
      */
     @PackageScope
     boolean addVertex(Vertex vertex) {
-        vertices[vertex.name] = vertex
+        vertices[vertex.key] = vertex
     }
 
     /**
-     * Finds the {@link Vertex} with the given name or creates a new one.
-     * @param name  the name of the {@link Vertex} to find or create.
+     * Finds the {@link Vertex} with the given key or creates a new one.
+     * @param key  the key of the {@link Vertex} to find or create.
      * @return the resulting {@link Vertex}
-     * @throws {@link IllegalArgumentException} When name is null or empty.
+     * @throws {@link IllegalArgumentException} When key is null or empty.
      */
-    Vertex vertex(String name) {
-        ConfigSpec spec = new ConfigSpec(map:[name:name])
+    Vertex vertex(Object key) {
+        ConfigSpec spec = new ConfigSpec(map:[key:key])
         vertex(spec)
     }
 
@@ -213,14 +213,14 @@ class Graph implements GroovyInterceptable {
 
     /**
      * Finds or creates all vertices returning them in a Set.
-     * @param name  name of first {@link Vertex} to find or create.
-     * @param names  of other vertices to find or create.
+     * @param key  key of first {@link Vertex} to find or create.
+     * @param keys  of other vertices to find or create.
      * @return set of created vertices
      */
-    Set<Vertex> vertex(String name, String... names) {
+    Set<Vertex> vertex(Object key, Object... keys) {
         Set<Vertex> set = new LinkedHashSet<>()
-        set << vertex(name)
-        names.collect {
+        set << vertex(key)
+        keys.collect {
             vertex(it)
         }.each {
             set << it
@@ -240,23 +240,23 @@ class Graph implements GroovyInterceptable {
 
     /**
      * Renames a {@link Vertex}. All edges connecting the {@link Vertex} are updated with the new name.
-     * @param name  of original vertex
-     * @param newName  for updated vertex
+     * @param key  of original vertex
+     * @param newKey  for updated vertex
      */
-    void rename(String name, String newName) {
-        if (!name || !newName) {
+    void changeKey(Object key, Object newKey) {
+        if (!key || !newKey) {
             throw new IllegalArgumentException('name or newName is null or empty.')
         }
-        Vertex vertex = vertex(name)
-        vertices.remove(vertex.name)
-        vertex.name = newName
-        vertices[vertex.name] = vertex
-        adjacentEdges(name).each {
-            if (it.one == name) {
-                it.one = newName
+        Vertex vertex = vertex(key)
+        vertices.remove(vertex.key)
+        vertex.key = newKey
+        vertices[vertex.key] = vertex
+        adjacentEdges(key).each {
+            if (it.one == key) {
+                it.one = newKey
             }
-            if (it.two == name) {
-                it.two = newName
+            if (it.two == key) {
+                it.two = newKey
             }
         }
     }
@@ -266,21 +266,21 @@ class Graph implements GroovyInterceptable {
      * @param name  of original vertex
      * @param newName  for updated vertex
      */
-    void rename(NameSpec name, NameSpec newName) {
-        rename(name.name, newName.name)
+    void changeKey(NameSpec name, NameSpec newName) {
+        changeKey(name.name, newName.name)
     }
 
     /**
      * Creates or updates a {@link Vertex} in this graph. The map may contain configuration for the vertex. Default
      * configuration used can be:
      * <dl>
-     *     <dt>name</dt>
-     *     <dd>name of the vertex to create or update</dd>
-     *     <dt>rename</dt>
-     *     <dd>new name for the vertex</dd>
+     *     <dt>key</dt>
+     *     <dd>key of the vertex to create or update</dd>
+     *     <dt>changeKey</dt>
+     *     <dd>new key for the vertex</dd>
      *     <dt>connectsTo</dt>
-     *     <dd>list of vertex names the vertex should connect to. Edges will be created with edge.one equal to the
-     *     vertex name and edge.two equals to the 'connectTo' name.</dd>
+     *     <dd>list of vertex keys the vertex should connect to. Edges will be created with edge.one equal to the
+     *     vertex key and edge.two equals to the 'connectTo' key.</dd>
      *     <dt>trait</dt>
      *     <dd>groovy trait to apply on the vertex delegate</dd>
      *     <dt>runnerCode</dt>
@@ -288,7 +288,7 @@ class Graph implements GroovyInterceptable {
      *     complex operations. See {@link #vertex(String,Closure)} for a detailed description of methods availiable
      *     in the closure.</dd>
      * </dl>
-     * Additional entries may be added by plugins applied to the graph.
+     * Additional entries may be added by types applied to the graph.
      * @param map  configuration of {@link Vertex}
      * @return the resulting {@link Vertex}
      * @see #vertex(String name, Closure closure)
@@ -299,7 +299,7 @@ class Graph implements GroovyInterceptable {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given name. {@code closure} is used to further
+     * Creates or updates a {@link Vertex} in this graph with the given key. {@code closure} is used to further
      * customize the vertex and graph. In the closure getting and setting properties delegates to the vertex. Methods
      * also delegate to the vertex.
      * <p>
@@ -314,26 +314,26 @@ class Graph implements GroovyInterceptable {
      * By default there are several methods added in the closure.
      * <p>
      * <dl>
-     *     <dt>{@code void rename(String newName)}</dt>
+     *     <dt>{@code void changeKey(String newName)}</dt>
      *     <dd>renames the vertex</dd>
-     *     <dt>{@code void rename(NameSpec newName)}</dt>
+     *     <dt>{@code void changeKey(NameSpec newName)}</dt>
      *     <dd>renames the vertex using a NameSpec</dd>
      *     <dt>{@code void trait(Class... trait)}</dt>
      *     <dd>applies trait to the vertex</dd>
-     *     <dt>{@code void connectsTo(String... names)}</dt>
+     *     <dt>{@code void connectsTo(Object... names)}</dt>
      *     <dd>Connects the vertex to other vertices. If they do not exist they are created.</dd>
      *     <dt>{@code void connectsTo(ConfigSpec... specs)}</dt>
      *     <dd>Connects the vertex to other vertices. If they do not exist they are created. This method allows for
      *     arbitrarily nested configurations.</dd>
      * </dl>
      * <p>
-     * Plugins may add variables and methods to the passed in closure.
-     * @param name  the name of the {@link Vertex} to find or create.
+     * Types may add variables and methods to the passed in closure.
+     * @param key  the key of the {@link Vertex} to find or create.
      * @param closure  configuration for graph and vertex
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(String name, Closure closure) {
-        ConfigSpec spec = new ConfigSpec(map:[name:name], closure:closure)
+    Vertex vertex(Object key, Closure closure) {
+        ConfigSpec spec = new ConfigSpec(map:[key:key], closure:closure)
         vertex(spec)
     }
 
@@ -349,14 +349,14 @@ class Graph implements GroovyInterceptable {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given name. The map contains configuration
+     * Creates or updates a {@link Vertex} in this graph with the given key. The map contains configuration
      * described in {@link #vertex(Map)}.
-     * @param name  the name of the {@link Vertex} to find or create.
+     * @param key  the key of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(String name, Map<String, ?> map) {
-        map.name = map.name ?: name
+    Vertex vertex(Object key, Map<String, ?> map) {
+        map.key = map.key ?: key
         ConfigSpec spec = new ConfigSpec(map:map)
         vertex(spec)
     }
@@ -389,13 +389,13 @@ class Graph implements GroovyInterceptable {
      * Creates or updates a {@link Vertex} in this graph. The map contains configuration
      * described in {@link #vertex(Map)}. The configuration given by the closure described in
      * {@link #vertex(String,Closure)}.
-     * @param name  the name of the {@link Vertex} to find or create.
+     * @param key  the key of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @param closure  configuration for graph and vertex
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(String name, Map<String, ?> map, Closure closure) {
-        map.name = map.name ?: name
+    Vertex vertex(Object key, Map<String, ?> map, Closure closure) {
+        map.key = map.key ?: key
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
         vertex(spec)
     }
@@ -427,11 +427,11 @@ class Graph implements GroovyInterceptable {
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
      * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
      * will be created.
-     * @param one  the name of the first {@link Vertex}.
-     * @param two  the name of the second {@link Vertex}.
+     * @param one  the key of the first {@link Vertex}.
+     * @param two  the key of the second {@link Vertex}.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(String one, String two) {
+    Edge edge(Object one, Object two) {
         ConfigSpec spec = new ConfigSpec(map:[one:one, two:two])
         configEdge(spec)
     }
@@ -452,15 +452,15 @@ class Graph implements GroovyInterceptable {
      * contain configuration for the edge. Default configuration options are:
      * <dl>
      *     <dt>one</dt>
-     *     <dd>name of the first {@link Vertex}</dd>
+     *     <dd>key of the first {@link Vertex}</dd>
      *     <dt>two</dt>
-     *     <dd>name of the second {@link Vertex}</dd>
-     *     <dt>renameOne</dt>
-     *     <dd>If the edge already exists rename edge.one to renameOne. Otherwise edge.one is set to renameOne instead
-     *     of map.one.</dd>
-     *     <dt>renameTwo</dt>
-     *     <dd>If the edge already exists rename edge.two to renameTwo. Otherwise edge.two is set to renameTwo instead
-     *     of map.one.</dd>
+     *     <dd>key of the second {@link Vertex}</dd>
+     *     <dt>changeOne</dt>
+     *     <dd>If the edge already exists changeKey edge.one to changeOne. Otherwise edge.one is set to changeOne
+     *     instead of map.one.</dd>
+     *     <dt>changeTwo</dt>
+     *     <dd>If the edge already exists changeKey edge.two to changeTwo. Otherwise edge.two is set to changeTwo
+     *     instead of map.one.</dd>
      *     <dt>traits</dt>
      *     <dd>Set of traits applied to the delegate of the edge.</dd>
      *     <dt>runnerCode</dt>
@@ -482,12 +482,12 @@ class Graph implements GroovyInterceptable {
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map contains
      * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
      * instead of the parameters.
-     * @param one  the name of the first {@link Vertex}.
-     * @param two  the name of the second {@link Vertex}.
+     * @param one  the key of the first {@link Vertex}.
+     * @param two  the key of the second {@link Vertex}.
      * @param map  used to create an {@link Edge}.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(String one, String two, Map<String, ?> map) {
+    Edge edge(Object one, Object two, Map<String, ?> map) {
         map.one = map.one ?: one
         map.two = map.two ?: two
         ConfigSpec spec = new ConfigSpec(map:map)
@@ -519,29 +519,29 @@ class Graph implements GroovyInterceptable {
      *     <dt>{@code edge}</dt>
      *     <dd>{@link Edge} added to graph</dd>
      * </dl>
-     * Attempting to set one or two will throw an exception. Use the {@code renameOne} and {@code renameTwo} methods.
+     * Attempting to set one or two will throw an exception. Use the {@code changeOne} and {@code changeTwo} methods.
      * <p>
      * By default there are several methods available in the closure.
      * <p>
      * <dl>
-     *     <dt>{@code void renameOne(String renameOne)}</dt>
-     *     <dd>Renames edge.one</dd>
-     *     <dt>{@code void renameOne(NameSpec renameOne)}</dt>
-     *     <dd>Renames edge.one</dd>
-     *     <dt>{@code void renameTwo(String renameTwo)}</dt>
-     *     <dd>Renames edge.two</dd>
-     *     <dt>{@code void renameTwo(NameSpec renameTwo)}</dt>
-     *     <dd>Renames edge.two</dd>
+     *     <dt>{@code void changeOne(String changeOne)}</dt>
+     *     <dd>Changes edge.one</dd>
+     *     <dt>{@code void changeOne(NameSpec changeOne)}</dt>
+     *     <dd>Changes edge.one</dd>
+     *     <dt>{@code void changeTwo(String changeTwo)}</dt>
+     *     <dd>Changes edge.two</dd>
+     *     <dt>{@code void changeTwo(NameSpec changeTwo)}</dt>
+     *     <dd>Changes edge.two</dd>
      *     <dt>{@code void traits(Class... traits)}</dt>
      *     <dd>Applies a trait the edge's delegate</dd>
      * </dl>
      * Plugins may add variables and methods to the passed in closure.
-     * @param one  the name of the first {@link Vertex}.
-     * @param two  the name of the second {@link Vertex}.
+     * @param one  the key of the first {@link Vertex}.
+     * @param two  the key of the second {@link Vertex}.
      * @param closure  to run.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(String one, String two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(Object one, Object two, Closure closure) {
         ConfigSpec spec = new ConfigSpec(map:[one:one, two:two], closure:closure)
         configEdge(spec)
     }
@@ -554,7 +554,7 @@ class Graph implements GroovyInterceptable {
      * @param closure  to run.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(NameSpec one, NameSpec two, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(NameSpec one, NameSpec two, Closure closure) {
         edge(one.name, two.name, closure)
     }
 
@@ -567,7 +567,7 @@ class Graph implements GroovyInterceptable {
      * @param closure  to run.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(Map<String, ?> map, Closure closure) {
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
         configEdge(spec)
     }
@@ -577,13 +577,13 @@ class Graph implements GroovyInterceptable {
      * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
      * instead of the parameters. The configuration given by the closure is described in
      * {@link #edge(String, String, Closure)}.
-     * @param one  the name of the first {@link Vertex}.
-     * @param two  the name of the second {@link Vertex}.
+     * @param one  the key of the first {@link Vertex}.
+     * @param two  the key of the second {@link Vertex}.
      * @param map  used to create an {@link Edge}.
      * @param closure  to run.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(String one, String two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(Object one, Object two, Map<String, ?> map, Closure closure) {
         map.one = map.one ?: one
         map.two = map.two ?: two
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
@@ -601,7 +601,7 @@ class Graph implements GroovyInterceptable {
      * @param closure  to run.
      * @return the resulting {@link Edge}.
      */
-    Edge edge(NameSpec one, NameSpec two, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(NameSpec one, NameSpec two, Map<String, ?> map, Closure closure) {
         edge(one.name, two.name, map, closure)
     }
 
@@ -628,25 +628,25 @@ class Graph implements GroovyInterceptable {
     }
 
     /**
-     * returns the name of first unvisited child vertex with a parent matching parentName.
+     * returns the name of first unvisited child vertex with a parent matching key.
      *
      * @param parentName  the name of the parent vertex to start searching from
      * @param colors  a map of vertex name entries with the value of the TraversalColor
      * @return the name of the first unvisited child vertex
      */
-    String getUnvisitedChildName(String parentName, Map<String, TraversalColor> colors) {
-        Edge edge = traverseEdges(parentName).findAll {
+    Object getUnvisitedChildName(Object key, Map<Object, TraversalColor> colors) {
+        Edge edge = traverseEdges(key).findAll {
             it.one != it.two
         }.find {
-            String childName = parentName == it.one ? it.two : it.one
-            TraversalColor color = colors[childName]
+            Object childKey = key == it.one ? it.two : it.one
+            TraversalColor color = colors[childKey]
             color != TraversalColor.GREY && color != TraversalColor.BLACK
         }
 
         if (!edge) {
             return null
         }
-        parentName == edge.one ? edge.two : edge.one
+        key == edge.one ? edge.two : edge.one
     }
 
     /**
@@ -660,12 +660,12 @@ class Graph implements GroovyInterceptable {
     }
 
     /**
-     * returns the name of first unvisited child vertex with a parent matching parentName.
+     * returns the name of first unvisited child vertex with a parent matching spec.
      * @param spec  configuration containing a name for the parent and TraversalColors for each vertex
-     * @return the name of the first unvisited child vertex
+     * @return the key of the first unvisited child vertex
      */
-    String getUnvisitedChildName(ConfigSpec spec) {
-        getUnvisitedChildName((String) spec.map.name, spec.map)
+    Object getUnvisitedChildName(ConfigSpec spec) {
+        getUnvisitedChildName(spec.map.key, spec.map)
     }
 
     /**
@@ -703,8 +703,8 @@ class Graph implements GroovyInterceptable {
      * @return
      */
     Map makeColorMap() {
-        vertices.collectEntries { name, vertex ->
-            [(name):TraversalColor.WHITE]
+        vertices.collectEntries { key, vertex ->
+            [(key):TraversalColor.WHITE]
         }
     }
 
@@ -1104,16 +1104,16 @@ class Graph implements GroovyInterceptable {
         }
 
         if (args.size() == 1 && args[0] instanceof Map) {
-            args[0].name = args[0].name ?: name
+            args[0].key = args[0].key ?: name
             return new ConfigSpec(map:(Map) args[0])
         }
 
         if (args.size() == 1 && args[0] instanceof Closure) {
-            return new ConfigSpec(map:[name:name], closure:(Closure) args[0])
+            return new ConfigSpec(map:[key:name], closure:(Closure) args[0])
         }
 
         if (args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
-            args[0].name = args[0].name ?: name
+            args[0].key = args[0].key ?: name
             return new ConfigSpec(map:(Map) args[0], closure:(Closure) args[1])
         }
 

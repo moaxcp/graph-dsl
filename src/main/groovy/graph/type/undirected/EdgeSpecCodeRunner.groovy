@@ -36,35 +36,35 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * Renames edge.one to renameOne. This allows edge.one to point to a different {@link graph.Vertex}
-     * @param renameOne the new name for edge.one
+     * Changes edge.one to changeOne. This allows edge.one to point to a different {@link graph.Vertex}
+     * @param changeOne the new key for edge.one
      */
-    void renameOne(String renameOne) {
-        graph.newEdgeSpec([one:edge.one, two:edge.two, renameOne:renameOne]).apply()
+    void changeOne(Object changeOne) {
+        graph.newEdgeSpec([one:edge.one, two:edge.two, changeOne:changeOne]).apply()
     }
 
     /**
-     * Renames edge.one to renameOne.name. This allows edge.one to point to a different {@link graph.Vertex}
-     * @param renameOne  the new name for edge.one
+     * Changes edge.one to changeOne.name. This allows edge.one to point to a different {@link graph.Vertex}
+     * @param changeOne  the new key for edge.one
      */
-    void renameOne(NameSpec renameOne) {
-        graph.newEdgeSpec([one:edge.one, two:edge.two, renameOne:renameOne.name]).apply()
+    void changeOne(NameSpec changeOne) {
+        graph.newEdgeSpec([one:edge.one, two:edge.two, changeOne:changeOne.name]).apply()
     }
 
     /**
-     * Renames edge.two to renameTwo. This allows edge.two to point to a different {@link graph.Vertex}.
-     * @param renameTwo the new name for edge.two
+     * Changes edge.two to changeTwo. This allows edge.two to point to a different {@link graph.Vertex}.
+     * @param changeTwo  the new key for edge.two
      */
-    void renameTwo(String renameTwo) {
-        graph.newEdgeSpec([one:edge.one, two:edge.two, renameTwo:renameTwo]).apply()
+    void changeTwo(Object changeTwo) {
+        graph.newEdgeSpec([one:edge.one, two:edge.two, changeTwo:changeTwo]).apply()
     }
 
     /**
-     * Renames edge.two to renameTwo.name. This allows edge.two to point to a different {@link graph.Vertex}
-     * @param renameTwo  the new name for edge.two
+     * Changes edge.two to changeTwo.name. This allows edge.two to point to a different {@link graph.Vertex}
+     * @param changeTwo  the new key for edge.two
      */
-    void renameTwo(NameSpec renameTwo) {
-        graph.newEdgeSpec([one:edge.one, two:edge.two, renameTwo:renameTwo.name]).apply()
+    void changeTwo(NameSpec changeTwo) {
+        graph.newEdgeSpec([one:edge.one, two:edge.two, changeTwo:changeTwo.name]).apply()
     }
 
     /**
@@ -102,10 +102,10 @@ class EdgeSpecCodeRunner {
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
         if (name == 'one') {
-            throw new MissingPropertyException('Cannot set one in dsl. Consider using renameOne method')
+            throw new MissingPropertyException('Cannot set one in dsl. Consider using changeOne method')
         }
         if (name == 'two') {
-            throw new MissingPropertyException('Cannot set two in dsl. Consider using renameTwo method')
+            throw new MissingPropertyException('Cannot set two in dsl. Consider using changeTwo method')
         }
         edge[name] = value
     }

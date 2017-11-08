@@ -17,7 +17,7 @@ class MethodsWithNameSpec extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add multiple vertices'() {
@@ -28,9 +28,9 @@ class MethodsWithNameSpec extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
     }
 
     def 'add a vertex with a NameSpec and Closure as method'() {
@@ -41,7 +41,7 @@ class MethodsWithNameSpec extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add a vertex with a NameSpec and Map as method'() {
@@ -52,7 +52,7 @@ class MethodsWithNameSpec extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add a vertex with a NameSpec, Map, and Closure as method'() {
@@ -63,6 +63,6 @@ class MethodsWithNameSpec extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 }

@@ -14,8 +14,8 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
@@ -27,8 +27,8 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
     def 'create two edges using connectsTo in map with NameSpec'() {
@@ -39,9 +39,9 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'A' && it.two == 'C' }
     }
@@ -54,9 +54,9 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'A' && it.two == 'C' }
     }
@@ -71,8 +71,8 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
@@ -86,8 +86,8 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
     def 'create two edges using connectsTo in closure with NameSpec'() {
@@ -100,9 +100,9 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'A' && it.two == 'C' }
     }
@@ -117,9 +117,9 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'A' && it.two == 'C' }
     }

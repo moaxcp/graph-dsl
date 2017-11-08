@@ -29,7 +29,7 @@ class DepthFirstTraversalSpec extends Specification {
             depthFirstTraversal {
                 root = 'A'
                 preorder { vertex ->
-                    names << vertex.name
+                    names << vertex.key
                 }
             }
         }
@@ -47,7 +47,7 @@ class DepthFirstTraversalSpec extends Specification {
             depthFirstTraversal {
                 root A
                 preorder { vertex ->
-                    names << vertex.name
+                    names << vertex.key
                 }
             }
         }
@@ -64,7 +64,7 @@ class DepthFirstTraversalSpec extends Specification {
         graph.with {
             depthFirstTraversal('A') {
                 preorder { vertex ->
-                    names << vertex.name
+                    names << vertex.key
                 }
             }
         }
@@ -81,7 +81,7 @@ class DepthFirstTraversalSpec extends Specification {
         graph.with {
             depthFirstTraversal(A) {
                 preorder { vertex ->
-                    names << vertex.name
+                    names << vertex.key
                 }
             }
         }
