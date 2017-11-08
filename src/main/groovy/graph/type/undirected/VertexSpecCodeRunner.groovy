@@ -35,27 +35,27 @@ class VertexSpecCodeRunner {
     }
 
     /**
-     * renames the vertex to newName
-     * @param newName
+     * Changes the key for the vertex to changeKey
+     * @param newKey
      */
-    void rename(String newName) {
-        graph.newVertexSpec([name:vertex.name, rename:newName]).apply()
+    void changeKey(Object newKey) {
+        graph.newVertexSpec([key:vertex.key, changeKey:newKey]).apply()
     }
 
     /**
-     * renames the vertex to newName
-     * @param newName
+     * Changes the key for the vertex to changeKey
+     * @param newKey
      */
-    void rename(NameSpec newName) {
-        graph.newVertexSpec([name:vertex.name, rename:newName.name]).apply()
+    void changeKey(NameSpec newKey) {
+        graph.newVertexSpec([key:vertex.key, changeKey:newKey.name]).apply()
     }
 
     /**
-     * Creates edges where the vertex is edge.one and each name in names is edge.two.
-     * @param names of vertices to connect to.
+     * Creates edges where the vertex is edge.one and each key in keys is edge.two.
+     * @param vertices to connect to.
      */
-    void connectsTo(String... names) {
-        graph.newVertexSpec([name:vertex.name, connectsTo:names]).apply()
+    void connectsTo(Object... keys) {
+        graph.newVertexSpec([key:vertex.key, connectsTo:keys]).apply()
     }
 
     /**
@@ -63,7 +63,7 @@ class VertexSpecCodeRunner {
      * @param names of vertices to connect to.
      */
     void connectsTo(NameSpec... names) {
-        graph.newVertexSpec([name:vertex.name, connectsTo:names*.name]).apply()
+        graph.newVertexSpec([key:vertex.key, connectsTo:names*.name]).apply()
     }
 
     /**
@@ -74,7 +74,7 @@ class VertexSpecCodeRunner {
         specs.each {
             graph.newVertexSpec(it).apply()
         }
-        connectsTo(specs*.map.name as String[])
+        connectsTo(specs*.map.key as Object[])
     }
 
     /**
@@ -111,7 +111,7 @@ class VertexSpecCodeRunner {
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
         if (name == 'name') {
-            throw new MissingPropertyException('Cannot set name in dsl. Consider using the rename method.')
+            throw new MissingPropertyException('Cannot set name in dsl. Consider using the changeKey method.')
         }
         vertex[name] = value
     }

@@ -16,13 +16,13 @@ class BFSMethods extends Specification {
         }
         graph.breadthFirstTraversal {
             visit { vertex ->
-                defaultOrder << vertex.name
+                defaultOrder << vertex.key
             }
         }
         graph.breadthFirstTraversal {
             root = 'D'
             visit { vertex ->
-                orderFromD << vertex.name
+                orderFromD << vertex.key
             }
         }
     }
@@ -32,7 +32,7 @@ class BFSMethods extends Specification {
         def result = []
         graph.with {
             eachBfs(D) {
-                result << it.name
+                result << it.key
             }
         }
 
@@ -45,12 +45,12 @@ class BFSMethods extends Specification {
         def vertex
         graph.with {
             vertex = findBfs(D) {
-                it.name == 'D'
+                it.key == 'D'
             }
         }
 
         then:
-        vertex.name == 'D'
+        vertex.key == 'D'
     }
 
     def 'injectBfs with NameSpec'() {
@@ -58,7 +58,7 @@ class BFSMethods extends Specification {
         def result
         graph.with {
             result = injectBfs(D, []) { list, vertex ->
-                list << vertex.name
+                list << vertex.key
             }
         }
 
@@ -76,14 +76,14 @@ class BFSMethods extends Specification {
         }
 
         then:
-        orderFromD == result*.name
+        orderFromD == result*.key
     }
 
     def 'collectBfs with NameSpec'() {
         when:
         def result
         graph.with {
-            result = collectBfs(D) { it.name }
+            result = collectBfs(D) { it.key }
         }
 
         then:

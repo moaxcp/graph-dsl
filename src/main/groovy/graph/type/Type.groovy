@@ -26,14 +26,14 @@ interface Type {
      * @param two  name of {@link graph.Vertex}
      * @return the new {@link graph.Edge}
      */
-    Edge newEdge(String one, String two)
+    Edge newEdge(Object one, Object two)
 
     /**
      * Creates a new {@link graph.Vertex}
      * @param name  name of the the {@link Vertex}
      * @return the new {@link Vertex}
      */
-    Vertex newVertex(String name)
+    Vertex newVertex(Object name)
 
     /**
      * Creates a new {@link EdgeSpec}

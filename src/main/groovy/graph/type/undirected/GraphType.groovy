@@ -17,7 +17,7 @@ class GraphType implements Type {
     Graph graph
 
     @Override
-    Edge newEdge(String one, String two, Object delegate = null) {
+    Edge newEdge(Object one, Object two, Map delegate = null) {
         if (delegate) {
             new Edge(one:one, two:two, delegate:delegate)
         } else {
@@ -26,11 +26,11 @@ class GraphType implements Type {
     }
 
     @Override
-    Vertex newVertex(String name, Object delegate = null) {
+    Vertex newVertex(Object key, Map delegate = null) {
         if (delegate) {
-            new Vertex(name:name, delegate:delegate)
+            new Vertex(key:key, delegate:delegate)
         } else {
-            new Vertex(name:name)
+            new Vertex(key:key)
         }
     }
 
@@ -78,18 +78,18 @@ class GraphType implements Type {
         graph.replaceEdgesSet(new LinkedHashSet<? extends Edge>())
 
         graph.replaceVertices { String name, Vertex vertex ->
-            [vertex.name, newVertex(vertex.name, vertex.delegate)]
+            [vertex.key, newVertex(vertex.key, vertex.delegate)]
         }
 
         graph.replaceVerticesMap([:])
     }
 
     /**
-     * Returns edges from vertex with name that should be traversed.
-     * @param name
+     * Returns edges from vertex that should be traversed.
+     * @param key
      * @return
      */
-    Set<? extends Edge> traverseEdges(String name) {
-        graph.adjacentEdges(name)
+    Set<? extends Edge> traverseEdges(Object key) {
+        graph.adjacentEdges(key)
     }
 }

@@ -41,14 +41,14 @@ class ReadMeSpec extends Specification {
         graph.depthFirstTraversal {
             root = 'A'
             preorder { vertex ->
-                println "preorder $vertex.name"
+                println "preorder $vertex.key"
             }
         }
 
         graph.breadthFirstTraversal {
             root = 'A'
             visit { vertex ->
-                println "bft $vertex.name"
+                println "bft $vertex.key"
             }
         }
 
@@ -72,7 +72,7 @@ class ReadMeSpec extends Specification {
             edge 'f', 'g'
             edge g, d
 
-            println collectBfs { it.name }
+            println collectBfs { it.key }
         }
 
         then:

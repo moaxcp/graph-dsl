@@ -114,10 +114,10 @@ class DirectedGraphSpec extends Specification {
         when:
         def traversal = graph.depthFirstTraversal {
             preorder { vertex ->
-                preorderList << vertex.name
+                preorderList << vertex.key
             }
             postorder { vertex ->
-                postorderList << vertex.name
+                postorderList << vertex.key
             }
         }
 
@@ -156,7 +156,7 @@ class DirectedGraphSpec extends Specification {
 
         when:
         graph.reversePostOrder { vertex ->
-            rpo << vertex.name
+            rpo << vertex.key
         }
 
         then:

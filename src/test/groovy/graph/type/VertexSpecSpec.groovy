@@ -13,7 +13,7 @@ class VertexSpecSpec extends Specification {
 
     def 'apply throws exception on invalid name'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [name:''])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [key:''])
 
         when:
         spec.apply()
@@ -24,18 +24,18 @@ class VertexSpecSpec extends Specification {
 
     def 'apply can add vertex'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [name:'step1'])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [key:'step1'])
 
         when:
         Vertex vertex = spec.apply()
 
         then:
-        graph.vertices[vertex.name] == vertex
+        graph.vertices[vertex.key] == vertex
     }
 
     def 'apply cannot be run twice'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [name:'step1'])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [key:'step1'])
 
         when:
         Vertex vertex = spec.apply()
@@ -48,20 +48,20 @@ class VertexSpecSpec extends Specification {
     def 'apply can rename vertex'() {
         setup:
         graph.vertex 'step1'
-        VertexSpec spec = new UndirectedVertexSpec(graph, [name:'step1', rename:'step2'])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [key:'step1', changeKey:'step2'])
 
         when:
         Vertex vertex = spec.apply()
 
         then:
         graph.vertices.size() == 1
-        vertex.name == 'step2'
-        graph.vertices[vertex.name] == vertex
+        vertex.key == 'step2'
+        graph.vertices[vertex.key] == vertex
     }
 
     def 'apply can add edges using edgesFirst'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [name:'step1', connectsTo:['step2', 'step3']])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [key:'step1', connectsTo:['step2', 'step3']])
 
         when:
         spec.apply()

@@ -17,7 +17,7 @@ class MethodsWithStrings extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add multiple vertices'() {
@@ -28,9 +28,9 @@ class MethodsWithStrings extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.name == 'A'
-        graph.vertices.B.name == 'B'
-        graph.vertices.C.name == 'C'
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
     }
 
     def 'add vertex with string and closure'() {
@@ -41,7 +41,7 @@ class MethodsWithStrings extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add vertex with string and map'() {
@@ -52,7 +52,7 @@ class MethodsWithStrings extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 
     def 'add vertex with string, map, and closure'() {
@@ -63,6 +63,6 @@ class MethodsWithStrings extends Specification {
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.name == 'A'
+        graph.vertices.A.key == 'A'
     }
 }

@@ -1,7 +1,7 @@
 # graph-dsl
 
-A groovy dsl for creating and traversing graphs. Graphs can be extended with plugins and traits which 
-allow developers to create a graph with the desired behavior and values for their algorithm.
+A groovy dsl for creating and traversing graphs. Graphs can be extended with types which allows developers to create a
+graph with the desired behavior and values for their algorithm.
 
 [![Build Status](https://travis-ci.org/moaxcp/graph-dsl.svg?branch=master)](https://travis-ci.org/moaxcp/graph-dsl)
 
@@ -17,6 +17,7 @@ changing the script to `DslScript` a new `Graph` becomes the delegate of the scr
 ```groovy
 #!/usr/bin/env groovy
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
+import graph.*
 @groovy.transform.BaseScript DslScript graph
 edge step1, step2
 assert graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
@@ -156,7 +157,13 @@ Calling `classifyEdges` on an undirected graph will result in two classification
 is what the edge would be in a directed graph. The second classification is always back-edge. This is because edges in 
 an undirected graph are considered bi-directional in `classifyEdges`.
 
-# Edge and Vertex Properties
+# Edge and Vertex
+
+## Vertex keys
+
+Vertex keys are used to refer to a Vertex in the dsl. Keys can be any object which implements equals and hashCode.
+
+## Properties
 
 Properties can be added to Edge and Vertex dynamically simply by assigning them.
 
@@ -294,6 +301,11 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## x.x.x
+
+In this release Vertex.name has been repalced with Vertex.key. The key may be any object that implements equals and
+hashCode.
 
 ## 0.21.0
 

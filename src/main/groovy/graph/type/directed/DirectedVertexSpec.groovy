@@ -11,7 +11,7 @@ import groovy.transform.PackageScope
  * Provides configuration for a directed graph vertex.
  */
 class DirectedVertexSpec extends UndirectedVertexSpec {
-    private final Set<String> connectsFromSet = [] as Set<String>
+    private final Set<Object> connectsFromSet = [] as Set<Object>
 
     /**
      * Creates a new DirectedVertexSpec from map.
@@ -21,13 +21,13 @@ class DirectedVertexSpec extends UndirectedVertexSpec {
     DirectedVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph, map, closure)
         map.connectsFrom?.each {
-            connectsFromSet.addAll((String) (it instanceof NameSpec ? it.name : it))
+            connectsFromSet.addAll(it instanceof NameSpec ? it.name : it)
         }
     }
 
     protected void applyConnectsFrom() {
         connectsFromSet.each {
-            graph.edge it, vertex.name
+            graph.edge it, vertex.key
         }
     }
 
