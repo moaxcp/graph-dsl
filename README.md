@@ -304,6 +304,8 @@ If there are any issues contact me moaxcp@gmail.com.
 
 ## 0.22.0
 
+[#102](https://github.com/moaxcp/graph-dsl/issues/102) Switch from name to key
+
 In this release Vertex.name has been repalced with Vertex.key. The key may be any object that implements equals and
 hashCode.
 
