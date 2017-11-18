@@ -70,6 +70,11 @@ class DirectedGraphType extends GraphType {
         }
     }
 
+    @Override
+    boolean isDirected() {
+        true
+    }
+
     /**
      * Returns in-edges of vertex
      * @param graph

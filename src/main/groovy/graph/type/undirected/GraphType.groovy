@@ -8,6 +8,11 @@ import graph.Vertex
 import graph.VertexSpec
 import graph.type.Type
 
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
+
+import static groovyx.javafx.GroovyFX.start
+
 /**
  * Implements an undirected graph. There can only be one {@link Edge} between any two vertices. When traversing a graph
  * an {@link Edge} is adjacent to a {@link Vertex} if it's one or two property equals the name of the {@link Vertex}.
@@ -19,18 +24,18 @@ class GraphType implements Type {
     @Override
     Edge newEdge(Object one, Object two, Map delegate = null) {
         if (delegate) {
-            new Edge(one:one, two:two, delegate:delegate)
+            new Edge(one: one, two: two, delegate: delegate)
         } else {
-            new Edge(one:one, two:two)
+            new Edge(one: one, two: two)
         }
     }
 
     @Override
     Vertex newVertex(Object key, Map delegate = null) {
         if (delegate) {
-            new Vertex(key:key, delegate:delegate)
+            new Vertex(key: key, delegate: delegate)
         } else {
-            new Vertex(key:key)
+            new Vertex(key: key)
         }
     }
 
@@ -55,13 +60,54 @@ class GraphType implements Type {
     }
 
     @Override
+    String dot() {
+        StringWriter writer = new StringWriter()
+
+        new IndentPrinter(writer).with { p ->
+            p.autoIndent = true
+            p.println("strict ${isDirected() ? 'digraph' : 'graph'} {")
+            p.incrementIndent()
+            graph.edges.each {
+                p.println(it.one + ' -- ' + it.two)
+            }
+            p.decrementIndent()
+            p.print('}')
+            p.flush()
+        }
+
+        writer.toString()
+    }
+
+    @Override
+    void view() {
+        println "in view ${dot()}"
+        Process execute = "${isDirected() ? 'dot' : 'neato'} -Tpng".execute()
+        execute.outputStream.withWriter { writer ->
+            writer.write(dot())
+        }
+        StringBuilder err = new StringBuilder()
+        execute.consumeProcessErrorStream(err)
+
+        start {
+            stage(title: 'Graph', visible: true) {
+                scene {
+                    imageView(image(execute.inputStream))
+                    //todo add any error text from graphviz process
+                }
+            }
+        }
+
+        execute.waitFor()
+    }
+
+    @Override
     boolean canConvert() {
         if (graph.edges.size() == 0) {
             return true
         }
         Set<Edge> edges = [] as Set
         !graph.edges.find { Edge current ->
-            Edge edge = new Edge(one:current.one, two:current.two)
+            Edge edge = new Edge(one: current.one, two: current.two)
             !edges.add(edge)
         }
     }
@@ -82,6 +128,11 @@ class GraphType implements Type {
         }
 
         graph.replaceVerticesMap([:])
+    }
+
+    @Override
+    boolean isDirected() {
+        false
     }
 
     /**

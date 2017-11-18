@@ -204,6 +204,7 @@ nexusStaging {
 
 dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
+    compile 'org.groovyfx:groovyfx:8.0.0'
     testCompile( 'com.athaydes:spock-reports:1.3.2' ) {
         transitive = false
     }
@@ -213,4 +214,5 @@ dependencies {
         exclude group: 'org.codehaus.groovy', module:'groovy-all'
     }
     testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    testCompile 'cglib:cglib-nodep:3.2.5'
 }

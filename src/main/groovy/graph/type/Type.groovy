@@ -8,6 +8,8 @@ import graph.Vertex
 
 import graph.VertexSpec
 
+import java.awt.image.BufferedImage
+
 /**
  * Classes implementing this interface are able to change the behavior of a {@link graph.Graph}. A Type can change the
  * base class of all {@link graph.Vertex} and {@link graph.Edge} objects to implement the  behavior needed but a Type
@@ -67,6 +69,10 @@ interface Type {
      */
     VertexSpec newVertexSpec(ConfigSpec spec)
 
+    String dot()
+
+    void view()
+
     boolean canConvert()
 
     /**
@@ -74,4 +80,6 @@ interface Type {
      * @param graph  to convert type
      */
     void convert()
+
+    boolean isDirected()
 }
