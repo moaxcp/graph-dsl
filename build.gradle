@@ -87,6 +87,12 @@ jacocoTestCoverageVerification {
     }
 }
 
+test {
+    systemProperty 'com.athaydes.spockframework.report.hideEmptyBlocks', 'true'
+    systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', 'true'
+    systemProperty 'com.athaydes.spockframework.report.projectVersion', version.toString()
+}
+
 gradle.taskGraph.whenReady { graph ->
     if (graph.hasTask(':jacocoTestReport') || graph.hasTask(':jacocoTestCoverageVerification')) {
         compileGroovy.groovyOptions.optimizationOptions.all = false
@@ -100,16 +106,6 @@ codenarc {
     maxPriority2Violations = 2
     maxPriority3Violations = 1
     ignoreFailures = true
-}
-
-repositories {
-    jcenter()
-}
-
-configurations {
-    codnarc {
-        extendsFrom compile
-    }
 }
 
 groovydoc {
@@ -202,17 +198,31 @@ nexusStaging {
     delayBetweenRetriesInMillis = 10000
 }
 
+repositories {
+    jcenter()
+}
+
+configurations {
+    codnarc {
+        extendsFrom compile
+    }
+}
+
 dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
     compile 'org.groovyfx:groovyfx:8.0.0'
+
     testCompile( 'com.athaydes:spock-reports:1.3.2' ) {
         transitive = false
     }
     testCompile 'org.slf4j:slf4j-api:1.7.13'
     testCompile 'org.slf4j:slf4j-simple:1.7.13'
+
     testCompile ('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude group: 'org.codehaus.groovy', module:'groovy-all'
     }
     testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
     testCompile 'cglib:cglib-nodep:3.2.5'
+
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
 }

@@ -1,5 +1,6 @@
 package graph
 
+import graph.plugin.Plugin
 import graph.type.Type
 
 import graph.type.undirected.EdgeSpecCodeRunner
@@ -25,6 +26,7 @@ class Graph implements GroovyInterceptable {
     private Map<Object, ? extends Vertex> vertices = [:] as LinkedHashMap<Object, ? extends Vertex>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
     private Type type
+    private Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
 
     Graph() {
         type = new GraphType()
@@ -175,6 +177,21 @@ class Graph implements GroovyInterceptable {
         Properties properties = new Properties()
         properties.load(getClass().getResourceAsStream("/META-INF/graph-types/${typeName}.properties"))
         type(this.class.classLoader.loadClass((String) properties.'implementation-class'))
+    }
+
+    void plugin(Class pluginClass) {
+        if (!Plugin.isAssignableFrom(pluginClass)) {
+            throw new IllegalArgumentException("$pluginClass.name does not implement Plugin")
+        }
+        Plugin plugin = (Plugin) pluginClass.newInstance()
+        plugin.graph = this
+        plugins.add plugin
+    }
+
+    void plugin(String pluginName) {
+        Properties properties = new Properties()
+        properties.load(getClass().getResourceAsStream("/META-INF/graph-plugins/${pluginName}.properties"))
+        plugin(this.class.classLoader.loadClass((String) properties.'implementation-class'))
     }
 
     Type getType() {
@@ -1091,9 +1108,22 @@ class Graph implements GroovyInterceptable {
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
         MetaMethod method = type.metaClass.getMetaMethod(name, args)
-        if (method != null &&
-                (method.declaringClass.theClass == Type || Type.isAssignableFrom(method.declaringClass.theClass))) {
+        if(method != null) {
             return method.invoke(type, args)
+        }
+
+        def list = plugins.collect { plugin ->
+            MetaMethod m = plugin.metaClass.getMetaMethod(name, args)
+            if(m) {
+                return [plugin, m]
+            }
+            null
+        }.find { list ->
+            list
+        }
+
+        if (list != null) {
+            return list[1].invoke(list[0], args)
         }
 
         if (name == 'vertex') {

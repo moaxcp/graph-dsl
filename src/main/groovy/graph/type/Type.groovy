@@ -69,10 +69,6 @@ interface Type {
      */
     VertexSpec newVertexSpec(ConfigSpec spec)
 
-    String dot()
-
-    void view()
-
     boolean canConvert()
 
     /**
