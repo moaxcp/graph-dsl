@@ -13,7 +13,7 @@ class DirectedGraphEdgeSpec extends Specification {
 
     def 'can get DirectedEdge from newEdge'() {
         when:
-        def edge = graph.newEdge 'step1', 'step2'
+        def edge = graph.newEdge one:'step1', two:'step2'
 
         then:
         edge instanceof DirectedEdge

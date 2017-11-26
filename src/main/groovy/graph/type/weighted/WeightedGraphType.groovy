@@ -13,4 +13,9 @@ class WeightedGraphType extends GraphType {
 
         graph.replaceEdgesSet(new TreeSet<>(new WeightedEdgeComparator()))
     }
+
+    @Override
+    boolean isWeighted() {
+        true
+    }
 }

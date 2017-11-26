@@ -157,11 +157,11 @@ class Graph implements GroovyInterceptable {
      * definition of an edge, for example to {@link graph.type.directed.DirectedEdge}, this method will still work as
      * expected. It will remove the edge where edge.one == one and edge.two == two. Keep in mind, in the case of the
      * base {@link Edge} object edge.one can also equal two and edge.two can also equal one.
-     * @param one name of first vertex
-     * @param two name of second vertex
+     * @param one key of first vertex
+     * @param two key of second vertex
      */
-    void deleteEdge(String one, String two) {
-        edges.remove(type.newEdge(one, two))
+    void deleteEdge(Object one, Object two) {
+        edges.remove(type.newEdge(one:one, two:two))
     }
 
     void type(Class typeClass) {
@@ -437,7 +437,7 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(ConfigSpec spec) {
-        type.newVertexSpec(spec).apply()
+        type.newVertexSpec(spec.map, spec.closure).apply()
     }
 
     /**
@@ -629,7 +629,7 @@ class Graph implements GroovyInterceptable {
      */
     @PackageScope
     Edge configEdge(ConfigSpec spec) {
-        type.newEdgeSpec(spec).apply()
+        type.newEdgeSpec(spec.map, spec.closure).apply()
     }
 
     /**
@@ -686,13 +686,13 @@ class Graph implements GroovyInterceptable {
     }
 
     /**
-     * Finds adjacent edges for vertex with name.
-     * @param name
+     * Finds adjacent edges for vertex with key.
+     * @param key
      * @return set of adjacent edges.
      */
-    Set<? extends Edge> adjacentEdges(String name) {
-        edges.findAll {
-            name == it.one || name == it.two
+    Set<? extends Edge> adjacentEdges(Object key) {
+        edges.findAll { Edge edge ->
+            key == edge.one || key == edge.two
         }
     }
 

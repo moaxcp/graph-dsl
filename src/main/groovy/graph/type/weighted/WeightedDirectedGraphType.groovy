@@ -9,4 +9,9 @@ class WeightedDirectedGraphType extends DirectedGraphType {
 
         graph.replaceEdgesSet(new TreeSet<>(new WeightedEdgeComparator()))
     }
+
+    @Override
+    boolean isWeighted() {
+        true
+    }
 }

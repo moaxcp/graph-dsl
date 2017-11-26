@@ -11,17 +11,27 @@ class EdgeTestSpec extends Specification {
         edge.two == 'step2'
     }
 
-    def 'unset properties throw MissingPropertyException'() {
-        when:
-        edge.weight == null
-
-        then:
-        thrown MissingPropertyException
+    def 'can check for missing properties'() {
+        expect:
+        !edge.containsKey('weight')
     }
 
-    def 'toString is added by transform'() {
-        expect:
-        edge.toString() == 'graph.Edge(one:step1, two:step2)'
+    def 'can check for properties'() {
+        when:
+        edge.weight = 10
+
+        then:
+        edge.containsKey('weight')
+        edge.weight == 10
+    }
+
+    def 'can set property with index operation'() {
+        when:
+        edge['weight'] = 10
+
+        then:
+        edge.containsKey('weight')
+        edge['weight'] == 10
     }
 
     def 'equals with null'() {

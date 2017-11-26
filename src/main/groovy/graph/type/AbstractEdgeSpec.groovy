@@ -33,7 +33,7 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
         if (edge) {
             throw new IllegalStateException('Edge already created.')
         }
-        Edge created = graph.newEdge(one, two)
+        Edge created = graph.newEdge(one:one, two:two)
         Edge existing = graph.edges.find { it == created }
         edgePresentInGraph = existing != null
 
@@ -65,7 +65,7 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
             throw new IllegalStateException('edge is not set created.')
         }
         if (changeOne || changeTwo) {
-            Edge renamed = graph.newEdge(changeOne ?: one, changeTwo ?: two)
+            Edge renamed = graph.newEdge(one:changeOne ?: one, two:changeTwo ?: two)
             if (graph.edges.find { it == renamed }) {
                 throw new IllegalStateException('renamed edge already exists.')
             }

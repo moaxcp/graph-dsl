@@ -9,20 +9,20 @@ import groovy.transform.ToString
  * A vertex in the graph. Every vertex should have a name. All vertices have a delegate which allows methods to be added
  * dynamically.
  */
-@ToString(includeNames=true)
-@EqualsAndHashCode
-class Vertex extends PropertyDelegator {
-    Object key
-
-    @PackageScope
-    void setKey(Object name) {
-        this.key = name
+class Vertex extends LinkedHashMap<String, Object> {
+    boolean asBoolean() {
+        key
     }
 
-    Object getAt(String name) {
-        if (name == 'key') {
-            return this.key
+    @Override
+    boolean equals(Object o) {
+        if(!(o instanceof Vertex)) {
+            return false
         }
-        delegate[name]
+        if(this.is(0)) {
+            return true
+        }
+        Vertex rhs = (Vertex) o
+        key == rhs.key
     }
 }

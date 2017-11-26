@@ -30,12 +30,8 @@ class DirectedGraphType extends GraphType {
      * @return a new DirectedEdge
      */
     @Override
-    Edge newEdge(Object one, Object two, Map delegate = null) {
-        if (delegate) {
-            new DirectedEdge(one:one, two:two, delegate:delegate)
-        } else {
-            new DirectedEdge(one:one, two:two)
-        }
+    Edge newEdge(Map<String, ?> map) {
+        new DirectedEdge(map)
     }
 
     /**
@@ -44,18 +40,8 @@ class DirectedGraphType extends GraphType {
      * @return
      */
     @Override
-    DirectedVertexSpec newVertexSpec(Map<String, ?> map) {
-        new DirectedVertexSpec(graph, map)
-    }
-
-    /**
-     * Creates a new {@link graph.type.directed.DirectedVertexSpec} from spec.
-     * @param spec
-     * @return
-     */
-    @Override
-    DirectedVertexSpec newVertexSpec(ConfigSpec spec) {
-        new DirectedVertexSpec(graph, spec.map, spec.closure)
+    DirectedVertexSpec newVertexSpec(Map<String, ?> map, Closure closure = null) {
+        new DirectedVertexSpec(graph, map, closure)
     }
 
     @Override
@@ -65,7 +51,7 @@ class DirectedGraphType extends GraphType {
         }
         Set edges = [] as Set
         !graph.edges.find { Edge current ->
-            Edge edge = new DirectedEdge(one:current.one, two:current.two)
+            Edge edge = new DirectedEdge(current)
             !edges.add(edge)
         }
     }

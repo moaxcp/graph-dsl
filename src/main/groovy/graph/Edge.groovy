@@ -1,43 +1,15 @@
 package graph
 
-import graph.internal.PropertyDelegator
-import groovy.transform.PackageScope
-import groovy.transform.ToString
-
 /**
  * An edge between two vertices. Properties may be added to Edge by setting values. Assigning a property to a
  * {@link Closure} will make it lazy. When the property is read the value returned is the result of calling the closure.
  * If a missing method is called on Edge and a property is set with a closure the closure will be called and the
  * resulting value returned.
  */
-@ToString(includeNames=true)
-class Edge extends PropertyDelegator {
-    Object one
-    Object two
+class Edge extends LinkedHashMap<String, Object> {
 
-    @PackageScope
-    void setOne(Object one) {
-        this.one = one
-    }
-
-    @PackageScope
-    void setTwo(Object two) {
-        this.two = two
-    }
-
-    /**
-     * Returns the property with the given name.
-     * @param name
-     * @return
-     */
-    Object getAt(String name) {
-        if (name == 'one') {
-            return one
-        }
-        if (name == 'two') {
-            return two
-        }
-        delegate[name]
+    boolean asBoolean() {
+        one && two
     }
 
     /**

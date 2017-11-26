@@ -11,18 +11,8 @@ class WeightedEdgeComparator implements Comparator<Edge> {
         if (a == b) {
             return 0
         }
-        def weightA = 0
-        try {
-            weightA = a.weight ?: 0
-        } catch (MissingPropertyException e) {
-            //defaults to 0
-        }
-        def weightB = 0
-        try {
-            weightB = b.weight ?: 0
-        } catch (MissingPropertyException e) {
-            //defaults to 0
-        }
+        def weightA = a.weight ?: 0
+        def weightB = b.weight ?: 0
 
         if (weightA < weightB) {
             return -1

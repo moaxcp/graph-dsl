@@ -9,7 +9,6 @@ import groovy.transform.ToString
  * two vertices.
  */
 @SuppressWarnings('EqualsAndHashCode') //equals still meets contract with hashCode (I think)
-@ToString(includeSuper=true, includeNames=true)
 class DirectedEdge extends Edge {
 
     /**

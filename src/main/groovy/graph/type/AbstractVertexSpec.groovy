@@ -36,7 +36,7 @@ abstract class AbstractVertexSpec extends VertexSpec {
             key = changeKey ?: key
             changeKey = null
         }
-        vertex = graph.vertices[key] ?: graph.newVertex(key)
+        vertex = graph.vertices[key] ?: graph.newVertex(key:key)
     }
 
     protected void checkConditions() {

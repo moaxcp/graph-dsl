@@ -1,7 +1,11 @@
 package graph.plugin.graphviz
 
 import graph.Graph
+import spock.lang.Ignore
 import spock.lang.Specification
+import sun.util.resources.cldr.luo.CalendarData_luo_KE
+
+import java.awt.image.AreaAveragingScaleFilter
 
 import static org.hamcrest.core.StringStartsWith.startsWith
 
@@ -75,7 +79,7 @@ class GraphVizSpec extends Specification {
         and: 'it contains the edge'
         '''
             strict digraph {
-              A -- B
+              A -> B
             }
         '''.stripIndent().trim() == dot
     }

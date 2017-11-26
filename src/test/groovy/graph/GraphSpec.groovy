@@ -140,7 +140,7 @@ class GraphSpec extends Specification {
 
         when:
         graph.replaceEdges {
-            new DirectedEdge(one:it.one, two:it.two, delegate:it.delegate)
+            new DirectedEdge(it)
         }
 
         then:

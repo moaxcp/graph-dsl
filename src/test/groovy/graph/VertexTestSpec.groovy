@@ -33,7 +33,7 @@ class VertexTestSpec extends Specification {
     def 'vertex equals non-equal vertex is false'() {
         setup:
         vertex.key = 'step1'
-        def compare = new Vertex(key: 'step2')
+        def compare = new Vertex(key:'step2')
 
         when:
         def equals = vertex == compare
@@ -56,17 +56,10 @@ class VertexTestSpec extends Specification {
     def 'vertex equals equal vertex is true'() {
         given:
         vertex.key = 'step1'
-        def compare = new Vertex(key: 'step1')
+        def compare = new Vertex(key:'step1')
 
         expect:
         vertex == compare
-    }
-
-    def 'toString is added by transform'() {
-        given:
-        vertex.key = 'step1'
-        expect:
-        vertex.toString() == 'graph.Vertex(key:step1)'
     }
 
     def 'getAt with name'() {
