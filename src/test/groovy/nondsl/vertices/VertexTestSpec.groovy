@@ -1,17 +1,29 @@
-package graph
+package nondsl.vertices
 
+import graph.Vertex
 import spock.lang.Specification
 
 class VertexTestSpec extends Specification {
 
-    def vertex = new Vertex()
+    def vertex = new Vertex(key:'step1')
 
-    def 'can set name of vertex'() {
+    def 'constructor set key'() {
+        expect:
+        vertex.key == 'step1'
+    }
+
+    def 'can check for missing entry'() {
+        expect:
+        !vertex.containsKey('value')
+    }
+
+    def 'can check for added entry'() {
         when:
-        vertex.key = 'step1'
+        vertex.value = 10
 
         then:
-        vertex.key == 'step1'
+        vertex.containsKey('value')
+        vertex.value == 10
     }
 
     def 'can add value to vertex'() {

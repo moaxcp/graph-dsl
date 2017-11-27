@@ -1,17 +1,28 @@
 package graph
 
-import graph.internal.PropertyDelegator
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.PackageScope
-import groovy.transform.ToString
 
 /**
  * A vertex in the graph. Every vertex should have a name. All vertices have a delegate which allows methods to be added
  * dynamically.
  */
-class Vertex extends LinkedHashMap<String, Object> {
+class Vertex {
+    @Delegate
+    Map map = [:]
+
+    Object getKey() {
+        get('key')
+    }
+
+    Object setKey(Object value) {
+        put('key', value)
+    }
+
     boolean asBoolean() {
         key
+    }
+
+    boolean equals(Vertex vertex) {
+        key == vertex.key
     }
 
     @Override
