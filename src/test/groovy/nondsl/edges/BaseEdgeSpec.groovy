@@ -33,7 +33,7 @@ abstract class BaseEdgeSpec extends Specification {
 
     def 'equals with null'() {
         expect:
-        !edge.equals(null)
+        edge != null
     }
 
     def 'equals with not Edge'() {
@@ -43,12 +43,15 @@ abstract class BaseEdgeSpec extends Specification {
 
     def 'equals with self'() {
         expect:
-        edge.equals(edge)
+        edge == edge
     }
 
     def 'equals with second edge'() {
         expect:
         edge == equalEdge
+
+        and:
+        equalEdge.weight == 10
     }
 
     def 'equals with both vertices different'() {
@@ -69,7 +72,7 @@ abstract class BaseEdgeSpec extends Specification {
         secondDifferent != edge
     }
 
-    def 'can set property with index operation'() {
+    def 'can add entry with index operation'() {
         when:
         edge['weight'] = 10
 

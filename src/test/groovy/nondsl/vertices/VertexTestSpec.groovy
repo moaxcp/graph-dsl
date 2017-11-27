@@ -6,6 +6,8 @@ import spock.lang.Specification
 class VertexTestSpec extends Specification {
 
     def vertex = new Vertex(key:'step1')
+    def equalVertex = new Vertex(key:'step1', value:'value')
+    def different = new Vertex(key:'step2')
 
     def 'constructor set key'() {
         expect:
@@ -26,67 +28,51 @@ class VertexTestSpec extends Specification {
         vertex.value == 10
     }
 
-    def 'can add value to vertex'() {
-        when:
-        vertex.value = ['work1', 'work2']
-
-        then:
-        vertex.value == ['work1', 'work2']
-    }
-
-    def 'vertex equals null is false'() {
-        when:
-        def equals = vertex.equals(null)
-
-        then:
-        !equals
-    }
-
-    def 'vertex equals non-equal vertex is false'() {
-        setup:
-        vertex.key = 'step1'
-        def compare = new Vertex(key:'step2')
-
-        when:
-        def equals = vertex == compare
-
-        then:
-        !equals
-    }
-
-    def 'vertex equals self'() {
-        setup:
-        vertex.key = 'step1'
-
-        when:
-        def equals = vertex == vertex
-
-        then:
-        equals
-    }
-
-    def 'vertex equals equal vertex is true'() {
-        given:
-        vertex.key = 'step1'
-        def compare = new Vertex(key:'step1')
-
+    def 'equals with null'() {
         expect:
-        vertex == compare
+        !vertex.equals(null)
     }
 
-    def 'getAt with name'() {
-        given:
-        vertex.key = 'step1'
+    def 'equals with not Vertex'() {
+        expect:
+        vertex != 'hello'
+    }
 
+    def 'equals with self'() {
+        expect:
+        vertex == vertex
+    }
+
+    def 'equals with second Vertex'() {
+        expect:
+        vertex == equalVertex
+    }
+
+    def 'not equals with different vertex'() {
+        expect:
+        vertex != different
+        different != vertex
+    }
+
+    def 'can add entry with index operation'() {
+        when:
+        vertex['value'] = 10
+
+        then:
+        vertex.containsKey('value')
+        vertex['value'] == 10
+    }
+
+    def 'getAt with key'() {
         expect:
         vertex['key'] == 'step1'
     }
 
     def 'getAt with delegate'() {
         given:
-        vertex.key = 'value'
+        vertex.value = 'value'
 
         expect:
-        vertex['key'] == 'value'
+        vertex['value'] == 'value'
     }
 }

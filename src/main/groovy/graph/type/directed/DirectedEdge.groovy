@@ -11,6 +11,10 @@ import groovy.transform.ToString
 @SuppressWarnings('EqualsAndHashCode') //equals still meets contract with hashCode (I think)
 class DirectedEdge extends Edge {
 
+    boolean equals(DirectedEdge edge) {
+        one == edge.one && two == edge.two
+    }
+
     /**
      * overridden to allow edges in both directions between two vertices.
      * @param o
@@ -25,6 +29,6 @@ class DirectedEdge extends Edge {
             return true
         }
         DirectedEdge rhs = (DirectedEdge) o
-        one == rhs.one && two == rhs.two
+        equals(rhs)
     }
 }
