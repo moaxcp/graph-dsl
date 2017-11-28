@@ -2,6 +2,8 @@ package graph.plugin
 
 import graph.Edge
 import graph.Graph
+import groovy.transform.Memoized
+import groovy.transform.PackageScope
 
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
@@ -16,11 +18,25 @@ class GraphViz implements Plugin {
         this.graph = graph
     }
 
+    @PackageScope
+    String getEdgeString() {
+        graph.isDirected() ? '->' : '--'
+    }
+
+    @Memoized
+    @PackageScope
+    String getId(String id) {
+        if(id ==~ '[_a-zA-Z\200-\377][_0-9a-zA-Z\200-\377]*') {
+            return id
+        } else {
+            return "\"$id\""
+        }
+    }
+
     private String getEdgeDot(Edge edge) {
-        String string = "$edge.one ${graph.isDirected() ? '->' : '--'} $edge.two"
-        Map attributes = [:]
-        if(graph.isWeighted()) {
-            attributes.weight = edge.weight
+        String string = "${getId(edge.one)} $edgeString ${getId(edge.two)}"
+        Map attributes = edge.findAll {
+            it.key != 'one' && it.key != 'two'
         }
 
         if(attributes) {

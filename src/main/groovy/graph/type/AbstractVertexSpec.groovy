@@ -8,16 +8,25 @@ import graph.VertexSpec
 /**
  * Base implementation of a VertexSpec. Type packages can inherit this class to implement default methods in
  * VertexSpec.
+ *
+ * Add new dsl properties for Vertex dsl to dslProperties. This will prevent them from being added as entries to the
+ * Vertex.
  */
 abstract class AbstractVertexSpec extends VertexSpec {
     Vertex vertex
     Object key
     Object changeKey
     final Set<Object> connectsToSet = [] as Set<Object>
+    List dslProperties
+    Map entries
     Closure runnerCodeClosure
 
     protected AbstractVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph)
+
+        dslProperties = ['key', 'changeKey', 'connectsTo']
+
+        entries = map.findAll { !(it.key in dslProperties)}
 
         key = map.key
         changeKey = map.changeKey instanceof NameSpec ? map.changeKey.name : map.changeKey
@@ -37,6 +46,10 @@ abstract class AbstractVertexSpec extends VertexSpec {
             changeKey = null
         }
         vertex = graph.vertices[key] ?: graph.newVertex(key:key)
+    }
+
+    protected void initEntries() {
+        vertex.putAll(entries)
     }
 
     protected void checkConditions() {
@@ -75,6 +88,7 @@ abstract class AbstractVertexSpec extends VertexSpec {
         checkConditions()
         applyRename()
         applyConnectsTo()
+        initEntries()
         addVertex(vertex)
         applyClosure()
         vertex

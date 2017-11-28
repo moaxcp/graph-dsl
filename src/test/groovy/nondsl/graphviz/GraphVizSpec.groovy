@@ -1,4 +1,4 @@
-package graph.plugin.graphviz
+package nondsl.graphviz
 
 import graph.Graph
 import spock.lang.Ignore
@@ -80,6 +80,59 @@ class GraphVizSpec extends Specification {
         '''
             strict digraph {
               A -> B
+            }
+        '''.stripIndent().trim() == dot
+    }
+
+    def 'dot is for weighted graph'() {
+        given: 'a weighted graph with the graphviz plugin'
+        graph.type 'weighted-graph'
+        graph.plugin 'graphviz'
+
+        when: 'the dot dsl is created'
+        String dot = graph.dot()
+
+        then: 'it contains an empty strict graph'
+        '''
+            strict graph {
+            }
+        '''.stripIndent().trim() == dot
+    }
+
+    def 'dot renders default weighted edges'() {
+        given: 'a weighted graph with the graphviz plugin'
+        graph.type 'weighted-graph'
+        graph.plugin 'graphviz'
+
+        and: 'vertices with an edge A, B'
+        graph.edge('A', 'B')
+
+        when: 'the dot dsl is created'
+        String dot = graph.dot()
+
+        then: 'it contains an empty strict graph'
+        '''
+            strict graph {
+              A -- B
+            }
+        '''.stripIndent().trim() == dot
+    }
+
+    def 'dot renders weighted edges'() {
+        given: 'a weighted graph with the graphviz plugin'
+        graph.type 'weighted-graph'
+        graph.plugin 'graphviz'
+
+        and: 'vertices with an edge A, B'
+        graph.edge('A', 'B', [weight:10])
+
+        when: 'the dot dsl is created'
+        String dot = graph.dot()
+
+        then: 'it contains an empty strict graph'
+        '''
+            strict graph {
+              A -- B [weight="10"]
             }
         '''.stripIndent().trim() == dot
     }
