@@ -2,6 +2,7 @@ package graph.plugin
 
 import graph.Edge
 import graph.Graph
+import graph.Vertex
 import groovy.transform.Memoized
 import groovy.transform.PackageScope
 
@@ -23,24 +24,47 @@ class GraphViz implements Plugin {
         graph.isDirected() ? '->' : '--'
     }
 
+    @PackageScope
+    String getGraphString() {
+        "${graph.isMultiGraph() ? '' : 'strict'} ${graph.isDirected() ? 'digraph' : 'graph'}"
+    }
+
     @Memoized
     @PackageScope
     String getId(String id) {
-        if(id ==~ '[_a-zA-Z\200-\377][_0-9a-zA-Z\200-\377]*') {
+        if(id ==~ '[-]?(.[0-9]+|[0-9]+(.[0-9]*)? )') {
+            return id
+        } else if(id ==~ '[_a-zA-Z\200-\377][_0-9a-zA-Z\200-\377]*') {
             return id
         } else {
             return "\"$id\""
         }
     }
 
-    private String getEdgeDot(Edge edge) {
-        String string = "${getId(edge.one)} $edgeString ${getId(edge.two)}"
-        Map attributes = edge.findAll {
+    @PackageScope
+    String getEdgeDot(Edge edge) {
+        String string = "${getId(edge.one.toString())} $edgeString ${getId(edge.two.toString())}"
+        String attributes = edge.findAll {
             it.key != 'one' && it.key != 'two'
-        }
-
+        }.collect {
+            /$it.key="$it.value"/
+        }.join(' ')
         if(attributes) {
-            string += ' [' + attributes.collect { /$it.key="$it.value"/ }.join(' ') + ']'
+            return "$string [$attributes]"
+        }
+        string
+    }
+
+    @PackageScope
+    String getVertexDot(Vertex vertex) {
+        String string =getId(vertex.key.toString())
+        String attributes = vertex.findAll {
+            it.key != 'key'
+        }.collect {
+            /$it.key="$it.value"/
+        }.join(' ')
+        if(attributes) {
+            return "$string [$attributes]"
         }
         string
     }
@@ -50,11 +74,17 @@ class GraphViz implements Plugin {
 
         new IndentPrinter(writer).with { p ->
             p.autoIndent = true
-            p.println("strict ${graph.isDirected() ? 'digraph' : 'graph'} {")
+            p.println("$graphString {")
             p.incrementIndent()
             graph.edges.each {
                 p.println(getEdgeDot(it))
             }
+            graph.vertices.each { Object id, Vertex v ->
+                if(v.size() > 1) {
+                    p.println(getVertexDot(v))
+                }
+            }
+
             p.decrementIndent()
             p.print('}')
             p.flush()

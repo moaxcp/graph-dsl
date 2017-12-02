@@ -12,128 +12,110 @@ import static org.hamcrest.core.StringStartsWith.startsWith
 class GraphVizSpec extends Specification {
     Graph graph = new Graph()
 
-    def 'dot is for an undirected graph'() {
-        given: 'an undirected graph with the graphviz plugin'
+    def setup() {
         graph.plugin 'graphviz'
+    }
 
-        when: 'the dot dsl is created'
-        String dot = graph.dot()
-
-        then: 'it is an empty strict graph'
+    def 'dot for empty undirected graph is an empty strict graph'() {
+        expect: 'dot is an empty strict graph'
         '''
             strict graph {
             }
-        '''.stripIndent().trim() == dot
+        '''.stripIndent().trim() == graph.dot()
     }
 
     def 'dot renders undirected edges'() {
-        given: 'an undirected graph with the graphviz plugin'
-        graph.plugin 'graphviz'
-
-        and: 'vertices with an edge A, B'
+        given: 'vertices with an edge A, B'
         graph.edge('A', 'B')
 
-        when: 'the dot dsl is created'
-        String dot = graph.dot()
-
-        then: 'it contains a strict graph'
-        dot.startsWith('strict graph {')
-
-        and: 'it contains the edge'
+        expect: 'dot is a strict graph with edge A, B'
         '''
             strict graph {
               A -- B
             }
-        '''.stripIndent().trim() == dot
+        '''.stripIndent().trim() == graph.dot()
     }
 
-    def 'dot is for a directed graph'() {
+    def 'dot for an empty directed graph is an empty strict digraph'() {
         given: 'a directed graph with the graphviz plugin'
         graph.type 'directed-graph'
-        graph.plugin 'graphviz'
 
-        when: 'the dot dsl is created'
-        String dot = graph.dot()
-
-        then: 'it contains an empty strict digraph'
+        expect: 'dot is an empty strict digraph'
         '''
             strict digraph {
             }
-        '''.stripIndent().trim() == dot
+        '''.stripIndent().trim() == graph.dot()
     }
 
     def 'dot renders directed edges'() {
         given: 'a directed graph with the graphviz plugin'
         graph.type 'directed-graph'
-        graph.plugin 'graphviz'
 
         and: 'vertices with an edge A, B'
         graph.edge('A', 'B')
 
-        when: 'the dot dsl is created'
-        String dot = graph.dot()
-
-        then: 'it contains a strict digraph'
-        dot startsWith('strict digraph {')
-
-        and: 'it contains the edge'
+        expect: 'dot is a strict digraph with edge A, B'
         '''
             strict digraph {
               A -> B
             }
-        '''.stripIndent().trim() == dot
+        '''.stripIndent().trim() == graph.dot()
     }
 
-    def 'dot is for weighted graph'() {
+    def 'dot renders weight for weighted graph'() {
         given: 'a weighted graph with the graphviz plugin'
         graph.type 'weighted-graph'
-        graph.plugin 'graphviz'
 
-        when: 'the dot dsl is created'
-        String dot = graph.dot()
-
-        then: 'it contains an empty strict graph'
+        expect: 'it contains an empty strict graph'
         '''
             strict graph {
             }
-        '''.stripIndent().trim() == dot
+        '''.stripIndent().trim() == graph.dot()
     }
 
     def 'dot renders default weighted edges'() {
         given: 'a weighted graph with the graphviz plugin'
         graph.type 'weighted-graph'
-        graph.plugin 'graphviz'
 
         and: 'vertices with an edge A, B'
         graph.edge('A', 'B')
 
-        when: 'the dot dsl is created'
-        String dot = graph.dot()
-
-        then: 'it contains an empty strict graph'
+        expect: 'it contains an empty strict graph'
         '''
             strict graph {
               A -- B
             }
-        '''.stripIndent().trim() == dot
+        '''.stripIndent().trim() == graph.dot()
     }
 
     def 'dot renders weighted edges'() {
         given: 'a weighted graph with the graphviz plugin'
         graph.type 'weighted-graph'
-        graph.plugin 'graphviz'
 
         and: 'vertices with an edge A, B'
         graph.edge('A', 'B', [weight:10])
 
-        when: 'the dot dsl is created'
-        String dot = graph.dot()
-
-        then: 'it contains an empty strict graph'
+        expect: 'it contains an empty strict graph'
         '''
             strict graph {
               A -- B [weight="10"]
             }
-        '''.stripIndent().trim() == dot
+        '''.stripIndent().trim() == graph.dot()
+    }
+
+    def 'dot renders vertex attributes'() {
+        given: 'vertices with an edge A, B'
+        graph.edge 'A', 'B'
+
+        and: 'vertex A has attributes'
+        graph.vertex 'A', [color:'blue']
+
+        expect: 'dot contains vertex A with attributes'
+        '''
+            strict graph {
+              A -- B
+              A [color="blue"]
+            }
+        '''.stripIndent().trim() == graph.dot()
     }
 }

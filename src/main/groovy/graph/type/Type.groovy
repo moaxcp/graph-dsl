@@ -63,6 +63,8 @@ interface Type {
      */
     void convert()
 
+    boolean isMultiGraph()
+
     boolean isDirected()
 
     boolean isWeighted()

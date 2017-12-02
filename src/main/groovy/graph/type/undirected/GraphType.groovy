@@ -66,6 +66,11 @@ class GraphType implements Type {
     }
 
     @Override
+    boolean isMultiGraph() {
+        false
+    }
+
+    @Override
     boolean isDirected() {
         false
     }
