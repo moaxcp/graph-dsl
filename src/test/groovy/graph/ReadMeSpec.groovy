@@ -78,4 +78,30 @@ class ReadMeSpec extends Specification {
         then:
         graph != null
     }
+
+    def 'graphviz readme'() {
+        given:
+        Graph graph = graph {
+            type 'directed-graph'
+            plugin 'graphviz'
+            vertex A {
+                connectsTo B {
+                    connectsTo C, D
+                }
+                connectsTo D {
+                    connectsTo C
+                    connectsTo E {
+                        connectsFrom A
+                    }
+                }
+                connectsFrom D
+            }
+        }
+
+        when:
+        graph.image('images/graphviz.png')
+
+        then:
+        true
+    }
 }
