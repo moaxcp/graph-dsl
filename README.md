@@ -3,12 +3,13 @@
 A groovy dsl for creating and traversing graphs. Graphs can be extended with types which allows developers to create a
 graph with the desired behavior and values for their algorithm.
 
-[![Travis](https://img.shields.io/travis/moaxcp/graph-dsl.svg)]()
+[![GitHub top language](https://img.shields.io/github/languages/top/moaxcp/graph-dsl.svg)]()
+[![GitHub last commit](https://img.shields.io/github/last-commit/moaxcp/graph-dsl.svg)]()
 [![Build Status](https://travis-ci.org/moaxcp/graph-dsl.svg?branch=master)](https://travis-ci.org/moaxcp/graph-dsl)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.moaxcp/graph-dsl.svg)](https://mvnrepository.com/artifact/com.github.moaxcp/graph-dsl)
 [![Javadocs](https://www.javadoc.io/badge/com.github.moaxcp/graph-dsl.svg)](https://www.javadoc.io/doc/com.github.moaxcp/graph-dsl)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.moaxcp/graph-dsl.svg)]()
-[![Libraries.io for GitHub](https://img.shields.io/librariesio/github/moaxcp/graph-dsl.svg)]()
-[![license](https://img.shields.io/github/license/moaxcp/graph-dsl.svg)]()
+[![Libraries.io for GitHub](https://img.shields.io/librariesio/github/moaxcp/graph-dsl.svg)](https://libraries.io/github/moaxcp/graph-dsl)
+[![license](https://img.shields.io/github/license/moaxcp/graph-dsl.svg)](LICENSE)
 
 # Usage
 
