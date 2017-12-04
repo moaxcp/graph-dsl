@@ -3,6 +3,8 @@ package graph
 import graph.type.directed.DirectedGraphType
 import spock.lang.Specification
 import static Graph.graph
+import graph.EdgeClassification.EdgeType
+import static graph.EdgeClassification.EdgeType.*
 
 class ReadMeSpec extends Specification {
 
@@ -90,12 +92,12 @@ class ReadMeSpec extends Specification {
                 }
                 connectsTo D {
                     connectsTo C
-                    connectsTo E {
-                        connectsFrom A
-                    }
+                    connectsTo E
                 }
                 connectsFrom D
             }
+            vertex F, [connectsTo:G]
+            edge G, D
         }
 
         when:

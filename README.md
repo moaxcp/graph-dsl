@@ -3,7 +3,12 @@
 A groovy dsl for creating and traversing graphs. Graphs can be extended with types which allows developers to create a
 graph with the desired behavior and values for their algorithm.
 
+[![Travis](https://img.shields.io/travis/moaxcp/graph-dsl.svg)]()
 [![Build Status](https://travis-ci.org/moaxcp/graph-dsl.svg?branch=master)](https://travis-ci.org/moaxcp/graph-dsl)
+[![Javadocs](https://www.javadoc.io/badge/com.github.moaxcp/graph-dsl.svg)](https://www.javadoc.io/doc/com.github.moaxcp/graph-dsl)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.moaxcp/graph-dsl.svg)]()
+[![Libraries.io for GitHub](https://img.shields.io/librariesio/github/moaxcp/graph-dsl.svg)]()
+[![license](https://img.shields.io/github/license/moaxcp/graph-dsl.svg)]()
 
 # Usage
 
@@ -253,25 +258,26 @@ plugin graph.plugin.GraphViz
 ## Graphviz
 
 Graphviz is a graph visualization toolset. The project provides a dsl called dot for visualizing graphs. The graphviz
-plugin provides methods to create dot strings, BufferedImages and to view the graph.
+plugin provides methods to create dot strings, BufferedImages and to view the graph. Edge and Vertex attributes will be used as dot attributes.
 
 ```groovy
+type 'directed-graph'
+plugin 'graphviz'
 vertex A {
     connectsTo B {
         connectsTo C, D
     }
     connectsTo D {
         connectsTo C
-        connectsTo E {
-            connectsFrom A
-        }
+        connectsTo E
     }
     connectsFrom D
 }
+vertex F, [connectsTo:G]
+edge G, D
+image 'images/graphviz.png
 ```
 ![Image of graph](/images/graphviz.png?raw=true "Grpah")
-
-Edge
 
 # Getting Started With Development/Contributing
 
