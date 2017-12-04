@@ -1,7 +1,8 @@
 # graph-dsl
 
-A groovy dsl for creating and traversing graphs. Graphs can be extended with types which allows developers to create a
-graph with the desired behavior and values for their algorithm.
+A groovy dsl for creating and traversing graphs. Graphs can be extended
+with types and plugins which allows developers to create graphs with
+the desired behavior and values for their algorithm.
 
 [![GitHub top language](https://img.shields.io/github/languages/top/moaxcp/graph-dsl.svg)]()
 [![GitHub last commit](https://img.shields.io/github/last-commit/moaxcp/graph-dsl.svg)]()
@@ -276,7 +277,7 @@ vertex A {
 }
 vertex F, [connectsTo:G]
 edge G, D
-image 'images/graphviz.png
+image 'images/graphviz.png'
 ```
 ![Image of graph](/images/graphviz.png?raw=true "Grpah")
 
