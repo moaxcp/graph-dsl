@@ -1,28 +1,39 @@
 package graph
 
-import graph.internal.PropertyDelegator
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.PackageScope
-import groovy.transform.ToString
 
 /**
  * A vertex in the graph. Every vertex should have a name. All vertices have a delegate which allows methods to be added
  * dynamically.
  */
-@ToString(includeNames=true)
-@EqualsAndHashCode
-class Vertex extends PropertyDelegator {
-    Object key
+class Vertex {
+    @Delegate
+    Map map = [:]
 
-    @PackageScope
-    void setKey(Object name) {
-        this.key = name
+    Object getKey() {
+        get('key')
     }
 
-    Object getAt(String name) {
-        if (name == 'key') {
-            return this.key
+    Object setKey(Object value) {
+        put('key', value)
+    }
+
+    boolean asBoolean() {
+        key
+    }
+
+    boolean equals(Vertex vertex) {
+        key == vertex.key
+    }
+
+    @Override
+    boolean equals(Object o) {
+        if(!(o instanceof Vertex)) {
+            return false
         }
-        delegate[name]
+        if(this.is(o)) {
+            return true
+        }
+        Vertex rhs = (Vertex) o
+        key == rhs.key
     }
 }

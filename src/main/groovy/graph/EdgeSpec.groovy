@@ -7,9 +7,6 @@ abstract class EdgeSpec {
     Graph graph
 
     protected EdgeSpec(Graph graph) {
-        if (this.graph) {
-            throw new IllegalArgumentException('Graph already set.')
-        }
         this.graph = graph
     }
 

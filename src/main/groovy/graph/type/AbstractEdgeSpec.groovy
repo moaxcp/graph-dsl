@@ -7,6 +7,8 @@ import graph.NameSpec
 
 /**
  * Base implementation of an EdgeSpec. Type packages can inherit this class to implement default methods in EdgeSpec.
+ *
+ * Add new dsl properties for the Edge dsl to dslProperties. This will prevent them from being added to the Edge.
  */
 abstract class AbstractEdgeSpec extends EdgeSpec {
     Edge edge
@@ -16,10 +18,16 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     Object two
     Object changeOne
     Object changeTwo
+    List dslProperties
+    Map entries
     Closure runnerCodeClosure
 
     protected AbstractEdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph)
+
+        dslProperties = ['one', 'two', 'changeOne', 'changeTwo']
+
+        entries = map.findAll { !(it.key in dslProperties) }
 
         one = map.one
         two = map.two
@@ -33,7 +41,7 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
         if (edge) {
             throw new IllegalStateException('Edge already created.')
         }
-        Edge created = graph.newEdge(one, two)
+        Edge created = graph.newEdge(one:one, two:two)
         Edge existing = graph.edges.find { it == created }
         edgePresentInGraph = existing != null
 
@@ -62,10 +70,10 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
             throw new IllegalStateException('graph is not set.')
         }
         if (!edge) {
-            throw new IllegalStateException('edge is not set created.')
+            throw new IllegalStateException('edge is not set.')
         }
         if (changeOne || changeTwo) {
-            Edge renamed = graph.newEdge(changeOne ?: one, changeTwo ?: two)
+            Edge renamed = graph.newEdge(one:changeOne ?: one, two:changeTwo ?: two)
             if (graph.edges.find { it == renamed }) {
                 throw new IllegalStateException('renamed edge already exists.')
             }
@@ -96,6 +104,10 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
         }
     }
 
+    protected void initEntries() {
+        edge.putAll(entries)
+    }
+
     protected abstract void applyClosure()
 
     Edge apply() {
@@ -104,6 +116,7 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
         setupGraph()
         initRenameOne()
         initRenameTwo()
+        initEntries()
         addEdge(edge)
         applyClosure()
         edge

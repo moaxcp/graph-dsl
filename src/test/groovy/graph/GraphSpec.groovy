@@ -94,14 +94,6 @@ class GraphSpec extends Specification {
         thrown MissingMethodException
     }
 
-    def 'methodMissing not inherited from type'() {
-        when:
-        new Graph().methodMissing('equals', new Graph())
-
-        then:
-        thrown MissingMethodException
-    }
-
     def 'can delete an unconnected Vertex'() {
         setup:
         Graph graph = new Graph()
@@ -148,7 +140,7 @@ class GraphSpec extends Specification {
 
         when:
         graph.replaceEdges {
-            new DirectedEdge(one:it.one, two:it.two, delegate:it.delegate)
+            new DirectedEdge(it)
         }
 
         then:

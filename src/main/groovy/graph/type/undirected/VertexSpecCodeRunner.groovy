@@ -72,7 +72,7 @@ class VertexSpecCodeRunner {
      */
     void connectsTo(ConfigSpec... specs) {
         specs.each {
-            graph.newVertexSpec(it).apply()
+            graph.newVertexSpec(it.map, it.closure).apply()
         }
         connectsTo(specs*.map.key as Object[])
     }

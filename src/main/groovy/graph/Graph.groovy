@@ -1,5 +1,6 @@
 package graph
 
+import graph.plugin.Plugin
 import graph.type.Type
 
 import graph.type.undirected.EdgeSpecCodeRunner
@@ -25,6 +26,7 @@ class Graph implements GroovyInterceptable {
     private Map<Object, ? extends Vertex> vertices = [:] as LinkedHashMap<Object, ? extends Vertex>
     private Set<? extends Edge> edges = [] as LinkedHashSet<? extends Edge>
     private Type type
+    private Set<? extends Plugin> plugins = [] as LinkedHashSet<? extends Plugin>
 
     Graph() {
         type = new GraphType()
@@ -155,11 +157,11 @@ class Graph implements GroovyInterceptable {
      * definition of an edge, for example to {@link graph.type.directed.DirectedEdge}, this method will still work as
      * expected. It will remove the edge where edge.one == one and edge.two == two. Keep in mind, in the case of the
      * base {@link Edge} object edge.one can also equal two and edge.two can also equal one.
-     * @param one name of first vertex
-     * @param two name of second vertex
+     * @param one key of first vertex
+     * @param two key of second vertex
      */
-    void deleteEdge(String one, String two) {
-        edges.remove(type.newEdge(one, two))
+    void deleteEdge(Object one, Object two) {
+        edges.remove(type.newEdge(one:one, two:two))
     }
 
     void type(Class typeClass) {
@@ -175,6 +177,21 @@ class Graph implements GroovyInterceptable {
         Properties properties = new Properties()
         properties.load(getClass().getResourceAsStream("/META-INF/graph-types/${typeName}.properties"))
         type(this.class.classLoader.loadClass((String) properties.'implementation-class'))
+    }
+
+    void plugin(Class pluginClass) {
+        if (!Plugin.isAssignableFrom(pluginClass)) {
+            throw new IllegalArgumentException("$pluginClass.name does not implement Plugin")
+        }
+        Plugin plugin = (Plugin) pluginClass.newInstance()
+        plugin.graph = this
+        plugins.add plugin
+    }
+
+    void plugin(String pluginName) {
+        Properties properties = new Properties()
+        properties.load(getClass().getResourceAsStream("/META-INF/graph-plugins/${pluginName}.properties"))
+        plugin(this.class.classLoader.loadClass((String) properties.'implementation-class'))
     }
 
     Type getType() {
@@ -420,7 +437,7 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(ConfigSpec spec) {
-        type.newVertexSpec(spec).apply()
+        type.newVertexSpec(spec.map, spec.closure).apply()
     }
 
     /**
@@ -612,7 +629,7 @@ class Graph implements GroovyInterceptable {
      */
     @PackageScope
     Edge configEdge(ConfigSpec spec) {
-        type.newEdgeSpec(spec).apply()
+        type.newEdgeSpec(spec.map, spec.closure).apply()
     }
 
     /**
@@ -669,13 +686,13 @@ class Graph implements GroovyInterceptable {
     }
 
     /**
-     * Finds adjacent edges for vertex with name.
-     * @param name
+     * Finds adjacent edges for vertex with key.
+     * @param key
      * @return set of adjacent edges.
      */
-    Set<? extends Edge> adjacentEdges(String name) {
-        edges.findAll {
-            name == it.one || name == it.two
+    Set<? extends Edge> adjacentEdges(Object key) {
+        edges.findAll { Edge edge ->
+            key == edge.one || key == edge.two
         }
     }
 
@@ -1091,9 +1108,22 @@ class Graph implements GroovyInterceptable {
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
         MetaMethod method = type.metaClass.getMetaMethod(name, args)
-        if (method != null &&
-                (method.declaringClass.theClass == Type || Type.isAssignableFrom(method.declaringClass.theClass))) {
+        if(method != null) {
             return method.invoke(type, args)
+        }
+
+        def list = plugins.collect { plugin ->
+            MetaMethod m = plugin.metaClass.getMetaMethod(name, args)
+            if(m) {
+                return [plugin, m]
+            }
+            null
+        }.find { list ->
+            list
+        }
+
+        if (list != null) {
+            return list[1].invoke(list[0], args)
         }
 
         if (name == 'vertex') {
