@@ -1,6 +1,5 @@
 package graph.type.undirected
 
-import graph.ConfigSpec
 import graph.Edge
 import graph.Graph
 import graph.EdgeSpec
@@ -17,41 +16,23 @@ class GraphType implements Type {
     Graph graph
 
     @Override
-    Edge newEdge(Object one, Object two, Map delegate = null) {
-        if (delegate) {
-            new Edge(one:one, two:two, delegate:delegate)
-        } else {
-            new Edge(one:one, two:two)
-        }
+    Edge newEdge(Map<String, ?> map) {
+        new Edge(map)
     }
 
     @Override
-    Vertex newVertex(Object key, Map delegate = null) {
-        if (delegate) {
-            new Vertex(key:key, delegate:delegate)
-        } else {
-            new Vertex(key:key)
-        }
+    Vertex newVertex(Map<String, ?> map) {
+        new Vertex(map)
     }
 
     @Override
-    EdgeSpec newEdgeSpec(Map<String, ?> map) {
-        new UndirectedEdgeSpec(graph, map)
+    EdgeSpec newEdgeSpec(Map<String, ?> map, Closure closure = null) {
+        new UndirectedEdgeSpec(graph, map, closure)
     }
 
     @Override
-    EdgeSpec newEdgeSpec(ConfigSpec spec) {
-        new UndirectedEdgeSpec(graph, spec.map, spec.closure)
-    }
-
-    @Override
-    VertexSpec newVertexSpec(Map<String, ?> map) {
-        new UndirectedVertexSpec(graph, map)
-    }
-
-    @Override
-    VertexSpec newVertexSpec(ConfigSpec spec) {
-        new UndirectedVertexSpec(graph, spec.map, spec.closure)
+    VertexSpec newVertexSpec(Map<String, ?> map, Closure closure = null) {
+        new UndirectedVertexSpec(graph, map, closure)
     }
 
     @Override
@@ -61,7 +42,7 @@ class GraphType implements Type {
         }
         Set<Edge> edges = [] as Set
         !graph.edges.find { Edge current ->
-            Edge edge = new Edge(one:current.one, two:current.two)
+            Edge edge = new Edge(current)
             !edges.add(edge)
         }
     }
@@ -72,16 +53,31 @@ class GraphType implements Type {
             throw new IllegalArgumentException("Cannot convert to ${getClass().simpleName}")
         }
         graph.replaceEdges { Edge edge ->
-            newEdge(edge.one, edge.two, edge.delegate)
+            newEdge(edge)
         }
 
         graph.replaceEdgesSet(new LinkedHashSet<? extends Edge>())
 
         graph.replaceVertices { String name, Vertex vertex ->
-            [vertex.key, newVertex(vertex.key, vertex.delegate)]
+            [vertex.key, newVertex(vertex)]
         }
 
         graph.replaceVerticesMap([:])
+    }
+
+    @Override
+    boolean isMultiGraph() {
+        false
+    }
+
+    @Override
+    boolean isDirected() {
+        false
+    }
+
+    @Override
+    boolean isWeighted() {
+        false
     }
 
     /**

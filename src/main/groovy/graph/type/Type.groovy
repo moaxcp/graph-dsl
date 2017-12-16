@@ -8,6 +8,8 @@ import graph.Vertex
 
 import graph.VertexSpec
 
+import java.awt.image.BufferedImage
+
 /**
  * Classes implementing this interface are able to change the behavior of a {@link graph.Graph}. A Type can change the
  * base class of all {@link graph.Vertex} and {@link graph.Edge} objects to implement the  behavior needed but a Type
@@ -20,20 +22,20 @@ import graph.VertexSpec
 interface Type {
 
     void setGraph(Graph graph)
+
     /**
      * Creates a new {@link graph.Edge}
-     * @param one  name of {@link graph.Vertex}
-     * @param two  name of {@link graph.Vertex}
      * @return the new {@link graph.Edge}
      */
-    Edge newEdge(Object one, Object two)
+    Edge newEdge(Map<String, ?> map)
 
     /**
      * Creates a new {@link graph.Vertex}
-     * @param name  name of the the {@link Vertex}
      * @return the new {@link Vertex}
      */
-    Vertex newVertex(Object name)
+    Vertex newVertex(Map<String, ?> map)
+
+    EdgeSpec newEdgeSpec(Map<String, ?> map)
 
     /**
      * Creates a new {@link EdgeSpec}
@@ -41,15 +43,7 @@ interface Type {
      * @param map  specification for spec
      * @return the new {@link EdgeSpec}
      */
-    EdgeSpec newEdgeSpec(Map<String, ?> map)
-
-    /**
-     * Creates a new {@link EdgeSpec} from a {@link ConfigSpec}
-     * @param graph  {@link graph.Graph} to create the {@link EdgeSpec} for
-     * @param spec  {@link ConfigSpec} for the new {@link EdgeSpec}
-     * @return the new {@link EdgeSpec}
-     */
-    EdgeSpec newEdgeSpec(ConfigSpec spec)
+    EdgeSpec newEdgeSpec(Map<String, ?> map, Closure closure)
 
     /**
      * Creates a new {@link VertexSpec} from a map.
@@ -59,13 +53,7 @@ interface Type {
      */
     VertexSpec newVertexSpec(Map<String, ?> map)
 
-    /**
-     * Creates a new {@link VertexSpec} from a {@link ConfigSpec}
-     * @param graph  {@link graph.Graph} to create the {@link EdgeSpec} for
-     * @param spec  {@link ConfigSpec} for the new {@link VertexSpec}
-     * @return the new {@link VertexSpec}
-     */
-    VertexSpec newVertexSpec(ConfigSpec spec)
+    VertexSpec newVertexSpec(Map<String, ?> map, Closure closure)
 
     boolean canConvert()
 
@@ -74,4 +62,10 @@ interface Type {
      * @param graph  to convert type
      */
     void convert()
+
+    boolean isMultiGraph()
+
+    boolean isDirected()
+
+    boolean isWeighted()
 }

@@ -1,9 +1,16 @@
 # graph-dsl
 
-A groovy dsl for creating and traversing graphs. Graphs can be extended with types which allows developers to create a
-graph with the desired behavior and values for their algorithm.
+A groovy dsl for creating and traversing graphs. Graphs can be extended
+with types and plugins which allows developers to create graphs with
+the desired behavior and values for their algorithm.
 
+[![GitHub top language](https://img.shields.io/github/languages/top/moaxcp/graph-dsl.svg)]()
+[![GitHub last commit](https://img.shields.io/github/last-commit/moaxcp/graph-dsl.svg)]()
 [![Build Status](https://travis-ci.org/moaxcp/graph-dsl.svg?branch=master)](https://travis-ci.org/moaxcp/graph-dsl)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.moaxcp/graph-dsl.svg)](https://mvnrepository.com/artifact/com.github.moaxcp/graph-dsl)
+[![Javadocs](https://www.javadoc.io/badge/com.github.moaxcp/graph-dsl.svg)](https://www.javadoc.io/doc/com.github.moaxcp/graph-dsl)
+[![Libraries.io for GitHub](https://img.shields.io/librariesio/github/moaxcp/graph-dsl.svg)](https://libraries.io/github/moaxcp/graph-dsl)
+[![license](https://img.shields.io/github/license/moaxcp/graph-dsl.svg)](LICENSE)
 
 # Usage
 
@@ -51,15 +58,6 @@ There are a few rules the dsl follows as it is being processed.
 
 1. All referenced vertices are created if they don't exist.
 2. If an edge or vertex already exists it will be reused by and operation.
-
-Future rules:
-
-These rules will address the api leak with Vertex or Edge. When these objects are returned or in scope some properties
-may be changed which will break the graph. These rules will address those issues.
-
-3. Changing name in Vertex renames the vertex in the graph
-4. Changing one or two in Edge moves the edge to different vertices. The vertices will be created if they do not exist.
-5. delegates in Vertex and Edge are read-only
 
 ## directed graphs
 
@@ -163,9 +161,10 @@ an undirected graph are considered bi-directional in `classifyEdges`.
 
 Vertex keys are used to refer to a Vertex in the dsl. Keys can be any object which implements equals and hashCode.
 
-## Properties
+## Edge and Vertex are Maps
 
-Properties can be added to Edge and Vertex dynamically simply by assigning them.
+Since Edge and Vertex are maps, all of the syntax for maps apply to them. In a dsl closure assignments create
+and entry in the Edge or Vertex.
 
 ```groovy
 edge(A, B) {
@@ -177,7 +176,22 @@ vertex step1, {
 }
 ```
 
+If non dsl entries are used in a dsl method they are added to the object.
+
+```groovy
+edge(A, B, [weight:10]) //weight is a non dsl entry
+
+vertex(step1, [connectsTo:step1, color:'red']) //color is a non dsl entry
+```
+
 # Types
+
+Types can be changed with the type methods.
+
+```groovy
+type 'directed-graph'
+type graph.type.DirectedGraphType
+```
 
 A graph's type determines specific behavior. A type can change a normal graph to an directed-graph. It can add wieght
 to the graph. It can change the graph to a DAG. Developers can make their own type and apply it to a graph. Types can:
@@ -224,15 +238,6 @@ edge A, B, [weight:10]
 edge (A, B) { weight = 10 }
 ```
 
-Weight can be a lazy property by assigning a closure.
-
-```groovy
-type 'weighted-graph'
-
-edge(A, B) {
-    weight = { queue.size() }
-}
-
 ## WeightedDirectedGraphType
 
 ```groovy
@@ -241,6 +246,40 @@ type 'weighted-directed-graph'
 
 WeightedDirectedGraphType is a directed graph where edges can have weight. Traversal methods follow edges with the least
 weight.
+
+
+# Plugins
+
+Plugins may be applied with the plugin methods.
+
+```groovy
+plugin 'graphviz'
+plugin graph.plugin.GraphViz
+```
+
+## Graphviz
+
+Graphviz is a graph visualization toolset. The project provides a dsl called dot for visualizing graphs. The graphviz
+plugin provides methods to create dot strings, BufferedImages and to view the graph. Edge and Vertex attributes will be used as dot attributes.
+
+```groovy
+type 'directed-graph'
+plugin 'graphviz'
+vertex A {
+    connectsTo B {
+        connectsTo C, D
+    }
+    connectsTo D {
+        connectsTo C
+        connectsTo E
+    }
+    connectsFrom D
+}
+vertex F, [connectsTo:G]
+edge G, D
+image 'images/graphviz.png'
+```
+![Image of graph](/images/graphviz.png?raw=true "Grpah")
 
 # Getting Started With Development/Contributing
 
@@ -302,7 +341,22 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
+## 0.23.0
+
+Adding graphviz plugin.
+
+Vertices and edges are now maps. Closures in entries are not resolved as was the case when dynamic properties were set.
+
+Example
+
+```groovy
+edge.weight = { queue.size() }
+assert edge.weight == 10 //in 0.22.0 would call the closure. In this release the closure is returned.
+```
+
 ## 0.22.0
+
+[#102](https://github.com/moaxcp/graph-dsl/issues/102) Switch from name to key
 
 In this release Vertex.name has been repalced with Vertex.key. The key may be any object that implements equals and
 hashCode.

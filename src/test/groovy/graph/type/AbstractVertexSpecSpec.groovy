@@ -7,7 +7,7 @@ import graph.VertexSpec
 import graph.type.undirected.UndirectedVertexSpec
 import spock.lang.Specification
 
-class VertexSpecSpec extends Specification {
+class AbstractVertexSpecSpec extends Specification {
 
     Graph graph = new Graph()
 
