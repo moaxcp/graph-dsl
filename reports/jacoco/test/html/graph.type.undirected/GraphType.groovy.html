@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GraphType.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph.type.undirected</a> &gt; <span class="el_source">GraphType.groovy</span></div><h1>GraphType.groovy</h1><pre class="source lang-java linenums">package graph.type.undirected
 
-import graph.ConfigSpec
 import graph.Edge
 import graph.Graph
 import graph.EdgeSpec
@@ -17,71 +16,68 @@ class GraphType implements Type {
     Graph graph
 
     @Override
-    Edge newEdge(Object one, Object two, Map delegate = null) {
-<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (delegate) {</span>
-<span class="pc" id="L22">            new Edge(one:one, two:two, delegate:delegate)</span>
-        } else {
-<span class="pc" id="L24">            new Edge(one:one, two:two)</span>
-        }
+    Edge newEdge(Map&lt;String, ?&gt; map) {
+<span class="pc" id="L20">        new Edge(map)</span>
     }
 
     @Override
-    Vertex newVertex(Object key, Map delegate = null) {
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (delegate) {</span>
-<span class="nc" id="L31">            new Vertex(key:key, delegate:delegate)</span>
-        } else {
-<span class="pc" id="L33">            new Vertex(key:key)</span>
-        }
+    Vertex newVertex(Map&lt;String, ?&gt; map) {
+<span class="pc" id="L25">        new Vertex(map)</span>
     }
 
     @Override
-    EdgeSpec newEdgeSpec(Map&lt;String, ?&gt; map) {
-<span class="pc" id="L39">        new UndirectedEdgeSpec(graph, map)</span>
+    EdgeSpec newEdgeSpec(Map&lt;String, ?&gt; map, Closure closure = null) {
+<span class="pc" id="L30">        new UndirectedEdgeSpec(graph, map, closure)</span>
     }
 
     @Override
-    EdgeSpec newEdgeSpec(ConfigSpec spec) {
-<span class="pc" id="L44">        new UndirectedEdgeSpec(graph, spec.map, spec.closure)</span>
-    }
-
-    @Override
-    VertexSpec newVertexSpec(Map&lt;String, ?&gt; map) {
-<span class="pc" id="L49">        new UndirectedVertexSpec(graph, map)</span>
-    }
-
-    @Override
-    VertexSpec newVertexSpec(ConfigSpec spec) {
-<span class="pc" id="L54">        new UndirectedVertexSpec(graph, spec.map, spec.closure)</span>
+    VertexSpec newVertexSpec(Map&lt;String, ?&gt; map, Closure closure = null) {
+<span class="pc" id="L35">        new UndirectedVertexSpec(graph, map, closure)</span>
     }
 
     @Override
     boolean canConvert() {
-<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (graph.edges.size() == 0) {</span>
-<span class="fc" id="L60">            return true</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (graph.edges.size() == 0) {</span>
+<span class="fc" id="L41">            return true</span>
         }
-<span class="fc" id="L62">        Set&lt;Edge&gt; edges = [] as Set</span>
-<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        !graph.edges.find { Edge current -&gt;</span>
-<span class="fc" id="L64">            Edge edge = new Edge(one:current.one, two:current.two)</span>
-<span class="pc bpc" id="L65" title="1 of 2 branches missed.">            !edges.add(edge)</span>
+<span class="fc" id="L43">        Set&lt;Edge&gt; edges = [] as Set</span>
+<span class="pc bfc" id="L44" title="All 2 branches covered.">        !graph.edges.find { Edge current -&gt;</span>
+<span class="fc" id="L45">            Edge edge = new Edge(current)</span>
+<span class="pc bfc" id="L46" title="All 2 branches covered.">            !edges.add(edge)</span>
         }
     }
 
     @Override
     void convert() {
-<span class="pc bpc" id="L71" title="2 of 4 branches missed.">        if (!canConvert()) {</span>
-<span class="nc" id="L72">            throw new IllegalArgumentException(&quot;Cannot convert to ${getClass().simpleName}&quot;)</span>
+<span class="fc bfc" id="L52" title="All 4 branches covered.">        if (!canConvert()) {</span>
+<span class="fc" id="L53">            throw new IllegalArgumentException(&quot;Cannot convert to ${getClass().simpleName}&quot;)</span>
         }
-<span class="fc" id="L74">        graph.replaceEdges { Edge edge -&gt;</span>
-<span class="pc" id="L75">            newEdge(edge.one, edge.two, edge.delegate)</span>
-        }
-
-<span class="fc" id="L78">        graph.replaceEdgesSet(new LinkedHashSet&lt;? extends Edge&gt;())</span>
-
-<span class="fc" id="L80">        graph.replaceVertices { String name, Vertex vertex -&gt;</span>
-<span class="pc" id="L81">            [vertex.key, newVertex(vertex.key, vertex.delegate)]</span>
+<span class="fc" id="L55">        graph.replaceEdges { Edge edge -&gt;</span>
+<span class="pc" id="L56">            newEdge(edge)</span>
         }
 
-<span class="fc" id="L84">        graph.replaceVerticesMap([:])</span>
+<span class="fc" id="L59">        graph.replaceEdgesSet(new LinkedHashSet&lt;? extends Edge&gt;())</span>
+
+<span class="fc" id="L61">        graph.replaceVertices { String name, Vertex vertex -&gt;</span>
+<span class="pc" id="L62">            [vertex.key, newVertex(vertex)]</span>
+        }
+
+<span class="fc" id="L65">        graph.replaceVerticesMap([:])</span>
+    }
+
+    @Override
+    boolean isMultiGraph() {
+<span class="pc" id="L70">        false</span>
+    }
+
+    @Override
+    boolean isDirected() {
+<span class="pc" id="L75">        false</span>
+    }
+
+    @Override
+    boolean isWeighted() {
+<span class="pc" id="L80">        false</span>
     }
 
     /**
@@ -90,7 +86,7 @@ class GraphType implements Type {
      * @return
      */
     Set&lt;? extends Edge&gt; traverseEdges(Object key) {
-<span class="pc" id="L93">        graph.adjacentEdges(key)</span>
+<span class="pc" id="L89">        graph.adjacentEdges(key)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

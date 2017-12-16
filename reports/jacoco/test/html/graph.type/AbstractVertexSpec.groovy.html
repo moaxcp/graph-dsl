@@ -8,76 +8,90 @@ import graph.VertexSpec
 /**
  * Base implementation of a VertexSpec. Type packages can inherit this class to implement default methods in
  * VertexSpec.
+ *
+ * Add new dsl properties for Vertex dsl to dslProperties. This will prevent them from being added as entries to the
+ * Vertex.
  */
 abstract class AbstractVertexSpec extends VertexSpec {
     Vertex vertex
     Object key
     Object changeKey
-<span class="fc" id="L16">    final Set&lt;Object&gt; connectsToSet = [] as Set&lt;Object&gt;</span>
+<span class="fc" id="L19">    final Set&lt;Object&gt; connectsToSet = [] as Set&lt;Object&gt;</span>
+    List dslProperties
+    Map entries
     Closure runnerCodeClosure
 
     protected AbstractVertexSpec(Graph graph, Map&lt;String, ?&gt; map, Closure closure = null) {
-<span class="fc" id="L20">        super(graph)</span>
+<span class="fc" id="L25">        super(graph)</span>
 
-<span class="fc" id="L22">        key = map.key</span>
-<span class="fc bfc" id="L23" title="All 2 branches covered.">        changeKey = map.changeKey instanceof NameSpec ? map.changeKey.name : map.changeKey</span>
+<span class="fc" id="L27">        dslProperties = ['key', 'changeKey', 'connectsTo']</span>
 
-<span class="fc" id="L25">        map.connectsTo?.each {</span>
-<span class="pc bfc" id="L26" title="All 2 branches covered.">            connectsToSet.add(it instanceof NameSpec ? it.name : it)</span>
+<span class="pc bfc" id="L29" title="All 2 branches covered.">        entries = map.findAll { !(it.key in dslProperties)}</span>
+
+<span class="fc" id="L31">        key = map.key</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        changeKey = map.changeKey instanceof NameSpec ? map.changeKey.name : map.changeKey</span>
+
+<span class="fc" id="L34">        map.connectsTo?.each {</span>
+<span class="pc bfc" id="L35" title="All 2 branches covered.">            connectsToSet.add(it instanceof NameSpec ? it.name : it)</span>
         }
-<span class="fc" id="L28">        runnerCodeClosure = closure</span>
+<span class="fc" id="L37">        runnerCodeClosure = closure</span>
     }
 
     protected void init() {
-<span class="fc bfc" id="L32" title="All 2 branches covered.">        if (vertex) {</span>
-<span class="fc" id="L33">            throw new IllegalStateException('vertex already created.')</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (vertex) {</span>
+<span class="fc" id="L42">            throw new IllegalStateException('vertex already created.')</span>
         }
-<span class="fc bfc" id="L35" title="All 4 branches covered.">        if (!graph.vertices[key]) {</span>
-<span class="fc bfc" id="L36" title="All 2 branches covered.">            key = changeKey ?: key</span>
-<span class="fc" id="L37">            changeKey = null</span>
+<span class="fc bfc" id="L44" title="All 4 branches covered.">        if (!graph.vertices[key]) {</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            key = changeKey ?: key</span>
+<span class="fc" id="L46">            changeKey = null</span>
         }
-<span class="fc bfc" id="L39" title="All 2 branches covered.">        vertex = graph.vertices[key] ?: graph.newVertex(key)</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        vertex = graph.vertices[key] ?: graph.newVertex(key:key)</span>
+    }
+
+    protected void initEntries() {
+<span class="fc" id="L52">        vertex.putAll(entries)</span>
     }
 
     protected void checkConditions() {
-<span class="fc bfc" id="L43" title="All 4 branches covered.">        if (!key) {</span>
-<span class="fc" id="L44">            throw new IllegalStateException('!key failed. Name must be groovy truth.')</span>
+<span class="fc bfc" id="L56" title="All 4 branches covered.">        if (!key) {</span>
+<span class="fc" id="L57">            throw new IllegalStateException('!key failed. Name must be groovy truth.')</span>
         }
-<span class="pc bpc" id="L46" title="2 of 4 branches missed.">        if (!graph) {</span>
-<span class="nc" id="L47">            throw new IllegalStateException('graph is not set.')</span>
+<span class="pc bpc" id="L59" title="2 of 4 branches missed.">        if (!graph) {</span>
+<span class="nc" id="L60">            throw new IllegalStateException('graph is not set.')</span>
         }
-<span class="pc bpc" id="L49" title="2 of 4 branches missed.">        if (!vertex) {</span>
-<span class="nc" id="L50">            throw new IllegalStateException('already ran spec')</span>
+<span class="pc bpc" id="L62" title="2 of 4 branches missed.">        if (!vertex) {</span>
+<span class="nc" id="L63">            throw new IllegalStateException('already ran spec')</span>
         }
-<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (changeKey) {</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">            if (graph.vertices[changeKey]) {</span>
-<span class="fc" id="L54">                throw new IllegalStateException('renamed vertex already exists')</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (changeKey) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            if (graph.vertices[changeKey]) {</span>
+<span class="fc" id="L67">                throw new IllegalStateException('renamed vertex already exists')</span>
             }
         }
     }
 
     protected void applyRename() {
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (changeKey) {</span>
-<span class="fc" id="L61">            graph.changeKey(key, changeKey)</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (changeKey) {</span>
+<span class="fc" id="L74">            graph.changeKey(key, changeKey)</span>
         }
     }
 
     protected void applyConnectsTo() {
-<span class="fc" id="L66">        connectsToSet.each {</span>
-<span class="pc" id="L67">            graph.edge vertex.key, it</span>
+<span class="fc" id="L79">        connectsToSet.each {</span>
+<span class="pc" id="L80">            graph.edge vertex.key, it</span>
         }
     }
 
     protected abstract void applyClosure()
 
     Vertex apply() {
-<span class="fc" id="L74">        init()</span>
-<span class="fc" id="L75">        checkConditions()</span>
-<span class="fc" id="L76">        applyRename()</span>
-<span class="fc" id="L77">        applyConnectsTo()</span>
-<span class="fc" id="L78">        addVertex(vertex)</span>
-<span class="fc" id="L79">        applyClosure()</span>
-<span class="pc" id="L80">        vertex</span>
+<span class="fc" id="L87">        init()</span>
+<span class="fc" id="L88">        checkConditions()</span>
+<span class="fc" id="L89">        applyRename()</span>
+<span class="fc" id="L90">        applyConnectsTo()</span>
+<span class="fc" id="L91">        initEntries()</span>
+<span class="fc" id="L92">        addVertex(vertex)</span>
+<span class="fc" id="L93">        applyClosure()</span>
+<span class="pc" id="L94">        vertex</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

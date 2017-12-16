@@ -8,14 +8,11 @@ abstract class VertexSpec {
     Graph graph
 
     protected VertexSpec(Graph graph) {
-<span class="pc bpc" id="L11" title="1 of 2 branches missed.">        if (this.graph) {</span>
-<span class="nc" id="L12">            throw new IllegalArgumentException('Graph already set.')</span>
-        }
-<span class="fc" id="L14">        this.graph = graph</span>
+<span class="fc" id="L11">        this.graph = graph</span>
     }
 
     protected void addVertex(Vertex vertex) {
-<span class="fc" id="L18">        graph.addVertex(vertex)</span>
+<span class="fc" id="L15">        graph.addVertex(vertex)</span>
     }
 
     abstract Vertex apply()

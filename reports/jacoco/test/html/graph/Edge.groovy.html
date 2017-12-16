@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Edge.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">Edge.groovy</span></div><h1>Edge.groovy</h1><pre class="source lang-java linenums">package graph
 
-import graph.internal.PropertyDelegator
-import groovy.transform.PackageScope
-import groovy.transform.ToString
 
 /**
  * An edge between two vertices. Properties may be added to Edge by setting values. Assigning a property to a
@@ -10,34 +7,32 @@ import groovy.transform.ToString
  * If a missing method is called on Edge and a property is set with a closure the closure will be called and the
  * resulting value returned.
  */
-@ToString(includeNames=true)
-class Edge extends PropertyDelegator {
-    Object one
-    Object two
+class Edge {
+<span class="pc" id="L11">    @Delegate</span>
+    Map map = [:]
 
-    @PackageScope
-    void setOne(Object one) {
-<span class="fc" id="L20">        this.one = one</span>
+    Object getOne() {
+<span class="nc" id="L15">        get('one')</span>
     }
 
-    @PackageScope
-    void setTwo(Object two) {
-<span class="fc" id="L25">        this.two = two</span>
+    Object setOne(Object value) {
+<span class="pc" id="L19">        put('one', value)</span>
     }
 
-    /**
-     * Returns the property with the given name.
-     * @param name
-     * @return
-     */
-    Object getAt(String name) {
-<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (name == 'one') {</span>
-<span class="fc" id="L35">            return one</span>
-        }
-<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (name == 'two') {</span>
-<span class="fc" id="L38">            return two</span>
-        }
-<span class="pc" id="L40">        delegate[name]</span>
+    Object getTwo() {
+<span class="nc" id="L23">        get('two')</span>
+    }
+
+    Object setTwo(Object value) {
+<span class="pc" id="L27">        put('two', value)</span>
+    }
+
+    boolean asBoolean() {
+<span class="pc bfc" id="L31" title="All 4 branches covered.">        one &amp;&amp; two</span>
+    }
+
+    boolean equals(Edge edge) {
+<span class="pc bfc" id="L35" title="All 12 branches covered.">        (one == edge.one || one == edge.two) &amp;&amp; (two == edge.two || two == edge.one)</span>
     }
 
     /**
@@ -49,14 +44,14 @@ class Edge extends PropertyDelegator {
     @Override
     @SuppressWarnings('Instanceof')
     boolean equals(Object o) {
-<span class="fc bfc" id="L52" title="All 4 branches covered.">        if (!(o instanceof Edge)) {</span>
-<span class="fc" id="L53">            return false</span>
+<span class="fc bfc" id="L47" title="All 4 branches covered.">        if (!(o instanceof Edge)) {</span>
+<span class="fc" id="L48">            return false</span>
         }
-<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (this.is(o)) {</span>
-<span class="fc" id="L56">            return true</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (this.is(o)) {</span>
+<span class="fc" id="L51">            return true</span>
         }
-<span class="fc" id="L58">        Edge rhs = (Edge) o</span>
-<span class="pc bfc" id="L59" title="All 12 branches covered.">        (one == rhs.one || one == rhs.two) &amp;&amp; (two == rhs.two || two == rhs.one)</span>
+<span class="fc" id="L53">        Edge rhs = (Edge) o</span>
+<span class="pc" id="L54">        equals(rhs)</span>
     }
 
     /**
@@ -65,7 +60,7 @@ class Edge extends PropertyDelegator {
      */
     @Override
     int hashCode() {
-<span class="pc" id="L68">        one.hashCode() + two.hashCode()</span>
+<span class="pc" id="L63">        one.hashCode() + two.hashCode()</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

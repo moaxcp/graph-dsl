@@ -11,32 +11,22 @@ class WeightedEdgeComparator implements Comparator&lt;Edge&gt; {
 <span class="fc bfc" id="L11" title="All 2 branches covered.">        if (a == b) {</span>
 <span class="fc" id="L12">            return 0</span>
         }
-<span class="fc" id="L14">        def weightA = 0</span>
-        try {
-<span class="pc bfc" id="L16" title="All 2 branches covered.">            weightA = a.weight ?: 0</span>
-        } catch (MissingPropertyException e) {
-            //defaults to 0
-        }
-<span class="fc" id="L20">        def weightB = 0</span>
-        try {
-<span class="pc bfc" id="L22" title="All 2 branches covered.">            weightB = b.weight ?: 0</span>
-        } catch (MissingPropertyException e) {
-            //defaults to 0
-        }
+<span class="fc bfc" id="L14" title="All 2 branches covered.">        def weightA = a.weight ?: 0</span>
+<span class="fc bfc" id="L15" title="All 2 branches covered.">        def weightB = b.weight ?: 0</span>
 
-<span class="fc bfc" id="L27" title="All 2 branches covered.">        if (weightA &lt; weightB) {</span>
-<span class="pc" id="L28">            return -1</span>
-<span class="fc bfc" id="L29" title="All 2 branches covered.">        } else if (weightA &gt; weightB) {</span>
-<span class="fc" id="L30">            return 1</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        if (weightA &lt; weightB) {</span>
+<span class="pc" id="L18">            return -1</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        } else if (weightA &gt; weightB) {</span>
+<span class="fc" id="L20">            return 1</span>
         }
-<span class="fc" id="L32">        int compareOne = a.one &lt;=&gt; b.one</span>
-<span class="fc" id="L33">        int compareTwo = a.two &lt;=&gt; b.two</span>
-<span class="fc bfc" id="L34" title="All 4 branches covered.">        if (compareOne != 0) {</span>
-<span class="pc" id="L35">            return compareOne</span>
-<span class="pc bpc" id="L36" title="2 of 4 branches missed.">        } else if (compareTwo != 0) {</span>
-<span class="fc" id="L37">            return compareTwo</span>
+<span class="fc" id="L22">        int compareOne = a.one &lt;=&gt; b.one</span>
+<span class="fc" id="L23">        int compareTwo = a.two &lt;=&gt; b.two</span>
+<span class="fc bfc" id="L24" title="All 4 branches covered.">        if (compareOne != 0) {</span>
+<span class="pc" id="L25">            return compareOne</span>
+<span class="pc bpc" id="L26" title="2 of 4 branches missed.">        } else if (compareTwo != 0) {</span>
+<span class="fc" id="L27">            return compareTwo</span>
         }
-<span class="nc" id="L39">        throw new IllegalStateException('a and be are not equals but one and two are not comparable')</span>
+<span class="nc" id="L29">        throw new IllegalStateException('a and be are not equals but one and two are not comparable')</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

@@ -5,9 +5,14 @@ import graph.type.directed.DirectedGraphType
 class WeightedDirectedGraphType extends DirectedGraphType {
     @Override
     void convert() {
-<span class="nc" id="L8">        super.convert()</span>
+<span class="fc" id="L8">        super.convert()</span>
 
-<span class="nc" id="L10">        graph.replaceEdgesSet(new TreeSet&lt;&gt;(new WeightedEdgeComparator()))</span>
+<span class="fc" id="L10">        graph.replaceEdgesSet(new TreeSet&lt;&gt;(new WeightedEdgeComparator()))</span>
+    }
+
+    @Override
+    boolean isWeighted() {
+<span class="pc" id="L15">        true</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

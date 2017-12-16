@@ -30,12 +30,8 @@ class DirectedGraphType extends GraphType {
      * @return a new DirectedEdge
      */
     @Override
-    Edge newEdge(Object one, Object two, Map delegate = null) {
-<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if (delegate) {</span>
-<span class="nc" id="L35">            new DirectedEdge(one:one, two:two, delegate:delegate)</span>
-        } else {
-<span class="pc" id="L37">            new DirectedEdge(one:one, two:two)</span>
-        }
+    Edge newEdge(Map&lt;String, ?&gt; map) {
+<span class="pc" id="L34">        new DirectedEdge(map)</span>
     }
 
     /**
@@ -44,30 +40,25 @@ class DirectedGraphType extends GraphType {
      * @return
      */
     @Override
-    DirectedVertexSpec newVertexSpec(Map&lt;String, ?&gt; map) {
-<span class="pc" id="L48">        new DirectedVertexSpec(graph, map)</span>
-    }
-
-    /**
-     * Creates a new {@link graph.type.directed.DirectedVertexSpec} from spec.
-     * @param spec
-     * @return
-     */
-    @Override
-    DirectedVertexSpec newVertexSpec(ConfigSpec spec) {
-<span class="pc" id="L58">        new DirectedVertexSpec(graph, spec.map, spec.closure)</span>
+    DirectedVertexSpec newVertexSpec(Map&lt;String, ?&gt; map, Closure closure = null) {
+<span class="pc" id="L44">        new DirectedVertexSpec(graph, map, closure)</span>
     }
 
     @Override
     boolean canConvert() {
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (graph.edges.size() == 0) {</span>
-<span class="fc" id="L64">            return true</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (graph.edges.size() == 0) {</span>
+<span class="fc" id="L50">            return true</span>
         }
-<span class="fc" id="L66">        Set edges = [] as Set</span>
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        !graph.edges.find { Edge current -&gt;</span>
-<span class="fc" id="L68">            Edge edge = new DirectedEdge(one:current.one, two:current.two)</span>
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">            !edges.add(edge)</span>
+<span class="fc" id="L52">        Set edges = [] as Set</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        !graph.edges.find { Edge current -&gt;</span>
+<span class="fc" id="L54">            Edge edge = new DirectedEdge(current)</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">            !edges.add(edge)</span>
         }
+    }
+
+    @Override
+    boolean isDirected() {
+<span class="pc" id="L61">        true</span>
     }
 
     /**
@@ -77,8 +68,8 @@ class DirectedGraphType extends GraphType {
      * @return
      */
     Set&lt;? extends Edge&gt; inEdges(Object key) {
-<span class="pc" id="L80">        graph.edges.findAll {</span>
-<span class="pc" id="L81">            key == it.two</span>
+<span class="pc" id="L71">        graph.edges.findAll {</span>
+<span class="pc" id="L72">            key == it.two</span>
         }
     }
 
@@ -89,7 +80,7 @@ class DirectedGraphType extends GraphType {
      * @return
      */
     int inDegree(Object key) {
-<span class="pc" id="L92">        graph.inEdges(key).size()</span>
+<span class="pc" id="L83">        graph.inEdges(key).size()</span>
     }
 
     /**
@@ -99,8 +90,8 @@ class DirectedGraphType extends GraphType {
      * @return
      */
     Set&lt;? extends Edge&gt; outEdges(Object key) {
-<span class="pc" id="L102">        graph.edges.findAll {</span>
-<span class="pc" id="L103">            key == it.one</span>
+<span class="pc" id="L93">        graph.edges.findAll {</span>
+<span class="pc" id="L94">            key == it.one</span>
         }
     }
 
@@ -111,7 +102,7 @@ class DirectedGraphType extends GraphType {
      * @return
      */
     int outDegree(Object key) {
-<span class="pc" id="L114">        graph.outEdges(key).size()</span>
+<span class="pc" id="L105">        graph.outEdges(key).size()</span>
     }
 
     /**
@@ -121,7 +112,7 @@ class DirectedGraphType extends GraphType {
      * @return
      */
     Set&lt;? extends Edge&gt; traverseEdges(Object key) {
-<span class="pc" id="L124">        graph.outEdges(key)</span>
+<span class="pc" id="L115">        graph.outEdges(key)</span>
     }
 
     /**
@@ -129,13 +120,13 @@ class DirectedGraphType extends GraphType {
      * @return
      */
     Deque&lt;String&gt; reversePostOrderSort() {
-<span class="fc" id="L132">        Deque&lt;String&gt; deque = [] as LinkedList&lt;String&gt;</span>
-<span class="fc" id="L133">        graph.depthFirstTraversal {</span>
-<span class="pc" id="L134">            postorder { vertex -&gt;</span>
-<span class="pc" id="L135">                deque.addFirst(vertex.key)</span>
+<span class="fc" id="L123">        Deque&lt;String&gt; deque = [] as LinkedList&lt;String&gt;</span>
+<span class="fc" id="L124">        graph.depthFirstTraversal {</span>
+<span class="pc" id="L125">            postorder { vertex -&gt;</span>
+<span class="pc" id="L126">                deque.addFirst(vertex.key)</span>
             }
         }
-<span class="pc" id="L138">        deque</span>
+<span class="pc" id="L129">        deque</span>
     }
 
     /**
@@ -143,9 +134,9 @@ class DirectedGraphType extends GraphType {
      * @param closure
      */
     void reversePostOrder(Closure closure) {
-<span class="fc" id="L146">        Deque&lt;String&gt; deque = graph.reversePostOrderSort()</span>
-<span class="fc" id="L147">        deque.each {</span>
-<span class="pc" id="L148">            closure(graph.vertices[it])</span>
+<span class="fc" id="L137">        Deque&lt;String&gt; deque = graph.reversePostOrderSort()</span>
+<span class="fc" id="L138">        deque.each {</span>
+<span class="pc" id="L139">            closure(graph.vertices[it])</span>
         }
     }
 }

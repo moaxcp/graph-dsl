@@ -1,29 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Vertex.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">Vertex.groovy</span></div><h1>Vertex.groovy</h1><pre class="source lang-java linenums">package graph
 
-import graph.internal.PropertyDelegator
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.PackageScope
-import groovy.transform.ToString
 
 /**
  * A vertex in the graph. Every vertex should have a name. All vertices have a delegate which allows methods to be added
  * dynamically.
  */
-@ToString(includeNames=true)
-@EqualsAndHashCode
-class Vertex extends PropertyDelegator {
-    Object key
+class Vertex {
+<span class="pc" id="L9">    @Delegate</span>
+    Map map = [:]
 
-    @PackageScope
-    void setKey(Object name) {
-<span class="fc" id="L19">        this.key = name</span>
+    Object getKey() {
+<span class="nc" id="L13">        get('key')</span>
     }
 
-    Object getAt(String name) {
-<span class="fc bfc" id="L23" title="All 2 branches covered.">        if (name == 'key') {</span>
-<span class="fc" id="L24">            return this.key</span>
+    Object setKey(Object value) {
+<span class="pc" id="L17">        put('key', value)</span>
+    }
+
+    boolean asBoolean() {
+<span class="pc" id="L21">        key</span>
+    }
+
+    boolean equals(Vertex vertex) {
+<span class="pc" id="L25">        key == vertex.key</span>
+    }
+
+    @Override
+    boolean equals(Object o) {
+<span class="pc bpc" id="L30" title="2 of 4 branches missed.">        if(!(o instanceof Vertex)) {</span>
+<span class="fc" id="L31">            return false</span>
         }
-<span class="pc" id="L26">        delegate[name]</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        if(this.is(o)) {</span>
+<span class="nc" id="L34">            return true</span>
+        }
+<span class="nc" id="L36">        Vertex rhs = (Vertex) o</span>
+<span class="nc" id="L37">        key == rhs.key</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

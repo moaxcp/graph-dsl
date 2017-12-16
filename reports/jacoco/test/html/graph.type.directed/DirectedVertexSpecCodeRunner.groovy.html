@@ -37,7 +37,7 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
      */
     void connectsFrom(ConfigSpec... specs) {
 <span class="fc" id="L39">        specs.each {</span>
-<span class="pc" id="L40">            graph.newVertexSpec(it).apply()</span>
+<span class="pc" id="L40">            graph.newVertexSpec(it.map, it.closure).apply()</span>
         }
 <span class="fc" id="L42">        connectsFrom(specs*.map.key as Object[])</span>
     }

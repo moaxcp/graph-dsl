@@ -72,7 +72,7 @@ class VertexSpecCodeRunner {
      */
     void connectsTo(ConfigSpec... specs) {
 <span class="fc" id="L74">        specs.each {</span>
-<span class="pc" id="L75">            graph.newVertexSpec(it).apply()</span>
+<span class="pc" id="L75">            graph.newVertexSpec(it.map, it.closure).apply()</span>
         }
 <span class="fc" id="L77">        connectsTo(specs*.map.key as Object[])</span>
     }

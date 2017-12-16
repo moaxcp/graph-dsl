@@ -7,14 +7,11 @@ abstract class EdgeSpec {
     Graph graph
 
     protected EdgeSpec(Graph graph) {
-<span class="pc bpc" id="L10" title="1 of 2 branches missed.">        if (this.graph) {</span>
-<span class="nc" id="L11">            throw new IllegalArgumentException('Graph already set.')</span>
-        }
-<span class="fc" id="L13">        this.graph = graph</span>
+<span class="fc" id="L10">        this.graph = graph</span>
     }
 
     protected void addEdge(Edge edge) {
-<span class="fc" id="L17">        graph.addEdge(edge)</span>
+<span class="fc" id="L14">        graph.addEdge(edge)</span>
     }
 
     abstract Edge apply()

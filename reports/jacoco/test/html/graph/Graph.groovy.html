@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Graph.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">Graph.groovy</span></div><h1>Graph.groovy</h1><pre class="source lang-java linenums">package graph
 
+import graph.plugin.Plugin
 import graph.type.Type
 
 import graph.type.undirected.EdgeSpecCodeRunner
@@ -23,12 +24,13 @@ import groovy.transform.PackageScope
  */
 class Graph implements GroovyInterceptable {
     private Map&lt;Object, ? extends Vertex&gt; vertices = [:] as LinkedHashMap&lt;Object, ? extends Vertex&gt;
-<span class="fc" id="L26">    private Set&lt;? extends Edge&gt; edges = [] as LinkedHashSet&lt;? extends Edge&gt;</span>
+<span class="fc" id="L27">    private Set&lt;? extends Edge&gt; edges = [] as LinkedHashSet&lt;? extends Edge&gt;</span>
     private Type type
+<span class="fc" id="L29">    private Set&lt;? extends Plugin&gt; plugins = [] as LinkedHashSet&lt;? extends Plugin&gt;</span>
 
     Graph() {
-<span class="fc" id="L30">        type = new GraphType()</span>
-<span class="fc" id="L31">        type.graph = this</span>
+<span class="fc" id="L32">        type = new GraphType()</span>
+<span class="fc" id="L33">        type.graph = this</span>
     }
 
     /**
@@ -66,9 +68,9 @@ class Graph implements GroovyInterceptable {
      * @return the resulting graph
      */
     static Graph graph(@DelegatesTo(Graph) Closure c) {
-<span class="fc" id="L69">        Graph graph = new Graph()</span>
-<span class="fc" id="L70">        graph.with(c)</span>
-<span class="pc" id="L71">        graph</span>
+<span class="fc" id="L71">        Graph graph = new Graph()</span>
+<span class="fc" id="L72">        graph.with(c)</span>
+<span class="pc" id="L73">        graph</span>
     }
 
     /**
@@ -76,7 +78,7 @@ class Graph implements GroovyInterceptable {
      * @return vertices as an unmodifiableMap
      */
     Map&lt;Object, ? extends Vertex&gt; getVertices() {
-<span class="pc" id="L79">        Collections.unmodifiableMap(vertices)</span>
+<span class="pc" id="L81">        Collections.unmodifiableMap(vertices)</span>
     }
 
     /**
@@ -87,12 +89,12 @@ class Graph implements GroovyInterceptable {
      * @see {@link #adjacentEdges}
      */
     void delete(Object key) {
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (adjacentEdges(key)) {</span>
-<span class="fc" id="L91">            throw new IllegalStateException(</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (adjacentEdges(key)) {</span>
+<span class="fc" id="L93">            throw new IllegalStateException(</span>
                     &quot;Cannot delete $key. There are edges that connect to it. Try deleting those first.&quot;
             )
         }
-<span class="fc" id="L95">        vertices.remove(key)</span>
+<span class="fc" id="L97">        vertices.remove(key)</span>
     }
 
     /**
@@ -100,7 +102,7 @@ class Graph implements GroovyInterceptable {
      * @return edges as an unmodifiable set
      */
     Set&lt;? extends Edge&gt; getEdges() {
-<span class="pc" id="L103">        Collections.unmodifiableSet(edges)</span>
+<span class="pc" id="L105">        Collections.unmodifiableSet(edges)</span>
     }
 
     /**
@@ -110,7 +112,7 @@ class Graph implements GroovyInterceptable {
      */
     @PackageScope
     boolean addEdge(Edge edge) {
-<span class="pc" id="L113">        edges.add(edge)</span>
+<span class="pc" id="L115">        edges.add(edge)</span>
     }
 
     /**
@@ -118,9 +120,9 @@ class Graph implements GroovyInterceptable {
      * @param closure to run on each edge
      */
     void replaceEdges(Closure closure) {
-<span class="fc" id="L121">        List replace = edges.collect(closure)</span>
-<span class="fc" id="L122">        edges.clear()</span>
-<span class="fc" id="L123">        edges.addAll(replace)</span>
+<span class="fc" id="L123">        List replace = edges.collect(closure)</span>
+<span class="fc" id="L124">        edges.clear()</span>
+<span class="fc" id="L125">        edges.addAll(replace)</span>
     }
 
     /**
@@ -128,25 +130,25 @@ class Graph implements GroovyInterceptable {
      * @param set to replace set of edges
      */
     void replaceEdgesSet(Set&lt;? extends Edge&gt; set) {
-<span class="fc bfc" id="L131" title="All 4 branches covered.">        if (!set.empty) {</span>
-<span class="fc" id="L132">            throw new IllegalArgumentException('set must be empty.')</span>
+<span class="fc bfc" id="L133" title="All 4 branches covered.">        if (!set.empty) {</span>
+<span class="fc" id="L134">            throw new IllegalArgumentException('set must be empty.')</span>
         }
-<span class="fc" id="L134">        set.addAll(edges)</span>
-<span class="fc" id="L135">        edges = set</span>
+<span class="fc" id="L136">        set.addAll(edges)</span>
+<span class="fc" id="L137">        edges = set</span>
     }
 
     void replaceVertices(Closure closure) {
-<span class="fc" id="L139">        Map&lt;String, ? extends Vertex&gt; replace = vertices.collectEntries(closure) as Map&lt;String, Vertex&gt;</span>
-<span class="fc" id="L140">        vertices.clear()</span>
-<span class="fc" id="L141">        vertices.putAll(replace)</span>
+<span class="fc" id="L141">        Map&lt;String, ? extends Vertex&gt; replace = vertices.collectEntries(closure) as Map&lt;String, Vertex&gt;</span>
+<span class="fc" id="L142">        vertices.clear()</span>
+<span class="fc" id="L143">        vertices.putAll(replace)</span>
     }
 
     void replaceVerticesMap(Map&lt;String, ? extends Vertex&gt; map) {
-<span class="fc bfc" id="L145" title="All 4 branches covered.">        if (!map.isEmpty()) {</span>
-<span class="fc" id="L146">            throw new IllegalArgumentException('map must be empty.')</span>
+<span class="fc bfc" id="L147" title="All 4 branches covered.">        if (!map.isEmpty()) {</span>
+<span class="fc" id="L148">            throw new IllegalArgumentException('map must be empty.')</span>
         }
-<span class="fc" id="L148">        map.putAll(vertices)</span>
-<span class="fc" id="L149">        vertices = map</span>
+<span class="fc" id="L150">        map.putAll(vertices)</span>
+<span class="fc" id="L151">        vertices = map</span>
     }
 
     /**
@@ -155,30 +157,45 @@ class Graph implements GroovyInterceptable {
      * definition of an edge, for example to {@link graph.type.directed.DirectedEdge}, this method will still work as
      * expected. It will remove the edge where edge.one == one and edge.two == two. Keep in mind, in the case of the
      * base {@link Edge} object edge.one can also equal two and edge.two can also equal one.
-     * @param one name of first vertex
-     * @param two name of second vertex
+     * @param one key of first vertex
+     * @param two key of second vertex
      */
-    void deleteEdge(String one, String two) {
-<span class="fc" id="L162">        edges.remove(type.newEdge(one, two))</span>
+    void deleteEdge(Object one, Object two) {
+<span class="fc" id="L164">        edges.remove(type.newEdge(one:one, two:two))</span>
     }
 
     void type(Class typeClass) {
-<span class="fc bfc" id="L166" title="All 4 branches covered.">        if (!Type.isAssignableFrom(typeClass)) {</span>
-<span class="fc" id="L167">            throw new IllegalArgumentException(&quot;$typeClass.name does not implement Type&quot;)</span>
+<span class="fc bfc" id="L168" title="All 4 branches covered.">        if (!Type.isAssignableFrom(typeClass)) {</span>
+<span class="fc" id="L169">            throw new IllegalArgumentException(&quot;$typeClass.name does not implement Type&quot;)</span>
         }
-<span class="fc" id="L169">        type = (Type) typeClass.newInstance()</span>
-<span class="fc" id="L170">        type.graph = this</span>
-<span class="fc" id="L171">        type.convert()</span>
+<span class="fc" id="L171">        type = (Type) typeClass.newInstance()</span>
+<span class="fc" id="L172">        type.graph = this</span>
+<span class="fc" id="L173">        type.convert()</span>
     }
 
     void type(String typeName) {
-<span class="fc" id="L175">        Properties properties = new Properties()</span>
-<span class="fc" id="L176">        properties.load(getClass().getResourceAsStream(&quot;/META-INF/graph-types/${typeName}.properties&quot;))</span>
-<span class="fc" id="L177">        type(this.class.classLoader.loadClass((String) properties.'implementation-class'))</span>
+<span class="fc" id="L177">        Properties properties = new Properties()</span>
+<span class="fc" id="L178">        properties.load(getClass().getResourceAsStream(&quot;/META-INF/graph-types/${typeName}.properties&quot;))</span>
+<span class="fc" id="L179">        type(this.class.classLoader.loadClass((String) properties.'implementation-class'))</span>
+    }
+
+    void plugin(Class pluginClass) {
+<span class="fc bfc" id="L183" title="All 4 branches covered.">        if (!Plugin.isAssignableFrom(pluginClass)) {</span>
+<span class="fc" id="L184">            throw new IllegalArgumentException(&quot;$pluginClass.name does not implement Plugin&quot;)</span>
+        }
+<span class="fc" id="L186">        Plugin plugin = (Plugin) pluginClass.newInstance()</span>
+<span class="fc" id="L187">        plugin.graph = this</span>
+<span class="fc" id="L188">        plugins.add plugin</span>
+    }
+
+    void plugin(String pluginName) {
+<span class="fc" id="L192">        Properties properties = new Properties()</span>
+<span class="fc" id="L193">        properties.load(getClass().getResourceAsStream(&quot;/META-INF/graph-plugins/${pluginName}.properties&quot;))</span>
+<span class="fc" id="L194">        plugin(this.class.classLoader.loadClass((String) properties.'implementation-class'))</span>
     }
 
     Type getType() {
-<span class="pc" id="L181">        type</span>
+<span class="pc" id="L198">        type</span>
     }
 
     /**
@@ -188,7 +205,7 @@ class Graph implements GroovyInterceptable {
      */
     @PackageScope
     boolean addVertex(Vertex vertex) {
-<span class="pc" id="L191">        vertices[vertex.key] = vertex</span>
+<span class="pc" id="L208">        vertices[vertex.key] = vertex</span>
     }
 
     /**
@@ -198,8 +215,8 @@ class Graph implements GroovyInterceptable {
      * @throws {@link IllegalArgumentException} When key is null or empty.
      */
     Vertex vertex(Object key) {
-<span class="fc" id="L201">        ConfigSpec spec = new ConfigSpec(map:[key:key])</span>
-<span class="pc" id="L202">        vertex(spec)</span>
+<span class="fc" id="L218">        ConfigSpec spec = new ConfigSpec(map:[key:key])</span>
+<span class="pc" id="L219">        vertex(spec)</span>
     }
 
     /**
@@ -208,7 +225,7 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(NameSpec spec) {
-<span class="pc" id="L211">        vertex(spec.name)</span>
+<span class="pc" id="L228">        vertex(spec.name)</span>
     }
 
     /**
@@ -218,14 +235,14 @@ class Graph implements GroovyInterceptable {
      * @return set of created vertices
      */
     Set&lt;Vertex&gt; vertex(Object key, Object... keys) {
-<span class="fc" id="L221">        Set&lt;Vertex&gt; set = new LinkedHashSet&lt;&gt;()</span>
-<span class="fc" id="L222">        set &lt;&lt; vertex(key)</span>
-<span class="fc" id="L223">        keys.collect {</span>
-<span class="pc" id="L224">            vertex(it)</span>
+<span class="fc" id="L238">        Set&lt;Vertex&gt; set = new LinkedHashSet&lt;&gt;()</span>
+<span class="fc" id="L239">        set &lt;&lt; vertex(key)</span>
+<span class="fc" id="L240">        keys.collect {</span>
+<span class="pc" id="L241">            vertex(it)</span>
         }.each {
-<span class="pc" id="L226">            set &lt;&lt; it</span>
+<span class="pc" id="L243">            set &lt;&lt; it</span>
         }
-<span class="pc" id="L228">        set</span>
+<span class="pc" id="L245">        set</span>
     }
 
     /**
@@ -235,7 +252,7 @@ class Graph implements GroovyInterceptable {
      * @return set of created vertices
      */
     Set&lt;Vertex&gt; vertex(NameSpec name, NameSpec... names) {
-<span class="pc" id="L238">        vertex(name.name, names*.name as String[])</span>
+<span class="pc" id="L255">        vertex(name.name, names*.name as String[])</span>
     }
 
     /**
@@ -244,19 +261,19 @@ class Graph implements GroovyInterceptable {
      * @param newKey  for updated vertex
      */
     void changeKey(Object key, Object newKey) {
-<span class="fc bfc" id="L247" title="All 10 branches covered.">        if (!key || !newKey) {</span>
-<span class="fc" id="L248">            throw new IllegalArgumentException('name or newName is null or empty.')</span>
+<span class="fc bfc" id="L264" title="All 10 branches covered.">        if (!key || !newKey) {</span>
+<span class="fc" id="L265">            throw new IllegalArgumentException('name or newName is null or empty.')</span>
         }
-<span class="fc" id="L250">        Vertex vertex = vertex(key)</span>
-<span class="fc" id="L251">        vertices.remove(vertex.key)</span>
-<span class="fc" id="L252">        vertex.key = newKey</span>
-<span class="fc" id="L253">        vertices[vertex.key] = vertex</span>
-<span class="fc" id="L254">        adjacentEdges(key).each {</span>
-<span class="fc bfc" id="L255" title="All 2 branches covered.">            if (it.one == key) {</span>
-<span class="fc" id="L256">                it.one = newKey</span>
+<span class="fc" id="L267">        Vertex vertex = vertex(key)</span>
+<span class="fc" id="L268">        vertices.remove(vertex.key)</span>
+<span class="fc" id="L269">        vertex.key = newKey</span>
+<span class="fc" id="L270">        vertices[vertex.key] = vertex</span>
+<span class="fc" id="L271">        adjacentEdges(key).each {</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">            if (it.one == key) {</span>
+<span class="fc" id="L273">                it.one = newKey</span>
             }
-<span class="fc bfc" id="L258" title="All 2 branches covered.">            if (it.two == key) {</span>
-<span class="pc" id="L259">                it.two = newKey</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">            if (it.two == key) {</span>
+<span class="pc" id="L276">                it.two = newKey</span>
             }
         }
     }
@@ -267,7 +284,7 @@ class Graph implements GroovyInterceptable {
      * @param newName  for updated vertex
      */
     void changeKey(NameSpec name, NameSpec newName) {
-<span class="fc" id="L270">        changeKey(name.name, newName.name)</span>
+<span class="fc" id="L287">        changeKey(name.name, newName.name)</span>
     }
 
     /**
@@ -294,8 +311,8 @@ class Graph implements GroovyInterceptable {
      * @see #vertex(String name, Closure closure)
      */
     Vertex vertex(Map&lt;String, ?&gt; map) {
-<span class="fc" id="L297">        ConfigSpec spec = new ConfigSpec(map:map)</span>
-<span class="pc" id="L298">        vertex(spec)</span>
+<span class="fc" id="L314">        ConfigSpec spec = new ConfigSpec(map:map)</span>
+<span class="pc" id="L315">        vertex(spec)</span>
     }
 
     /**
@@ -333,8 +350,8 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(Object key, Closure closure) {
-<span class="fc" id="L336">        ConfigSpec spec = new ConfigSpec(map:[key:key], closure:closure)</span>
-<span class="pc" id="L337">        vertex(spec)</span>
+<span class="fc" id="L353">        ConfigSpec spec = new ConfigSpec(map:[key:key], closure:closure)</span>
+<span class="pc" id="L354">        vertex(spec)</span>
     }
 
     /**
@@ -345,7 +362,7 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(NameSpec name, Closure closure) {
-<span class="pc" id="L348">        vertex(name.name, closure)</span>
+<span class="pc" id="L365">        vertex(name.name, closure)</span>
     }
 
     /**
@@ -356,9 +373,9 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(Object key, Map&lt;String, ?&gt; map) {
-<span class="fc bfc" id="L359" title="All 2 branches covered.">        map.key = map.key ?: key</span>
-<span class="fc" id="L360">        ConfigSpec spec = new ConfigSpec(map:map)</span>
-<span class="pc" id="L361">        vertex(spec)</span>
+<span class="fc bfc" id="L376" title="All 2 branches covered.">        map.key = map.key ?: key</span>
+<span class="fc" id="L377">        ConfigSpec spec = new ConfigSpec(map:map)</span>
+<span class="pc" id="L378">        vertex(spec)</span>
     }
 
     /**
@@ -369,7 +386,7 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(NameSpec name, Map&lt;String, ?&gt; map) {
-<span class="pc" id="L372">        vertex(name.name, map)</span>
+<span class="pc" id="L389">        vertex(name.name, map)</span>
     }
 
     /**
@@ -381,8 +398,8 @@ class Graph implements GroovyInterceptable {
      * @return  The resulting {@link Vertex}.
      */
     Vertex vertex(Map&lt;String, ?&gt; map, Closure closure) {
-<span class="fc" id="L384">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
-<span class="pc" id="L385">        vertex(spec)</span>
+<span class="fc" id="L401">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
+<span class="pc" id="L402">        vertex(spec)</span>
     }
 
     /**
@@ -395,9 +412,9 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(Object key, Map&lt;String, ?&gt; map, Closure closure) {
-<span class="fc bfc" id="L398" title="All 2 branches covered.">        map.key = map.key ?: key</span>
-<span class="fc" id="L399">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
-<span class="pc" id="L400">        vertex(spec)</span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">        map.key = map.key ?: key</span>
+<span class="fc" id="L416">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
+<span class="pc" id="L417">        vertex(spec)</span>
     }
 
     /**
@@ -410,7 +427,7 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(NameSpec name, Map&lt;String, ?&gt; map, Closure closure) {
-<span class="pc" id="L413">        vertex(name.name, map, closure)</span>
+<span class="pc" id="L430">        vertex(name.name, map, closure)</span>
     }
 
     /**
@@ -420,7 +437,7 @@ class Graph implements GroovyInterceptable {
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(ConfigSpec spec) {
-<span class="pc" id="L423">        type.newVertexSpec(spec).apply()</span>
+<span class="pc" id="L440">        type.newVertexSpec(spec.map, spec.closure).apply()</span>
     }
 
     /**
@@ -432,8 +449,8 @@ class Graph implements GroovyInterceptable {
      * @return the resulting {@link Edge}.
      */
     Edge edge(Object one, Object two) {
-<span class="fc" id="L435">        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two])</span>
-<span class="pc" id="L436">        configEdge(spec)</span>
+<span class="fc" id="L452">        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two])</span>
+<span class="pc" id="L453">        configEdge(spec)</span>
     }
 
     /**
@@ -444,7 +461,7 @@ class Graph implements GroovyInterceptable {
      * @return the resulting {@link Edge}.
      */
     Edge edge(NameSpec one, NameSpec two) {
-<span class="pc" id="L447">        edge(one.name, two.name)</span>
+<span class="pc" id="L464">        edge(one.name, two.name)</span>
     }
 
     /**
@@ -474,8 +491,8 @@ class Graph implements GroovyInterceptable {
      * @see #edge(String one, String two, Closure closure)
      */
     Edge edge(Map&lt;String, ?&gt; map) {
-<span class="fc" id="L477">        ConfigSpec spec = new ConfigSpec(map:map)</span>
-<span class="pc" id="L478">        configEdge(spec)</span>
+<span class="fc" id="L494">        ConfigSpec spec = new ConfigSpec(map:map)</span>
+<span class="pc" id="L495">        configEdge(spec)</span>
     }
 
     /**
@@ -488,10 +505,10 @@ class Graph implements GroovyInterceptable {
      * @return the resulting {@link Edge}.
      */
     Edge edge(Object one, Object two, Map&lt;String, ?&gt; map) {
-<span class="fc bfc" id="L491" title="All 2 branches covered.">        map.one = map.one ?: one</span>
-<span class="fc bfc" id="L492" title="All 2 branches covered.">        map.two = map.two ?: two</span>
-<span class="fc" id="L493">        ConfigSpec spec = new ConfigSpec(map:map)</span>
-<span class="pc" id="L494">        configEdge(spec)</span>
+<span class="fc bfc" id="L508" title="All 2 branches covered.">        map.one = map.one ?: one</span>
+<span class="fc bfc" id="L509" title="All 2 branches covered.">        map.two = map.two ?: two</span>
+<span class="fc" id="L510">        ConfigSpec spec = new ConfigSpec(map:map)</span>
+<span class="pc" id="L511">        configEdge(spec)</span>
     }
 
     /**
@@ -504,7 +521,7 @@ class Graph implements GroovyInterceptable {
      * @return the resulting {@link Edge}.
      */
     Edge edge(NameSpec one, NameSpec two, Map&lt;String, ?&gt; map) {
-<span class="pc" id="L507">        edge(one.name, two.name, map)</span>
+<span class="pc" id="L524">        edge(one.name, two.name, map)</span>
     }
 
     /**
@@ -542,8 +559,8 @@ class Graph implements GroovyInterceptable {
      * @return the resulting {@link Edge}.
      */
     Edge edge(Object one, Object two, Closure closure) {
-<span class="fc" id="L545">        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two], closure:closure)</span>
-<span class="pc" id="L546">        configEdge(spec)</span>
+<span class="fc" id="L562">        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two], closure:closure)</span>
+<span class="pc" id="L563">        configEdge(spec)</span>
     }
 
     /**
@@ -555,7 +572,7 @@ class Graph implements GroovyInterceptable {
      * @return the resulting {@link Edge}.
      */
     Edge edge(NameSpec one, NameSpec two, Closure closure) {
-<span class="pc" id="L558">        edge(one.name, two.name, closure)</span>
+<span class="pc" id="L575">        edge(one.name, two.name, closure)</span>
     }
 
     /**
@@ -568,8 +585,8 @@ class Graph implements GroovyInterceptable {
      * @return the resulting {@link Edge}.
      */
     Edge edge(Map&lt;String, ?&gt; map, Closure closure) {
-<span class="fc" id="L571">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
-<span class="pc" id="L572">        configEdge(spec)</span>
+<span class="fc" id="L588">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
+<span class="pc" id="L589">        configEdge(spec)</span>
     }
 
     /**
@@ -584,10 +601,10 @@ class Graph implements GroovyInterceptable {
      * @return the resulting {@link Edge}.
      */
     Edge edge(Object one, Object two, Map&lt;String, ?&gt; map, Closure closure) {
-<span class="fc bfc" id="L587" title="All 2 branches covered.">        map.one = map.one ?: one</span>
-<span class="fc bfc" id="L588" title="All 2 branches covered.">        map.two = map.two ?: two</span>
-<span class="fc" id="L589">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
-<span class="pc" id="L590">        configEdge(spec)</span>
+<span class="fc bfc" id="L604" title="All 2 branches covered.">        map.one = map.one ?: one</span>
+<span class="fc bfc" id="L605" title="All 2 branches covered.">        map.two = map.two ?: two</span>
+<span class="fc" id="L606">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
+<span class="pc" id="L607">        configEdge(spec)</span>
     }
 
     /**
@@ -602,7 +619,7 @@ class Graph implements GroovyInterceptable {
      * @return the resulting {@link Edge}.
      */
     Edge edge(NameSpec one, NameSpec two, Map&lt;String, ?&gt; map, Closure closure) {
-<span class="pc" id="L605">        edge(one.name, two.name, map, closure)</span>
+<span class="pc" id="L622">        edge(one.name, two.name, map, closure)</span>
     }
 
     /**
@@ -612,7 +629,7 @@ class Graph implements GroovyInterceptable {
      */
     @PackageScope
     Edge configEdge(ConfigSpec spec) {
-<span class="pc" id="L615">        type.newEdgeSpec(spec).apply()</span>
+<span class="pc" id="L632">        type.newEdgeSpec(spec.map, spec.closure).apply()</span>
     }
 
     /**
@@ -622,8 +639,8 @@ class Graph implements GroovyInterceptable {
      * @return the first unvisited vertex name in the vertices.
      */
     String getUnvisitedVertexName(Map colors) {
-<span class="pc" id="L625">        vertices.find { k, v -&gt;</span>
-<span class="pc bfc" id="L626" title="All 4 branches covered.">            colors[(k)] != TraversalColor.BLACK &amp;&amp; colors[k] != TraversalColor.GREY</span>
+<span class="pc" id="L642">        vertices.find { k, v -&gt;</span>
+<span class="pc bfc" id="L643" title="All 4 branches covered.">            colors[(k)] != TraversalColor.BLACK &amp;&amp; colors[k] != TraversalColor.GREY</span>
         }?.key
     }
 
@@ -635,18 +652,18 @@ class Graph implements GroovyInterceptable {
      * @return the name of the first unvisited child vertex
      */
     Object getUnvisitedChildName(Object key, Map&lt;Object, TraversalColor&gt; colors) {
-<span class="fc" id="L638">        Edge edge = traverseEdges(key).findAll {</span>
-<span class="pc" id="L639">            it.one != it.two</span>
+<span class="fc" id="L655">        Edge edge = traverseEdges(key).findAll {</span>
+<span class="pc" id="L656">            it.one != it.two</span>
         }.find {
-<span class="fc bfc" id="L641" title="All 2 branches covered.">            Object childKey = key == it.one ? it.two : it.one</span>
-<span class="fc" id="L642">            TraversalColor color = colors[childKey]</span>
-<span class="pc bfc" id="L643" title="All 4 branches covered.">            color != TraversalColor.GREY &amp;&amp; color != TraversalColor.BLACK</span>
+<span class="fc bfc" id="L658" title="All 2 branches covered.">            Object childKey = key == it.one ? it.two : it.one</span>
+<span class="fc" id="L659">            TraversalColor color = colors[childKey]</span>
+<span class="pc bfc" id="L660" title="All 4 branches covered.">            color != TraversalColor.GREY &amp;&amp; color != TraversalColor.BLACK</span>
         }
 
-<span class="fc bfc" id="L646" title="All 4 branches covered.">        if (!edge) {</span>
-<span class="fc" id="L647">            return null</span>
+<span class="fc bfc" id="L663" title="All 4 branches covered.">        if (!edge) {</span>
+<span class="fc" id="L664">            return null</span>
         }
-<span class="pc bfc" id="L649" title="All 2 branches covered.">        key == edge.one ? edge.two : edge.one</span>
+<span class="pc bfc" id="L666" title="All 2 branches covered.">        key == edge.one ? edge.two : edge.one</span>
     }
 
     /**
@@ -656,7 +673,7 @@ class Graph implements GroovyInterceptable {
      * @return the name of the first unvisited child vertex
      */
     String getUnvisitedChildName(NameSpec spec, Map&lt;String, TraversalColor&gt; colors) {
-<span class="pc" id="L659">        getUnvisitedChildName(spec.name, colors)</span>
+<span class="pc" id="L676">        getUnvisitedChildName(spec.name, colors)</span>
     }
 
     /**
@@ -665,17 +682,17 @@ class Graph implements GroovyInterceptable {
      * @return the key of the first unvisited child vertex
      */
     Object getUnvisitedChildName(ConfigSpec spec) {
-<span class="pc" id="L668">        getUnvisitedChildName(spec.map.key, spec.map)</span>
+<span class="pc" id="L685">        getUnvisitedChildName(spec.map.key, spec.map)</span>
     }
 
     /**
-     * Finds adjacent edges for vertex with name.
-     * @param name
+     * Finds adjacent edges for vertex with key.
+     * @param key
      * @return set of adjacent edges.
      */
-    Set&lt;? extends Edge&gt; adjacentEdges(String name) {
-<span class="pc" id="L677">        edges.findAll {</span>
-<span class="pc bfc" id="L678" title="All 4 branches covered.">            name == it.one || name == it.two</span>
+    Set&lt;? extends Edge&gt; adjacentEdges(Object key) {
+<span class="pc" id="L694">        edges.findAll { Edge edge -&gt;</span>
+<span class="pc bfc" id="L695" title="All 4 branches covered.">            key == edge.one || key == edge.two</span>
         }
     }
 
@@ -685,7 +702,7 @@ class Graph implements GroovyInterceptable {
      * @return set of adjacent edges.
      */
     Set&lt;? extends Edge&gt; adjacentEdges(NameSpec name) {
-<span class="pc" id="L688">        adjacentEdges(name.name)</span>
+<span class="pc" id="L705">        adjacentEdges(name.name)</span>
     }
 
     /**
@@ -694,7 +711,7 @@ class Graph implements GroovyInterceptable {
      * @return
      */
     Set&lt;? extends Edge&gt; traverseEdges(NameSpec name) {
-<span class="pc" id="L697">        traverseEdges(name.name)</span>
+<span class="pc" id="L714">        traverseEdges(name.name)</span>
     }
 
     /**
@@ -703,8 +720,8 @@ class Graph implements GroovyInterceptable {
      * @return
      */
     Map makeColorMap() {
-<span class="pc" id="L706">        vertices.collectEntries { key, vertex -&gt;</span>
-<span class="pc" id="L707">            [(key):TraversalColor.WHITE]</span>
+<span class="pc" id="L723">        vertices.collectEntries { key, vertex -&gt;</span>
+<span class="pc" id="L724">            [(key):TraversalColor.WHITE]</span>
         }
     }
 
@@ -716,8 +733,8 @@ class Graph implements GroovyInterceptable {
      * @return result of the traversal
      */
     Traversal depthFirstTraversal(String root = null, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
-<span class="fc" id="L719">        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(root, specClosure)</span>
-<span class="pc" id="L720">        traversal(this.&amp;depthFirstTraversalConnected, spec)</span>
+<span class="fc" id="L736">        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(root, specClosure)</span>
+<span class="pc" id="L737">        traversal(this.&amp;depthFirstTraversalConnected, spec)</span>
     }
 
     /**
@@ -728,7 +745,7 @@ class Graph implements GroovyInterceptable {
      * @return result of the traversal
      */
     Traversal depthFirstTraversal(NameSpec root, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
-<span class="pc" id="L731">        depthFirstTraversal(root.name, specClosure)</span>
+<span class="pc" id="L748">        depthFirstTraversal(root.name, specClosure)</span>
     }
 
     /**
@@ -741,12 +758,12 @@ class Graph implements GroovyInterceptable {
      */
     private DepthFirstTraversalSpec depthFirstTraversalSpec(String root = null,
                                                             @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
-<span class="fc" id="L744">        DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()</span>
-<span class="fc" id="L745">        spec.root = root</span>
-<span class="fc" id="L746">        specClosure.delegate = spec</span>
-<span class="fc" id="L747">        specClosure()</span>
-<span class="fc" id="L748">        setupSpec(spec)</span>
-<span class="pc" id="L749">        spec</span>
+<span class="fc" id="L761">        DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()</span>
+<span class="fc" id="L762">        spec.root = root</span>
+<span class="fc" id="L763">        specClosure.delegate = spec</span>
+<span class="fc" id="L764">        specClosure()</span>
+<span class="fc" id="L765">        setupSpec(spec)</span>
+<span class="pc" id="L766">        spec</span>
     }
 
     /**
@@ -756,8 +773,8 @@ class Graph implements GroovyInterceptable {
      * @param spec the {@link TraversalSpec} to configure with defaults.
      */
     private void setupSpec(TraversalSpec spec) {
-<span class="fc bfc" id="L759" title="All 2 branches covered.">        spec.colors = spec.colors ?: makeColorMap()</span>
-<span class="fc bfc" id="L760" title="All 2 branches covered.">        spec.root = spec.root ?: getUnvisitedVertexName(spec.colors)</span>
+<span class="fc bfc" id="L776" title="All 2 branches covered.">        spec.colors = spec.colors ?: makeColorMap()</span>
+<span class="fc bfc" id="L777" title="All 2 branches covered.">        spec.root = spec.root ?: getUnvisitedVertexName(spec.colors)</span>
     }
 
     /**
@@ -770,12 +787,12 @@ class Graph implements GroovyInterceptable {
      */
     private BreadthFirstTraversalSpec breadthFirstTraversalSpec(String root = null,
                                        @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
-<span class="fc" id="L773">        BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()</span>
-<span class="fc" id="L774">        spec.root = root</span>
-<span class="fc" id="L775">        specClosure.delegate = spec</span>
-<span class="fc" id="L776">        specClosure()</span>
-<span class="fc" id="L777">        setupSpec(spec)</span>
-<span class="pc" id="L778">        spec</span>
+<span class="fc" id="L790">        BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()</span>
+<span class="fc" id="L791">        spec.root = root</span>
+<span class="fc" id="L792">        specClosure.delegate = spec</span>
+<span class="fc" id="L793">        specClosure()</span>
+<span class="fc" id="L794">        setupSpec(spec)</span>
+<span class="pc" id="L795">        spec</span>
     }
 
     /**
@@ -789,16 +806,16 @@ class Graph implements GroovyInterceptable {
      * @return null or a Traversal value
      */
     protected Traversal traversal(traversalConnected, TraversalSpec spec) {
-<span class="fc" id="L792">        spec.roots = [] as Set</span>
-<span class="fc bfc" id="L793" title="All 2 branches covered.">        while (spec.root) {</span>
-<span class="fc" id="L794">            Traversal traversal = traversalConnected(spec)</span>
-<span class="fc bfc" id="L795" title="All 2 branches covered.">            if (traversal == Traversal.STOP) {</span>
-<span class="fc" id="L796">                return Traversal.STOP</span>
+<span class="fc" id="L809">        spec.roots = [] as Set</span>
+<span class="fc bfc" id="L810" title="All 2 branches covered.">        while (spec.root) {</span>
+<span class="fc" id="L811">            Traversal traversal = traversalConnected(spec)</span>
+<span class="fc bfc" id="L812" title="All 2 branches covered.">            if (traversal == Traversal.STOP) {</span>
+<span class="fc" id="L813">                return Traversal.STOP</span>
             }
-<span class="fc" id="L798">            spec.roots &lt;&lt; spec.root</span>
-<span class="fc" id="L799">            spec.root = getUnvisitedVertexName(spec.colors)</span>
+<span class="fc" id="L815">            spec.roots &lt;&lt; spec.root</span>
+<span class="fc" id="L816">            spec.root = getUnvisitedVertexName(spec.colors)</span>
         }
-<span class="pc" id="L801">        null</span>
+<span class="pc" id="L818">        null</span>
     }
 
     /**
@@ -813,35 +830,35 @@ class Graph implements GroovyInterceptable {
      */
     @SuppressWarnings('NoDef')
     private Traversal depthFirstTraversalConnected(DepthFirstTraversalSpec spec) {
-<span class="fc" id="L816">        def root = spec.root</span>
-<span class="fc bfc" id="L817" title="All 6 branches covered.">        if (spec.preorder &amp;&amp; spec.preorder(vertices[root]) == Traversal.STOP) {</span>
-<span class="fc" id="L818">            spec.colors[root] = TraversalColor.GREY</span>
-<span class="fc" id="L819">            return Traversal.STOP</span>
+<span class="fc" id="L833">        def root = spec.root</span>
+<span class="fc bfc" id="L834" title="All 6 branches covered.">        if (spec.preorder &amp;&amp; spec.preorder(vertices[root]) == Traversal.STOP) {</span>
+<span class="fc" id="L835">            spec.colors[root] = TraversalColor.GREY</span>
+<span class="fc" id="L836">            return Traversal.STOP</span>
         }
-<span class="fc" id="L821">        spec.colors[root] = TraversalColor.GREY</span>
+<span class="fc" id="L838">        spec.colors[root] = TraversalColor.GREY</span>
 
-<span class="fc" id="L823">        Set&lt;Edge&gt; adjacentEdges = traverseEdges(root)</span>
-<span class="fc bfc" id="L824" title="All 2 branches covered.">        for (int index = 0; index &lt; adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges</span>
-<span class="fc" id="L825">            Edge edge = adjacentEdges[index]</span>
-<span class="fc bfc" id="L826" title="All 2 branches covered.">            String connectedName = root == edge.one ? edge.two : edge.one</span>
-<span class="fc bfc" id="L827" title="All 2 branches covered.">            if (spec.classifyEdge &amp;&amp; spec.classifyEdge(edge, root, connectedName,</span>
-<span class="fc bfc" id="L828" title="All 4 branches covered.">                    spec.colors[connectedName]) == Traversal.STOP) {</span>
-<span class="fc" id="L829">                return Traversal.STOP</span>
+<span class="fc" id="L840">        Set&lt;Edge&gt; adjacentEdges = traverseEdges(root)</span>
+<span class="fc bfc" id="L841" title="All 2 branches covered.">        for (int index = 0; index &lt; adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges</span>
+<span class="fc" id="L842">            Edge edge = adjacentEdges[index]</span>
+<span class="fc bfc" id="L843" title="All 2 branches covered.">            String connectedName = root == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L844" title="All 2 branches covered.">            if (spec.classifyEdge &amp;&amp; spec.classifyEdge(edge, root, connectedName,</span>
+<span class="fc bfc" id="L845" title="All 4 branches covered.">                    spec.colors[connectedName]) == Traversal.STOP) {</span>
+<span class="fc" id="L846">                return Traversal.STOP</span>
             }
-<span class="fc bfc" id="L831" title="All 2 branches covered.">            if (spec.colors[connectedName] == TraversalColor.WHITE) {</span>
-<span class="fc" id="L832">                spec.root = connectedName</span>
-<span class="fc bfc" id="L833" title="All 2 branches covered.">                if (Traversal.STOP == depthFirstTraversalConnected(spec)) {</span>
-<span class="fc" id="L834">                    return Traversal.STOP</span>
+<span class="fc bfc" id="L848" title="All 2 branches covered.">            if (spec.colors[connectedName] == TraversalColor.WHITE) {</span>
+<span class="fc" id="L849">                spec.root = connectedName</span>
+<span class="fc bfc" id="L850" title="All 2 branches covered.">                if (Traversal.STOP == depthFirstTraversalConnected(spec)) {</span>
+<span class="fc" id="L851">                    return Traversal.STOP</span>
                 }
             }
         }
 
-<span class="fc bfc" id="L839" title="All 6 branches covered.">        if (spec.postorder &amp;&amp; spec.postorder(vertices[root]) == Traversal.STOP) {</span>
-<span class="fc" id="L840">            spec.colors[root] = TraversalColor.BLACK</span>
-<span class="fc" id="L841">            return Traversal.STOP</span>
+<span class="fc bfc" id="L856" title="All 6 branches covered.">        if (spec.postorder &amp;&amp; spec.postorder(vertices[root]) == Traversal.STOP) {</span>
+<span class="fc" id="L857">            spec.colors[root] = TraversalColor.BLACK</span>
+<span class="fc" id="L858">            return Traversal.STOP</span>
         }
-<span class="fc" id="L843">        spec.colors[root] = TraversalColor.BLACK</span>
-<span class="pc" id="L844">        null</span>
+<span class="fc" id="L860">        spec.colors[root] = TraversalColor.BLACK</span>
+<span class="pc" id="L861">        null</span>
     }
 
     /**
@@ -851,11 +868,11 @@ class Graph implements GroovyInterceptable {
      * @param closure  execute on each {@link Vertex}
      */
     void eachBfs(String root = null, Closure closure) {
-<span class="fc" id="L854">        breadthFirstTraversal {</span>
-<span class="fc" id="L855">            delegate.root = root</span>
-<span class="pc" id="L856">            visit { vertex -&gt;</span>
-<span class="fc" id="L857">                closure(vertex)</span>
-<span class="pc" id="L858">                null</span>
+<span class="fc" id="L871">        breadthFirstTraversal {</span>
+<span class="fc" id="L872">            delegate.root = root</span>
+<span class="pc" id="L873">            visit { vertex -&gt;</span>
+<span class="fc" id="L874">                closure(vertex)</span>
+<span class="pc" id="L875">                null</span>
             }
         }
     }
@@ -866,7 +883,7 @@ class Graph implements GroovyInterceptable {
      * @param closure  execute on each {@link Vertex}
      */
     void eachBfs(NameSpec root, Closure closure) {
-<span class="fc" id="L869">        eachBfs(root.name, closure)</span>
+<span class="fc" id="L886">        eachBfs(root.name, closure)</span>
     }
 
     /**
@@ -877,17 +894,17 @@ class Graph implements GroovyInterceptable {
      * @return first {@link Vertex} where closure returns true
      */
     Vertex findBfs(String root = null, Closure closure) {
-<span class="fc" id="L880">        Vertex result = null</span>
-<span class="fc" id="L881">        breadthFirstTraversal {</span>
-<span class="fc" id="L882">            delegate.root = root</span>
-<span class="pc" id="L883">            visit { vertex -&gt;</span>
-<span class="fc bfc" id="L884" title="All 2 branches covered.">                if (closure(vertex)) {</span>
-<span class="fc" id="L885">                    result = vertex</span>
-<span class="pc" id="L886">                    return Traversal.STOP</span>
+<span class="fc" id="L897">        Vertex result = null</span>
+<span class="fc" id="L898">        breadthFirstTraversal {</span>
+<span class="fc" id="L899">            delegate.root = root</span>
+<span class="pc" id="L900">            visit { vertex -&gt;</span>
+<span class="fc bfc" id="L901" title="All 2 branches covered.">                if (closure(vertex)) {</span>
+<span class="fc" id="L902">                    result = vertex</span>
+<span class="pc" id="L903">                    return Traversal.STOP</span>
                 }
             }
         }
-<span class="pc" id="L890">        result</span>
+<span class="pc" id="L907">        result</span>
     }
 
     /**
@@ -898,7 +915,7 @@ class Graph implements GroovyInterceptable {
      * @return first {@link Vertex} where closure returns true
      */
     Vertex findBfs(NameSpec root, Closure closure) {
-<span class="pc" id="L901">        findBfs(root.name, closure)</span>
+<span class="pc" id="L918">        findBfs(root.name, closure)</span>
     }
 
     /**
@@ -910,14 +927,14 @@ class Graph implements GroovyInterceptable {
      * @return object returned from the final call to closure.
      */
     Object injectBfs(String root = null, Object object, Closure closure) {
-<span class="fc" id="L913">        Object result = object</span>
-<span class="fc" id="L914">        breadthFirstTraversal {</span>
-<span class="fc" id="L915">            delegate.root = root</span>
-<span class="pc" id="L916">            visit { vertex -&gt;</span>
-<span class="pc" id="L917">                result = closure(result, vertex)</span>
+<span class="fc" id="L930">        Object result = object</span>
+<span class="fc" id="L931">        breadthFirstTraversal {</span>
+<span class="fc" id="L932">            delegate.root = root</span>
+<span class="pc" id="L933">            visit { vertex -&gt;</span>
+<span class="pc" id="L934">                result = closure(result, vertex)</span>
             }
         }
-<span class="pc" id="L920">        result</span>
+<span class="pc" id="L937">        result</span>
     }
 
     /**
@@ -929,7 +946,7 @@ class Graph implements GroovyInterceptable {
      * @return object returned from the final call to closure.
      */
     Object injectBfs(NameSpec root, Object object, Closure closure) {
-<span class="pc" id="L932">        injectBfs(root.name, object, closure)</span>
+<span class="pc" id="L949">        injectBfs(root.name, object, closure)</span>
     }
 
     /**
@@ -940,17 +957,17 @@ class Graph implements GroovyInterceptable {
      * @return the vertices where closure returns true
      */
     List&lt;? extends Vertex&gt; findAllBfs(String root = null, Closure closure) {
-<span class="fc" id="L943">        Closure inject = null</span>
-<span class="fc bfc" id="L944" title="All 2 branches covered.">        if (root) {</span>
-<span class="fc" id="L945">            inject = this.&amp;injectBfs.curry(root)</span>
+<span class="fc" id="L960">        Closure inject = null</span>
+<span class="fc bfc" id="L961" title="All 2 branches covered.">        if (root) {</span>
+<span class="fc" id="L962">            inject = this.&amp;injectBfs.curry(root)</span>
         } else {
-<span class="fc" id="L947">            inject = this.&amp;injectBfs</span>
+<span class="fc" id="L964">            inject = this.&amp;injectBfs</span>
         }
-<span class="pc" id="L949">        (List&lt;? extends Vertex&gt;) inject([]) { result, vertex -&gt;</span>
-<span class="fc bfc" id="L950" title="All 2 branches covered.">            if (closure(vertex)) {</span>
-<span class="fc" id="L951">                result &lt;&lt; vertex</span>
+<span class="pc" id="L966">        (List&lt;? extends Vertex&gt;) inject([]) { result, vertex -&gt;</span>
+<span class="fc bfc" id="L967" title="All 2 branches covered.">            if (closure(vertex)) {</span>
+<span class="fc" id="L968">                result &lt;&lt; vertex</span>
             }
-<span class="pc" id="L953">            result</span>
+<span class="pc" id="L970">            result</span>
         }
     }
 
@@ -962,7 +979,7 @@ class Graph implements GroovyInterceptable {
      * @return the vertices where closure returns true
      */
     List&lt;? extends Vertex&gt; findAllBfs(NameSpec root, Closure closure) {
-<span class="pc" id="L965">        findAllBfs(root.name, closure)</span>
+<span class="pc" id="L982">        findAllBfs(root.name, closure)</span>
     }
 
     /**
@@ -973,14 +990,14 @@ class Graph implements GroovyInterceptable {
      * @return values returned from each execution of closure
      */
     List&lt;?&gt; collectBfs(String root = null, Closure closure) {
-<span class="fc" id="L976">        Closure inject = null</span>
-<span class="fc bfc" id="L977" title="All 2 branches covered.">        if (root) {</span>
-<span class="fc" id="L978">            inject = this.&amp;injectBfs.curry(root)</span>
+<span class="fc" id="L993">        Closure inject = null</span>
+<span class="fc bfc" id="L994" title="All 2 branches covered.">        if (root) {</span>
+<span class="fc" id="L995">            inject = this.&amp;injectBfs.curry(root)</span>
         } else {
-<span class="fc" id="L980">            inject = this.&amp;injectBfs</span>
+<span class="fc" id="L997">            inject = this.&amp;injectBfs</span>
         }
-<span class="pc" id="L982">        (List&lt;? extends Vertex&gt;) inject([]) { result, vertex -&gt;</span>
-<span class="pc" id="L983">            result &lt;&lt; closure(vertex)</span>
+<span class="pc" id="L999">        (List&lt;? extends Vertex&gt;) inject([]) { result, vertex -&gt;</span>
+<span class="pc" id="L1000">            result &lt;&lt; closure(vertex)</span>
         }
     }
 
@@ -992,7 +1009,7 @@ class Graph implements GroovyInterceptable {
      * @return values returned from each execution of closure
      */
     List&lt;?&gt; collectBfs(NameSpec root, Closure closure) {
-<span class="pc" id="L995">        collectBfs(root.name, closure)</span>
+<span class="pc" id="L1012">        collectBfs(root.name, closure)</span>
     }
 
     /**
@@ -1003,12 +1020,12 @@ class Graph implements GroovyInterceptable {
      * @return
      */
     Traversal breadthFirstTraversal(String root = null, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
-<span class="fc" id="L1006">        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(root, specClosure)</span>
-<span class="pc" id="L1007">        traversal(this.&amp;breadthFirstTraversalConnected, spec)</span>
+<span class="fc" id="L1023">        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(root, specClosure)</span>
+<span class="pc" id="L1024">        traversal(this.&amp;breadthFirstTraversalConnected, spec)</span>
     }
 
     Traversal breadthFirstTraversal(NameSpec root, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
-<span class="pc" id="L1011">        breadthFirstTraversal(root.name, specClosure)</span>
+<span class="pc" id="L1028">        breadthFirstTraversal(root.name, specClosure)</span>
     }
 
     /**
@@ -1023,36 +1040,36 @@ class Graph implements GroovyInterceptable {
      */
     @SuppressWarnings('NoDef')
     private Traversal breadthFirstTraversalConnected(BreadthFirstTraversalSpec spec) {
-<span class="fc bfc" id="L1026" title="All 4 branches covered.">        if (!vertices[spec.root]) {</span>
-<span class="fc" id="L1027">            throw new IllegalArgumentException(&quot;Could not find $spec.root in graph&quot;)</span>
+<span class="fc bfc" id="L1043" title="All 4 branches covered.">        if (!vertices[spec.root]) {</span>
+<span class="fc" id="L1044">            throw new IllegalArgumentException(&quot;Could not find $spec.root in graph&quot;)</span>
         }
-<span class="fc" id="L1029">        def traversal = spec.visit(vertices[spec.root])</span>
-<span class="fc bfc" id="L1030" title="All 2 branches covered.">        if (traversal == Traversal.STOP) {</span>
-<span class="fc" id="L1031">            spec.colors[spec.root] = TraversalColor.GREY</span>
-<span class="fc" id="L1032">            return traversal</span>
+<span class="fc" id="L1046">        def traversal = spec.visit(vertices[spec.root])</span>
+<span class="fc bfc" id="L1047" title="All 2 branches covered.">        if (traversal == Traversal.STOP) {</span>
+<span class="fc" id="L1048">            spec.colors[spec.root] = TraversalColor.GREY</span>
+<span class="fc" id="L1049">            return traversal</span>
         }
-<span class="fc" id="L1034">        spec.colors[spec.root] = TraversalColor.GREY</span>
-<span class="fc" id="L1035">        Queue&lt;String&gt; queue = [] as Queue&lt;String&gt;</span>
-<span class="fc" id="L1036">        queue &lt;&lt; spec.root</span>
-<span class="fc bfc" id="L1037" title="All 2 branches covered.">        while (queue.size() != 0) {</span>
-<span class="fc" id="L1038">            String current = queue.poll()</span>
-<span class="fc" id="L1039">            Set&lt;Edge&gt; adjacentEdges = traverseEdges(current)</span>
-<span class="fc bfc" id="L1040" title="All 2 branches covered.">            for (int i = 0; i &lt; adjacentEdges.size(); i++) {</span>
-<span class="fc" id="L1041">                Edge edge = adjacentEdges[i]</span>
-<span class="fc bfc" id="L1042" title="All 2 branches covered.">                String connected = current == edge.one ? edge.two : edge.one</span>
-<span class="fc bfc" id="L1043" title="All 2 branches covered.">                if (spec.colors[connected] == TraversalColor.WHITE) {</span>
-<span class="fc" id="L1044">                    traversal = spec.visit(vertices[connected])</span>
-<span class="fc bfc" id="L1045" title="All 2 branches covered.">                    if (traversal == Traversal.STOP) {</span>
-<span class="fc" id="L1046">                        spec.colors[connected] = TraversalColor.GREY</span>
-<span class="fc" id="L1047">                        return traversal</span>
+<span class="fc" id="L1051">        spec.colors[spec.root] = TraversalColor.GREY</span>
+<span class="fc" id="L1052">        Queue&lt;String&gt; queue = [] as Queue&lt;String&gt;</span>
+<span class="fc" id="L1053">        queue &lt;&lt; spec.root</span>
+<span class="fc bfc" id="L1054" title="All 2 branches covered.">        while (queue.size() != 0) {</span>
+<span class="fc" id="L1055">            String current = queue.poll()</span>
+<span class="fc" id="L1056">            Set&lt;Edge&gt; adjacentEdges = traverseEdges(current)</span>
+<span class="fc bfc" id="L1057" title="All 2 branches covered.">            for (int i = 0; i &lt; adjacentEdges.size(); i++) {</span>
+<span class="fc" id="L1058">                Edge edge = adjacentEdges[i]</span>
+<span class="fc bfc" id="L1059" title="All 2 branches covered.">                String connected = current == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L1060" title="All 2 branches covered.">                if (spec.colors[connected] == TraversalColor.WHITE) {</span>
+<span class="fc" id="L1061">                    traversal = spec.visit(vertices[connected])</span>
+<span class="fc bfc" id="L1062" title="All 2 branches covered.">                    if (traversal == Traversal.STOP) {</span>
+<span class="fc" id="L1063">                        spec.colors[connected] = TraversalColor.GREY</span>
+<span class="fc" id="L1064">                        return traversal</span>
                     }
-<span class="fc" id="L1049">                    spec.colors[connected] = TraversalColor.GREY</span>
-<span class="fc" id="L1050">                    queue &lt;&lt; connected</span>
+<span class="fc" id="L1066">                    spec.colors[connected] = TraversalColor.GREY</span>
+<span class="fc" id="L1067">                    queue &lt;&lt; connected</span>
                 }
             }
-<span class="fc" id="L1053">            spec.colors[current] = TraversalColor.BLACK</span>
+<span class="fc" id="L1070">            spec.colors[current] = TraversalColor.BLACK</span>
         }
-<span class="pc" id="L1055">        null</span>
+<span class="pc" id="L1072">        null</span>
     }
 
     /**
@@ -1061,13 +1078,13 @@ class Graph implements GroovyInterceptable {
      * @return the resulting EdgeClassification
      */
     EdgeClassification classifyEdges(Closure action) {
-<span class="fc" id="L1064">        EdgeClassification ec = new EdgeClassification()</span>
-<span class="fc" id="L1065">        depthFirstTraversal {</span>
-<span class="pc" id="L1066">            classifyEdge { Edge edge, String from, String to, TraversalColor toColor -&gt;</span>
-<span class="pc" id="L1067">                ec.addEdge(this, edge, from, to, toColor, action)</span>
+<span class="fc" id="L1081">        EdgeClassification ec = new EdgeClassification()</span>
+<span class="fc" id="L1082">        depthFirstTraversal {</span>
+<span class="pc" id="L1083">            classifyEdge { Edge edge, String from, String to, TraversalColor toColor -&gt;</span>
+<span class="pc" id="L1084">                ec.addEdge(this, edge, from, to, toColor, action)</span>
             }
         }
-<span class="pc" id="L1070">        ec</span>
+<span class="pc" id="L1087">        ec</span>
     }
 
     /**
@@ -1077,7 +1094,7 @@ class Graph implements GroovyInterceptable {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-<span class="pc" id="L1080">        new NameSpec(name:name)</span>
+<span class="pc" id="L1097">        new NameSpec(name:name)</span>
     }
 
     /**
@@ -1090,34 +1107,47 @@ class Graph implements GroovyInterceptable {
     @SuppressWarnings('Instanceof')
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
-<span class="fc" id="L1093">        MetaMethod method = type.metaClass.getMetaMethod(name, args)</span>
-<span class="fc bfc" id="L1094" title="All 2 branches covered.">        if (method != null &amp;&amp;</span>
-<span class="fc bfc" id="L1095" title="All 8 branches covered.">                (method.declaringClass.theClass == Type || Type.isAssignableFrom(method.declaringClass.theClass))) {</span>
-<span class="fc" id="L1096">            return method.invoke(type, args)</span>
+<span class="fc" id="L1110">        MetaMethod method = type.metaClass.getMetaMethod(name, args)</span>
+<span class="fc bfc" id="L1111" title="All 2 branches covered.">        if(method != null) {</span>
+<span class="fc" id="L1112">            return method.invoke(type, args)</span>
         }
 
-<span class="fc bfc" id="L1099" title="All 2 branches covered.">        if (name == 'vertex') {</span>
-<span class="fc" id="L1100">            throw new IllegalArgumentException(&quot;Confusing name 'vertex' for spec.&quot;)</span>
-        }
-<span class="fc bfc" id="L1102" title="All 2 branches covered.">        if (args.size() == 0) {</span>
-<span class="fc" id="L1103">            return new ConfigSpec(map:[name:name])</span>
-        }
-
-<span class="fc bfc" id="L1106" title="All 6 branches covered.">        if (args.size() == 1 &amp;&amp; args[0] instanceof Map) {</span>
-<span class="fc bfc" id="L1107" title="All 2 branches covered.">            args[0].key = args[0].key ?: name</span>
-<span class="fc" id="L1108">            return new ConfigSpec(map:(Map) args[0])</span>
+<span class="fc" id="L1115">        def list = plugins.collect { plugin -&gt;</span>
+<span class="fc" id="L1116">            MetaMethod m = plugin.metaClass.getMetaMethod(name, args)</span>
+<span class="fc bfc" id="L1117" title="All 2 branches covered.">            if(m) {</span>
+<span class="fc" id="L1118">                return [plugin, m]</span>
+            }
+<span class="pc" id="L1120">            null</span>
+        }.find { list -&gt;
+<span class="pc" id="L1122">            list</span>
         }
 
-<span class="fc bfc" id="L1111" title="All 6 branches covered.">        if (args.size() == 1 &amp;&amp; args[0] instanceof Closure) {</span>
-<span class="fc" id="L1112">            return new ConfigSpec(map:[key:name], closure:(Closure) args[0])</span>
+<span class="fc bfc" id="L1125" title="All 2 branches covered.">        if (list != null) {</span>
+<span class="fc" id="L1126">            return list[1].invoke(list[0], args)</span>
         }
 
-<span class="fc bfc" id="L1115" title="All 10 branches covered.">        if (args.size() == 2 &amp;&amp; args[0] instanceof Map &amp;&amp; args[1] instanceof Closure) {</span>
-<span class="fc bfc" id="L1116" title="All 2 branches covered.">            args[0].key = args[0].key ?: name</span>
-<span class="fc" id="L1117">            return new ConfigSpec(map:(Map) args[0], closure:(Closure) args[1])</span>
+<span class="fc bfc" id="L1129" title="All 2 branches covered.">        if (name == 'vertex') {</span>
+<span class="fc" id="L1130">            throw new IllegalArgumentException(&quot;Confusing name 'vertex' for spec.&quot;)</span>
+        }
+<span class="fc bfc" id="L1132" title="All 2 branches covered.">        if (args.size() == 0) {</span>
+<span class="fc" id="L1133">            return new ConfigSpec(map:[name:name])</span>
         }
 
-<span class="pc" id="L1120">        throw new MissingMethodException(name, Graph, args)</span>
+<span class="fc bfc" id="L1136" title="All 6 branches covered.">        if (args.size() == 1 &amp;&amp; args[0] instanceof Map) {</span>
+<span class="fc bfc" id="L1137" title="All 2 branches covered.">            args[0].key = args[0].key ?: name</span>
+<span class="fc" id="L1138">            return new ConfigSpec(map:(Map) args[0])</span>
+        }
+
+<span class="fc bfc" id="L1141" title="All 6 branches covered.">        if (args.size() == 1 &amp;&amp; args[0] instanceof Closure) {</span>
+<span class="fc" id="L1142">            return new ConfigSpec(map:[key:name], closure:(Closure) args[0])</span>
+        }
+
+<span class="fc bfc" id="L1145" title="All 10 branches covered.">        if (args.size() == 2 &amp;&amp; args[0] instanceof Map &amp;&amp; args[1] instanceof Closure) {</span>
+<span class="fc bfc" id="L1146" title="All 2 branches covered.">            args[0].key = args[0].key ?: name</span>
+<span class="fc" id="L1147">            return new ConfigSpec(map:(Map) args[0], closure:(Closure) args[1])</span>
+        }
+
+<span class="pc" id="L1150">        throw new MissingMethodException(name, Graph, args)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

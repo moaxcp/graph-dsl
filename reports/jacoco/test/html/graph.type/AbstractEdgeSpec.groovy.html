@@ -7,6 +7,8 @@ import graph.NameSpec
 
 /**
  * Base implementation of an EdgeSpec. Type packages can inherit this class to implement default methods in EdgeSpec.
+ *
+ * Add new dsl properties for the Edge dsl to dslProperties. This will prevent them from being added to the Edge.
  */
 abstract class AbstractEdgeSpec extends EdgeSpec {
     Edge edge
@@ -16,97 +18,108 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     Object two
     Object changeOne
     Object changeTwo
+    List dslProperties
+    Map entries
     Closure runnerCodeClosure
 
     protected AbstractEdgeSpec(Graph graph, Map&lt;String, ?&gt; map, Closure closure = null) {
-<span class="fc" id="L22">        super(graph)</span>
+<span class="fc" id="L26">        super(graph)</span>
 
-<span class="fc" id="L24">        one = map.one</span>
-<span class="fc" id="L25">        two = map.two</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        changeOne = map.changeOne instanceof NameSpec ? map.changeOne.name : map.changeOne</span>
-<span class="fc bfc" id="L27" title="All 2 branches covered.">        changeTwo = map.changeTwo instanceof NameSpec ? map.changeTwo.name : map.changeTwo</span>
+<span class="fc" id="L28">        dslProperties = ['one', 'two', 'changeOne', 'changeTwo']</span>
 
-<span class="fc" id="L29">        runnerCodeClosure = closure</span>
+<span class="pc bfc" id="L30" title="All 2 branches covered.">        entries = map.findAll { !(it.key in dslProperties) }</span>
+
+<span class="fc" id="L32">        one = map.one</span>
+<span class="fc" id="L33">        two = map.two</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        changeOne = map.changeOne instanceof NameSpec ? map.changeOne.name : map.changeOne</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        changeTwo = map.changeTwo instanceof NameSpec ? map.changeTwo.name : map.changeTwo</span>
+
+<span class="fc" id="L37">        runnerCodeClosure = closure</span>
     }
 
     protected init() {
-<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if (edge) {</span>
-<span class="nc" id="L34">            throw new IllegalStateException('Edge already created.')</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (edge) {</span>
+<span class="fc" id="L42">            throw new IllegalStateException('Edge already created.')</span>
         }
-<span class="fc" id="L36">        Edge created = graph.newEdge(one, two)</span>
-<span class="pc" id="L37">        Edge existing = graph.edges.find { it == created }</span>
-<span class="fc" id="L38">        edgePresentInGraph = existing != null</span>
+<span class="fc" id="L44">        Edge created = graph.newEdge(one:one, two:two)</span>
+<span class="pc" id="L45">        Edge existing = graph.edges.find { it == created }</span>
+<span class="fc" id="L46">        edgePresentInGraph = existing != null</span>
 
-<span class="fc bfc" id="L40" title="All 4 branches covered.">        if (!edgePresentInGraph) {</span>
-<span class="fc bfc" id="L41" title="All 2 branches covered.">            one = changeOne ?: one</span>
-<span class="fc bfc" id="L42" title="All 2 branches covered.">            two = changeTwo ?: two</span>
-<span class="fc" id="L43">            changeOne = null</span>
-<span class="fc" id="L44">            changeTwo = null</span>
-<span class="fc" id="L45">            created.one = one</span>
-<span class="fc" id="L46">            created.two = two</span>
-<span class="pc" id="L47">            existing = graph.edges.find { it == created }</span>
-<span class="fc" id="L48">            edgePresentInGraph = existing != null</span>
+<span class="fc bfc" id="L48" title="All 4 branches covered.">        if (!edgePresentInGraph) {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            one = changeOne ?: one</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            two = changeTwo ?: two</span>
+<span class="fc" id="L51">            changeOne = null</span>
+<span class="fc" id="L52">            changeTwo = null</span>
+<span class="fc" id="L53">            created.one = one</span>
+<span class="fc" id="L54">            created.two = two</span>
+<span class="pc" id="L55">            existing = graph.edges.find { it == created }</span>
+<span class="fc" id="L56">            edgePresentInGraph = existing != null</span>
         }
 
-<span class="pc bfc" id="L51" title="All 2 branches covered.">        edge = existing ?: created</span>
+<span class="pc bfc" id="L59" title="All 2 branches covered.">        edge = existing ?: created</span>
     }
 
     protected void checkConditions() {
-<span class="fc bfc" id="L55" title="All 4 branches covered.">        if (!one) {</span>
-<span class="fc" id="L56">            throw new IllegalStateException('!one failed. one must be groovy truth.')</span>
+<span class="fc bfc" id="L63" title="All 4 branches covered.">        if (!one) {</span>
+<span class="fc" id="L64">            throw new IllegalStateException('!one failed. one must be groovy truth.')</span>
         }
-<span class="fc bfc" id="L58" title="All 4 branches covered.">        if (!two) {</span>
-<span class="fc" id="L59">            throw new IllegalStateException('!two failed. two must be groovy truth.')</span>
+<span class="fc bfc" id="L66" title="All 4 branches covered.">        if (!two) {</span>
+<span class="fc" id="L67">            throw new IllegalStateException('!two failed. two must be groovy truth.')</span>
         }
-<span class="pc bpc" id="L61" title="2 of 4 branches missed.">        if (!graph) {</span>
-<span class="nc" id="L62">            throw new IllegalStateException('graph is not set.')</span>
+<span class="fc bfc" id="L69" title="All 4 branches covered.">        if (!graph) {</span>
+<span class="fc" id="L70">            throw new IllegalStateException('graph is not set.')</span>
         }
-<span class="pc bpc" id="L64" title="2 of 4 branches missed.">        if (!edge) {</span>
-<span class="nc" id="L65">            throw new IllegalStateException('edge is not set created.')</span>
+<span class="fc bfc" id="L72" title="All 4 branches covered.">        if (!edge) {</span>
+<span class="fc" id="L73">            throw new IllegalStateException('edge is not set.')</span>
         }
-<span class="fc bfc" id="L67" title="All 6 branches covered.">        if (changeOne || changeTwo) {</span>
-<span class="fc bfc" id="L68" title="All 4 branches covered.">            Edge renamed = graph.newEdge(changeOne ?: one, changeTwo ?: two)</span>
-<span class="pc bfc" id="L69" title="All 2 branches covered.">            if (graph.edges.find { it == renamed }) {</span>
-<span class="fc" id="L70">                throw new IllegalStateException('renamed edge already exists.')</span>
+<span class="fc bfc" id="L75" title="All 6 branches covered.">        if (changeOne || changeTwo) {</span>
+<span class="fc bfc" id="L76" title="All 4 branches covered.">            Edge renamed = graph.newEdge(one:changeOne ?: one, two:changeTwo ?: two)</span>
+<span class="pc bfc" id="L77" title="All 2 branches covered.">            if (graph.edges.find { it == renamed }) {</span>
+<span class="fc" id="L78">                throw new IllegalStateException('renamed edge already exists.')</span>
             }
         }
     }
 
     protected void setupGraph() {
-<span class="fc bfc" id="L76" title="All 10 branches covered.">        if (edgePresentInGraph &amp;&amp; (changeOne || changeTwo)) {</span>
+<span class="fc bfc" id="L84" title="All 10 branches covered.">        if (edgePresentInGraph &amp;&amp; (changeOne || changeTwo)) {</span>
             //need to delete and re-add edge to reset hashcode in LinkedHashSet.
-<span class="fc" id="L78">            graph.deleteEdge(edge.one, edge.two)</span>
+<span class="fc" id="L86">            graph.deleteEdge(edge.one, edge.two)</span>
         }
 
-<span class="fc" id="L81">        graph.vertex(one)</span>
-<span class="fc" id="L82">        graph.vertex(two)</span>
+<span class="fc" id="L89">        graph.vertex(one)</span>
+<span class="fc" id="L90">        graph.vertex(two)</span>
     }
 
     protected void initRenameOne() {
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (changeOne) {</span>
-<span class="fc" id="L87">            graph.vertex(changeOne)</span>
-<span class="fc" id="L88">            edge.one = changeOne</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (changeOne) {</span>
+<span class="fc" id="L95">            graph.vertex(changeOne)</span>
+<span class="fc" id="L96">            edge.one = changeOne</span>
         }
     }
 
     protected void initRenameTwo() {
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (changeTwo) {</span>
-<span class="fc" id="L94">            graph.vertex(changeTwo)</span>
-<span class="fc" id="L95">            edge.two = changeTwo</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (changeTwo) {</span>
+<span class="fc" id="L102">            graph.vertex(changeTwo)</span>
+<span class="fc" id="L103">            edge.two = changeTwo</span>
         }
+    }
+
+    protected void initEntries() {
+<span class="fc" id="L108">        edge.putAll(entries)</span>
     }
 
     protected abstract void applyClosure()
 
     Edge apply() {
-<span class="fc" id="L102">        init()</span>
-<span class="fc" id="L103">        checkConditions()</span>
-<span class="fc" id="L104">        setupGraph()</span>
-<span class="fc" id="L105">        initRenameOne()</span>
-<span class="fc" id="L106">        initRenameTwo()</span>
-<span class="fc" id="L107">        addEdge(edge)</span>
-<span class="fc" id="L108">        applyClosure()</span>
-<span class="pc" id="L109">        edge</span>
+<span class="fc" id="L114">        init()</span>
+<span class="fc" id="L115">        checkConditions()</span>
+<span class="fc" id="L116">        setupGraph()</span>
+<span class="fc" id="L117">        initRenameOne()</span>
+<span class="fc" id="L118">        initRenameTwo()</span>
+<span class="fc" id="L119">        initEntries()</span>
+<span class="fc" id="L120">        addEdge(edge)</span>
+<span class="fc" id="L121">        applyClosure()</span>
+<span class="pc" id="L122">        edge</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

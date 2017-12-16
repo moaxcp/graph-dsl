@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GraphViz.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph.plugin</a> &gt; <span class="el_source">GraphViz.groovy</span></div><h1>GraphViz.groovy</h1><pre class="source lang-java linenums">package graph.plugin
+
+import graph.Edge
+import graph.Graph
+import graph.Vertex
+import groovy.transform.Memoized
+import groovy.transform.PackageScope
+
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
+import java.nio.file.Files
+import java.nio.file.Path
+
+class GraphViz implements Plugin {
+    Graph graph
+
+    @Override
+    void apply(Graph graph) {
+<span class="fc" id="L19">        this.graph = graph</span>
+    }
+
+    @PackageScope
+    String getEdgeString() {
+<span class="pc bfc" id="L24" title="All 2 branches covered.">        graph.isDirected() ? '-&gt;' : '--'</span>
+    }
+
+    @PackageScope
+    String getGraphString() {
+<span class="pc bpc" id="L29" title="1 of 4 branches missed.">        &quot;${graph.isMultiGraph() ? '' : 'strict'} ${graph.isDirected() ? 'digraph' : 'graph'}&quot;</span>
+    }
+
+    @Memoized
+    @PackageScope
+    String getId(String id) {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if(id ==~ '[-]?(.[0-9]+|[0-9]+(.[0-9]*)? )') {</span>
+<span class="pc" id="L36">            return id</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        } else if(id ==~ '[_a-zA-Z\200-\377][_0-9a-zA-Z\200-\377]*') {</span>
+<span class="pc" id="L38">            return id</span>
+        } else {
+<span class="pc" id="L40">            return &quot;\&quot;$id\&quot;&quot;</span>
+        }
+    }
+
+    @PackageScope
+    String getEdgeDot(Edge edge) {
+<span class="fc" id="L46">        String string = &quot;${getId(edge.one.toString())} $edgeString ${getId(edge.two.toString())}&quot;</span>
+<span class="fc" id="L47">        String attributes = edge.findAll {</span>
+<span class="pc bfc" id="L48" title="All 4 branches covered.">            it.key != 'one' &amp;&amp; it.key != 'two'</span>
+        }.collect {
+<span class="pc" id="L50">            /$it.key=&quot;$it.value&quot;/</span>
+        }.join(' ')
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if(attributes) {</span>
+<span class="fc" id="L53">            return &quot;$string [$attributes]&quot;</span>
+        }
+<span class="pc" id="L55">        string</span>
+    }
+
+    @PackageScope
+    String getVertexDot(Vertex vertex) {
+<span class="fc" id="L60">        String string =getId(vertex.key.toString())</span>
+<span class="fc" id="L61">        String attributes = vertex.findAll {</span>
+<span class="pc" id="L62">            it.key != 'key'</span>
+        }.collect {
+<span class="pc" id="L64">            /$it.key=&quot;$it.value&quot;/</span>
+        }.join(' ')
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if(attributes) {</span>
+<span class="fc" id="L67">            return &quot;$string [$attributes]&quot;</span>
+        }
+<span class="pc" id="L69">        string</span>
+    }
+
+    String dot() {
+<span class="fc" id="L73">        StringWriter writer = new StringWriter()</span>
+
+<span class="fc" id="L75">        new IndentPrinter(writer).with { p -&gt;</span>
+<span class="fc" id="L76">            p.autoIndent = true</span>
+<span class="fc" id="L77">            p.println(&quot;$graphString {&quot;)</span>
+<span class="fc" id="L78">            p.incrementIndent()</span>
+<span class="fc" id="L79">            graph.edges.each {</span>
+<span class="pc" id="L80">                p.println(getEdgeDot(it))</span>
+            }
+<span class="fc" id="L82">            graph.vertices.each { Object id, Vertex v -&gt;</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                if(v.size() &gt; 1) {</span>
+<span class="pc" id="L84">                    p.println(getVertexDot(v))</span>
+                }
+            }
+
+<span class="fc" id="L88">            p.decrementIndent()</span>
+<span class="fc" id="L89">            p.print('}')</span>
+<span class="pc" id="L90">            p.flush()</span>
+        }
+
+<span class="pc" id="L93">        writer.toString()</span>
+    }
+
+    void dot(String file) {
+<span class="fc" id="L97">        new File(file).write(dot())</span>
+    }
+
+    Map image() {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        Process execute = &quot;${graph.isDirected() ? 'dot' : 'neato'} -Tpng&quot;.execute()</span>
+<span class="nc" id="L102">        execute.outputStream.withWriter { writer -&gt;</span>
+<span class="nc" id="L103">            writer.write(dot())</span>
+        }
+<span class="nc" id="L105">        StringBuilder err = new StringBuilder()</span>
+<span class="nc" id="L106">        execute.consumeProcessErrorStream(err)</span>
+
+<span class="nc" id="L108">        BufferedImage image = ImageIO.read(execute.inputStream)</span>
+<span class="nc" id="L109">        execute.waitFor()</span>
+
+<span class="nc" id="L111">        return [image:image, error:err.toString()]</span>
+    }
+
+    void image(String file) {
+<span class="nc" id="L115">        new File(file).withOutputStream { out -&gt;</span>
+<span class="nc" id="L116">            ImageIO.write(image().image, 'PNG', out)</span>
+        }
+    }
+
+    void view() {
+<span class="nc" id="L121">        Path file = Files.createTempFile('graph', '.png')</span>
+<span class="nc" id="L122">        image(file.toString())</span>
+<span class="nc" id="L123">        Process execute = &quot;xdg-open $file&quot;.execute()</span>
+<span class="nc" id="L124">        StringBuilder err = new StringBuilder()</span>
+<span class="nc" id="L125">        execute.consumeProcessErrorStream(err)</span>
+<span class="nc" id="L126">        execute.waitFor()</span>
+<span class="nc" id="L127">        print err</span>
+<span class="nc" id="L128">        Files.delete(file)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

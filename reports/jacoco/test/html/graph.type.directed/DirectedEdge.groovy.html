@@ -9,8 +9,11 @@ import groovy.transform.ToString
  * two vertices.
  */
 @SuppressWarnings('EqualsAndHashCode') //equals still meets contract with hashCode (I think)
-@ToString(includeSuper=true, includeNames=true)
 class DirectedEdge extends Edge {
+
+    boolean equals(DirectedEdge edge) {
+<span class="pc bfc" id="L15" title="All 4 branches covered.">        one == edge.one &amp;&amp; two == edge.two</span>
+    }
 
     /**
      * overridden to allow edges in both directions between two vertices.
@@ -19,14 +22,14 @@ class DirectedEdge extends Edge {
      */
     @SuppressWarnings('Instanceof')
     boolean equals(Object o) {
-<span class="fc bfc" id="L22" title="All 4 branches covered.">        if (!(o instanceof DirectedEdge)) {</span>
-<span class="fc" id="L23">            return false</span>
+<span class="fc bfc" id="L25" title="All 4 branches covered.">        if (!(o instanceof DirectedEdge)) {</span>
+<span class="fc" id="L26">            return false</span>
         }
-<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (this.is(o)) {</span>
-<span class="fc" id="L26">            return true</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if (this.is(o)) {</span>
+<span class="nc" id="L29">            return true</span>
         }
-<span class="fc" id="L28">        DirectedEdge rhs = (DirectedEdge) o</span>
-<span class="pc bfc" id="L29" title="All 4 branches covered.">        one == rhs.one &amp;&amp; two == rhs.two</span>
+<span class="fc" id="L31">        DirectedEdge rhs = (DirectedEdge) o</span>
+<span class="pc" id="L32">        equals(rhs)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
