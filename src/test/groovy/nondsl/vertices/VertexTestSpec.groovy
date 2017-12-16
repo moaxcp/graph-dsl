@@ -5,6 +5,7 @@ import spock.lang.Specification
 
 class VertexTestSpec extends Specification {
 
+    def emptyVertex = new Vertex()
     def vertex = new Vertex(key:'step1')
     def equalVertex = new Vertex(key:'step1', value:'value')
     def different = new Vertex(key:'step2')
@@ -30,7 +31,7 @@ class VertexTestSpec extends Specification {
 
     def 'equals with null'() {
         expect:
-        !vertex.equals(null)
+        vertex != null
     }
 
     def 'equals with not Vertex'() {
@@ -52,6 +53,16 @@ class VertexTestSpec extends Specification {
         expect:
         vertex != different
         different != vertex
+    }
+
+    def 'true vertex'() {
+        expect:
+        vertex
+    }
+
+    def 'false vertex'() {
+        expect:
+        !emptyVertex
     }
 
     def 'can add entry with index operation'() {

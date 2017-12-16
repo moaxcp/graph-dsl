@@ -70,7 +70,7 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
             throw new IllegalStateException('graph is not set.')
         }
         if (!edge) {
-            throw new IllegalStateException('edge is not set created.')
+            throw new IllegalStateException('edge is not set.')
         }
         if (changeOne || changeTwo) {
             Edge renamed = graph.newEdge(one:changeOne ?: one, two:changeTwo ?: two)

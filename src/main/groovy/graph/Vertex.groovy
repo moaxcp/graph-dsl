@@ -30,7 +30,7 @@ class Vertex {
         if(!(o instanceof Vertex)) {
             return false
         }
-        if(this.is(0)) {
+        if(this.is(o)) {
             return true
         }
         Vertex rhs = (Vertex) o

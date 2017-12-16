@@ -1,13 +1,10 @@
 package nondsl.graphviz
 
 import graph.Graph
-import spock.lang.Ignore
 import spock.lang.Specification
-import sun.util.resources.cldr.luo.CalendarData_luo_KE
 
-import java.awt.image.AreaAveragingScaleFilter
-
-import static org.hamcrest.core.StringStartsWith.startsWith
+import java.nio.file.Files
+import java.nio.file.Path
 
 class GraphVizSpec extends Specification {
     Graph graph = new Graph()
@@ -117,5 +114,24 @@ class GraphVizSpec extends Specification {
               A [color="blue"]
             }
         '''.stripIndent().trim() == graph.dot()
+    }
+
+    def 'dot saves to file'() {
+        given: 'graph with edge'
+        graph.edge 'A', 'B'
+
+        and: 'a file to save dot'
+        Path file = Files.createTempFile('graph', '.dot')
+
+        when:
+        graph.dot(file.toString())
+
+        then:
+        '''
+            strict graph {
+              A -- B
+            }
+        '''.stripIndent().trim() == file.text
+        Files.delete(file)
     }
 }
