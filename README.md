@@ -341,7 +341,7 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
-## x.x.x
+## 0.23.0
 
 Adding graphviz plugin.
 
