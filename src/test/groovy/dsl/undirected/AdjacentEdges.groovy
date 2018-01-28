@@ -9,23 +9,9 @@ class AdjacentEdges extends Specification {
         given:
         def edges
         graph {
-            edge A, B
-            edge C, A
+            edge 'A', 'B'
+            edge 'C', 'A'
             edges = adjacentEdges('A')
-        }
-
-        expect:
-        edges.find { it.one == 'A' && it.two == 'B' }
-        edges.find { it.one == 'C' && it.two == 'A' }
-    }
-
-    def 'adjacentEdges with NameSpec'() {
-        given:
-        def edges
-        graph {
-            edge A, B
-            edge C, A
-            edges = adjacentEdges(A)
         }
 
         expect:

@@ -8,14 +8,14 @@ class BreadthFirstTraversalSpec extends Specification {
 
     def setup() {
         graph.with {
-            edge A, B
-            edge A, D
-            edge A, E
-            edge B, D
-            edge B, C
-            edge D, C
-            edge D, E
-            edge D, A
+            edge 'A', 'B'
+            edge 'A', 'D'
+            edge 'A', 'E'
+            edge 'B', 'D'
+            edge 'B', 'C'
+            edge 'D', 'C'
+            edge 'D', 'E'
+            edge 'D', 'A'
         }
     }
 
@@ -35,42 +35,11 @@ class BreadthFirstTraversalSpec extends Specification {
         names == ['A', 'B', 'D', 'E', 'C']
     }
 
-    def 'breadth first traversal with NameSpec root'() {
-        given:
-        def names = []
-        graph.with {
-            breadthFirstTraversal {
-                root A
-                visit { vertex ->
-                    names << vertex.key
-                }
-            }
-        }
-
-        expect:
-        names == ['A', 'B', 'D', 'E', 'C']
-    }
-
     def 'breadth first traversal with string root param'() {
         given:
         def names = []
         graph.with {
             breadthFirstTraversal('A') {
-                visit { vertex ->
-                    names << vertex.key
-                }
-            }
-        }
-
-        expect:
-        names == ['A', 'B', 'D', 'E', 'C']
-    }
-
-    def 'breadth first traversal with NameSpec root param'() {
-        given:
-        def names = []
-        graph.with {
-            breadthFirstTraversal(A) {
                 visit { vertex ->
                     names << vertex.key
                 }

@@ -8,22 +8,22 @@ class BreadthFirstTraversalSpec extends Specification {
 
     def setup() {
         graph.with {
-            edge A, B
-            edge A, D
-            edge A, E
-            edge B, D
-            edge B, C
-            edge D, C
-            edge D, E
-            edge D, A
+            edge 'A', 'B'
+            edge 'A', 'D'
+            edge 'A', 'E'
+            edge 'B', 'D'
+            edge 'B', 'C'
+            edge 'D', 'C'
+            edge 'D', 'E'
+            edge 'D', 'A'
         }
     }
 
-    def 'breadth first traversal with VertexNameSpec root'() {
+    def 'breadth first traversal with root'() {
         given:
         def names = []
         graph.breadthFirstTraversal {
-            root A
+            root = 'A'
             visit { vertex ->
                 names << vertex.key
             }

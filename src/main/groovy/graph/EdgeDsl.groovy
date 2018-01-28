@@ -2,6 +2,8 @@ package graph
 
 trait EdgeDsl {
 
+    abstract Edge edge(ConfigSpec spec)
+
     /**
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
      * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
@@ -16,18 +18,7 @@ trait EdgeDsl {
             throw new IllegalArgumentException("Invalid one and two.")
         }
         ConfigSpec spec = new ConfigSpec(map:[one:one, two:two])
-        configEdge(spec)
-    }
-
-    /**
-     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. This method
-     * calls {@link #edge(Object,Object,Map)} with the names from the {@link NameSpec} as params.
-     * @param one  {@link NameSpec} for the first {@link Vertex}.
-     * @param two  {@link NameSpec} for the second {@link Vertex}.
-     * @return the resulting {@link Edge}.
-     */
-    Edge edge(NameSpec one, NameSpec two) {
-        edge(one.name, two.name)
+        edge(spec)
     }
 
     /**
@@ -56,7 +47,7 @@ trait EdgeDsl {
             throw new IllegalArgumentException("Invalid one and two.")
         }
         ConfigSpec spec = new ConfigSpec(map:map)
-        configEdge(spec)
+        edge(spec)
     }
 
     /**
@@ -76,20 +67,7 @@ trait EdgeDsl {
         map.one = map.one ?: one
         map.two = map.two ?: two
         ConfigSpec spec = new ConfigSpec(map:map)
-        configEdge(spec)
-    }
-
-    /**
-     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map contains
-     * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
-     * instead of the parameters.
-     * @param one  {@link NameSpec} for the first {@link Vertex}.
-     * @param two  {@link NameSpec} for the second {@link Vertex}.
-     * @param map  used to create an {@link Edge}.
-     * @return the resulting {@link Edge}.
-     */
-    Edge edge(NameSpec one, NameSpec two, Map<String, ?> map) {
-        edge(one.name, two.name, map)
+        edge(spec)
     }
 
     /**
@@ -132,19 +110,7 @@ trait EdgeDsl {
             throw new IllegalArgumentException("Invalid one and two.")
         }
         ConfigSpec spec = new ConfigSpec(map:[one:one, two:two], closure:closure)
-        configEdge(spec)
-    }
-
-    /**
-     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
-     * configuration given by the closure is described in {@link #edge(String, String, Closure)}.
-     * @param one  {@link NameSpec} for the first {@link Vertex}.
-     * @param two  {@link NameSpec} for the second {@link Vertex}.
-     * @param closure  to run.
-     * @return the resulting {@link Edge}.
-     */
-    Edge edge(NameSpec one, NameSpec two, Closure closure) {
-        edge(one.name, two.name, closure)
+        edge(spec)
     }
 
     /**
@@ -162,7 +128,7 @@ trait EdgeDsl {
             throw new IllegalArgumentException("Invalid one and two.")
         }
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
-        configEdge(spec)
+        edge(spec)
     }
 
     /**
@@ -184,22 +150,6 @@ trait EdgeDsl {
         map.one = map.one ?: one
         map.two = map.two ?: two
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
-        configEdge(spec)
+        edge(spec)
     }
-
-    /**
-     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map contains
-     * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
-     * instead of the parameters. The configuration given by the closure is described in
-     * {@link #edge(String, String, Closure)}.
-     * @param one  {@link NameSpec} for the first {@link Vertex}.
-     * @param two  {@link NameSpec} for the second {@link Vertex}.
-     * @param map  used to create an {@link Edge}.
-     * @param closure  to run.
-     * @return the resulting {@link Edge}.
-     */
-    Edge edge(NameSpec one, NameSpec two, Map<String, ?> map, Closure closure) {
-        edge(one.name, two.name, map, closure)
-    }
-
 }

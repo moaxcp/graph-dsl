@@ -26,7 +26,7 @@ changing the script to `DslScript` a new `Graph` becomes the delegate of the scr
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
 import graph.*
 @groovy.transform.BaseScript DslScript graph
-edge step1, step2
+edge 'step1', 'step2'
 assert graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
 assert graph.edges.size() == 1
 assert graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
@@ -77,26 +77,26 @@ Once a graph is created there is a dsl for depthFirstTraversal and breadthFirstT
 
 ```groovy
 type 'directed-graph'
-vertex A {
-    connectsTo B, D, E
-    connectsFrom D
+vertex('A') {
+    connectsTo 'B', 'D', 'E'
+    connectsFrom 'D'
 }
 
-vertex D {
-    connectsTo C, E
-    connectsFrom B
+vertex('D') {
+    connectsTo 'C', 'E'
+    connectsFrom 'B'
 }
 
-edge B, C
+edge 'B', 'C'
 depthFirstTraversal {
-    root A
+    root = 'A'
     preorder { vertex ->
         println vertex.name
     }
 }
 
 breadthFirstTraversal {
-    root A
+    root = 'A'
     visit { vertex ->
         println "bft $vertex.name"
     }
@@ -167,11 +167,11 @@ Since Edge and Vertex are maps, all of the syntax for maps apply to them. In a d
 and entry in the Edge or Vertex.
 
 ```groovy
-edge(A, B) {
-    key = 'value'
+edge('A', 'B') {
+    label = 'edge label'
 }
 
-vertex step1, {
+vertex('step1') {
     label = 'first step in process'
 }
 ```
@@ -179,9 +179,9 @@ vertex step1, {
 If non dsl entries are used in a dsl method they are added to the object.
 
 ```groovy
-edge(A, B, [weight:10]) //weight is a non dsl entry
+edge('A', 'B', [weight:10]) //weight is a non dsl entry
 
-vertex(step1, [connectsTo:step1, color:'red']) //color is a non dsl entry
+vertex('step1', [connectsTo:step1, color:'red']) //color is a non dsl entry
 ```
 
 # Types
@@ -233,9 +233,9 @@ Edges can be assigned weight within the dsl.
 ```groovy
 type 'weighted-graph'
 
-edge A, B, [weight:10]
+edge 'A', 'B', [weight:10]
 
-edge (A, B) { weight = 10 }
+edge ('A', 'B') { weight = 10 }
 ```
 
 ## WeightedDirectedGraphType
@@ -265,18 +265,18 @@ plugin provides methods to create dot strings, BufferedImages and to view the gr
 ```groovy
 type 'directed-graph'
 plugin 'graphviz'
-vertex A {
-    connectsTo B {
-        connectsTo C, D
+vertex('A') {
+    connectsTo('B') {
+        connectsTo 'C', 'D'
     }
-    connectsTo D {
-        connectsTo C
-        connectsTo E
+    connectsTo('D') {
+        connectsTo 'C'
+        connectsTo 'E'
     }
-    connectsFrom D
+    connectsFrom 'D'
 }
-vertex F, [connectsTo:G]
-edge G, D
+vertex 'F', [connectsTo:'G']
+edge 'G', 'D'
 image 'images/graphviz.png'
 ```
 ![Image of graph](/images/graphviz.png?raw=true "Grpah")

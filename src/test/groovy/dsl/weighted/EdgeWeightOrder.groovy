@@ -9,8 +9,8 @@ class EdgeWeightOrder extends Specification {
         given:
         Graph graph = graph {
             type 'weighted-graph'
-            edge A, B
-            edge C, A
+            edge 'A', 'B'
+            edge 'C', 'A'
         }
 
         when:
@@ -26,8 +26,8 @@ class EdgeWeightOrder extends Specification {
         given:
         Graph graph = graph {
             type 'weighted-graph'
-            edge (A, B) { weight = null }
-            edge (C, A) { weight = null }
+            edge ('A', 'B') { weight = null }
+            edge ('C', 'A') { weight = null }
         }
 
         when:
@@ -44,8 +44,8 @@ class EdgeWeightOrder extends Specification {
         given:
         Graph graph = graph {
             type 'weighted-graph'
-            edge (A, B) { weight = 0 }
-            edge (C, A) { weight = 0 }
+            edge ('A', 'B') { weight = 0 }
+            edge ('C', 'A') { weight = 0 }
         }
 
         when:
@@ -62,8 +62,8 @@ class EdgeWeightOrder extends Specification {
         given:
         Graph graph = graph {
             type 'weighted-graph'
-            edge (A, B) { weight = 0 }
-            edge (A, C) { weight = 0 }
+            edge ('A', 'B') { weight = 0 }
+            edge ('A', 'C') { weight = 0 }
         }
 
         when:
@@ -80,9 +80,9 @@ class EdgeWeightOrder extends Specification {
         given:
         Graph graph = graph {
             type 'weighted-graph'
-            edge (A, B) { weight = 3 }
-            edge (A, C) { weight = 1 }
-            edge (A, D) { weight = 2 }
+            edge ('A', 'B') { weight = 3 }
+            edge ('A', 'C') { weight = 1 }
+            edge ('A', 'D') { weight = 2 }
         }
 
         when:
@@ -97,9 +97,9 @@ class EdgeWeightOrder extends Specification {
     def 'traverseEdges sorts edges by weight after type set'() {
         given:
         Graph graph = graph {
-            edge (A, B) { weight = 3 }
-            edge (A, C) { weight = 1 }
-            edge (A, D) { weight = 2 }
+            edge ('A', 'B') { weight = 3 }
+            edge ('A', 'C') { weight = 1 }
+            edge ('A', 'D') { weight = 2 }
             type 'weighted-graph'
         }
 

@@ -15,7 +15,7 @@ class ReadMeSpec extends Specification {
     def 'graph method'() {
         when:
         def graph = graph {
-            edge step1, step2
+            edge 'step1', 'step2'
         }
         then:
         graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
@@ -27,17 +27,17 @@ class ReadMeSpec extends Specification {
         when:
         def graph = graph {
             type DirectedGraphType
-            vertex A {
+            vertex('A') {
                 connectsTo 'B', 'D', 'E'
                 connectsFrom 'D'
             }
 
-            vertex D {
+            vertex('D') {
                 connectsTo 'C', 'E'
                 connectsFrom 'B'
             }
 
-            edge B, C
+            edge 'B', 'C'
         }
 
         graph.depthFirstTraversal {
@@ -58,46 +58,23 @@ class ReadMeSpec extends Specification {
         true
     }
 
-    def 'main readme example'() {
-        when:
-        Graph graph = Graph.graph {
-            type DirectedGraphType
-            vertex a {
-                connectsTo 'b', 'd'
-                connectsFrom 'd'
-            }
-
-            vertex d([connectsTo:'c']) {
-                connectsTo 'e'
-            }
-
-            edge 'f', 'g'
-            edge g, d
-
-            println collectBfs { it.key }
-        }
-
-        then:
-        graph != null
-    }
-
     def 'graphviz readme'() {
         given:
         Graph graph = graph {
             type 'directed-graph'
             plugin 'graphviz'
-            vertex A {
-                connectsTo B {
-                    connectsTo C, D
+            vertex('A') {
+                connectsTo ('B') {
+                    connectsTo 'C', 'D'
                 }
-                connectsTo D {
-                    connectsTo C
-                    connectsTo E
+                connectsTo('D') {
+                    connectsTo 'C'
+                    connectsTo 'E'
                 }
-                connectsFrom D
+                connectsFrom 'D'
             }
-            vertex F, [connectsTo:G]
-            edge G, D
+            vertex 'F', [connectsTo:'G']
+            edge 'G', 'D'
         }
 
         expect:

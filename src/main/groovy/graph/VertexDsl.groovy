@@ -2,6 +2,8 @@ package graph
 
 trait VertexDsl {
 
+    abstract Vertex vertex(ConfigSpec spec)
+
     /**
      * Finds the {@link Vertex} with the given key or creates a new one.
      * @param key  the key of the {@link Vertex} to find or create.
@@ -14,19 +16,6 @@ trait VertexDsl {
         }
         ConfigSpec spec = new ConfigSpec(map:[key:key])
         vertex(spec)
-    }
-
-    /**
-     * Creates a {@link Vertex} in this graph using name in the {@link NameSpec}.
-     * @param spec  The name of the Vertex.
-     * @return The resulting {@link Vertex}.
-     * @throws {@link IllegalArgumentException} When spec or spec.name is empty.
-     */
-    Vertex vertex(NameSpec spec) {
-        if(!spec || !spec.name) {
-            throw new IllegalArgumentException("Invalid spec.")
-        }
-        vertex(spec.name)
     }
 
     /**
@@ -44,16 +33,6 @@ trait VertexDsl {
             set << it
         }
         set
-    }
-
-    /**
-     * Finds or creates all vertices returning them in a Set.
-     * @param name  first vertex to create
-     * @param names  vertices to create
-     * @return set of created vertices
-     */
-    Set<Vertex> vertex(NameSpec name, NameSpec... names) {
-        vertex(name.name, names*.name as String[])
     }
 
     /**
@@ -122,17 +101,6 @@ trait VertexDsl {
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given name. The configuration given by the closure is
-     * described in {@link #vertex(Object,Closure)}.
-     * @param name  the name of the {@link Vertex} to find or create.
-     * @param closure  configuration for graph and vertex
-     * @return The resulting {@link Vertex}.
-     */
-    Vertex vertex(NameSpec name, Closure closure) {
-        vertex(name.name, closure)
-    }
-
-    /**
      * Creates or updates a {@link Vertex} in this graph with the given key. The map contains configuration described
      * in {@link #vertex(Map)}.
      * @param key  the key of the {@link Vertex} to find or create.
@@ -146,17 +114,6 @@ trait VertexDsl {
         map.key = map.key ?: key
         ConfigSpec spec = new ConfigSpec(map:map)
         vertex(spec)
-    }
-
-    /**
-     * Creates or updates a {@link Vertex} in this graph with the given name. The map contains configuration described
-     * in {@link #vertex(Map)}.
-     * @param name  the name of the {@link Vertex} to find or create.
-     * @param map  configuration of {@link Vertex}
-     * @return The resulting {@link Vertex}.
-     */
-    Vertex vertex(NameSpec name, Map<String, ?> map) {
-        vertex(name.name, map)
     }
 
     /**
@@ -190,17 +147,4 @@ trait VertexDsl {
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
         vertex(spec)
     }
-
-    /**
-     * Creates or updates a {@link Vertex} in this graph. The map contains configuration described in
-     * {@link #vertex(Map)}. The configuration given by the closure described in {@link #vertex(Object,Closure)}.
-     * @param name  the name of the {@link Vertex} to find or create.
-     * @param map  configuration of {@link Vertex}
-     * @param closure  configuration for graph and vertex
-     * @return The resulting {@link Vertex}.
-     */
-    Vertex vertex(NameSpec name, Map<String, ?> map, Closure closure) {
-        vertex(name.name, map, closure)
-    }
-
 }

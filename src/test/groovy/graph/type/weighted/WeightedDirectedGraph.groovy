@@ -19,9 +19,9 @@ class WeightedDirectedGraph extends Specification {
         given: 'a weighted directed graph with three weighted edges'
         Graph graph = graph {
             type 'weighted-directed-graph'
-            edge A, B, [weight:2]
-            edge C, D, [weight:1]
-            edge E, F, [weight:3]
+            edge 'A', 'B', [weight:2]
+            edge 'C', 'D', [weight:1]
+            edge 'E', 'F', [weight:3]
         }
 
         expect:

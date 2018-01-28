@@ -12,14 +12,11 @@ class AbstractVertexSpecSpec extends Specification {
     Graph graph = new Graph()
 
     def 'apply throws exception on invalid name'() {
-        setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [key:''])
-
         when:
-        spec.apply()
+        new UndirectedVertexSpec(graph, [key:''])
 
         then:
-        thrown IllegalStateException
+        thrown IllegalArgumentException
     }
 
     def 'apply can add vertex'() {

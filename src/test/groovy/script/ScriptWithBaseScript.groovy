@@ -19,7 +19,7 @@ class ScriptWithBaseScript extends Specification {
         Graph graph = shell.evaluate '''
             import graph.DslScript
             @groovy.transform.BaseScript DslScript script
-            edge a, b
+            edge 'a', 'b'
             assert vertices.size() == 2
             assert vertices['a'].key == 'a'
             assert vertices['b'].key == 'b'

@@ -1,7 +1,6 @@
 package graph.type
 
 import graph.Graph
-import graph.NameSpec
 import graph.Vertex
 import graph.VertexSpec
 
@@ -28,11 +27,21 @@ abstract class AbstractVertexSpec extends VertexSpec {
 
         entries = map.findAll { !(it.key in dslProperties)}
 
+        if(map.containsKey('key') && !map.key) {
+            throw new IllegalArgumentException('Invalid key')
+        }
         key = map.key
-        changeKey = map.changeKey instanceof NameSpec ? ((NameSpec)map.changeKey).name : map.changeKey
+
+        if(map.containsKey('changeKey') && !map.changeKey) {
+            throw new IllegalArgumentException('Invalid containsKey')
+        }
+        changeKey = map.changeKey
 
         map.connectsTo?.each {
-            connectsToSet.add(it instanceof NameSpec ? it.name : it)
+            if(!it) {
+                throw new IllegalArgumentException('Invalid connectsTo item.')
+            }
+            connectsToSet.add(it)
         }
         runnerCodeClosure = closure
     }

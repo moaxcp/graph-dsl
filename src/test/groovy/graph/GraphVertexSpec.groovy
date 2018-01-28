@@ -220,12 +220,4 @@ class GraphVertexSpec extends Specification {
                 new Vertex(key:'step4')
         ] as Set<Vertex>
     }
-
-    def 'can create Vertex with VertexSpec property'() {
-        when:
-        def vertex = graph.vertex graph.step1
-
-        then:
-        vertex.key == 'step1'
-    }
 }

@@ -4,32 +4,28 @@ import graph.Graph
 import spock.lang.Specification
 
 import static graph.Graph.graph
-import static graph.Graph.graph
-import static graph.Graph.graph
-import static graph.Graph.graph
-import static graph.Graph.graph
 
-class MethodsWithConnectsFrom extends Specification {
+class MethodsWithConnectsTo extends Specification {
 
-    def 'create edge using connectsFrom in map'() {
+    def 'create edge using connectsTo in map'() {
         given:
         Graph graph = graph {
             type 'directed-graph'
-            vertex ('A', [connectsFrom:'B'])
+            vertex('A', [connectsTo:'B'])
         }
 
         expect:
         graph.vertices.size() == 2
         graph.vertices.A.key == 'A'
         graph.vertices.B.key == 'B'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
+        graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
-    def 'create two edges using connectsFrom in map'() {
+    def 'create two edges using connectsTo in map'() {
         given:
         Graph graph = graph {
             type 'directed-graph'
-            vertex ('A', [connectsFrom:['B', 'C']])
+            vertex('A', [connectsTo:['B', 'C']])
         }
 
         expect:
@@ -37,16 +33,16 @@ class MethodsWithConnectsFrom extends Specification {
         graph.vertices.A.key == 'A'
         graph.vertices.B.key == 'B'
         graph.vertices.C.key == 'C'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
-        graph.edges.find { it.one == 'C' && it.two == 'A' }
+        graph.edges.find { it.one == 'A' && it.two == 'B' }
+        graph.edges.find { it.one == 'A' && it.two == 'C' }
     }
 
-    def 'use connectsFrom'() {
+    def 'use connectsTo in closure'() {
         given:
         Graph graph = graph {
             type 'directed-graph'
             vertex ('A') {
-                connectsFrom 'B'
+                connectsTo 'B'
             }
         }
 
@@ -54,15 +50,15 @@ class MethodsWithConnectsFrom extends Specification {
         graph.vertices.size() == 2
         graph.vertices.A.key == 'A'
         graph.vertices.B.key == 'B'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
+        graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
-    def 'use connectsFrom with two vertices'() {
+    def 'use connectsTo in closure with two vertices'() {
         given:
         Graph graph = graph {
-            type 'directed-graph'
             vertex ('A') {
-                connectsFrom 'B', 'C'
+                type 'directed-graph'
+                connectsTo 'B', 'C'
             }
         }
 
@@ -71,17 +67,17 @@ class MethodsWithConnectsFrom extends Specification {
         graph.vertices.A.key == 'A'
         graph.vertices.B.key == 'B'
         graph.vertices.C.key == 'C'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
-        graph.edges.find { it.one == 'C' && it.two == 'A' }
+        graph.edges.find { it.one == 'A' && it.two == 'B' }
+        graph.edges.find { it.one == 'A' && it.two == 'C' }
     }
 
-    def 'use nested connectsFrom'() {
+    def 'use nested connectsTo in closure'() {
         given:
         Graph graph = graph {
-            type 'directed-graph'
             vertex ('A') {
-                connectsFrom ('B') {
-                    connectsFrom ('C')
+                type 'directed-graph'
+                connectsTo ('B') {
+                    connectsTo 'C'
                 }
             }
         }
@@ -91,8 +87,7 @@ class MethodsWithConnectsFrom extends Specification {
         graph.vertices.A.key == 'A'
         graph.vertices.B.key == 'B'
         graph.vertices.C.key == 'C'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
-        graph.edges.find { it.one == 'C' && it.two == 'B' }
+        graph.edges.find { it.one == 'A' && it.two == 'B' }
+        graph.edges.find { it.one == 'B' && it.two == 'C' }
     }
-
 }

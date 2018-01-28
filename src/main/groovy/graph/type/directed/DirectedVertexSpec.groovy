@@ -1,7 +1,6 @@
 package graph.type.directed
 
 import graph.Graph
-import graph.NameSpec
 import graph.Vertex
 import graph.type.undirected.UndirectedVertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
@@ -21,7 +20,7 @@ class DirectedVertexSpec extends UndirectedVertexSpec {
     DirectedVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph, map, closure)
         map.connectsFrom?.each {
-            connectsFromSet.addAll(it instanceof NameSpec ? it.name : it)
+            connectsFromSet.addAll(it)
         }
     }
 

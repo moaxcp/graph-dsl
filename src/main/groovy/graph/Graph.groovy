@@ -231,15 +231,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * Renames a {@link Vertex}. All edges connecting the {@link Vertex} are updated with the new name.
-     * @param name  of original vertex
-     * @param newName  for updated vertex
-     */
-    void changeKey(NameSpec name, NameSpec newName) {
-        changeKey(name.name, newName.name)
-    }
-
-    /**
      * Creates or updates a {@link Vertex} in this graph. The map contains configuration described in
      * {@link #vertex(Map)}. The closure contains configuration described in {@link #vertex(Object,Closure)}.
      * @param spec  specification for vertex
@@ -254,8 +245,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
      * @param spec the specification for an {@link Edge}
      * @return the resulting {@link Edge}.
      */
-    @PackageScope
-    Edge configEdge(ConfigSpec spec) {
+    Edge edge(ConfigSpec spec) {
         type.newEdgeSpec(spec.map, spec.closure).apply()
     }
 
@@ -294,26 +284,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * returns the first unvisited child key with a parent matching spec.
-     *
-     * @param spec  the name of the parent vertex to start searching from
-     * @param colors  a map of vertex name entries with the value of the TraversalColor
-     * @return the first unvisited child key
-     */
-    Object getUnvisitedChildKey(NameSpec spec, Map<String, TraversalColor> colors) {
-        getUnvisitedChildKey(spec.name, colors)
-    }
-
-    /**
-     * returns the first unvisited child key with a parent matching spec.
-     * @param spec  configuration containing a key for the parent and TraversalColors for each vertex
-     * @return the first unvisited child key
-     */
-    Object getUnvisitedChildKey(ConfigSpec spec) {
-        getUnvisitedChildKey(spec.map.key, spec.map)
-    }
-
-    /**
      * Finds adjacent edges for vertex with key.
      * @param key
      * @return set of adjacent edges.
@@ -322,24 +292,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
         edges.findAll { Edge edge ->
             key == edge.one || key == edge.two
         }
-    }
-
-    /**
-     * Finds adjacent edges for vertex with name.
-     * @param name
-     * @return set of adjacent edges.
-     */
-    Set<? extends Edge> adjacentEdges(NameSpec name) {
-        adjacentEdges(name.name)
-    }
-
-    /**
-     * Returns edges from vertex with name that should be traversed.
-     * @param name
-     * @return
-     */
-    Set<? extends Edge> traverseEdges(NameSpec name) {
-        traverseEdges(name.name)
     }
 
     Set<? extends Edge> traverseEdges(Object key) {
@@ -372,17 +324,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     Traversal depthFirstTraversal(@DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
         DepthFirstTraversalSpec spec = depthFirstTraversalSpec(specClosure)
         traversal(this.&depthFirstTraversalConnected, spec)
-    }
-
-    /**
-     * configures a depth first traversal with the given closure using {@link #depthFirstTraversalSpec(String,Closure)}.
-     * Once the spec is configured {@link #traversal(Closure,TraversalSpec)} is called.
-     * @param root  optional root to start traversal
-     * @param specClosure  closure for depthFirstTraversalSpec method
-     * @return result of the traversal
-     */
-    Traversal depthFirstTraversal(NameSpec root, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
-        depthFirstTraversal(root.name, specClosure)
     }
 
     /**
@@ -514,15 +455,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * executes closure on each {@link Vertex} in breadth first order. See {@link #breadthFirstTraversal} for details.
-     * @param root  vertex to start breadth first traversal
-     * @param closure  execute on each {@link Vertex}
-     */
-    void eachBfs(NameSpec root, Closure closure) {
-        eachBfs(root.name, closure)
-    }
-
-    /**
      * Executes closure on each {@link Vertex} in breadth first order starting at root. If the closure returns true the
      * {@link Vertex} is returned.
      * @param root  vertex to start breadth first traversal
@@ -544,17 +476,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * Executes closure on each {@link Vertex} in breadth first order starting at root. If the closure returns true the
-     * {@link Vertex} is returned.
-     * @param root  vertex to start breadth first traversal
-     * @param closure  execute on each {@link Vertex}
-     * @return first {@link Vertex} where closure returns true
-     */
-    Vertex findBfs(NameSpec root, Closure closure) {
-        findBfs(root.name, closure)
-    }
-
-    /**
      * Executes closure on each vertex in breadth first order starting at root. object is the initial value passed to
      * the closure. Each returned value from the closure is passed to the next call.
      * @param root  vertex to start breadth first traversal
@@ -571,18 +492,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
             }
         }
         result
-    }
-
-    /**
-     * Executes closure on each vertex in breadth first order starting at root. object is the initial value passed to
-     * the closure. Each returned value from the closure is passed to the next call.
-     * @param root  vertex to start breadth first traversal
-     * @param object  initial value passed to the closure
-     * @param closure  execute on each {@link Vertex}
-     * @return object returned from the final call to closure.
-     */
-    Object injectBfs(NameSpec root, Object object, Closure closure) {
-        injectBfs(root.name, object, closure)
     }
 
     /**
@@ -608,17 +517,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are
-     * returned.
-     * @param root  vertex to start breadth first traversal
-     * @param closure  execute on each {@link Vertex}
-     * @return the vertices where closure returns true
-     */
-    List<? extends Vertex> findAllBfs(NameSpec root, Closure closure) {
-        findAllBfs(root.name, closure)
-    }
-
-    /**
      * Runs closure on each vertex in breadth first order, starting at root, collecting returned values from the
      * closure.
      * @param root  vertex to start breadth first traversal
@@ -638,17 +536,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * Runs closure on each vertex in breadth first order, starting at root, collecting returned values from the
-     * closure.
-     * @param root  vertex to start breadth first traversal
-     * @param closure  execute on each {@link Vertex}
-     * @return values returned from each execution of closure
-     */
-    List<?> collectBfs(NameSpec root, Closure closure) {
-        collectBfs(root.name, closure)
-    }
-
-    /**
      * configures a breadth first traversal with the given closure using breadthFirstTraversalSpec(). Once the spec is
      * configured traversal(this.&breadthFirstTraversalConnected, spec) is called.
      * @param root  optional root to start traversal.
@@ -658,10 +545,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     Traversal breadthFirstTraversal(String root = null, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
         BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(root, specClosure)
         traversal(this.&breadthFirstTraversalConnected, spec)
-    }
-
-    Traversal breadthFirstTraversal(NameSpec root, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
-        breadthFirstTraversal(root.name, specClosure)
     }
 
     /**
@@ -724,16 +607,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * Creates a {@link GraphVertexSpec}
-     * @param name
-     * @return a {@link graph.type.undirected.GraphVertexSpec} with name set to the property name.
-     */
-    @SuppressWarnings('NoDef')
-    def propertyMissing(String name) {
-        new NameSpec(name:name)
-    }
-
-    /**
      * If the missing method is in the assigned {@link Type} the method will be called on type. Otherwise a
      * {@link ConfigSpec} is created and returned.
      * @param name
@@ -761,28 +634,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
         if (list != null) {
             return list[1].invoke(list[0], args)
         }
-
-        if (name == 'vertex') {
-            throw new IllegalArgumentException("Confusing name 'vertex' for spec.")
-        }
-        if (args.size() == 0) {
-            return new ConfigSpec(map:[name:name])
-        }
-
-        if (args.size() == 1 && args[0] instanceof Map) {
-            args[0].key = args[0].key ?: name
-            return new ConfigSpec(map:(Map) args[0])
-        }
-
-        if (args.size() == 1 && args[0] instanceof Closure) {
-            return new ConfigSpec(map:[key:name], closure:(Closure) args[0])
-        }
-
-        if (args.size() == 2 && args[0] instanceof Map && args[1] instanceof Closure) {
-            args[0].key = args[0].key ?: name
-            return new ConfigSpec(map:(Map) args[0], closure:(Closure) args[1])
-        }
-
         throw new MissingMethodException(name, Graph, args)
     }
 }

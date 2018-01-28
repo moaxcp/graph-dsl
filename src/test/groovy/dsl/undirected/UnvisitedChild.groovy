@@ -10,44 +10,12 @@ class UnvisitedChild extends Specification {
         given:
         String name
         graph {
-            vertex A {
-                connectsTo B
-                connectsTo C
+            vertex ('A') {
+                connectsTo 'B'
+                connectsTo 'C'
             }
 
             name = getUnvisitedChildKey('A', ['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
-        }
-
-        expect:
-        name == 'B'
-    }
-
-    def 'unvisited child with NameSpec'() {
-        given:
-        String name
-        graph {
-            vertex A {
-                connectsTo B
-                connectsTo C
-            }
-
-            name = getUnvisitedChildKey(A, ['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
-        }
-
-        expect:
-        name == 'B'
-    }
-
-    def 'unvisited child with ConfigSpec'() {
-        given:
-        String name
-        graph {
-            vertex A {
-                connectsTo B
-                connectsTo C
-            }
-
-            name = getUnvisitedChildKey A(['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
         }
 
         expect:

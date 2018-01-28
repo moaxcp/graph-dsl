@@ -9,14 +9,14 @@ class DepthFirstTraversalSpec extends Specification {
 
     def setup() {
         graph.with {
-            edge A, B
-            edge A, D
-            edge A, E
-            edge B, D
-            edge B, C
-            edge D, C
-            edge D, E
-            edge D, A
+            edge 'A', 'D'
+            edge 'A', 'B'
+            edge 'A', 'E'
+            edge 'B', 'D'
+            edge 'B', 'C'
+            edge 'D', 'C'
+            edge 'D', 'E'
+            edge 'D', 'A'
         }
     }
 
@@ -35,25 +35,7 @@ class DepthFirstTraversalSpec extends Specification {
         }
 
         then:
-        names == ['A', 'B', 'D', 'C', 'E']
-    }
-
-    def 'depth first traversal with VertexNameSpec root'() {
-        given:
-        def names = []
-
-        when:
-        graph.with {
-            depthFirstTraversal {
-                root A
-                preorder { vertex ->
-                    names << vertex.key
-                }
-            }
-        }
-
-        then:
-        names == ['A', 'B', 'D', 'C', 'E']
+        names == ['A', 'D', 'B', 'C', 'E']
     }
 
     def 'depth first traversal with string root param'() {
@@ -70,23 +52,6 @@ class DepthFirstTraversalSpec extends Specification {
         }
 
         then:
-        names == ['A', 'B', 'D', 'C', 'E']
-    }
-
-    def 'depth first traversal with VertexNameSpec root param'() {
-        given:
-        def names = []
-
-        when:
-        graph.with {
-            depthFirstTraversal(A) {
-                preorder { vertex ->
-                    names << vertex.key
-                }
-            }
-        }
-
-        then:
-        names == ['A', 'B', 'D', 'C', 'E']
+        names == ['A', 'D', 'B', 'C', 'E']
     }
 }

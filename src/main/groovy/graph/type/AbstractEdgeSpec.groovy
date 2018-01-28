@@ -3,7 +3,6 @@ package graph.type
 import graph.Edge
 import graph.EdgeSpec
 import graph.Graph
-import graph.NameSpec
 
 /**
  * Base implementation of an EdgeSpec. Type packages can inherit this class to implement default methods in EdgeSpec.
@@ -31,8 +30,8 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
 
         one = map.one
         two = map.two
-        changeOne = map.changeOne instanceof NameSpec ? map.changeOne.name : map.changeOne
-        changeTwo = map.changeTwo instanceof NameSpec ? map.changeTwo.name : map.changeTwo
+        changeOne = map.changeOne
+        changeTwo = map.changeTwo
 
         runnerCodeClosure = closure
     }

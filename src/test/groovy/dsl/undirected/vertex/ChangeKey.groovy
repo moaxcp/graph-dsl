@@ -5,9 +5,9 @@ import spock.lang.Specification
 
 import static graph.Graph.graph
 
-class Rename extends Specification {
+class ChangeKey extends Specification {
 
-    def 'rename method with String'() {
+    def 'change key'() {
         given:
         Graph graph = graph {
             vertex('A')
@@ -19,22 +19,10 @@ class Rename extends Specification {
         graph.vertices.B.key == 'B'
     }
 
-    def 'rename method with NameSpec'() {
-        given:
-        Graph graph = graph {
-            vertex(A)
-            changeKey(A, B)
-        }
-
-        expect:
-        graph.vertices.size() == 1
-        graph.vertices.B.key == 'B'
-    }
-
-    def 'rename method null name'() {
+    def 'change key null key'() {
         when:
         Graph graph = graph {
-            vertex A
+            vertex 'A'
             changeKey null, 'B'
         }
 
@@ -42,10 +30,21 @@ class Rename extends Specification {
         thrown IllegalArgumentException
     }
 
-    def 'changeKey in map with string'() {
+    def 'change key null new key'() {
+        when:
+        Graph graph = graph {
+            vertex 'A'
+            changeKey 'A', null
+        }
+
+        then:
+        thrown IllegalArgumentException
+    }
+
+    def 'change key in map'() {
         given:
         Graph graph = graph {
-            vertex(A, [changeKey:'B'])
+            vertex('A', [changeKey:'B'])
         }
 
         expect:
@@ -53,21 +52,20 @@ class Rename extends Specification {
         graph.vertices.B.key == 'B'
     }
 
-    def 'changeKey in map with NameSpec'() {
-        given:
+    def 'change key in map null'() {
+        when:
         Graph graph = graph {
-            vertex(A, [changeKey:B])
+            vertex('A', [changeKey:null])
         }
 
-        expect:
-        graph.vertices.size() == 1
-        graph.vertices.B.key == 'B'
+        then:
+        thrown IllegalArgumentException
     }
 
-    def 'changeKey in closure with string'() {
+    def 'changeKey in closure'() {
         given:
         Graph graph = graph {
-            vertex(A) {
+            vertex('A') {
                 changeKey 'B'
             }
         }
@@ -77,26 +75,25 @@ class Rename extends Specification {
         graph.vertices.B.key == 'B'
     }
 
-    def 'changeKey in closure with NameSpec'() {
-        given:
+    def 'changeKey in closure with null'() {
+        when:
         Graph graph = graph {
-            vertex(A) {
-                changeKey B
+            vertex('A') {
+                changeKey null
             }
         }
 
-        expect:
-        graph.vertices.size() == 1
-        graph.vertices.B.key == 'B'
+        then:
+        thrown IllegalArgumentException
     }
 
     def 'changeKey in spec to vertex that already exists'() {
         when:
         Graph graph = graph {
-            vertex(A)
-            vertex(B)
-            vertex(B) {
-                changeKey A
+            vertex('A')
+            vertex('B')
+            vertex('B') {
+                changeKey 'A'
             }
         }
 

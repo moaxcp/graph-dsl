@@ -74,33 +74,6 @@ class GraphDepthFirstSpec extends Specification {
         spec.postorder != null
     }
 
-    def 'can depthFirstTraversalSpec custom with VertexNameSpec'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'step1'
-        }
-        Closure c = {
-            root new NameSpec(name:'step1')
-            colors = ['step1' : WHITE]
-            preorder {
-                //do nothing
-            }
-            postorder {
-                //do nothing
-            }
-        }
-
-        when:
-        def spec = graph.depthFirstTraversalSpec(c)
-
-        then:
-        spec.root == 'step1'
-        spec.colors == ['step1' : WHITE]
-        spec.preorder != null
-        spec.postorder != null
-    }
-
     def 'can depthFirstTraversalSpec'() {
         setup:
         def graph = new Graph()
