@@ -1,8 +1,10 @@
 package graph
 
 import spock.lang.Specification
+import static TraversalColor.*
+import static Traversal.*
 
-public class GraphDepthFirstSpec extends Specification {
+class GraphDepthFirstSpec extends Specification {
 
 
     def 'can get adjacent edges'() {
@@ -39,9 +41,9 @@ public class GraphDepthFirstSpec extends Specification {
 
         then:
         colors == [
-                'step1': graph.Graph.TraversalColor.WHITE,
-                'step2': graph.Graph.TraversalColor.WHITE,
-                'step3': graph.Graph.TraversalColor.WHITE
+                'step1': WHITE,
+                'step2': WHITE,
+                'step3': WHITE
         ]
     }
 
@@ -53,7 +55,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
         Closure c = {
             root = 'step1'
-            colors = ['step1' : graph.Graph.TraversalColor.WHITE]
+            colors = ['step1' : WHITE]
             preorder {
                 //do nothing
             }
@@ -67,7 +69,7 @@ public class GraphDepthFirstSpec extends Specification {
 
         then:
         spec.root == 'step1'
-        spec.colors == ['step1' : graph.Graph.TraversalColor.WHITE]
+        spec.colors == ['step1' : WHITE]
         spec.preorder != null
         spec.postorder != null
     }
@@ -80,7 +82,7 @@ public class GraphDepthFirstSpec extends Specification {
         }
         Closure c = {
             root new NameSpec(name:'step1')
-            colors = ['step1' : graph.Graph.TraversalColor.WHITE]
+            colors = ['step1' : WHITE]
             preorder {
                 //do nothing
             }
@@ -94,7 +96,7 @@ public class GraphDepthFirstSpec extends Specification {
 
         then:
         spec.root == 'step1'
-        spec.colors == ['step1' : graph.Graph.TraversalColor.WHITE]
+        spec.colors == ['step1' : WHITE]
         spec.preorder != null
         spec.postorder != null
     }
@@ -118,7 +120,7 @@ public class GraphDepthFirstSpec extends Specification {
 
         then:
         spec.root == 'step1'
-        spec.colors == ['step1' : graph.Graph.TraversalColor.WHITE]
+        spec.colors == ['step1' : WHITE]
         spec.preorder != null
         spec.postorder != null
     }
@@ -143,7 +145,7 @@ public class GraphDepthFirstSpec extends Specification {
         spec.preorder { vertex ->
             preorderList << vertex.key
             if(vertex.key == 'step2') {
-                Graph.Traversal.STOP
+                STOP
             }
         }
         spec.postorder { vertex ->
@@ -154,12 +156,12 @@ public class GraphDepthFirstSpec extends Specification {
         def traversal = graph.depthFirstTraversalConnected spec
 
         then:
-        traversal == Graph.Traversal.STOP
+        traversal == STOP
         spec.colors == [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY,
-                'step3': graph.Graph.TraversalColor.WHITE,
-                'step4': graph.Graph.TraversalColor.WHITE
+                'step1': GREY,
+                'step2': GREY,
+                'step3': WHITE,
+                'step4': WHITE
         ]
         preorderList == ['step1', 'step2']
         postorderList == []
@@ -200,14 +202,14 @@ public class GraphDepthFirstSpec extends Specification {
         def traversal = graph.depthFirstTraversalConnected spec
 
         then:
-        traversal != Graph.Traversal.STOP
+        traversal != STOP
         spec.colors == [
-                'step1': graph.Graph.TraversalColor.BLACK,
-                'step2': graph.Graph.TraversalColor.BLACK,
-                'step3': graph.Graph.TraversalColor.BLACK,
-                'step4': graph.Graph.TraversalColor.BLACK,
-                'step5': graph.Graph.TraversalColor.BLACK,
-                'step6': graph.Graph.TraversalColor.BLACK
+                'step1': BLACK,
+                'step2': BLACK,
+                'step3': BLACK,
+                'step4': BLACK,
+                'step5': BLACK,
+                'step6': BLACK
         ]
         preorderList == ['step1', 'step2', 'step3', 'step4', 'step6', 'step5']
     }
@@ -236,11 +238,11 @@ public class GraphDepthFirstSpec extends Specification {
         def traversal = graph.depthFirstTraversalConnected spec
 
         then:
-        traversal != Graph.Traversal.STOP
+        traversal != STOP
         spec.colors == [
-                'step1': graph.Graph.TraversalColor.BLACK,
-                'step2': graph.Graph.TraversalColor.BLACK,
-                'step3': graph.Graph.TraversalColor.BLACK
+                'step1': BLACK,
+                'step2': BLACK,
+                'step3': BLACK
         ]
         postorderList == ['step2', 'step3', 'step1']
     }
@@ -265,7 +267,7 @@ public class GraphDepthFirstSpec extends Specification {
         spec.postorder { vertex ->
             postorderList << vertex.key
             if(vertex.key == 'step2') {
-                Graph.Traversal.STOP
+                STOP
             }
         }
         spec.preorder { vertex ->
@@ -276,12 +278,12 @@ public class GraphDepthFirstSpec extends Specification {
         def traversal = graph.depthFirstTraversalConnected spec
 
         then:
-        traversal == Graph.Traversal.STOP
+        traversal == STOP
         spec.colors == [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.BLACK,
-                'step3': graph.Graph.TraversalColor.BLACK,
-                'step4': graph.Graph.TraversalColor.WHITE
+                'step1': GREY,
+                'step2': BLACK,
+                'step3': BLACK,
+                'step4': WHITE
         ]
         postorderList == ['step3', 'step2']
         preorderList == ['step1', 'step2', 'step3']
@@ -314,10 +316,10 @@ public class GraphDepthFirstSpec extends Specification {
 
         then:
         spec.colors == [
-                'step1': graph.Graph.TraversalColor.BLACK,
-                'step2': graph.Graph.TraversalColor.BLACK,
-                'step3': graph.Graph.TraversalColor.BLACK,
-                'step4': graph.Graph.TraversalColor.BLACK
+                'step1': BLACK,
+                'step2': BLACK,
+                'step3': BLACK,
+                'step4': BLACK
         ]
     }
 
@@ -337,7 +339,7 @@ public class GraphDepthFirstSpec extends Specification {
         def spec = graph.depthFirstTraversalSpec {
             preorder { vertex ->
                 if(vertex.key == 'step2') {
-                    return Graph.Traversal.STOP
+                    return STOP
                 }
             }
             postorder { vertex ->
@@ -349,12 +351,12 @@ public class GraphDepthFirstSpec extends Specification {
         def traversal = graph.traversal(graph.&depthFirstTraversalConnected, spec)
 
         then:
-        traversal == Graph.Traversal.STOP
+        traversal == STOP
         spec.colors == [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY,
-                'step3': graph.Graph.TraversalColor.WHITE,
-                'step4': graph.Graph.TraversalColor.WHITE
+                'step1': GREY,
+                'step2': GREY,
+                'step3': WHITE,
+                'step4': WHITE
         ]
     }
 
@@ -388,12 +390,12 @@ public class GraphDepthFirstSpec extends Specification {
         then:
         fromNames[0] == 'A'
         toNames[0] == 'B'
-        colors[0] == Graph.TraversalColor.WHITE
+        colors[0] == WHITE
         edges[0] == graph.edge('A', 'B')
 
         fromNames[1] == 'B'
         toNames[1] == 'A'
-        colors[1] == Graph.TraversalColor.GREY
+        colors[1] == GREY
         edges[1] == graph.edge('A', 'B')
     }
 
@@ -412,7 +414,7 @@ public class GraphDepthFirstSpec extends Specification {
             root = 'A'
             classifyEdge { edge, from, to, toColor ->
                 if(from == 'B' && to == 'C') {
-                    return Graph.Traversal.STOP
+                    return STOP
                 }
             }
         }
@@ -421,6 +423,6 @@ public class GraphDepthFirstSpec extends Specification {
         def traversal = graph.depthFirstTraversalConnected spec
 
         then:
-        traversal == Graph.Traversal.STOP
+        traversal == STOP
     }
 }

@@ -1,7 +1,6 @@
 package dsl.undirected
 
-import graph.Graph
-import graph.Graph.TraversalColor
+import graph.TraversalColor
 import spock.lang.Specification
 import static graph.Graph.graph
 
@@ -16,7 +15,7 @@ class UnvisitedChild extends Specification {
                 connectsTo C
             }
 
-            name = getUnvisitedChildName('A', ['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
+            name = getUnvisitedChildKey('A', ['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
         }
 
         expect:
@@ -32,7 +31,7 @@ class UnvisitedChild extends Specification {
                 connectsTo C
             }
 
-            name = getUnvisitedChildName(A, ['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
+            name = getUnvisitedChildKey(A, ['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
         }
 
         expect:
@@ -48,7 +47,7 @@ class UnvisitedChild extends Specification {
                 connectsTo C
             }
 
-            name = getUnvisitedChildName A(['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
+            name = getUnvisitedChildKey A(['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
         }
 
         expect:

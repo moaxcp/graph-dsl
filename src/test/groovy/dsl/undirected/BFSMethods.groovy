@@ -27,7 +27,7 @@ class BFSMethods extends Specification {
         }
     }
 
-    def 'eachFbs with NameSpec'() {
+    def 'eachBfs with NameSpec'() {
         when:
         def result = []
         graph.with {

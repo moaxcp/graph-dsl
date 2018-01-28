@@ -1,6 +1,7 @@
 package graph
 
 import groovy.transform.PackageScope
+import static TraversalColor.*
 
 /**
  * The results from classifyEdges in Graph.
@@ -24,15 +25,15 @@ class EdgeClassification {
         /**
          * When the followed edge is WHITE
          */
-                TREE_EDGE,
+        TREE_EDGE,
         /**
          * When the followed edge is BLACK and the connecting vertex is not in the forrest
          */
-                FORWARD_EDGE,
+        FORWARD_EDGE,
         /**
          * When the followed edge is BLACK and the connecting vertex is in the forreest
          */
-                CROSS_EDGE
+        CROSS_EDGE
     }
 
     /**
@@ -45,27 +46,27 @@ class EdgeClassification {
      * @param action
      */
     @PackageScope
-    void addEdge(Graph graph, Edge edge, String from, String to, Graph.TraversalColor toColor, Closure action) {
+    void addEdge(Graph graph, Edge edge, String from, String to, TraversalColor toColor, Closure action) {
         EdgeType edgeType
         switch (toColor) {
-            case Graph.TraversalColor.WHITE:
+            case WHITE:
                 forrest.edge(from, to)
                 treeEdges << edge
-                edgeType = EdgeClassification.EdgeType.TREE_EDGE
+                edgeType = EdgeType.TREE_EDGE
                 break
 
-            case Graph.TraversalColor.GREY:
+            case GREY:
                 backEdges << edge
-                edgeType = EdgeClassification.EdgeType.BACK_EDGE
+                edgeType = EdgeType.BACK_EDGE
                 break
 
-            case Graph.TraversalColor.BLACK:
+            case BLACK:
                 if (forrest.vertices[to]) {
                     crossEdges << edge
-                    edgeType = EdgeClassification.EdgeType.CROSS_EDGE
+                    edgeType = EdgeType.CROSS_EDGE
                 } else {
                     forwardEdges << edge
-                    edgeType = EdgeClassification.EdgeType.FORWARD_EDGE
+                    edgeType = EdgeType.FORWARD_EDGE
                 }
                 break
 

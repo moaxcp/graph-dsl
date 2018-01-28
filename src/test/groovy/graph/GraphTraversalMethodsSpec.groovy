@@ -1,6 +1,7 @@
 package graph
 
 import spock.lang.Specification
+import static graph.TraversalColor.*
 
 class GraphTraversalMethodsSpec extends Specification {
 
@@ -11,7 +12,7 @@ class GraphTraversalMethodsSpec extends Specification {
         def colors = [:]
 
         when:
-        def name = graph.getUnvisitedVertexName(colors)
+        def name = graph.getUnvisitedVertexKey(colors)
 
         then:
         name == 'step1'
@@ -21,10 +22,10 @@ class GraphTraversalMethodsSpec extends Specification {
         setup:
         def graph = new Graph()
         graph.vertex 'step1'
-        def colors = ['step1': graph.Graph.TraversalColor.WHITE]
+        def colors = ['step1': WHITE]
 
         when:
-        def name = graph.getUnvisitedVertexName(colors)
+        def name = graph.getUnvisitedVertexKey(colors)
 
         then:
         name == 'step1'
@@ -37,10 +38,10 @@ class GraphTraversalMethodsSpec extends Specification {
             vertex 'step1'
             vertex 'step2'
         }
-        def colors = ['step1': graph.Graph.TraversalColor.GREY]
+        def colors = ['step1': GREY]
 
         when:
-        def name = graph.getUnvisitedVertexName(colors)
+        def name = graph.getUnvisitedVertexKey(colors)
 
         then:
         name == 'step2'
@@ -57,12 +58,12 @@ class GraphTraversalMethodsSpec extends Specification {
             edge 'step1', 'step3'
         }
         def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY
+                'step1': GREY,
+                'step2': GREY
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName('step1', colors)
+        def childName = graph.getUnvisitedChildKey('step1', colors)
 
         then:
         childName == 'step3'
@@ -79,12 +80,12 @@ class GraphTraversalMethodsSpec extends Specification {
             edge 'step3', 'step1'
         }
         def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY
+                'step1': GREY,
+                'step2': GREY
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName('step1', colors)
+        def childName = graph.getUnvisitedChildKey('step1', colors)
 
         then:
         childName == 'step3'
@@ -101,12 +102,12 @@ class GraphTraversalMethodsSpec extends Specification {
             edge 'step1', 'step3'
         }
         def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY
+                'step1': GREY,
+                'step2': GREY
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName('step1', colors)
+        def childName = graph.getUnvisitedChildKey('step1', colors)
 
         then:
         childName == 'step3'
@@ -123,12 +124,12 @@ class GraphTraversalMethodsSpec extends Specification {
             edge 'step1', 'step3'
         }
         def colors = [
-                'step1': graph.Graph.TraversalColor.BLACK,
-                'step2': graph.Graph.TraversalColor.BLACK
+                'step1': BLACK,
+                'step2': BLACK
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName('step1', colors)
+        def childName = graph.getUnvisitedChildKey('step1', colors)
 
         then:
         childName == 'step3'
@@ -145,12 +146,12 @@ class GraphTraversalMethodsSpec extends Specification {
             edge 'step1', 'step3'
         }
         def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step3': graph.Graph.TraversalColor.GREY
+                'step1': GREY,
+                'step3': GREY
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName('step1', colors)
+        def childName = graph.getUnvisitedChildKey('step1', colors)
 
         then:
         childName == 'step2'
@@ -165,12 +166,12 @@ class GraphTraversalMethodsSpec extends Specification {
             edge 'step1', 'step2'
         }
         def colors = [
-                'step1': graph.Graph.TraversalColor.GREY,
-                'step2': graph.Graph.TraversalColor.GREY
+                'step1': GREY,
+                'step2': GREY
         ]
 
         when:
-        def childName = graph.getUnvisitedChildName('step1', colors)
+        def childName = graph.getUnvisitedChildKey('step1', colors)
 
         then:
         childName == null

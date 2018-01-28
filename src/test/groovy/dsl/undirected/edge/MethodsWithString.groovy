@@ -72,7 +72,7 @@ class MethodsWithString extends Specification {
         }
 
         then:
-        thrown IllegalStateException
+        thrown IllegalArgumentException
     }
 
     def 'cannot add edge when two is null'() {
@@ -82,6 +82,6 @@ class MethodsWithString extends Specification {
         }
 
         then:
-        thrown IllegalStateException
+        thrown IllegalArgumentException
     }
 }

@@ -29,7 +29,7 @@ abstract class AbstractVertexSpec extends VertexSpec {
         entries = map.findAll { !(it.key in dslProperties)}
 
         key = map.key
-        changeKey = map.changeKey instanceof NameSpec ? map.changeKey.name : map.changeKey
+        changeKey = map.changeKey instanceof NameSpec ? ((NameSpec)map.changeKey).name : map.changeKey
 
         map.connectsTo?.each {
             connectsToSet.add(it instanceof NameSpec ? it.name : it)
@@ -69,7 +69,7 @@ abstract class AbstractVertexSpec extends VertexSpec {
         }
     }
 
-    protected void applyRename() {
+    protected void applyChangeKey() {
         if (changeKey) {
             graph.changeKey(key, changeKey)
         }
@@ -86,7 +86,7 @@ abstract class AbstractVertexSpec extends VertexSpec {
     Vertex apply() {
         init()
         checkConditions()
-        applyRename()
+        applyChangeKey()
         applyConnectsTo()
         initEntries()
         addVertex(vertex)

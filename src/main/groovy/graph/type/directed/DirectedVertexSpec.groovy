@@ -47,7 +47,7 @@ class DirectedVertexSpec extends UndirectedVertexSpec {
     Vertex apply() {
         init()
         checkConditions()
-        applyRename()
+        applyChangeKey()
         applyConnectsTo()
         applyConnectsFrom()
         addVertex(vertex)

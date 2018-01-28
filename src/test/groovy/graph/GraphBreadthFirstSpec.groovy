@@ -1,7 +1,8 @@
 package graph
 
 import spock.lang.Specification
-import static graph.Graph.TraversalColor.*
+import static TraversalColor.*
+import static Traversal.*
 
 class GraphBreadthFirstSpec extends Specification {
 
@@ -41,7 +42,7 @@ class GraphBreadthFirstSpec extends Specification {
 
         then:
         spec.root == 'A'
-        spec.colors == ['A' : graph.Graph.TraversalColor.WHITE]
+        spec.colors == ['A' : WHITE]
         spec.visit != null
     }
 
@@ -60,7 +61,7 @@ class GraphBreadthFirstSpec extends Specification {
         def traversal = graph.breadthFirstTraversalConnected spec
 
         then:
-        traversal != Graph.Traversal.STOP
+        traversal != STOP
         spec.colors == [
             A: BLACK, B: BLACK, C: BLACK, D: BLACK, E: BLACK
         ]
@@ -88,7 +89,7 @@ class GraphBreadthFirstSpec extends Specification {
         def visitList = []
         spec.visit { vertex ->
             if(vertex.key == 'E') {
-                return Graph.Traversal.STOP
+                return STOP
             }
             visitList << vertex.key
         }
@@ -97,7 +98,7 @@ class GraphBreadthFirstSpec extends Specification {
         def traversal = graph.breadthFirstTraversalConnected spec
 
         then:
-        traversal == Graph.Traversal.STOP
+        traversal == STOP
         spec.colors == [
                 A: GREY, B: GREY, C: WHITE, D: GREY, E: GREY
         ]
@@ -113,7 +114,7 @@ class GraphBreadthFirstSpec extends Specification {
         spec.visit { vertex ->
             visitList << vertex.key
             if(vertex.key == 'A') {
-                return Graph.Traversal.STOP
+                return STOP
             }
         }
 
@@ -121,7 +122,7 @@ class GraphBreadthFirstSpec extends Specification {
         def traversal = graph.breadthFirstTraversalConnected spec
 
         then:
-        traversal == Graph.Traversal.STOP
+        traversal == STOP
         spec.colors == [
                 A: GREY, B: WHITE, C: WHITE, D: WHITE, E: WHITE
         ]

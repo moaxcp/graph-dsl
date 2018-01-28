@@ -2,7 +2,7 @@ package graph
 
 import spock.lang.Specification
 
-import static graph.Graph.TraversalColor.*
+import static graph.TraversalColor.*
 import static graph.EdgeClassification.EdgeType.*
 
 class EdgeClassificationSpec extends Specification {

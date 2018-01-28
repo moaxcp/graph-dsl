@@ -7,9 +7,7 @@ buildscript {
 }
 
 plugins {
-    id 'net.ossindex.audit' version '0.1.1'
-    id 'io.codearte.nexus-staging' version '0.8.0'
-    id "org.standardout.versioneye" version "1.4.0"
+    id 'io.codearte.nexus-staging' version '0.11.0'
 }
 
 apply plugin: 'idea'
@@ -25,12 +23,7 @@ description = 'A groovy dsl for creating and traversing graphs.'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-ext.groovyVersion = '2.4.12'
-
-versioneye {
-    includePlugins = true
-    exclude configurations.findAll { !it.canBeResolved }*.name as String[]
-}
+ext.groovyVersion = '2.4.13'
 
 jacocoTestReport {
     dependsOn test
@@ -215,17 +208,17 @@ dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
     compile 'org.groovyfx:groovyfx:8.0.0'
 
-    testCompile( 'com.athaydes:spock-reports:1.3.2' ) {
+    testCompile( 'com.athaydes:spock-reports:1.4.0' ) {
         transitive = false
     }
-    testCompile 'org.slf4j:slf4j-api:1.7.13'
-    testCompile 'org.slf4j:slf4j-simple:1.7.13'
+    testCompile 'org.slf4j:slf4j-api:1.7.25'
+    testCompile 'org.slf4j:slf4j-simple:1.7.25'
 
     testCompile ('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude group: 'org.codehaus.groovy', module:'groovy-all'
     }
     testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
-    testCompile 'cglib:cglib-nodep:3.2.5'
+    testCompile 'cglib:cglib-nodep:3.2.6'
 
     testCompile 'org.hamcrest:hamcrest-all:1.3'
 }
