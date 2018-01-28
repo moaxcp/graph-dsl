@@ -495,21 +495,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * Classifies edges in a depthFirstTraversal returning the results.
-     * @param action passed into EdgeClassification.addEdge
-     * @return the resulting EdgeClassification
-     */
-    EdgeClassification classifyEdges(Closure action) {
-        EdgeClassification ec = new EdgeClassification()
-        depthFirstTraversal {
-            classifyEdge { Edge edge, String from, String to, TraversalColor toColor ->
-                ec.addEdge(this, edge, from, to, toColor, action)
-            }
-        }
-        ec
-    }
-
-    /**
      * If the missing method is in the assigned {@link Type} the method will be called on type. Otherwise a
      * {@link ConfigSpec} is created and returned.
      * @param name

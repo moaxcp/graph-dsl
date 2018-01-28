@@ -98,4 +98,19 @@ trait TraversalDsl {
             result << closure(vertex)
         }
     }
+
+    /**
+     * Classifies edges in a depthFirstTraversal returning the results.
+     * @param action passed into EdgeClassification.addEdge
+     * @return the resulting EdgeClassification
+     */
+    EdgeClassification classifyEdges(Closure action) {
+        EdgeClassification ec = new EdgeClassification()
+        depthFirstTraversal {
+            classifyEdge { Edge edge, String from, String to, TraversalColor toColor ->
+                ec.addEdge(this, edge, from, to, toColor, action)
+            }
+        }
+        ec
+    }
 }
