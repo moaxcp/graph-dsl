@@ -33,7 +33,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
 
     /**
      * static entry point to the dsl.
-     * @param c  closure to execute with graph as the delegate
+     * @param c closure to execute with graph as the delegate
      * @return the resulting graph
      */
     static Graph graph(@DelegatesTo(Graph) Closure c) {
@@ -53,7 +53,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     /**
      * Removes the {@link Vertex} from vertices with the matching key. If the Vertex has adjacentEdges it cannot be
      * deleted an IllegalStateException will be thrown.
-     * @param key  key of {@link Vertex} to delete from this graph
+     * @param key key of {@link Vertex} to delete from this graph
      * @throws IllegalStateException if key vertex has adjacentEdges.
      * @see {@link Graph#adjacentEdges(Object)}
      */
@@ -76,7 +76,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
 
     /**
      * Adds an edge object directly.
-     * @param  edge to add
+     * @param edge to add
      * @return true if add was successful.
      */
     @PackageScope
@@ -108,7 +108,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
 
     /**
      * Replaces entries in vertices {@link Map}. The closure should return map entries for each entry passed in.
-     * @param closure  returns replaced entries.
+     * @param closure returns replaced entries.
      */
     void replaceVertices(Closure closure) {
         Map<String, ? extends Vertex> replace = vertices.collectEntries(closure) as Map<String, Vertex>
@@ -137,12 +137,12 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
      * @param two key of second vertex
      */
     void deleteEdge(Object one, Object two) {
-        edges.remove(type.newEdge(one:one, two:two))
+        edges.remove(type.newEdge(one: one, two: two))
     }
 
     /**
      * Converts this Graph to the {@link Type} passed in.
-     * @param typeClass  type to convert Graph into
+     * @param typeClass type to convert Graph into
      */
     void type(Class typeClass) {
         if (!Type.isAssignableFrom(typeClass)) {
@@ -156,7 +156,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     /**
      * Searches for a properties file on the classpath using "/META-INF/graph-types/${typeName}.properties". A
      * property 'implementation-class' is used to find the {@link Type} class. The class is used to convert this graph.
-     * @param typeName  name of type to convert graph
+     * @param typeName name of type to convert graph
      */
     void type(String typeName) {
         Properties properties = new Properties()
@@ -166,7 +166,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
 
     /**
      * Applies a {@link Plugin} to this Graph.
-     * @param pluginClass  plugin to apply
+     * @param pluginClass plugin to apply
      */
     void plugin(Class pluginClass) {
         if (!Plugin.isAssignableFrom(pluginClass)) {
@@ -181,7 +181,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
      * Searches for a properties file on the classpath using "/META-INF/graph-plugins/${pluginName}.properties". A
      * property 'implementation-class' is used to find the {@link Plugin} class. The plugin class is applied to this
      * graph.
-     * @param pluginName  name of plugin to apply
+     * @param pluginName name of plugin to apply
      */
     void plugin(String pluginName) {
         Properties properties = new Properties()
@@ -209,8 +209,8 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
 
     /**
      * Replaces the key of a {@link Vertex}. All edges connecting the {@link Vertex} are updated with the new key.
-     * @param key  of original vertex
-     * @param newKey  for updated vertex
+     * @param key of original vertex
+     * @param newKey for updated vertex
      */
     void changeKey(Object key, Object newKey) {
         if (!key || !newKey) {
@@ -232,8 +232,8 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
 
     /**
      * Creates or updates a {@link Vertex} in this graph. The map contains configuration described in
-     * {@link #vertex(Map)}. The closure contains configuration described in {@link #vertex(Object,Closure)}.
-     * @param spec  specification for vertex
+     * {@link #vertex(Map)}. The closure contains configuration described in {@link #vertex(Object, Closure)}.
+     * @param spec specification for vertex
      * @return The resulting {@link Vertex}.
      */
     Vertex vertex(ConfigSpec spec) {
@@ -252,7 +252,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     /**
      * Returns the first unvisited vertex key in vertices.
      *
-     * @param colors  map of vertex key and TraversalColor entries.
+     * @param colors map of vertex key and TraversalColor entries.
      * @return the first unvisited vertex key in vertices.
      */
     Object getUnvisitedVertexKey(Map colors) {
@@ -264,8 +264,8 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     /**
      * returns the first unvisited child key with a parent matching key.
      *
-     * @param key  the key of the parent vertex to start searching from
-     * @param colors  a map of vertex key and TraversalColor entries.
+     * @param key the key of the parent vertex to start searching from
+     * @param colors a map of vertex key and TraversalColor entries.
      * @return the first unvisited child key with a parent matching key.
      */
     Object getUnvisitedChildKey(Object key, Map<Object, TraversalColor> colors) {
@@ -305,15 +305,15 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
      */
     Map<Object, TraversalColor> makeColorMap() {
         vertices.collectEntries { key, vertex ->
-            [(key):WHITE]
+            [(key): WHITE]
         } as Map<Object, TraversalColor>
     }
 
     /**
-     * configures a depth first traversal with the given closure using {@link #depthFirstTraversalSpec(String,Closure)}.
-     * Once the spec is configured {@link #traversal(Closure,TraversalSpec)} is called.
-     * @param root  optional root to start traversal
-     * @param specClosure  closure for depthFirstTraversalSpec method
+     * configures a depth first traversal with the given closure using {@link #depthFirstTraversalSpec(String, Closure)}.
+     * Once the spec is configured {@link #traversal(Closure, TraversalSpec)} is called.
+     * @param root optional root to start traversal
+     * @param specClosure closure for depthFirstTraversalSpec method
      * @return result of the traversal
      */
     Traversal depthFirstTraversal(String root, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
@@ -329,8 +329,8 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     /**
      * Creates a DepthFirstTraversalSpec from the provided closure. If root is set spec.root will be set before calling
      * the closure. Defaults will be configured with the setupSpec method after the closure is called.
-     * @param root  optional root to start traversal
-     * @param specClosure   A closure that has a new DepthFirstTraversalSpec as a delegate. Modify the
+     * @param root optional root to start traversal
+     * @param specClosure A closure that has a new DepthFirstTraversalSpec as a delegate. Modify the
      * DepthFirstTraversalSpec in this closure to change the behavior of the depth first traversal.
      * @return resulting specification
      */
@@ -361,7 +361,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
      * and continues to call traversalConnected until all vertices are colored black.
      * To stop the traversal early the spec can return Traversal.STOP in any of the
      * traversal closures.
-     * @param traversalConnected  one of the traversalConnected methods in this graph
+     * @param traversalConnected one of the traversalConnected methods in this graph
      * @param spec
      * @return null or a Traversal value
      */
@@ -424,22 +424,22 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
      * Performs a breadth first traversal on each component of the Graph starting at root.
      * <p>
      *     It is possible to stop the traversal early by returning Traversal.STOP from closure.
-     * @param root  optional root to start traversal.
-     * @param closure  Closure to perform on each vertex
+     * @param root optional root to start traversal.
+     * @param closure Closure to perform on each vertex
      * @return resulting Traversal value
      */
     Traversal breadthFirstTraversal(Object root = null, Map<Object, TraversalColor> colors = null, Closure closure) {
-        if(!colors) {
+        if (!colors) {
             colors = makeColorMap()
         }
         Object next = root
-        if(!next) {
+        if (!next) {
             next = getUnvisitedVertexKey(colors)
         }
 
         while (next) {
             Traversal traversal = breadthFirstTraversalConnected(next, colors, closure)
-            if(!traversal) {
+            if (!traversal) {
                 throw new IllegalStateException('Invalid Traversal value returned.')
             }
             if (traversal == Traversal.STOP) {
@@ -460,20 +460,20 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
      * @return a Traversal value
      */
     Traversal breadthFirstTraversalConnected(Object root, Map<Object, TraversalColor> colors, Closure closure) {
-        if(!root) {
+        if (!root) {
             throw new IllegalArgumentException("Invalid root.")
         }
-        if(!colors) {
+        if (!colors) {
             throw new IllegalArgumentException("Invalid colors.")
         }
-        if(closure == null) {
+        if (closure == null) {
             throw new IllegalArgumentException("Invalid closure.")
         }
         if (!vertices[root]) {
             throw new IllegalArgumentException("Could not find $root in graph")
         }
         Traversal traversal = closure(vertices[root])
-        if(!traversal) {
+        if (!traversal) {
             throw new IllegalStateException('Invalid Traversal value returned.')
         }
         if (traversal == Traversal.STOP) {
@@ -491,7 +491,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
                 String connected = current == edge.one ? edge.two : edge.one
                 if (colors[connected] == WHITE) {
                     traversal = closure(vertices[connected])
-                    if(!traversal) {
+                    if (!traversal) {
                         throw new IllegalStateException('Invalid Traversal value returned.')
                     }
                     if (traversal == Traversal.STOP) {
@@ -518,13 +518,13 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
         MetaMethod method = type.metaClass.getMetaMethod(name, args)
-        if(method != null) {
+        if (method != null) {
             return method.invoke(type, args)
         }
 
         def list = plugins.collect { plugin ->
             MetaMethod m = plugin.metaClass.getMetaMethod(name, args)
-            if(m) {
+            if (m) {
                 return [plugin, m]
             }
             null
