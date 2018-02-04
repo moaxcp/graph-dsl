@@ -2,9 +2,8 @@ package graph
 
 import graph.type.directed.DirectedGraphType
 import spock.lang.Specification
+import static Traversal.*
 import static Graph.graph
-import graph.EdgeClassification.EdgeType
-import static graph.EdgeClassification.EdgeType.*
 
 class ReadMeSpec extends Specification {
 
@@ -47,11 +46,9 @@ class ReadMeSpec extends Specification {
             }
         }
 
-        graph.breadthFirstTraversal {
-            root = 'A'
-            visit { vertex ->
-                println "bft $vertex.key"
-            }
+        graph.breadthFirstTraversal('A') { vertex ->
+            println "bft $vertex.key"
+            CONTINUE
         }
 
         then:
@@ -64,7 +61,7 @@ class ReadMeSpec extends Specification {
             type 'directed-graph'
             plugin 'graphviz'
             vertex('A') {
-                connectsTo ('B') {
+                connectsTo('B') {
                     connectsTo 'C', 'D'
                 }
                 connectsTo('D') {
@@ -73,7 +70,7 @@ class ReadMeSpec extends Specification {
                 }
                 connectsFrom 'D'
             }
-            vertex 'F', [connectsTo:'G']
+            vertex 'F', [connectsTo: 'G']
             edge 'G', 'D'
         }
 

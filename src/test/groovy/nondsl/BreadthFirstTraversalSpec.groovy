@@ -2,6 +2,7 @@ package nondsl
 
 import graph.Graph
 import spock.lang.Specification
+import static graph.Traversal.*
 
 class BreadthFirstTraversalSpec extends Specification {
     Graph graph = new Graph()
@@ -22,11 +23,9 @@ class BreadthFirstTraversalSpec extends Specification {
     def 'breadth first traversal with root'() {
         given:
         def names = []
-        graph.breadthFirstTraversal {
-            root = 'A'
-            visit { vertex ->
-                names << vertex.key
-            }
+        graph.breadthFirstTraversal('A') { vertex ->
+            names << vertex.key
+            CONTINUE
         }
 
         expect:

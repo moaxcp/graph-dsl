@@ -303,10 +303,10 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
      * TraversalColor.WHITE.
      * @return
      */
-    Map makeColorMap() {
+    Map<Object, TraversalColor> makeColorMap() {
         vertices.collectEntries { key, vertex ->
             [(key):WHITE]
-        }
+        } as Map<Object, TraversalColor>
     }
 
     /**
@@ -353,24 +353,6 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     private void setupSpec(TraversalSpec spec) {
         spec.colors = spec.colors ?: makeColorMap()
         spec.root = spec.root ?: getUnvisitedVertexKey(spec.colors)
-    }
-
-    /**
-     * Creates a BreadthFirstTraversalSpec from the provided closure. If root is set spec.root will be set before
-     * calling the closure. Defaults will be configured with the setupSpec method after the closure is called.
-     * @param root  optional root to start traversal
-     * @param specClosure   A closure that has a new BreadthFirstTraversalSpec as a delegate. Modify the
-     * BreadthFirstTraversalSpec in this closure to change the behavior of the depth first traversal.
-     * @return resulting specification
-     */
-    private BreadthFirstTraversalSpec breadthFirstTraversalSpec(String root = null,
-                                                                @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
-        BreadthFirstTraversalSpec spec = new BreadthFirstTraversalSpec()
-        spec.root = root
-        specClosure.delegate = spec
-        specClosure()
-        setupSpec(spec)
-        spec
     }
 
     /**
@@ -439,59 +421,90 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * configures a breadth first traversal with the given closure using breadthFirstTraversalSpec(). Once the spec is
-     * configured traversal(this.&breadthFirstTraversalConnected, spec) is called.
+     * Performs a breadth first traversal on each component of the Graph starting at root.
+     * <p>
+     *     It is possible to stop the traversal early by returning Traversal.STOP from closure.
      * @param root  optional root to start traversal.
-     * @param specClosure
-     * @return
+     * @param closure  Closure to perform on each vertex
+     * @return resulting Traversal value
      */
-    Traversal breadthFirstTraversal(String root = null, @DelegatesTo(BreadthFirstTraversalSpec) Closure specClosure) {
-        BreadthFirstTraversalSpec spec = breadthFirstTraversalSpec(root, specClosure)
-        traversal(this.&breadthFirstTraversalConnected, spec)
+    Traversal breadthFirstTraversal(Object root = null, Map<Object, TraversalColor> colors = null, Closure closure) {
+        if(!colors) {
+            colors = makeColorMap()
+        }
+        Object next = root
+        if(!next) {
+            next = getUnvisitedVertexKey(colors)
+        }
+
+        while (next) {
+            Traversal traversal = breadthFirstTraversalConnected(next, colors, closure)
+            if(!traversal) {
+                throw new IllegalStateException('Invalid Traversal value returned.')
+            }
+            if (traversal == Traversal.STOP) {
+                return Traversal.STOP
+            }
+            next = getUnvisitedVertexKey(colors)
+        }
+        Traversal.CONTINUE
     }
 
     /**
      * Performs a breadth first traversal on a connected component of the graph starting
-     * at the vertex identified by spec.root. The behavior of the traversal is determined by
-     * spec.colors and spec.visit.
+     * at the vertex identified by root. The behavior of the traversal is determined by
+     * colors and closure.
      * <p>
-     * Traversal.STOP - It is possible to stop the traversal early by returning this value
-     * in visit.
+     *     It is possible to stop the traversal early by returning Traversal.STOP from closure.
      * @param spec the BreadthFirstTraversalSpec
-     * @return null or a Traversal value
+     * @return a Traversal value
      */
-    @SuppressWarnings('NoDef')
-    private Traversal breadthFirstTraversalConnected(BreadthFirstTraversalSpec spec) {
-        if (!vertices[spec.root]) {
-            throw new IllegalArgumentException("Could not find $spec.root in graph")
+    Traversal breadthFirstTraversalConnected(Object root, Map<Object, TraversalColor> colors, Closure closure) {
+        if(!root) {
+            throw new IllegalArgumentException("Invalid root.")
         }
-        def traversal = spec.visit(vertices[spec.root])
+        if(!colors) {
+            throw new IllegalArgumentException("Invalid colors.")
+        }
+        if(closure == null) {
+            throw new IllegalArgumentException("Invalid closure.")
+        }
+        if (!vertices[root]) {
+            throw new IllegalArgumentException("Could not find $root in graph")
+        }
+        Traversal traversal = closure(vertices[root])
+        if(!traversal) {
+            throw new IllegalStateException('Invalid Traversal value returned.')
+        }
         if (traversal == Traversal.STOP) {
-            spec.colors[spec.root] = GREY
+            colors[root] = GREY
             return traversal
         }
-        spec.colors[spec.root] = GREY
+        colors[root] = GREY
         Queue<String> queue = [] as Queue<String>
-        queue << spec.root
+        queue << root
         while (queue.size() != 0) {
             String current = queue.poll()
             Set<Edge> adjacentEdges = traverseEdges(current)
             for (int i = 0; i < adjacentEdges.size(); i++) {
                 Edge edge = adjacentEdges[i]
                 String connected = current == edge.one ? edge.two : edge.one
-                if (spec.colors[connected] == WHITE) {
-                    traversal = spec.visit(vertices[connected])
+                if (colors[connected] == WHITE) {
+                    traversal = closure(vertices[connected])
+                    if(!traversal) {
+                        throw new IllegalStateException('Invalid Traversal value returned.')
+                    }
                     if (traversal == Traversal.STOP) {
-                        spec.colors[connected] = GREY
+                        colors[connected] = GREY
                         return traversal
                     }
-                    spec.colors[connected] = GREY
+                    colors[connected] = GREY
                     queue << connected
                 }
             }
-            spec.colors[current] = BLACK
+            colors[current] = BLACK
         }
-        null
+        Traversal.CONTINUE
     }
 
     /**

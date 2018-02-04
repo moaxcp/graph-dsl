@@ -26,56 +26,30 @@ class GraphBreadthFirstSpec extends Specification {
         }
     }
 
-    def 'can breadthFirstTraversalSpec'() {
-        setup:
-        def graph = new Graph()
-        graph.with {
-            vertex 'A'
-        }
-
-        when:
-        def spec = graph.breadthFirstTraversalSpec {
-            visit {
-                //do nothing
-            }
-        }
-
-        then:
-        spec.root == 'A'
-        spec.colors == ['A' : WHITE]
-        spec.visit != null
-    }
-
     def 'breadthFirstTraversalConnected visit'() {
         setup:
         def visitList = []
-
-        def spec = new BreadthFirstTraversalSpec()
-        spec.root = 'A'
-        spec.colors = graph.makeColorMap()
-        spec.visit { vertex ->
-            visitList << vertex.key
-        }
+        def colors = graph.makeColorMap()
 
         when:
-        def traversal = graph.breadthFirstTraversalConnected spec
+        def traversal = graph.breadthFirstTraversalConnected('A', colors) { vertex ->
+            visitList << vertex.key
+            CONTINUE
+        }
 
         then:
         traversal != STOP
-        spec.colors == [
+        colors == [
             A: BLACK, B: BLACK, C: BLACK, D: BLACK, E: BLACK
         ]
         visitList == ['A', 'B', 'D', 'E', 'C']
     }
 
     def 'root does not exist'() {
-        setup:
-        def spec = new BreadthFirstTraversalSpec()
-        spec.root = 'step1'
-        spec.colors = graph.makeColorMap()
-
         when:
-        graph.breadthFirstTraversalConnected spec
+        graph.breadthFirstTraversalConnected('step1', graph.makeColorMap()) {
+
+        }
 
         then:
         thrown IllegalArgumentException
@@ -83,23 +57,21 @@ class GraphBreadthFirstSpec extends Specification {
 
     def 'can stop traversal'() {
         setup:
-        def spec = new BreadthFirstTraversalSpec()
-        spec.root = 'A'
-        spec.colors = graph.makeColorMap()
         def visitList = []
-        spec.visit { vertex ->
+        def colors = graph.makeColorMap()
+
+        when:
+        def traversal = graph.breadthFirstTraversalConnected('A', colors) { vertex ->
             if(vertex.key == 'E') {
                 return STOP
             }
             visitList << vertex.key
+            return CONTINUE
         }
-
-        when:
-        def traversal = graph.breadthFirstTraversalConnected spec
 
         then:
         traversal == STOP
-        spec.colors == [
+        colors == [
                 A: GREY, B: GREY, C: WHITE, D: GREY, E: GREY
         ]
         visitList == ['A', 'B', 'D']
@@ -107,56 +79,23 @@ class GraphBreadthFirstSpec extends Specification {
 
     def 'can stop traversal at root'() {
         setup:
-        def spec = new BreadthFirstTraversalSpec()
-        spec.root = 'A'
-        spec.colors = graph.makeColorMap()
+        def colors = graph.makeColorMap()
         def visitList = []
-        spec.visit { vertex ->
+
+        when:
+        def traversal = graph.breadthFirstTraversalConnected('A', colors) { vertex ->
             visitList << vertex.key
             if(vertex.key == 'A') {
                 return STOP
             }
+            return CONTINUE
         }
-
-        when:
-        def traversal = graph.breadthFirstTraversalConnected spec
 
         then:
         traversal == STOP
-        spec.colors == [
+        colors == [
                 A: GREY, B: WHITE, C: WHITE, D: WHITE, E: WHITE
         ]
         visitList == ['A']
-    }
-
-    def 'breadthFirstTraversal with closure'() {
-        setup:
-        def visitList = []
-
-        when:
-        def traversal = graph.breadthFirstTraversal {
-            visit { vertex ->
-                visitList << vertex.key
-            }
-        }
-
-        then:
-        visitList == ['A', 'B', 'D', 'E', 'C']
-    }
-
-    def 'breadthFirstTraversal change root'() {
-        setup:
-        def visitList = []
-
-        when:
-        def traversal = graph.breadthFirstTraversal {
-            root = 'E'
-            visit { vertex ->
-                visitList << vertex.key
-            }
-        }
-
-        then:
-        visitList == ['E', 'A', 'D', 'B', 'C']
     }
 }

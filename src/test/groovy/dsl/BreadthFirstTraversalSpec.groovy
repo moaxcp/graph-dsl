@@ -1,5 +1,6 @@
 package dsl
 
+import static graph.Traversal.*
 import spock.lang.Specification
 import graph.Graph
 
@@ -23,11 +24,9 @@ class BreadthFirstTraversalSpec extends Specification {
         given:
         def names = []
         graph.with {
-            breadthFirstTraversal {
-                root = 'A'
-                visit { vertex ->
-                    names << vertex.key
-                }
+            breadthFirstTraversal('A') { vertex ->
+                names << vertex.key
+                CONTINUE
             }
         }
 
@@ -39,10 +38,9 @@ class BreadthFirstTraversalSpec extends Specification {
         given:
         def names = []
         graph.with {
-            breadthFirstTraversal('A') {
-                visit { vertex ->
-                    names << vertex.key
-                }
+            breadthFirstTraversal('A') { vertex ->
+                names << vertex.key
+                CONTINUE
             }
         }
 
