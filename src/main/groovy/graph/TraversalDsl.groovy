@@ -89,7 +89,7 @@ trait TraversalDsl {
         } else {
             inject = this.&injectBfs
         }
-        (List<? extends Vertex>) inject([]) { result, vertex ->
+        inject.call([] as List<? extends Vertex>) { result, vertex ->
             result << closure(vertex)
         }
     }

@@ -309,6 +309,22 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
         } as Map<Object, TraversalColor>
     }
 
+    Traversal preOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure closure) {
+        depthFirstTraversal {
+            getDelegate().root = root
+            getDelegate().colors = colors
+            getDelegate().preorder(closure)
+        }
+    }
+
+    Traversal postOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure closure) {
+        depthFirstTraversal {
+            getDelegate().root = root
+            getDelegate().colors = colors
+            getDelegate().postorder(closure)
+        }
+    }
+
     /**
      * configures a depth first traversal with the given closure using {@link #depthFirstTraversalSpec(String, Closure)}.
      * Once the spec is configured {@link #traversal(Closure, TraversalSpec)} is called.
@@ -428,7 +444,7 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
      * @param closure Closure to perform on each vertex
      * @return resulting Traversal value
      */
-    Traversal breadthFirstTraversal(Object root = null, Map<Object, TraversalColor> colors = null, Closure closure) {
+    TraversalResult breadthFirstTraversal(Object root = null, Map<Object, TraversalColor> colors = null, Closure closure) {
         if (!colors) {
             colors = makeColorMap()
         }
@@ -437,17 +453,21 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
             next = getUnvisitedVertexKey(colors)
         }
 
+        TraversalResult result = new TraversalResult()
+        result.colors.putAll(colors)
+
         while (next) {
-            Traversal traversal = breadthFirstTraversalConnected(next, colors, closure)
-            if (!traversal) {
+            result.roots.add(next)
+            result.traversal = breadthFirstTraversalConnected(next, result.colors, closure)
+            if (!result.traversal) {
                 throw new IllegalStateException('Invalid Traversal value returned.')
             }
-            if (traversal == Traversal.STOP) {
-                return Traversal.STOP
+            if (result.traversal == Traversal.STOP) {
+                return result
             }
-            next = getUnvisitedVertexKey(colors)
+            next = getUnvisitedVertexKey(result.colors)
         }
-        Traversal.CONTINUE
+        return result
     }
 
     /**
