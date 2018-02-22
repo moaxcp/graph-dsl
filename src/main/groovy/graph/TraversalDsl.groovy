@@ -1,6 +1,6 @@
 package graph
 
-import static graph.Traversal.*
+import static TraversalState.*
 
 trait TraversalDsl {
 

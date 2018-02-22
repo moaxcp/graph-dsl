@@ -2,7 +2,7 @@ package graph
 
 import graph.type.directed.DirectedGraphType
 import spock.lang.Specification
-import static Traversal.*
+import static TraversalState.*
 import static Graph.graph
 
 class ReadMeSpec extends Specification {
@@ -39,11 +39,9 @@ class ReadMeSpec extends Specification {
             edge 'B', 'C'
         }
 
-        graph.depthFirstTraversal {
-            root = 'A'
-            preorder { vertex ->
-                println "preorder $vertex.key"
-            }
+        graph.preOrder('A') { vertex ->
+            println "preorder $vertex.key"
+            CONTINUE
         }
 
         graph.breadthFirstTraversal('A') { vertex ->

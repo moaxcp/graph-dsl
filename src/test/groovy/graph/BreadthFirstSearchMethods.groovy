@@ -1,7 +1,7 @@
 package graph
 
 import spock.lang.Specification
-import static graph.Traversal.*
+import static TraversalState.*
 
 class BreadthFirstSearchMethods extends Specification {
 

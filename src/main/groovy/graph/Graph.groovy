@@ -50,6 +50,10 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
         Collections.unmodifiableMap(vertices)
     }
 
+    Vertex getVertex(Object key) {
+        vertices[key]
+    }
+
     /**
      * Removes the {@link Vertex} from vertices with the matching key. If the Vertex has adjacentEdges it cannot be
      * deleted an IllegalStateException will be thrown.
@@ -309,222 +313,57 @@ class Graph implements GroovyInterceptable, VertexDsl, EdgeDsl, TraversalDsl {
         } as Map<Object, TraversalColor>
     }
 
-    Traversal preOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure closure) {
-        depthFirstTraversal {
-            getDelegate().root = root
-            getDelegate().colors = colors
-            getDelegate().preorder(closure)
+    Map preOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
+            return traversal(TraversalAlgorithms.&preOrderTraversal.curry(this), root, colors, action)
+    }
+
+    /**
+     * Performs a full traversal with the given algorithm on all components of the graph. This method calls algorithm
+     * on root and continues to call algorithm until all vertices are black. To stop the traversal early action may
+     * return TraversalState.STOP.
+     * @param algorithm  type of traversal to run on each component
+     * @param root  root of component to start traversal
+     * @param colors  starting set of colors. Will not be modified.
+     * @param action  action to perform by algorithm (on each edge or vertex)
+     * @return results containing current root, roots of all components, colors, and results added by algorithm
+     */
+    protected Map traversal(Closure algorithm, Object root, Map<Object, TraversalColor> colors, Closure action) {
+        if(root && !vertices[root]) {
+            throw new IllegalArgumentException("$root not found in vertices")
         }
-    }
-
-    Traversal postOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure closure) {
-        depthFirstTraversal {
-            getDelegate().root = root
-            getDelegate().colors = colors
-            getDelegate().postorder(closure)
+        Map results = [:]
+        results.colors = [:]
+        results.colors.putAll(colors ?: makeColorMap())
+        results.root = root
+        if(!results.root) {
+            results.root = getUnvisitedVertexKey((Map) results.colors)
         }
-    }
-
-    /**
-     * configures a depth first traversal with the given closure using {@link #depthFirstTraversalSpec(String, Closure)}.
-     * Once the spec is configured {@link #traversal(Closure, TraversalSpec)} is called.
-     * @param root optional root to start traversal
-     * @param specClosure closure for depthFirstTraversalSpec method
-     * @return result of the traversal
-     */
-    Traversal depthFirstTraversal(String root, @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
-        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(root, specClosure)
-        traversal(this.&depthFirstTraversalConnected, spec)
-    }
-
-    Traversal depthFirstTraversal(@DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
-        DepthFirstTraversalSpec spec = depthFirstTraversalSpec(specClosure)
-        traversal(this.&depthFirstTraversalConnected, spec)
-    }
-
-    /**
-     * Creates a DepthFirstTraversalSpec from the provided closure. If root is set spec.root will be set before calling
-     * the closure. Defaults will be configured with the setupSpec method after the closure is called.
-     * @param root optional root to start traversal
-     * @param specClosure A closure that has a new DepthFirstTraversalSpec as a delegate. Modify the
-     * DepthFirstTraversalSpec in this closure to change the behavior of the depth first traversal.
-     * @return resulting specification
-     */
-    private DepthFirstTraversalSpec depthFirstTraversalSpec(String root = null,
-                                                            @DelegatesTo(DepthFirstTraversalSpec) Closure specClosure) {
-        DepthFirstTraversalSpec spec = new DepthFirstTraversalSpec()
-        spec.root = root
-        specClosure.delegate = spec
-        specClosure()
-        setupSpec(spec)
-        spec
-    }
-
-    /**
-     * Configures defaults for a TraversalSpec. When colors and root are not set This method will generate defaults. If
-     * colors is not defined in the spec it defaults to the result of {@link #makeColorMap()}. If root is not defined
-     * in the spec it defaults to the result of calling {@link #getUnvisitedVertexKey(Map)} with spec.colors.
-     * @param spec the {@link TraversalSpec} to configure with defaults.
-     */
-    private void setupSpec(TraversalSpec spec) {
-        spec.colors = spec.colors ?: makeColorMap()
-        spec.root = spec.root ?: getUnvisitedVertexKey(spec.colors)
-    }
-
-    /**
-     * Performs a traversal with the given traversalConnected method and TraversalSpec on all
-     * components of the graph. This method calls traversalConnected on spec.root
-     * and continues to call traversalConnected until all vertices are colored black.
-     * To stop the traversal early the spec can return Traversal.STOP in any of the
-     * traversal closures.
-     * @param traversalConnected one of the traversalConnected methods in this graph
-     * @param spec
-     * @return null or a Traversal value
-     */
-    protected Traversal traversal(traversalConnected, TraversalSpec spec) {
-        spec.roots = [] as Set
-        while (spec.root) {
-            Traversal traversal = traversalConnected(spec)
-            if (traversal == Traversal.STOP) {
-                return Traversal.STOP
+        results.roots = [] as Set
+        while (results.root) {
+            results.state = algorithm.call(results, action)
+            if (results.state == TraversalState.STOP) {
+                return results
             }
-            spec.roots << spec.root
-            spec.root = getUnvisitedVertexKey(spec.colors)
+            results.roots << results.root
+            results.root = getUnvisitedVertexKey((Map) results.colors)
         }
-        null
+        results
     }
 
-    /**
-     * Performs a depth first traversal on a connected component of the graph starting
-     * at the vertex identified by root. The behavior of the traversal is determined by
-     * spec.colors, spec.preorder, and spec.postorder.
-     *
-     * Traversal.STOP - It is possible to stop the traversal early by returning this value
-     * in preorder and postorder.
-     * @param spec the DepthFirstTraversalSpec
-     * @return null or a Traversal value
-     */
-    private Traversal depthFirstTraversalConnected(DepthFirstTraversalSpec spec) {
-        Object root = spec.root
-        if (spec.preorder && spec.preorder(vertices[root]) == Traversal.STOP) {
-            spec.colors[root] = GREY
-            return Traversal.STOP
-        }
-        spec.colors[root] = GREY
-
-        Set<Edge> adjacentEdges = traverseEdges(root)
-        for (int index = 0; index < adjacentEdges.size(); index++) { //cannot stop and each() call on adjacentEdges
-            Edge edge = adjacentEdges[index]
-            String connectedName = root == edge.one ? edge.two : edge.one
-            if (spec.classifyEdge && spec.classifyEdge(edge, root, connectedName,
-                    spec.colors[connectedName]) == Traversal.STOP) {
-                return Traversal.STOP
-            }
-            if (spec.colors[connectedName] == WHITE) {
-                spec.root = connectedName
-                if (Traversal.STOP == depthFirstTraversalConnected(spec)) {
-                    return Traversal.STOP
-                }
-            }
-        }
-
-        if (spec.postorder && spec.postorder(vertices[root]) == Traversal.STOP) {
-            spec.colors[root] = BLACK
-            return Traversal.STOP
-        }
-        spec.colors[root] = BLACK
-        null
+    Map postOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
+        return traversal(TraversalAlgorithms.&postOrderTraversal.curry(this), root, colors, action)
     }
 
     /**
      * Performs a breadth first traversal on each component of the Graph starting at root.
      * <p>
-     *     It is possible to stop the traversal early by returning Traversal.STOP from closure.
+     *     It is possible to stop the traversal early by returning TraversalState.STOP from closure.
      * @param root optional root to start traversal.
      * @param closure Closure to perform on each vertex
-     * @return resulting Traversal value
+     * @return resulting TraversalState value
      */
-    TraversalResult breadthFirstTraversal(Object root = null, Map<Object, TraversalColor> colors = null, Closure closure) {
-        if (!colors) {
-            colors = makeColorMap()
-        }
-        Object next = root
-        if (!next) {
-            next = getUnvisitedVertexKey(colors)
-        }
-
-        TraversalResult result = new TraversalResult()
-        result.colors.putAll(colors)
-
-        while (next) {
-            result.roots.add(next)
-            result.traversal = breadthFirstTraversalConnected(next, result.colors, closure)
-            if (!result.traversal) {
-                throw new IllegalStateException('Invalid Traversal value returned.')
-            }
-            if (result.traversal == Traversal.STOP) {
-                return result
-            }
-            next = getUnvisitedVertexKey(result.colors)
-        }
-        return result
-    }
-
-    /**
-     * Performs a breadth first traversal on a connected component of the graph starting
-     * at the vertex identified by root. The behavior of the traversal is determined by
-     * colors and closure.
-     * <p>
-     *     It is possible to stop the traversal early by returning Traversal.STOP from closure.
-     * @param spec the BreadthFirstTraversalSpec
-     * @return a Traversal value
-     */
-    Traversal breadthFirstTraversalConnected(Object root, Map<Object, TraversalColor> colors, Closure closure) {
-        if (!root) {
-            throw new IllegalArgumentException("Invalid root.")
-        }
-        if (!colors) {
-            throw new IllegalArgumentException("Invalid colors.")
-        }
-        if (closure == null) {
-            throw new IllegalArgumentException("Invalid closure.")
-        }
-        if (!vertices[root]) {
-            throw new IllegalArgumentException("Could not find $root in graph")
-        }
-        Traversal traversal = closure(vertices[root])
-        if (!traversal) {
-            throw new IllegalStateException('Invalid Traversal value returned.')
-        }
-        if (traversal == Traversal.STOP) {
-            colors[root] = GREY
-            return traversal
-        }
-        colors[root] = GREY
-        Queue<String> queue = [] as Queue<String>
-        queue << root
-        while (queue.size() != 0) {
-            String current = queue.poll()
-            Set<Edge> adjacentEdges = traverseEdges(current)
-            for (int i = 0; i < adjacentEdges.size(); i++) {
-                Edge edge = adjacentEdges[i]
-                String connected = current == edge.one ? edge.two : edge.one
-                if (colors[connected] == WHITE) {
-                    traversal = closure(vertices[connected])
-                    if (!traversal) {
-                        throw new IllegalStateException('Invalid Traversal value returned.')
-                    }
-                    if (traversal == Traversal.STOP) {
-                        colors[connected] = GREY
-                        return traversal
-                    }
-                    colors[connected] = GREY
-                    queue << connected
-                }
-            }
-            colors[current] = BLACK
-        }
-        Traversal.CONTINUE
+    Map breadthFirstTraversal(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
+        traversal(TraversalAlgorithms.&breadthFirstTraversal.curry(this), root, colors, action)
     }
 
     /**
