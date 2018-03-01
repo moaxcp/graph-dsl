@@ -1,4 +1,4 @@
-package nondsl.graphviz
+package api.graphviz
 
 import graph.Graph
 import spock.lang.Specification

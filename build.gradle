@@ -32,6 +32,42 @@ jacocoTestReport {
     }
 }
 
+task apiTest(type:Test) {
+    include 'api/*'
+}
+
+task apiCodeCoverageReport(type:JacocoReport) {
+    executionData apiTest
+    sourceSets sourceSets.main
+}
+
+task dslTest(type:Test) {
+    include 'dsl/*'
+}
+
+task dslCodeCoverageReport(type:JacocoReport) {
+    executionData dslTest
+    sourceSets sourceSets.main
+}
+
+task graphTest(type:Test) {
+    include 'graph/*'
+}
+
+task graphCodeCoverageReport(type:JacocoReport) {
+    executionData graphTest
+    sourceSets sourceSets.main
+}
+
+task scriptTest(type:Test) {
+    include 'dsl/*'
+}
+
+task scriptCodeCoverageReport(type:JacocoReport) {
+    executionData scriptTest
+    sourceSets sourceSets.main
+}
+
 jacocoTestCoverageVerification {
     dependsOn test
     violationRules {

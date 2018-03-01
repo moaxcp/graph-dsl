@@ -1,4 +1,4 @@
-package nondsl.edges
+package api.edges
 
 import graph.Edge
 import spock.lang.Shared

@@ -1,6 +1,4 @@
-package nondsl
-
-import spock.lang.Specification
+package api
 
 class DirectedGraphSpec extends GraphBaseSpec {
     def setup() {

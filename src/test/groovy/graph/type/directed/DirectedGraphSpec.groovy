@@ -160,7 +160,7 @@ class DirectedGraphSpec extends Specification {
         }
 
         when:
-        def sort = graph.reversePostOrderSort()
+        def sort = graph.topologicalSort('A')
 
         then:
         sort == ['A', 'E', 'B', 'C', 'D', 'G', 'F']

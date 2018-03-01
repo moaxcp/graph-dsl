@@ -1,7 +1,6 @@
-package nondsl.edges
+package api.edges
 
 import graph.Edge
-import spock.lang.Specification
 
 class EdgeTestSpec extends BaseEdgeSpec {
     def setup() {

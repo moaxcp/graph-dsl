@@ -1,7 +1,6 @@
-package nondsl.edges
+package api.edges
 
 import graph.type.directed.DirectedEdge
-import spock.lang.Specification
 
 public class DirectedEdgeSpec extends BaseEdgeSpec {
     def setup() {

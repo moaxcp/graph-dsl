@@ -1,4 +1,4 @@
-package nondsl.vertices
+package api.vertices
 
 import graph.Vertex
 import spock.lang.Specification
