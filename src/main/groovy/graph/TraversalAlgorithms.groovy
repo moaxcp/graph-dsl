@@ -10,18 +10,19 @@ class TraversalAlgorithms {
     static Map preOrderTraversal(Graph graph, Map spec, Closure action) {
         Object root = spec.root
         Map<Object, TraversalColor> colors = spec.colors
-        if(action(graph.getVertex(root)) == TraversalState.STOP) {
-            colors[root] == GREY
+        if(graph.getVertex(root) && action(graph.getVertex(root)) == TraversalState.STOP) {
+            colors[root] = GREY
             spec.state = TraversalState.STOP
             return spec
         }
         colors[root] = GREY
 
-        Set<Edge> adjacentEdges = graph.traverseEdges(root)
-        for(int index = 0; index < adjacentEdges.size(); index++) {
-            Edge edge = adjacentEdges[index]
+        Set<Edge> edges = graph.traverseEdges(root)
+        for(int index = 0; index < edges.size(); index++) {
+            Edge edge = edges[index]
             Object connectedKey = root == edge.one ? edge.two : edge.one
-            if(colors[connectedKey] == WHITE) {
+            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
+                colors[connectedKey] = WHITE
                 spec.root = connectedKey
                 preOrderTraversal(graph, spec, action)
                 if(spec.state == TraversalState.STOP) {
@@ -42,7 +43,8 @@ class TraversalAlgorithms {
         for(int index = 0; index < adjacentEdges.size(); index++) {
             Edge edge = adjacentEdges[index]
             Object connectedKey = root == edge.one ? edge.two : edge.one
-            if(colors[connectedKey] == WHITE) {
+            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
+                colors[connectedKey] = WHITE
                 spec.root = connectedKey
                 postOrderTraversal(graph, spec, action)
                 if(spec.state == TraversalState.STOP) {
@@ -50,10 +52,9 @@ class TraversalAlgorithms {
                 }
             }
         }
-        if(action(graph.getVertex(root)) == TraversalState.STOP) {
-            TraversalState state = TraversalState.STOP
+        if(graph.getVertex(root) && action(graph.getVertex(root)) == TraversalState.STOP) {
             colors[root] = BLACK
-            spec.state = state
+            spec.state = TraversalState.STOP
             return spec
         }
         colors[root] = BLACK
