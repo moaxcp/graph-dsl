@@ -76,7 +76,7 @@ trait TraversalDsl {
         results.roots = [] as Set
         while (results.root) {
             results.state = algorithm.call(results, action)
-            if (results.state == TraversalState.STOP) {
+            if (results.state == STOP) {
                 return results
             }
             results.roots << results.root

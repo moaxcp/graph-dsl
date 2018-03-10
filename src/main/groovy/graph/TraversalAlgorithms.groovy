@@ -1,6 +1,8 @@
 package graph
 
 import static graph.TraversalColor.*
+import static graph.EdgeType.*
+import static graph.TraversalState.*
 
 class TraversalAlgorithms {
     private TraversalAlgorithms() {
@@ -10,9 +12,9 @@ class TraversalAlgorithms {
     static Map preOrderTraversal(Graph graph, Map spec, Closure action) {
         Object root = spec.root
         Map<Object, TraversalColor> colors = spec.colors
-        if(graph.getVertex(root) && action(graph.getVertex(root)) == TraversalState.STOP) {
+        if(graph.getVertex(root) && action(graph.getVertex(root)) == STOP) {
             colors[root] = GREY
-            spec.state = TraversalState.STOP
+            spec.state = STOP
             return spec
         }
         colors[root] = GREY
@@ -25,13 +27,13 @@ class TraversalAlgorithms {
                 colors[connectedKey] = WHITE
                 spec.root = connectedKey
                 preOrderTraversal(graph, spec, action)
-                if(spec.state == TraversalState.STOP) {
+                if(spec.state == STOP) {
                     return spec
                 }
             }
         }
         colors[root] = BLACK
-        spec.state = TraversalState.CONTINUE
+        spec.state = CONTINUE
         spec
     }
 
@@ -47,18 +49,18 @@ class TraversalAlgorithms {
                 colors[connectedKey] = WHITE
                 spec.root = connectedKey
                 postOrderTraversal(graph, spec, action)
-                if(spec.state == TraversalState.STOP) {
+                if(spec.state == STOP) {
                     return spec
                 }
             }
         }
-        if(graph.getVertex(root) && action(graph.getVertex(root)) == TraversalState.STOP) {
+        if(graph.getVertex(root) && action(graph.getVertex(root)) == STOP) {
             colors[root] = BLACK
-            spec.state = TraversalState.STOP
+            spec.state = STOP
             return spec
         }
         colors[root] = BLACK
-        spec.state = TraversalState.CONTINUE
+        spec.state = CONTINUE
         spec
     }
 
@@ -71,40 +73,47 @@ class TraversalAlgorithms {
             Edge edge = adjacentEdges[index]
             Object connectedKey = root == edge.one ? edge.two : edge.one
             TraversalColor toColor = colors[connectedKey]
+            if(!spec.forrest) {
+                spec.forrest = new Graph()
+            }
             EdgeType edgeType = edgeType(spec, root, connectedKey, toColor)
-            action(root, connectedKey, edgeType)
-            if(colors[connectedKey] == WHITE) {
+            if(edgeType == TREE_EDGE)
+            spec.forrest.edge(root, connectedKey)
+            spec.state = action(root, connectedKey, edgeType)
+            if(spec.state == STOP) {
+                return spec
+            }
+            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
                 spec.root = connectedKey
                 classifyEdgesTraversal(graph, spec, action)
-                if(spec.state == TraversalState.STOP) {
+                if(spec.state == STOP) {
                     return spec
                 }
             }
         }
         colors[root] = BLACK
-        spec.state = TraversalState.CONTINUE
+        spec.state = CONTINUE
         spec
     }
 
     private static EdgeType edgeType(Map map, Object from, Object to, TraversalColor color) {
-        if(!map.forrest) {
-            map.forrest = new Graph()
-        }
         EdgeType edgeType
         switch(color) {
             case WHITE:
-                map.forrest.edge(from, to)
-                edgeType = EdgeType.TREE_EDGE
+                edgeType = TREE_EDGE
                 break
             case GREY:
-                edgeType = EdgeType.BACK_EDGE
+                edgeType = BACK_EDGE
                 break
             case BLACK:
-                if(map.forrest.vertices[to]) {
-                    edgeType = EdgeType.CROSS_EDGE
+                if(((Map)map.forrest.vertices)[to]) {
+                    edgeType = FORWARD_EDGE
                 } else {
-                    edgeType = EdgeType.FORWARD_EDGE
+                    edgeType = CROSS_EDGE
                 }
+                break
+            case null:
+                edgeType = TREE_EDGE
                 break
             default:
                 throw new IllegalStateException("Edge from $from to $to needs to be WHITE, GREY, or BLACK.")
@@ -116,9 +125,9 @@ class TraversalAlgorithms {
         Object root = spec.root
         Map<Object, TraversalColor> colors = spec.colors
         TraversalState traversal = action(graph.getVertex(root))
-        if(traversal == TraversalState.STOP) {
+        if(traversal == STOP) {
             colors[root] = GREY
-            spec.state = TraversalState.STOP
+            spec.state = STOP
             return spec
         }
         colors[root] = GREY
@@ -136,9 +145,9 @@ class TraversalAlgorithms {
                     if(!traversal) {
                         throw new IllegalStateException('Invalid TraversalState value returned by action.')
                     }
-                    if(traversal == TraversalState.STOP) {
+                    if(traversal == STOP) {
                         colors[connected] = GREY
-                        spec.state = TraversalState.STOP
+                        spec.state = STOP
                         return spec
                     }
                     colors[connected] = GREY
@@ -147,7 +156,7 @@ class TraversalAlgorithms {
             }
             colors[current] = BLACK
         }
-        spec.state = TraversalState.CONTINUE
+        spec.state = CONTINUE
         spec
     }
 }
