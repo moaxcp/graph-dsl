@@ -77,8 +77,11 @@ class TraversalAlgorithms {
                 spec.forrest = new Graph()
             }
             EdgeType edgeType = edgeType(spec, root, connectedKey, toColor)
-            if(edgeType == TREE_EDGE)
-            spec.forrest.edge(root, connectedKey)
+            if(edgeType == TREE_EDGE) {
+                spec.forrest.vertex root, [rootKey:spec.traversalRoot]
+                spec.forrest.vertex connectedKey, [rootKey:spec.traversalRoot]
+                spec.forrest.edge(root, connectedKey)
+            }
             spec.state = action(root, connectedKey, edgeType)
             if(spec.state == STOP) {
                 return spec
@@ -106,7 +109,9 @@ class TraversalAlgorithms {
                 edgeType = BACK_EDGE
                 break
             case BLACK:
-                if(((Map)map.forrest.vertices)[to]) {
+                def fromTree = map.forrest.vertices[from].rootKey
+                def toTree = map.forrest.vertices[to].rootKey
+                if(fromTree == toTree) {
                     edgeType = FORWARD_EDGE
                 } else {
                     edgeType = CROSS_EDGE

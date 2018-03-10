@@ -75,11 +75,12 @@ trait TraversalDsl {
         }
         results.roots = [] as Set
         while (results.root) {
+            results.roots << results.root
+            results.traversalRoot = results.root
             results.state = algorithm.call(results, action)
             if (results.state == STOP) {
                 return results
             }
-            results.roots << results.root
             results.root = getUnvisitedVertexKey((Map) results.colors)
         }
         results

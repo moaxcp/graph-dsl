@@ -227,7 +227,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
 
         when: 'classify-edges is called on root A'
         def firstTree = []
-        Map result = classifyEdgesTraversal(graph, [root:'A', colors:[:]]) { from, to, type ->
+        Map result = classifyEdgesTraversal(graph, [root:'A', traversalRoot:'A', colors:[:]]) { from, to, type ->
             Map map = [:]
             map.from = from
             map.to = to
@@ -237,6 +237,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
         and: 'classify-edges is called on root F'
         def secondTree =[]
         result.root = 'F'
+        result.traversalRoot = 'F'
         classifyEdgesTraversal(graph, result) { from, to, type ->
             Map map = [:]
             map.from = from
@@ -280,7 +281,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
         and: 'returned results are correct'
         Graph forrest = result.forrest
         result.remove('forrest')
-        result == [root:'G', colors:[A:BLACK, B:BLACK, C:BLACK, D:BLACK, E:BLACK, F:BLACK, G:BLACK], state:CONTINUE]
+        result == [root:'G', traversalRoot:'F', colors:[A:BLACK, B:BLACK, C:BLACK, D:BLACK, E:BLACK, F:BLACK, G:BLACK], state:CONTINUE]
 
         and: 'forrest in results are correct'
         forrest.edges.size() == 5
