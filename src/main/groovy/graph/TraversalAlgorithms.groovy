@@ -64,7 +64,7 @@ class TraversalAlgorithms {
         spec
     }
 
-    static Map classifyEdgesTraversal(Graph graph, Map spec, Closure action) {
+    static Map preOrderEdgesTraversal(Graph graph, Map spec, Closure action) {
         Object root = spec.root
         Map<Object, TraversalColor> colors = spec.colors
         colors[root] = GREY
@@ -72,23 +72,14 @@ class TraversalAlgorithms {
         for(int index = 0; index < adjacentEdges.size(); index++) {
             Edge edge = adjacentEdges[index]
             Object connectedKey = root == edge.one ? edge.two : edge.one
-            TraversalColor toColor = colors[connectedKey]
-            if(!spec.forrest) {
-                spec.forrest = new Graph()
-            }
-            EdgeType edgeType = edgeType(spec, root, connectedKey, toColor)
-            if(edgeType == TREE_EDGE) {
-                spec.forrest.vertex root, [rootKey:spec.traversalRoot]
-                spec.forrest.vertex connectedKey, [rootKey:spec.traversalRoot]
-                spec.forrest.edge(root, connectedKey)
-            }
-            spec.state = action(root, connectedKey, edgeType)
+            TraversalColor toColor = colors[connectedKey] ?: WHITE
+            spec.state = action(root, connectedKey, toColor)
             if(spec.state == STOP) {
                 return spec
             }
             if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
                 spec.root = connectedKey
-                classifyEdgesTraversal(graph, spec, action)
+                preOrderEdgesTraversal(graph, spec, action)
                 if(spec.state == STOP) {
                     return spec
                 }
@@ -97,6 +88,22 @@ class TraversalAlgorithms {
         colors[root] = BLACK
         spec.state = CONTINUE
         spec
+    }
+
+    static Map classifyEdgesTraversal(Graph graph, Map spec, Closure action) {
+        if(!spec.forrest) {
+            spec.forrest = new Graph()
+        }
+        def edgesAction = { Object from, Object to, TraversalColor toColor ->
+            EdgeType edgeType = edgeType(spec, from, to, toColor)
+            if(edgeType == TREE_EDGE) {
+                spec.forrest.vertex from, [rootKey:spec.traversalRoot]
+                spec.forrest.vertex to, [rootKey:spec.traversalRoot]
+                spec.forrest.edge(from, to)
+            }
+            return action(from, to, edgeType)
+        }
+        return preOrderEdgesTraversal(graph, spec, edgesAction)
     }
 
     private static EdgeType edgeType(Map map, Object from, Object to, TraversalColor color) {

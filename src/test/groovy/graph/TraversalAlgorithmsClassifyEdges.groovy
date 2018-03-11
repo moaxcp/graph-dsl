@@ -44,6 +44,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
     def 'classify-edges missing action'() {
         when: 'classify-edges is called with missing action'
         Map result = classifyEdgesTraversal(graph, [root:'A', colors:[:]], null)
+        result.remove('forrest')
 
         then: 'invalid results are returned'
         result == [root:'A', colors:[A:BLACK], state:CONTINUE]
