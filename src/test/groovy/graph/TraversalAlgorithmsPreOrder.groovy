@@ -3,7 +3,7 @@ package graph
 import spock.lang.Specification
 
 import static graph.Graph.graph
-import static graph.TraversalAlgorithms.preOrderTraversal
+import static TraversalAlgorithms.preOrderTraversal
 import static graph.TraversalColor.BLACK
 import static graph.TraversalColor.GREY
 import static graph.TraversalState.CONTINUE
@@ -79,6 +79,20 @@ class TraversalAlgorithmsPreOrder extends Specification {
         result.is(spec)
     }
 
+    def 'pre-order one vertex action returns null'() {
+        given: 'graph containing vertex A'
+        graph.vertex 'A'
+
+        when: 'pre-order is called with action returning null'
+        preOrderTraversal(graph, [root:'A', colors:[:]]) {
+            null
+        }
+
+        then: 'NullPointerException is thrown'
+        NullPointerException e = thrown()
+        e.message == 'action cannot return null TraversalState.'
+    }
+
     def 'pre-order one vertex'() {
         given: 'graph containing vertex A'
         graph.vertex 'A'
@@ -134,6 +148,7 @@ class TraversalAlgorithmsPreOrder extends Specification {
             if(it.key == 'B') {
                 return STOP
             }
+            CONTINUE
         }
 
         then: 'A was marked as frontier'

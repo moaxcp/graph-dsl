@@ -7,7 +7,7 @@ import static graph.EdgeType.CROSS_EDGE
 import static graph.EdgeType.FORWARD_EDGE
 import static graph.EdgeType.TREE_EDGE
 import static graph.Graph.graph
-import static graph.TraversalAlgorithms.classifyEdgesTraversal
+import static TraversalAlgorithms.classifyEdgesTraversal
 import static graph.TraversalColor.BLACK
 import static graph.TraversalColor.GREY
 import static graph.TraversalState.CONTINUE
@@ -185,6 +185,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
             if(from == 'B') {
                 return STOP
             }
+            CONTINUE
         }
         def forrest = result.forrest
         result.remove('forrest')
@@ -234,6 +235,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
             map.to = to
             map.type = type
             firstTree << map
+            CONTINUE
         }
         and: 'classify-edges is called on root F'
         def secondTree =[]
@@ -245,6 +247,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
             map.to = to
             map.type = type
             secondTree << map
+            CONTINUE
         }
 
         then: 'action was called with correct params'

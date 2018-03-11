@@ -12,10 +12,16 @@ class TraversalAlgorithms {
     static Map preOrderTraversal(Graph graph, Map spec, Closure action) {
         Object root = spec.root
         Map<Object, TraversalColor> colors = spec.colors
-        if(graph.getVertex(root) && action(graph.getVertex(root)) == STOP) {
-            colors[root] = GREY
-            spec.state = STOP
-            return spec
+        if(graph.getVertex(root)) {
+            TraversalState state = action(graph.getVertex(root))
+            if(!state) {
+                throw new NullPointerException('action cannot return null TraversalState.')
+            }
+            if(state == STOP) {
+                colors[root] = GREY
+                spec.state = STOP
+                return spec
+            }
         }
         colors[root] = GREY
 
@@ -54,10 +60,16 @@ class TraversalAlgorithms {
                 }
             }
         }
-        if(graph.getVertex(root) && action(graph.getVertex(root)) == STOP) {
-            colors[root] = BLACK
-            spec.state = STOP
-            return spec
+        if(graph.getVertex(root)) {
+            TraversalState state = action(graph.getVertex(root))
+            if(!state) {
+                throw new NullPointerException('action cannot return null TraversalState.')
+            }
+            if(state == STOP) {
+                colors[root] = BLACK
+                spec.state = STOP
+                return spec
+            }
         }
         colors[root] = BLACK
         spec.state = CONTINUE
@@ -73,8 +85,12 @@ class TraversalAlgorithms {
             Edge edge = adjacentEdges[index]
             Object connectedKey = root == edge.one ? edge.two : edge.one
             TraversalColor toColor = colors[connectedKey] ?: WHITE
-            spec.state = action(root, connectedKey, toColor)
-            if(spec.state == STOP) {
+            TraversalState state = action(root, connectedKey, toColor)
+            if(!state) {
+                throw new NullPointerException('action cannot return null TraversalState.')
+            }
+            if(state == STOP) {
+                spec.state = STOP
                 return spec
             }
             if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
@@ -106,7 +122,7 @@ class TraversalAlgorithms {
         return preOrderEdgesTraversal(graph, spec, edgesAction)
     }
 
-    private static EdgeType edgeType(Map map, Object from, Object to, TraversalColor color) {
+    static EdgeType edgeType(Map map, Object from, Object to, TraversalColor color) {
         EdgeType edgeType
         switch(color) {
             case WHITE:
@@ -139,6 +155,9 @@ class TraversalAlgorithms {
         Map<Object, TraversalColor> colors = spec.colors
         if(graph.getVertex(root)) {
             TraversalState traversal = action(graph.getVertex(root))
+            if(!traversal) {
+                throw new NullPointerException('action cannot return null TraversalState.')
+            }
             if(traversal == STOP) {
                 colors[root] = GREY
                 spec.state = STOP
@@ -157,10 +176,10 @@ class TraversalAlgorithms {
                 Object connected = current == edge.one ? edge.two : edge.one
                 if(!colors[connected] || colors[connected] == WHITE) {
                     TraversalState traversal = action(graph.getVertex(connected))
-                    colors[connected] = GREY
                     if(!traversal) {
-                        throw new IllegalStateException('Invalid TraversalState value returned by action.')
+                        throw new NullPointerException('action cannot return null TraversalState.')
                     }
+                    colors[connected] = GREY
                     if(traversal == STOP) {
                         spec.root = connected
                         spec.state = STOP

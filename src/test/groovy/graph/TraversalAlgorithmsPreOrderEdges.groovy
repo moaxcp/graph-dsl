@@ -3,7 +3,7 @@ package graph
 import spock.lang.Specification
 
 import static graph.Graph.graph
-import static graph.TraversalAlgorithms.preOrderEdgesTraversal
+import static TraversalAlgorithms.preOrderEdgesTraversal
 import static graph.TraversalColor.*
 import static graph.TraversalState.CONTINUE
 import static graph.TraversalState.STOP
@@ -76,6 +76,20 @@ class TraversalAlgorithmsPreOrderEdges extends Specification {
 
         then: 'result is original spec map'
         result.is(spec)
+    }
+
+    def 'pre-order-edges one vertex action returns null'() {
+        given: 'graph containing edge A -- B'
+        graph.edge 'A', 'B'
+
+        when: 'pre-order-edges is called with action returning null'
+        preOrderEdgesTraversal(graph, [root:'A', colors:[:]]) { from, to, toColor ->
+            null
+        }
+
+        then: 'NullPointerException is thrown'
+        NullPointerException e = thrown()
+        e.message == 'action cannot return null TraversalState.'
     }
 
     def 'pre-order-edges one edge'() {
@@ -160,6 +174,7 @@ class TraversalAlgorithmsPreOrderEdges extends Specification {
             if(from == 'B') {
                 return STOP
             }
+            CONTINUE
         }
 
         then: 'action was called with correct params'

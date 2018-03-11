@@ -3,7 +3,7 @@ package graph
 import spock.lang.Specification
 
 import static graph.Graph.graph
-import static graph.TraversalAlgorithms.breadthFirstTraversal
+import static TraversalAlgorithms.breadthFirstTraversal
 import static graph.TraversalColor.BLACK
 import static graph.TraversalColor.GREY
 import static graph.TraversalState.CONTINUE
@@ -79,6 +79,37 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
         result.is(spec)
     }
 
+    def 'breadth-first-traversal one vertex action returns null'() {
+        given: 'graph containing vertex A'
+        graph.vertex 'A'
+
+        when: 'breadth-first-traversal is called with action returning null'
+        breadthFirstTraversal(graph, [root:'A', colors:[:]]) {
+            null
+        }
+
+        then: 'NullPointerException is thrown'
+        NullPointerException e = thrown()
+        e.message == 'action cannot return null TraversalState.'
+    }
+
+    def 'breadth-first-traversal two vertices action returns null on second'() {
+        given: 'graph containing edge A -- B'
+        graph.edge 'A', 'B'
+
+        when: 'breadth-first-traversal is called with action returning null on B'
+        breadthFirstTraversal(graph, [root:'A', colors:[:]]) {
+            if(it.key == 'B') {
+                return null
+            }
+            CONTINUE
+        }
+
+        then: 'NullPointerException is thrown'
+        NullPointerException e = thrown()
+        e.message == 'action cannot return null TraversalState.'
+    }
+
     def 'breadth-first-traversal one vertex'() {
         given: 'graph containing vertex A'
         graph.vertex 'A'
@@ -134,6 +165,7 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
             if(it.key == 'B') {
                 return STOP
             }
+            CONTINUE
         }
 
         then: 'returned map of results are correct'

@@ -4,7 +4,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static graph.Graph.graph
-import static graph.TraversalAlgorithms.preOrderEdgesTraversal
+import static TraversalAlgorithms.preOrderEdgesTraversal
 import static graph.TraversalColor.BLACK
 import static graph.TraversalColor.WHITE
 import static graph.TraversalColor.GREY

@@ -3,7 +3,7 @@ package graph
 import spock.lang.Specification
 
 import static graph.Graph.graph
-import static graph.TraversalAlgorithms.postOrderTraversal
+import static TraversalAlgorithms.postOrderTraversal
 import static graph.TraversalColor.BLACK
 import static graph.TraversalColor.GREY
 import static graph.TraversalState.CONTINUE
@@ -77,6 +77,20 @@ class TraversalAlgorithmsPostOrder extends Specification {
 
         then: 'result is original spec map'
         result.is(spec)
+    }
+
+    def 'post-order one vertex action returns null'() {
+        given: 'graph containing vertex A'
+        graph.vertex 'A'
+
+        when: 'post-order is called with action returning null'
+        postOrderTraversal(graph, [root:'A', colors:[:]]) {
+            null
+        }
+
+        then: 'NullPointerException is thrown'
+        NullPointerException e = thrown()
+        e.message == 'action cannot return null TraversalState.'
     }
 
     def 'post-order one vertex'() {

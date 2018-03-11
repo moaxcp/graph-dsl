@@ -24,34 +24,6 @@ trait TraversalDsl {
         return traversal(TraversalAlgorithms.&preOrderTraversal.curry(this), root, colors, action)
     }
 
-    Map postOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
-        return traversal(TraversalAlgorithms.&postOrderTraversal.curry(this), root, colors, action)
-    }
-
-    List topologicalSort(Object root = null) {
-        List<Object> sorted = []
-        postOrder(root) {
-            sorted << it.key
-        }
-        sorted.reverse()
-    }
-
-    Map reversePostOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
-        List<Object> sorted = []
-        Map result = postOrder(root, colors) {
-            sorted << it.key
-        }
-        sorted = sorted.reverse()
-        sorted.each {
-            action(vertices[it])
-        }
-        result
-    }
-
-    Map classifyEdges(Object root = null, Map<Object, TraversalColor> colors, Closure action) {
-        return traversal(TraversalAlgorithms.&classifyEdgesTraversal.curry(this), root, colors, action)
-    }
-
     /**
      * Performs a full traversal with the given algorithm on all components of the graph. This method calls algorithm
      * on root and continues to call algorithm until all vertices are black. To stop the traversal early action may
@@ -63,7 +35,7 @@ trait TraversalDsl {
      * @return results containing current root, roots of all components, colors, and results added by algorithm
      */
     Map traversal(Closure algorithm, Object root, Map<Object, TraversalColor> colors, Closure action) {
-        if(root && !vertices[root]) {
+        if(root && !this.getVertex(root)) {
             throw new IllegalArgumentException("$root not found in vertices")
         }
         Map results = [:]
@@ -84,6 +56,36 @@ trait TraversalDsl {
             results.root = getUnvisitedVertexKey((Map) results.colors)
         }
         results
+    }
+
+    Map postOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
+        return traversal(TraversalAlgorithms.&postOrderTraversal.curry(this), root, colors, action)
+    }
+
+    List topologicalSort(Object root = null) {
+        List<Object> sorted = []
+        postOrder(root) {
+            sorted << it.key
+            CONTINUE
+        }
+        sorted.reverse()
+    }
+
+    Map reversePostOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
+        List<Object> sorted = []
+        Map result = postOrder(root, colors) {
+            sorted << it.key
+            CONTINUE
+        }
+        sorted = sorted.reverse()
+        sorted.each {
+            action(vertices[it])
+        }
+        result
+    }
+
+    Map classifyEdges(Object root = null, Map<Object, TraversalColor> colors, Closure action) {
+        return traversal(TraversalAlgorithms.&classifyEdgesTraversal.curry(this), root, colors, action)
     }
 
     /**

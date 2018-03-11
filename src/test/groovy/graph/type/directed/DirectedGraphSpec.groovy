@@ -1,8 +1,9 @@
 package graph.type.directed
 
 import graph.Graph
-import graph.TraversalState
 import spock.lang.Specification
+
+import static graph.TraversalState.CONTINUE
 
 class DirectedGraphSpec extends Specification {
     def graph = new Graph()
@@ -114,7 +115,7 @@ class DirectedGraphSpec extends Specification {
         when:
         graph.preOrder { vertex ->
             preOrderList << vertex.key
-            TraversalState.CONTINUE
+            CONTINUE
         }
 
         then:
@@ -143,6 +144,7 @@ class DirectedGraphSpec extends Specification {
         when:
         graph.postOrder {vertex ->
             postOrderList << vertex.key
+            CONTINUE
         }
 
         then:
