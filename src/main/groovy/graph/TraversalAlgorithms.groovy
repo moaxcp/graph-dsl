@@ -124,23 +124,26 @@ class TraversalAlgorithms {
                     edgeType = CROSS_EDGE
                 }
                 break
-            case null:
-                edgeType = TREE_EDGE
-                break
-            default:
-                throw new IllegalStateException("Edge from $from to $to needs to be WHITE, GREY, or BLACK.")
         }
         edgeType
     }
 
     static Map breadthFirstTraversal(Graph graph, Map spec, Closure action) {
+        if(!spec.root) {
+            throw new NullPointerException('spec.root is null')
+        }
+        if(!action) {
+            throw new NullPointerException('action is null')
+        }
         Object root = spec.root
         Map<Object, TraversalColor> colors = spec.colors
-        TraversalState traversal = action(graph.getVertex(root))
-        if(traversal == STOP) {
-            colors[root] = GREY
-            spec.state = STOP
-            return spec
+        if(graph.getVertex(root)) {
+            TraversalState traversal = action(graph.getVertex(root))
+            if(traversal == STOP) {
+                colors[root] = GREY
+                spec.state = STOP
+                return spec
+            }
         }
         colors[root] = GREY
         Queue<Object> queue = [] as Queue<Object>
@@ -152,17 +155,17 @@ class TraversalAlgorithms {
             for (int i = 0; i < adjacentEdges.size(); i++) {
                 Edge edge = adjacentEdges[i]
                 Object connected = current == edge.one ? edge.two : edge.one
-                if(colors[connected] == WHITE) {
-                    traversal = action(graph.getVertex(connected))
+                if(!colors[connected] || colors[connected] == WHITE) {
+                    TraversalState traversal = action(graph.getVertex(connected))
+                    colors[connected] = GREY
                     if(!traversal) {
                         throw new IllegalStateException('Invalid TraversalState value returned by action.')
                     }
                     if(traversal == STOP) {
-                        colors[connected] = GREY
+                        spec.root = connected
                         spec.state = STOP
                         return spec
                     }
-                    colors[connected] = GREY
                     queue << connected
                 }
             }
