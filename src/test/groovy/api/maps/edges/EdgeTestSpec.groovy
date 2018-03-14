@@ -1,13 +1,13 @@
-package api.edges
+package api.maps.edges
 
 import graph.Edge
 
 class EdgeTestSpec extends BaseEdgeSpec {
     def setup() {
-        emptyEdge = new Edge()
-        edge = new Edge(one:'step1', two:'step2')
-        equalEdge = new Edge(one: 'step1', two: 'step2', weight:10)
-        bothDifferent = new Edge(one: 'step4', two: 'step3')
+        emptyMap = new Edge()
+        map = new Edge(one:'step1', two:'step2')
+        equalMap = new Edge(one: 'step1', two: 'step2')
+        differentMap = new Edge(one: 'step4', two: 'step3')
         firstDifferent = new Edge(one: 'step3', two: 'step2')
         secondDifferent = new Edge(one: 'step1', two: 'step3')
         switched = new Edge(one: 'step2', two: 'step1')
@@ -16,6 +16,6 @@ class EdgeTestSpec extends BaseEdgeSpec {
 
     def 'equals with both vertices switched'() {
         expect:
-        edge == switched
+        map == switched
     }
 }

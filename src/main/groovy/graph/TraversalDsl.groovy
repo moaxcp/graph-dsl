@@ -5,6 +5,11 @@ import static graph.TraversalColor.WHITE
 
 trait TraversalDsl {
 
+    /**
+     * Returns edges to be traversed for a given {@link Vertex} key.
+     * @param key
+     * @return edges to traverse
+     */
     Set<? extends Edge> traverseEdges(Object key) {
         type.traverseEdges(key)
     }
@@ -12,7 +17,7 @@ trait TraversalDsl {
     /**
      * Creates and returns a color map in the form of name:color where name is the vertex name and color is
      * TraversalColor.WHITE.
-     * @return
+     * @return color map
      */
     Map<Object, TraversalColor> makeColorMap() {
         vertices.collectEntries { key, vertex ->
@@ -20,14 +25,44 @@ trait TraversalDsl {
         } as Map<Object, TraversalColor>
     }
 
+    /**
+     * Performs a pre-order depth first traversal of the graph calling action on each {@link Vertex} returning results.
+     * <p>
+     * Returned map contains:
+     * <dl>
+     *     <dt>root</dt>
+     *     <dd>ending root of traversal</dd>
+     *     <dt>colors</dt>
+     *     <dd>ending colors of traversal</dd>
+     *     <dt>state</dt>
+     *     <dd>ending state of traversal</dd>
+     * </dl>
+     * <p>
+     * Values returned can be used to restart traversal.
+     * @param root  starting {@Vertex} key
+     * @param colors  of graph
+     * @param action  action to perform on each {@link Vertex}
+     * @return results map
+     */
     Map preOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
-        return traversal(TraversalAlgorithms.&preOrderTraversal.curry(this), root, colors, action)
+        return traversal(TraversalAlgorithms.&preOrderTraversal, root, colors, action).subMap(['root', 'state', 'colors'])
     }
 
     /**
-     * Performs a full traversal with the given algorithm on all components of the graph. This method calls algorithm
-     * on root and continues to call algorithm until all vertices are black. To stop the traversal early action may
-     * return TraversalState.STOP.
+     * Performs a full traversal with the given {@code algorithm} on all components of this {@link Graph}.
+     * {@code algorithm} must accept the following parameters.
+     * <p>
+     * {@code algorithm} must meet the following:
+     *     <ul>
+     *         <li>each call to {@code algorithm} must visit part of the graph by updating {@code spec.colors}. This
+     *         will eventually cause calls to {@link Graph#getUnvisitedVertexKey} to return null which signals the end
+     *         of the traversal.</li>
+     *         <li>must call action on each vertex or edge</li>
+     *         <li>must stop when action returns {@link TraversalState#STOP}</li>
+     *         <li>must throw exception when action does not return a {@link TraversalState}</li>
+     *     </ul>
+     * </p>
+     *
      * @param algorithm  type of traversal to run on each component
      * @param root  root of component to start traversal
      * @param colors  starting set of colors. Will not be modified.
@@ -38,30 +73,54 @@ trait TraversalDsl {
         if(root && !this.getVertex(root)) {
             throw new IllegalArgumentException("$root not found in vertices")
         }
-        Map results = [:]
-        results.colors = [:]
-        results.colors.putAll(colors ?: makeColorMap())
-        results.root = root
-        if(!results.root) {
-            results.root = getUnvisitedVertexKey((Map) results.colors)
+        Map spec = [:]
+        spec.colors = [:]
+        spec.colors.putAll(colors ?: makeColorMap())
+        spec.root = root
+        if(!spec.root) {
+            spec.root = getUnvisitedVertexKey((Map) spec.colors)
         }
-        results.roots = [] as Set
-        while (results.root) {
-            results.roots << results.root
-            results.traversalRoot = results.root
-            results.state = algorithm.call(results, action)
-            if (results.state == STOP) {
-                return results
+        spec.roots = [] as Set
+        while (spec.root) {
+            spec.roots << spec.root
+            spec.traversalRoot = spec.root
+            spec.state = algorithm.call(this, spec, action)
+            if (spec.state == STOP) {
+                return spec
             }
-            results.root = getUnvisitedVertexKey((Map) results.colors)
+            spec.root = getUnvisitedVertexKey((Map) spec.colors)
         }
-        results
+        spec
     }
 
+    /**
+     * Performs a post-order depth first traversal of the graph calling action on each {@link Vertex} returning results.
+     * <p>
+     * Returned map contains:
+     * <dl>
+     *     <dt>root</dt>
+     *     <dd>ending root of traversal</dd>
+     *     <dt>colors</dt>
+     *     <dd>ending colors of traversal</dd>
+     *     <dt>state</dt>
+     *     <dd>ending state of traversal</dd>
+     * </dl>
+     * <p>
+     * Values returned can be used to restart traversal.
+     * @param root  starting {@Vertex} key
+     * @param colors  of graph
+     * @param action  action to perform on each {@link Vertex}
+     * @return results map
+     */
     Map postOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
-        return traversal(TraversalAlgorithms.&postOrderTraversal.curry(this), root, colors, action)
+        return traversal(TraversalAlgorithms.&postOrderTraversal, root, colors, action).subMap(['root', 'state', 'colors'])
     }
 
+    /**
+     * Performs a topological sort of the graph returning a list of keys of each {@link Vertex} in topological order.
+     * @param root  starting {@link Vertex}
+     * @return list of keys of each {@link Vertex} in topological order
+     */
     List topologicalSort(Object root = null) {
         List<Object> sorted = []
         postOrder(root) {
@@ -71,33 +130,87 @@ trait TraversalDsl {
         sorted.reverse()
     }
 
-    Map reversePostOrder(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
+    /**
+     * Performs a reverse post-order depth first traversal of the graph calling action on each {@link Vertex} returning
+     * results.
+     * <p>
+     * Returned map contains:
+     * <dl>
+     *     <dt>state</dt>
+     *     <dd>ending state of traversal</dd>
+     * </dl>
+     * @param root  starting {@Vertex} key
+     * @param action  action to perform on each {@link Vertex}
+     * @return results map
+     */
+    Map reversePostOrder(Object root = null, Closure action) {
         List<Object> sorted = []
-        Map result = postOrder(root, colors) {
+        Map result = postOrder(root) {
             sorted << it.key
             CONTINUE
         }
         sorted = sorted.reverse()
         sorted.each {
-            action(vertices[it])
+            result.state = action(getVertex(it))
         }
-        result
-    }
-
-    Map classifyEdges(Object root = null, Map<Object, TraversalColor> colors, Closure action) {
-        return traversal(TraversalAlgorithms.&classifyEdgesTraversal.curry(this), root, colors, action)
+        result.subMap(['state'])
     }
 
     /**
-     * Performs a breadth first traversal on each component of the Graph starting at root.
+     * Performs a pre-order depth first traversal of the graph calling action for each edge returning results.
      * <p>
-     *     It is possible to stop the traversal early by returning TraversalState.STOP from closure.
-     * @param root optional root to start traversal.
-     * @param closure Closure to perform on each vertex
-     * @return resulting TraversalState value
+     * Returned map contains:
+     * <dl>
+     *     <dt>root</dt>
+     *     <dd>ending root of traversal</dd>
+     *     <dt>colors</dt>
+     *     <dd>ending colors of traversal</dd>
+     *     <dt>state</dt>
+     *     <dd>ending state of traversal</dd>
+     * </dl>
+     * <p>
+     * Values returned can be used to restart traversal.
+     * <p>
+     * {@code action} params are:
+     * <dl>
+     *     <dt>Object from</dt>
+     *     <dd>from vertex key</dd>
+     *     <dt>Object to</dt>
+     *     <dd>to vertex key</dd>
+     *     <dt>EdgeType type</dt>
+     *     <dd>type of edge</dd>
+     * </dl>
+     * @param root  starting {@Vertex} key
+     * @param colors  of graph
+     * @param action  action to perform
+     * @return results map
+     */
+    Map classifyEdges(Object root = null, Map<Object, TraversalColor> colors, Closure action) {
+        return traversal(TraversalAlgorithms.&classifyEdgesTraversal, root, colors, action).subMap('root', 'colors', 'state')
+    }
+
+    /**
+     * Performs a breadth first traversal on each component of the Graph calling action on each {@link Vertex}
+     * returning results.
+     * <p>
+     * Returned map contains:
+     * <dl>
+     *     <dt>root</dt>
+     *     <dd>ending root of traversal</dd>
+     *     <dt>colors</dt>
+     *     <dd>ending colors of traversal</dd>
+     *     <dt>state</dt>
+     *     <dd>ending state of traversal</dd>
+     * </dl>
+     * <p>
+     * Values returned can be used to restart traversal.
+     * @param root  starting {@Vertex} key
+     * @param colors  of graph
+     * @param action  action to perform on each {@link Vertex}
+     * @return results map
      */
     Map breadthFirstTraversal(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
-        traversal(TraversalAlgorithms.&breadthFirstTraversal.curry(this), root, colors, action)
+        traversal(TraversalAlgorithms.&breadthFirstTraversal, root, colors, action)
     }
 
     /**
