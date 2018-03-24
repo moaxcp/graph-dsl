@@ -6,7 +6,7 @@ import static graph.TraversalState.*
 
 /**
  * Traversal algorithms which are expected to be called from
- * {@link graph.Graph.traversal(Closure algorithm, Object root, Map<Object, TraversalColor> colors, Closure action)}.
+ * {@link graph.Graph#traversal}.
  */
 class TraversalAlgorithms {
     private TraversalAlgorithms() {
@@ -144,8 +144,8 @@ class TraversalAlgorithms {
         def edgesAction = { Object from, Object to, TraversalColor toColor ->
             EdgeType edgeType = edgeType(spec, from, to, toColor)
             if(edgeType == TREE_EDGE) {
-                spec.forrest.vertex from, [rootKey:spec.traversalRoot]
-                spec.forrest.vertex to, [rootKey:spec.traversalRoot]
+                spec.forrest.vertex from, [component:spec.componentRoot]
+                spec.forrest.vertex to, [component:spec.componentRoot]
                 spec.forrest.edge(from, to)
             }
             return action(from, to, edgeType)
@@ -163,8 +163,8 @@ class TraversalAlgorithms {
                 edgeType = BACK_EDGE
                 break
             case BLACK:
-                def fromTree = map.forrest.vertices[from].rootKey
-                def toTree = map.forrest.vertices[to].rootKey
+                def fromTree = map.forrest.vertices[from].component
+                def toTree = map.forrest.vertices[to].component
                 if(fromTree == toTree) {
                     edgeType = FORWARD_EDGE
                 } else {
@@ -221,6 +221,40 @@ class TraversalAlgorithms {
             }
             colors[current] = BLACK
         }
+        spec.state = CONTINUE
+        spec
+    }
+
+    static Map connectedComponentTraversal(Graph graph, Map spec, Closure action) {
+        Object root = spec.root
+        Map<Object, TraversalColor> colors = spec.colors
+        if(graph.getVertex(root)) {
+            TraversalState state = action(spec.componentRoot, graph.getVertex(root))
+            if(!state) {
+                throw new NullPointerException('action cannot return null TraversalState.')
+            }
+            if(state == STOP) {
+                colors[root] = GREY
+                spec.state = STOP
+                return spec
+            }
+        }
+        colors[root] = GREY
+
+        Set<Edge> edges = graph.adjacentEdges(root)
+        for(int index = 0; index < edges.size(); index++) {
+            Edge edge = edges[index]
+            Object connectedKey = root == edge.one ? edge.two : edge.one
+            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
+                colors[connectedKey] = WHITE
+                spec.root = connectedKey
+                connectedComponentTraversal(graph, spec, action)
+                if(spec.state == STOP) {
+                    return spec
+                }
+            }
+        }
+        colors[root] = BLACK
         spec.state = CONTINUE
         spec
     }

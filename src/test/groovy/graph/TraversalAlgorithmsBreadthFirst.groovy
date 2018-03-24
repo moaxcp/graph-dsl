@@ -3,7 +3,7 @@ package graph
 import spock.lang.Specification
 
 import static graph.Graph.graph
-import static TraversalAlgorithms.breadthFirstTraversal
+import static graph.TraversalAlgorithms.breadthFirstTraversal
 import static graph.TraversalColor.BLACK
 import static graph.TraversalColor.GREY
 import static graph.TraversalState.CONTINUE

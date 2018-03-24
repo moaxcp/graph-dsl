@@ -1,29 +1,10 @@
 package graph
 
-import static TraversalState.*
 import static graph.TraversalColor.WHITE
+import static graph.TraversalState.CONTINUE
+import static graph.TraversalState.STOP
 
 trait TraversalDsl {
-
-    /**
-     * Returns edges to be traversed for a given {@link Vertex} key.
-     * @param key
-     * @return edges to traverse
-     */
-    Set<? extends Edge> traverseEdges(Object key) {
-        type.traverseEdges(key)
-    }
-
-    /**
-     * Creates and returns a color map in the form of name:color where name is the vertex name and color is
-     * TraversalColor.WHITE.
-     * @return color map
-     */
-    Map<Object, TraversalColor> makeColorMap() {
-        vertices.collectEntries { key, vertex ->
-            [(key): WHITE]
-        } as Map<Object, TraversalColor>
-    }
 
     /**
      * Performs a pre-order depth first traversal of the graph calling action on each {@link Vertex} returning results.
@@ -70,7 +51,7 @@ trait TraversalDsl {
      * @return results containing current root, roots of all components, colors, and results added by algorithm
      */
     Map traversal(Closure algorithm, Object root, Map<Object, TraversalColor> colors, Closure action) {
-        if(root && !this.getVertex(root)) {
+        if(root && !getVertex(root)) {
             throw new IllegalArgumentException("$root not found in vertices")
         }
         Map spec = [:]
@@ -81,9 +62,11 @@ trait TraversalDsl {
             spec.root = getUnvisitedVertexKey((Map) spec.colors)
         }
         spec.roots = [] as Set
+        spec.components = [] as Set
         while (spec.root) {
             spec.roots << spec.root
-            spec.traversalRoot = spec.root
+            spec.componentRoot = spec.root
+            spec.components << spec.root
             spec.state = algorithm.call(this, spec, action)
             if (spec.state == STOP) {
                 return spec
@@ -91,6 +74,40 @@ trait TraversalDsl {
             spec.root = getUnvisitedVertexKey((Map) spec.colors)
         }
         spec
+    }
+
+    /**
+     * Returns edges to be traversed for a given {@link Vertex} key.
+     * @param key
+     * @return edges to traverse
+     */
+    Set<? extends Edge> traverseEdges(Object key) {
+        type.traverseEdges(key)
+    }
+
+    /**
+     * Creates and returns a color map in the form of name:color where name is the vertex name and color is
+     * TraversalColor.WHITE.
+     * @return color map
+     */
+    Map<Object, TraversalColor> makeColorMap() {
+        vertices.collectEntries { key, vertex ->
+            [(key): WHITE]
+        } as Map<Object, TraversalColor>
+    }
+
+    /**
+     * Performs a topological sort of the graph returning a list of keys of each {@link Vertex} in topological order.
+     * @param root  starting {@link Vertex}
+     * @return list of keys of each {@link Vertex} in topological order
+     */
+    List topologicalSort(Object root = null) {
+        List<Object> sorted = []
+        postOrder(root) {
+            sorted << it.key
+            CONTINUE
+        }
+        sorted.reverse()
     }
 
     /**
@@ -117,20 +134,6 @@ trait TraversalDsl {
     }
 
     /**
-     * Performs a topological sort of the graph returning a list of keys of each {@link Vertex} in topological order.
-     * @param root  starting {@link Vertex}
-     * @return list of keys of each {@link Vertex} in topological order
-     */
-    List topologicalSort(Object root = null) {
-        List<Object> sorted = []
-        postOrder(root) {
-            sorted << it.key
-            CONTINUE
-        }
-        sorted.reverse()
-    }
-
-    /**
      * Performs a reverse post-order depth first traversal of the graph calling action on each {@link Vertex} returning
      * results.
      * <p>
@@ -144,14 +147,15 @@ trait TraversalDsl {
      * @return results map
      */
     Map reversePostOrder(Object root = null, Closure action) {
-        List<Object> sorted = []
-        Map result = postOrder(root) {
-            sorted << it.key
+        List<Vertex> sorted = []
+        Map result = postOrder(root) { Vertex it ->
+            sorted << it
             CONTINUE
         }
         sorted = sorted.reverse()
-        sorted.each {
-            result.state = action(getVertex(it))
+        sorted.find {
+            result.state = action(it)
+            result.state == STOP
         }
         result.subMap(['state'])
     }
@@ -189,6 +193,23 @@ trait TraversalDsl {
         return traversal(TraversalAlgorithms.&classifyEdgesTraversal, root, colors, action).subMap('root', 'colors', 'state')
     }
 
+    Map connectedComponent(Object root = null, Map<Object, TraversalColor> colors, Closure action) {
+        return traversal(TraversalAlgorithms.&connectedComponentTraversal, root, colors, action).subMap('root', 'colors', 'state')
+    }
+
+    /**
+     * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}. See
+     * {@link #breadthFirstTraversal} for details.
+     * @param root vertex to start breadth first traversal
+     * @param closure execute on each {@link Vertex}
+     */
+    void eachBfs(String root = null, Closure closure) {
+        breadthFirstTraversal(root) { vertex ->
+            closure(vertex)
+            CONTINUE
+        }
+    }
+
     /**
      * Performs a breadth first traversal on each component of the Graph calling action on each {@link Vertex}
      * returning results.
@@ -211,19 +232,6 @@ trait TraversalDsl {
      */
     Map breadthFirstTraversal(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
         traversal(TraversalAlgorithms.&breadthFirstTraversal, root, colors, action)
-    }
-
-    /**
-     * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}. See
-     * {@link #breadthFirstTraversal} for details.
-     * @param root vertex to start breadth first traversal
-     * @param closure execute on each {@link Vertex}
-     */
-    void eachBfs(String root = null, Closure closure) {
-        breadthFirstTraversal(root) { vertex ->
-            closure(vertex)
-            CONTINUE
-        }
     }
 
     /**
@@ -292,7 +300,7 @@ trait TraversalDsl {
      * @return values returned from each execution of closure
      */
     List<?> collectBfs(String root = null, Closure closure) {
-        Closure inject = null
+        Closure inject
         if (root) {
             inject = this.&injectBfs.curry(root)
         } else {
