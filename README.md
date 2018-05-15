@@ -1,8 +1,8 @@
 # graph-dsl
 
-A groovy dsl for creating and traversing graphs. Graphs can be extended
-with types and plugins which allows developers to create graphs with
-the desired behavior and values for their algorithm.
+A groovy dsl for creating and traversing graphs. Graphs can be extended with 
+types and plugins which allows developers to create the desired behavior and 
+values for their algorithm.
 
 [![GitHub top language](https://img.shields.io/github/languages/top/moaxcp/graph-dsl.svg)]()
 [![GitHub last commit](https://img.shields.io/github/last-commit/moaxcp/graph-dsl.svg)]()
@@ -31,6 +31,16 @@ assert graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were crea
 assert graph.edges.size() == 1
 assert graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
 ```
+
+image::base-script.png[]
+////
+[graphviz, base-script-diagram, png]
+----
+graph g {
+  step1 -- step2
+}
+----
+////
 
 This example of a graph creates two vertices named 'step1' and 'step2' as well as an edge between them. The basic graph
 structure is held in a map of named Vertex objects and a set of Edge objects. Each Edge contains the names of the two
