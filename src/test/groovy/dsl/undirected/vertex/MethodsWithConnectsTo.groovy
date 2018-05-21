@@ -85,4 +85,18 @@ class MethodsWithConnectsTo extends Specification {
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'B' && it.two == 'C' }
     }
+    
+    def 'nested connectsTo in closure with multiple letters'() {
+        given:
+        Graph graph = graph {
+            vertex('first') {
+                connectsTo('second') {
+                    
+                }
+            }
+        }
+        
+        expect:
+        graph.vertices.size() == 2
+    }
 }

@@ -18,61 +18,185 @@ There are two entry points into the dsl: The `graph` method, and `BaseScript`.
 
 ## BaseScript
 
-`BaseScript` is a transformation which allows developers to change the base script class for the current script. By
-changing the script to `DslScript` a new `Graph` becomes the delegate of the script.
+`BaseScript` is a transformation which allows developers to change the base 
+script class for the current script. By changing the script to `DslScript` a 
+new `Graph` becomes the delegate of the script.
 
 ```groovy
 #!/usr/bin/env groovy
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
 import graph.*
 @groovy.transform.BaseScript DslScript graph
-edge 'step1', 'step2'
+edge 'A', 'B'
 assert graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
 assert graph.edges.size() == 1
 assert graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
 ```
 
-image::base-script.png[]
-////
-[graphviz, base-script-diagram, png]
-----
-graph g {
-  step1 -- step2
-}
-----
-////
+![Image](images/base-script-method.png?raw=true)
 
-This example of a graph creates two vertices named 'step1' and 'step2' as well as an edge between them. The basic graph
-structure is held in a map of named Vertex objects and a set of Edge objects. Each Edge contains the names of the two
-vertices it connects.
+This example of a graph creates two vertices named 'step1' and 'step2' as well 
+as an edge between them. The basic graph structure is held in a map of named 
+Vertex objects and a set of Edge objects. Each Edge contains the names of the 
+two vertices it connects.
 
 The same graph can be created using the `graph` method.
 
 ## graph method
 
-The entry-point to the dsl is the `Graph.graph(Closure)` method. This method applies the closure to a new Graph object 
-and returns it. 
+The entry-point to the dsl is the `Graph.graph(Closure)` method. This method 
+applies the closure to a new Graph object and returns it.
 
 ```groovy
 #!/usr/bin/env groovy
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
+import graph.*
 import static graph.Graph.*
 def graph = graph {
-    edge step1, step2
+    edge 'step1', 'step2'
 }
+
+assert graph.vertices.keySet() == ['step1', 'step2'] as Set
+assert graph.edges.size() == 1
+assert graph.edges.first() == new Edge(one:'step1', two:'step2')
 ```
+
+![Image](images/graph-method.png?raw=true)
 
 ## dsl policy
 
-There are a few rules the dsl follows as it is being processed.
+There are a few rules the dsl follows:
 
 1. All referenced vertices are created if they don't exist.
-2. If an edge or vertex already exists it will be reused by and operation.
+2. If an edge or vertex already exists it will be reused by an operation.
+3. Type can be changed at any time if the type is compatible with the current graph structure.
+4. Plugins can be applied at any time.
+
+## Example: Breadth First Traversal Order
+
+```groovy
+type 'directed-graph'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo('C')
+        connectsTo('D')
+    }
+    connectsFrom('D') {
+        connectsTo('C')
+        connectsTo('E')
+    }
+    connectsTo('E')
+}
+def count = 1
+breadthFirstTraversal('A') { vertex ->
+    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.fillcolor = 'green'
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
+}
+```
+
+![Image](images/breadth-first-traversal.png?raw=true)
+
+## Example: Pre-Order
+
+```groovy
+type 'directed-graph'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo('C')
+        connectsTo('D')
+    }
+    connectsFrom('D') {
+        connectsTo('C')
+        connectsTo('E')
+    }
+    connectsTo('E')
+}
+def count = 1
+preOrder('A') { vertex ->
+    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.fillcolor = 'green'
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
+}
+
+```
+
+![Image](images/pre-order-traversal.png?raw=true)
+
+## Example: Post-Order
+
+```groovy
+type 'directed-graph'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo('C')
+        connectsTo('D')
+    }
+    connectsFrom('D') {
+        connectsTo('C')
+        connectsTo('E')
+    }
+    connectsTo('E')
+}
+def count = 1
+postOrder('A') { vertex ->
+    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.fillcolor = 'green'
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
+}
+```
+
+![Image](images/post-order-traversal.png?raw=true)
+
+## Example: Reverse Post Order
+
+```groovy
+type 'directed-graph'
+edge 'compileJava', 'classes'
+edge 'processResources', 'classes'
+vertex('classes') {
+    connectsTo 'javadoc'
+    connectsTo('compileTestJava') {
+        connectsTo('testClasses') {
+            connectsFrom('processTestResources')
+            connectsTo('test') {
+                connectsFrom 'classes'
+                connectsTo('check') {
+                    connectsTo 'build'
+                }
+            }
+        }
+    }
+    connectsTo('jar') {
+        connectsTo 'uploadArchives'
+        connectsTo('assemble') {
+            connectsTo 'build'
+        }
+    }
+}
+def count = 1
+reversePostOrder('javadoc') { vertex ->
+    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.fillcolor = 'green'
+    vertex.style = 'filled'
+    CONTINUE
+}
+```
+
+![Image](images/reverse-post-order-traversal.png?raw=true)
+
+## Example: Classify Edges
+
+## Example: Color Connected Components
 
 ## directed graphs
 
-The Default behavior of a graph is undirected. These graphs have a set of edges where only one edge
-can connect any two vertices. An undirected graph can be changed to a directed graph at any time using 
+The Default behavior of a graph is undirected. These graphs have a set of edges 
+where only one edge can connect any two vertices. An undirected graph can be 
+changed to a directed graph at any time using 
 `DirectedGraphType`.
 
 ```groovy

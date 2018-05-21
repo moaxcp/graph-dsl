@@ -109,8 +109,15 @@ class GraphVizSpec extends Specification {
             vertex('Z', [color:'black'])
         }
         graphviz.apply(graph)
+        println(graphviz.dot())
         
-        expect 'expected format is returned'
-        '' == graphviz.dot()
+        expect: 'expected format is returned'
+        graphviz.dot() == '''
+            strict graph {
+              A -- B [color="blue"]
+              A -- C [color="red"]
+              Z [color="black"]
+            }
+        '''.stripIndent().trim();
     }
 }
