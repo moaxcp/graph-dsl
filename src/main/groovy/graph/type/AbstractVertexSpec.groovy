@@ -37,11 +37,15 @@ abstract class AbstractVertexSpec extends VertexSpec {
         }
         changeKey = map.changeKey
 
-        map.connectsTo?.each {
-            if(!it) {
-                throw new IllegalArgumentException('Invalid connectsTo item.')
+        if(map.connectsTo && (map.connectsTo instanceof Collection || map.connectsTo.class.isArray())) {
+            map.connectsTo.each {
+                if(!it) {
+                    throw new IllegalArgumentException('Invalid connectsTo item.')
+                }
+                connectsToSet.add(it)
             }
-            connectsToSet.add(it)
+        } else if(map.connectsTo) {
+            connectsToSet.add(map.connectsTo)
         }
         runnerCodeClosure = closure
     }

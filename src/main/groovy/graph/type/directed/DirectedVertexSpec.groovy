@@ -19,8 +19,16 @@ class DirectedVertexSpec extends UndirectedVertexSpec {
     @PackageScope
     DirectedVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph, map, closure)
-        map.connectsFrom?.each {
-            connectsFromSet.addAll(it)
+
+        if(map.connectsFrom && (map.connectsFrom instanceof Collection || map.connectsFrom.class.isArray())) {
+            map.connectsFrom.each {
+                if(!it) {
+                    throw new IllegalArgumentException('Invalid connectsFrom item.')
+                }
+                connectsFromSet.add(it)
+            }
+        } else if(map.connectsFrom) {
+            connectsFromSet.add(map.connectsFrom)
         }
     }
 
