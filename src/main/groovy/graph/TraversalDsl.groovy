@@ -189,11 +189,11 @@ trait TraversalDsl {
      * @param action  action to perform
      * @return results map
      */
-    Map classifyEdges(Object root = null, Map<Object, TraversalColor> colors, Closure action) {
+    Map classifyEdges(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
         return traversal(TraversalAlgorithms.&classifyEdgesTraversal, root, colors, action).subMap('root', 'colors', 'state')
     }
 
-    Map connectedComponent(Object root = null, Map<Object, TraversalColor> colors, Closure action) {
+    Map connectedComponent(Object root = null, Map<Object, TraversalColor> colors = null, Closure action) {
         return traversal(TraversalAlgorithms.&connectedComponentTraversal, root, colors, action).subMap('root', 'colors', 'state')
     }
 

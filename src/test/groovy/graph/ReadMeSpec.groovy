@@ -151,7 +151,7 @@ class ReadMeSpec extends Specification {
                 }
             }
             def count = 1
-            reversePostOrder('javadoc') { vertex ->
+            reversePostOrder('build') { vertex ->
                 vertex.label = "${vertex.key}\\lorder:${count++}\\l"
                 vertex.fillcolor = 'green'
                 vertex.style = 'filled'
@@ -161,6 +161,58 @@ class ReadMeSpec extends Specification {
             plugin 'graphviz'
             image 'images/reverse-post-order-traversal.png'
         }
+    }
+
+    def 'classify edges'() {
+        expect:
+        def graph = graph {
+            type 'directed-graph'
+            vertex('A') {
+                connectsTo('B') {
+                    connectsTo 'C'
+                    connectsTo('D') {
+                        connectsTo 'A'
+                        connectsFrom 'A'
+                        connectsTo 'C'
+                        connectsTo 'E'
+                    }
+                }
+            }
+            vertex('F') {
+                connectsTo('G') {
+                    connectsTo 'D'
+                }
+            }
+            classifyEdges('A') {Object from, Object to, EdgeType type ->
+                edge(from, to) {
+                    switch(type) {
+                        case EdgeType.TREE_EDGE:
+                            color = 'black'
+                            label = 'tree'
+                            break
+                        case EdgeType.BACK_EDGE:
+                            color = 'red'
+                            label = 'back'
+                            break
+                        case EdgeType.FORWARD_EDGE:
+                            color = 'grey'
+                            label = 'forward'
+                            break
+                        case EdgeType.CROSS_EDGE:
+                            color = 'blue'
+                            label = 'cross'
+                            break
+                    }
+                }
+                CONTINUE
+            }
+            plugin 'graphviz'
+            image 'images/edge-classification.png'
+        }
+    }
+
+    def 'connectedComponent directed'() {
+
     }
 
     def 'usage 3'() {

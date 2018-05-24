@@ -63,7 +63,7 @@ assert graph.edges.first() == new Edge(one:'step1', two:'step2')
 
 ![Image](images/graph-method.png?raw=true)
 
-## dsl policy
+# dsl policy
 
 There are a few rules the dsl follows:
 
@@ -71,8 +71,14 @@ There are a few rules the dsl follows:
 2. If an edge or vertex already exists it will be reused by an operation.
 3. Type can be changed at any time if the type is compatible with the current graph structure.
 4. Plugins can be applied at any time.
+5. Vertices and edges are always Maps.
 
-## Example: Breadth First Traversal Order
+# Traversals
+
+All traversal methods start at a root vertex and traverse the graph. A closure is called on each "visit" which can
+modify the graph in some way. The following examples create a graph and perform a traversal.
+
+## Example: breadthFirstTraversal, label and color vertex
 
 ```groovy
 type 'directed-graph'
@@ -94,11 +100,13 @@ breadthFirstTraversal('A') { vertex ->
     vertex.style = 'filled'
     TraversalState.CONTINUE
 }
+plugin 'graphviz'
+image 'images/breadth-first-traversal.png'
 ```
 
 ![Image](images/breadth-first-traversal.png?raw=true)
 
-## Example: Pre-Order
+## Example: preOrder, label and color vertex
 
 ```groovy
 type 'directed-graph'
@@ -120,12 +128,13 @@ preOrder('A') { vertex ->
     vertex.style = 'filled'
     TraversalState.CONTINUE
 }
-
+plugin 'graphviz'
+image 'images/pre-order-traversal.png'
 ```
 
 ![Image](images/pre-order-traversal.png?raw=true)
 
-## Example: Post-Order
+## Example: postOrder, label and color vertex
 
 ```groovy
 type 'directed-graph'
@@ -147,11 +156,15 @@ postOrder('A') { vertex ->
     vertex.style = 'filled'
     TraversalState.CONTINUE
 }
+plugin 'graphviz'
+image 'images/post-order-traversal.png'
 ```
 
 ![Image](images/post-order-traversal.png?raw=true)
 
-## Example: Reverse Post Order
+## Example: reversePostOrder, label and color vertex
+
+Note: This is the DAG created by the java gradle plugin
 
 ```groovy
 type 'directed-graph'
@@ -178,19 +191,71 @@ vertex('classes') {
     }
 }
 def count = 1
-reversePostOrder('javadoc') { vertex ->
+reversePostOrder('build') { vertex ->
     vertex.label = "${vertex.key}\\lorder:${count++}\\l"
     vertex.fillcolor = 'green'
     vertex.style = 'filled'
     CONTINUE
 }
+plugin 'graphviz'
+image 'images/reverse-post-order-traversal.png'
 ```
 
 ![Image](images/reverse-post-order-traversal.png?raw=true)
 
-## Example: Classify Edges
+## Example: classifyEdges, color edge by type
 
-## Example: Color Connected Components
+```groovy
+
+type 'directed-graph'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo 'C'
+        connectsTo('D') {
+            connectsTo 'A'
+            connectsFrom 'A'
+            connectsTo 'C'
+            connectsTo 'E'
+        }
+    }
+}
+vertex('F') {
+    connectsTo('G') {
+        connectsTo 'D'
+    }
+}
+classifyEdges('A') {Object from, Object to, EdgeType type ->
+    edge(from, to) {
+        switch(type) {
+            case EdgeType.TREE_EDGE:
+                color = 'black'
+                label = 'tree'
+                break
+            case EdgeType.BACK_EDGE:
+                color = 'red'
+                label = 'back'
+                break
+            case EdgeType.FORWARD_EDGE:
+                color = 'grey'
+                label = 'forward'
+                break
+            case EdgeType.CROSS_EDGE:
+                color = 'blue'
+                label = 'cross'
+                break
+        }
+    }
+    CONTINUE
+}
+plugin 'graphviz'
+image 'images/edge-classification.png'
+```
+
+## Example: connectedComponent (undirected), label and color components
+
+## Example: connectedComponent (directed), label and color components
+
+
 
 ## directed graphs
 
