@@ -205,6 +205,9 @@ image 'images/reverse-post-order-traversal.png'
 
 ## Example: classifyEdges, color edge by type
 
+This example classifies edges and colors them by type. The closure takes the arguments from, to, and type. These
+arguments can be used to modify the graph. In this example the edges are colored and labeled with the type.
+
 ```groovy
 
 type 'directed-graph'
@@ -253,58 +256,80 @@ image 'images/edge-classification.png'
 
 ## Example: connectedComponent (undirected), label and color components
 
-## Example: connectedComponent (directed), label and color components
-
-
-
-## directed graphs
-
-The Default behavior of a graph is undirected. These graphs have a set of edges 
-where only one edge can connect any two vertices. An undirected graph can be 
-changed to a directed graph at any time using 
-`DirectedGraphType`.
+Connected component visits each vertex supplying the root vertex for the component. The closure parameters are the
+root vertex key and the current vertex.
 
 ```groovy
-//lots of code
-type 'directed-graph'
-//lots of code
+vertex('A') {
+    connectsTo('B') {
+        connectsTo 'C'
+    }
+    connectsTo 'C'
+}
+
+vertex('Z') {
+    connectsTo('X') {
+        connectsTo('Y')
+    }
+    connectsTo('W') {
+        connectsTo 'X'
+    }
+}
+
+vertex 'J'
+def colors = ['A':'yellow', 'Z':'green', J:'blue']
+connectedComponent('A') { root, vertex ->
+    vertex.fillcolor = colors[(root)]
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
+}
+plugin 'graphviz'
+image 'images/connected-component-undirected.png'
 ```
 
-## Traversing a graph
-
-Once a graph is created there is a dsl for depthFirstTraversal and breadthFirstTraversal.
+## Example: connectedComponent (directed), label and color components
 
 ```groovy
 type 'directed-graph'
 vertex('A') {
-    connectsTo 'B', 'D', 'E'
-    connectsFrom 'D'
+    connectsTo('B') {
+        connectsTo 'C'
+    }
+    connectsTo 'C'
 }
 
-vertex('D') {
-    connectsTo 'C', 'E'
-    connectsFrom 'B'
-}
-
-edge 'B', 'C'
-depthFirstTraversal {
-    root = 'A'
-    preorder { vertex ->
-        println vertex.name
+vertex('Z') {
+    connectsTo('X') {
+        connectsTo('Y')
+    }
+    connectsTo('W') {
+        connectsTo 'X'
     }
 }
-
-breadthFirstTraversal {
-    root = 'A'
-    visit { vertex ->
-        println "bft $vertex.name"
-    }
+vertex 'J'
+def colors = ['A': 'yellow', 'Z': 'green', J: 'blue']
+connectedComponent('A') { root, vertex ->
+    vertex.fillcolor = colors[(root)]
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
 }
+plugin 'graphviz'
+image 'images/connected-component-directed.png'
 ```
 
-`depthFirstTraversal` provides preorder and postorder methods.
+# directed graphs
 
-## Functional search methods
+The Default behavior of a graph is undirected. These graphs have a set of edges 
+where only one edge can connect any two vertices. An undirected graph can be 
+changed to a directed graph at any time using `DirectedGraphType`.
+
+```groovy
+//lots of code
+type 'directed-graph'
+//lots of code
+```
+
+# Functional search methods
 
 There are functional search methods built on the depthFirstTraversal and breadthFirstTraversal method. These methods 
 follow the standard names in groovy: each, find, inject, findAll, collect. The methods can specify which type of 
@@ -326,33 +351,6 @@ def bfsOrder = collectBfs {
 
 Note: These methods are not yet implemented for depth first traversal. The depth first search methods will be the
 defaults when a search type is not specified.
-
-## Edge Classification
-
-Depth first traversal supports edge classification where an edge is classified as:
-
-* tree-edge - when the destination vertex is white
-* back-edge - when the destination vertex is grey
-* forward-edge - when the destination vertex is black
-* cross-edge - when the destination vertex is black and in a different tree
-
-To classify edges use the `classifyEdges(Closure)` method.
-
-```groovy
-//setup graph
-classifyEdges { from, to, edgeType ->
-    println "$from $to is $edgeType"
-}
-```
-
-`classifyEdges` returns an EdgeClassification object. This object contains lists of all back edges, tree-edges,
-forward edges, and cross edges. There is also a new Graph called forest that gets created. 
-`EdgeClassification.forrest` contains the forrest created by tree edges. It uses the vertex and edge objects
-from the original graph object.
-
-Calling `classifyEdges` on an undirected graph will result in two classifications for each edge. The first classification
-is what the edge would be in a directed graph. The second classification is always back-edge. This is because edges in 
-an undirected graph are considered bi-directional in `classifyEdges`.
 
 # Edge and Vertex
 

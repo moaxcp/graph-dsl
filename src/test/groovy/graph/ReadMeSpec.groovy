@@ -93,7 +93,6 @@ class ReadMeSpec extends Specification {
             }
             plugin 'graphviz'
             image 'images/pre-order-traversal.png'
-            
         }
     }
     
@@ -211,8 +210,66 @@ class ReadMeSpec extends Specification {
         }
     }
 
-    def 'connectedComponent directed'() {
+    def 'connectedComponent undirected'() {
+        expect:
+        Graph graph = graph {
+            vertex('A') {
+                connectsTo('B') {
+                    connectsTo 'C'
+                }
+                connectsTo 'C'
+            }
 
+            vertex('Z') {
+                connectsTo('X') {
+                    connectsTo('Y')
+                }
+                connectsTo('W') {
+                    connectsTo 'X'
+                }
+            }
+
+            vertex 'J'
+            def colors = ['A':'yellow', 'Z':'green', J:'blue']
+            connectedComponent('A') { root, vertex ->
+                vertex.fillcolor = colors[(root)]
+                vertex.style = 'filled'
+                TraversalState.CONTINUE
+            }
+            plugin 'graphviz'
+            image 'images/connected-component-undirected.png'
+        }
+    }
+
+    def 'connectedComponent directed'() {
+        expect:
+        def graph = graph {
+            type 'directed-graph'
+            vertex('A') {
+                connectsTo('B') {
+                    connectsTo 'C'
+                }
+                connectsTo 'C'
+            }
+
+            vertex('Z') {
+                connectsTo('X') {
+                    connectsTo('Y')
+                }
+                connectsTo('W') {
+                    connectsTo 'X'
+                }
+            }
+            vertex 'J'
+            def colors = ['A': 'yellow', 'Z': 'green', J: 'blue']
+            connectedComponent('A') { root, vertex ->
+                vertex.fillcolor = colors[(root)]
+                vertex.style = 'filled'
+                TraversalState.CONTINUE
+            }
+            plugin 'graphviz'
+            image 'images/connected-component-directed.png'
+        }
     }
 
     def 'usage 3'() {
