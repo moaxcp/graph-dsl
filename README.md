@@ -254,6 +254,8 @@ plugin 'graphviz'
 image 'images/edge-classification.png'
 ```
 
+![Image](images/edge-classification.png?raw=true)
+
 ## Example: connectedComponent (undirected), label and color components
 
 Connected component visits each vertex supplying the root vertex for the component. The closure parameters are the
@@ -287,6 +289,8 @@ plugin 'graphviz'
 image 'images/connected-component-undirected.png'
 ```
 
+![Image](images/connected-component-undirected.png?raw=true)
+
 ## Example: connectedComponent (directed), label and color components
 
 ```groovy
@@ -316,6 +320,8 @@ connectedComponent('A') { root, vertex ->
 plugin 'graphviz'
 image 'images/connected-component-directed.png'
 ```
+
+![Image](images/connected-component-directed.png?raw=true)
 
 # directed graphs
 
