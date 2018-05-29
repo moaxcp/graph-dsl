@@ -327,7 +327,7 @@ image 'images/connected-component-directed.png'
 
 The Default behavior of a graph is undirected. These graphs have a set of edges 
 where only one edge can connect any two vertices. An undirected graph can be 
-changed to a directed graph at any time using `DirectedGraphType`.
+changed to a directed graph at any time using the `type` method.
 
 ```groovy
 //lots of code
@@ -543,6 +543,13 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## 0.24.0
+
+* Switched to using reckon gradle plugin. This is an opinionated version similar to gradle-gitflow but there is no need
+to use gitflow
+* Stopped using gitflow and simply use master with tagged versions for releases
+
 
 ## 0.23.0
 

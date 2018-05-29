@@ -18,7 +18,6 @@ cache:
 install: true
 script:
   - "./travis.sh"
-  - ./gradlew jacocoTestReport
 before_install:
 - openssl aes-256-cbc -K $encrypted_89c9bd3bab4e_key -iv $encrypted_89c9bd3bab4e_iv
   -in signingkey.gpg.enc -out signingkey.gpg -d

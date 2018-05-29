@@ -1,17 +1,11 @@
-import static com.github.amkay.gradle.gitflow.version.VersionType.*
-
-buildscript {
-    dependencies {
-        classpath 'com.github.amkay:gradle-gitflow:0.2.0'
-    }
-}
-
 plugins {
     id 'io.codearte.nexus-staging' version '0.11.0'
+    id 'org.ajoberstar.grgit' version '2.2.0'
+    id 'org.ajoberstar.reckon' version '0.6.0'
+    id 'org.ajoberstar.git-publish' version '0.4.1'
 }
 
 apply plugin: 'idea'
-apply plugin: 'com.github.amkay.gitflow'
 apply plugin: 'jacoco'
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
@@ -21,51 +15,20 @@ apply plugin: 'signing'
 group = 'com.github.moaxcp'
 description = 'A groovy dsl for creating and traversing graphs.'
 
+reckon {
+    normal = scopeFromProp()
+    preRelease = snapshotFromProp()
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-ext.groovyVersion = '2.4.13'
+ext.groovyVersion = '2.4.15'
 
 jacocoTestReport {
     dependsOn test
     reports {
         xml.enabled = true
     }
-}
-
-task apiTest(type:Test) {
-    include 'api/*'
-}
-
-task apiCodeCoverageReport(type:JacocoReport) {
-    executionData apiTest
-    sourceSets sourceSets.main
-}
-
-task dslTest(type:Test) {
-    include 'dsl/*'
-}
-
-task dslCodeCoverageReport(type:JacocoReport) {
-    executionData dslTest
-    sourceSets sourceSets.main
-}
-
-task graphTest(type:Test) {
-    include 'graph/*'
-}
-
-task graphCodeCoverageReport(type:JacocoReport) {
-    executionData graphTest
-    sourceSets sourceSets.main
-}
-
-task scriptTest(type:Test) {
-    include 'dsl/*'
-}
-
-task scriptCodeCoverageReport(type:JacocoReport) {
-    executionData scriptTest
-    sourceSets sourceSets.main
 }
 
 jacocoTestCoverageVerification {
@@ -160,6 +123,14 @@ task javaDocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
 }
 
+task createReadMeImages(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'groovy.ui.GroovyMain'
+    args 'MakeImages.groovy'
+}
+
+build.dependsOn(createReadMeImages)
+
 artifacts {
     archives jar
     archives sourceJar
@@ -172,10 +143,6 @@ signing {
     sign configurations.archives
 }
 
-if(!project.hasProperty('releaseType')) {
-    ext.releaseType = 'RELEASE'
-}
-
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -184,10 +151,10 @@ uploadArchives {
             }
 
             def publishUrl = ''
-            if(releaseType == 'RELEASE') {
-                publishUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
-            } else if(releaseType == 'SNAPSHOT') {
+            if(version =~ 'SNAPSHOT$') {
                 publishUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+            } else {
+                publishUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
             }
 
             repository(url: publishUrl) {
@@ -228,6 +195,16 @@ nexusStaging {
     password = System.getProperty('nexus.password')
     numberOfRetries = 10
     delayBetweenRetriesInMillis = 10000
+}
+
+gitPublish {
+    repoUri = "https://github.com/moaxcp/graph-dsl.git"
+    branch = 'gh-pages'
+    contents {
+        from 'build/docs'
+        from 'build/reports'
+    }
+    commitMessage = 'Publishing from gradle.'
 }
 
 repositories {
