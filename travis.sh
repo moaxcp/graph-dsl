@@ -6,7 +6,6 @@ git fetch --unshallow || true #get all commit history for exact blame info
     -Psigning.keyId=A9A4043B \
     -Psigning.secretKeyRingFile=signingkey.gpg \
     -Psigning.password=$SIGNING_PASSWORD
-./gradlew jacocoTestCoverageVerification
 
 if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo "build for master branch"
@@ -14,6 +13,8 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
         -Dnexus.username=moaxcp \
         -Dnexus.password=$NEXUS_PASSWORD
 fi
+
+./gradlew jacocoTestCoverageVerification
 
 if [ -n "$TRAVIS_TAG" ]; then
     echo "release for $TRAVIS_TAG"
