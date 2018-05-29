@@ -11,7 +11,10 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     echo "build for master branch"
     ./gradlew uploadArchives \
         -Dnexus.username=moaxcp \
-        -Dnexus.password=$NEXUS_PASSWORD
+        -Dnexus.password=$NEXUS_PASSWORD \
+        -Psigning.keyId=A9A4043B \
+        -Psigning.secretKeyRingFile=signingkey.gpg \
+        -Psigning.password=$SIGNING_PASSWORD
 fi
 
 ./gradlew jacocoTestCoverageVerification
@@ -20,11 +23,17 @@ if [ -n "$TRAVIS_TAG" ]; then
     echo "release for $TRAVIS_TAG"
     ./gradlew uploadArchives \
         -Dnexus.username=moaxcp \
-        -Dnexus.password=$NEXUS_PASSWORD
+        -Dnexus.password=$NEXUS_PASSWORD \
+        -Psigning.keyId=A9A4043B \
+        -Psigning.secretKeyRingFile=signingkey.gpg \
+        -Psigning.password=$SIGNING_PASSWORD
 
     ./gradlew closeAndReleaseRepository --info --stacktrace \
         -Dnexus.username=moaxcp \
-        -Dnexus.password=$NEXUS_PASSWORD
+        -Dnexus.password=$NEXUS_PASSWORD \
+        -Psigning.keyId=A9A4043B \
+        -Psigning.secretKeyRingFile=signingkey.gpg \
+        -Psigning.password=$SIGNING_PASSWORD
 
     ./gradlew jacocoTestReport
 
