@@ -129,8 +129,6 @@ task createReadMeImages(type: JavaExec) {
     args 'MakeImages.groovy'
 }
 
-build.dependsOn(createReadMeImages)
-
 artifacts {
     archives jar
     archives sourceJar
