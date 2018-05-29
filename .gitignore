@@ -4,3 +4,5 @@ build
 *.iml
 *.iws
 signingkey.gpg
+/.nb-gradle/
+/out/

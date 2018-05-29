@@ -18,7 +18,7 @@ class GraphVertexSpec extends Specification {
         graph.vertex ''
 
         then:
-        thrown IllegalStateException
+        thrown IllegalArgumentException
     }
 
     def 'can add/get with vertex(String)'() {
@@ -219,13 +219,5 @@ class GraphVertexSpec extends Specification {
                 new Vertex(key:'step3'),
                 new Vertex(key:'step4')
         ] as Set<Vertex>
-    }
-
-    def 'can create Vertex with VertexSpec property'() {
-        when:
-        def vertex = graph.vertex graph.step1
-
-        then:
-        vertex.key == 'step1'
     }
 }

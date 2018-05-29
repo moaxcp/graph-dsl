@@ -2,6 +2,7 @@ package graph.plugin
 
 import graph.Edge
 import graph.Graph
+import static graph.Graph.graph
 import graph.Vertex
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -98,5 +99,25 @@ class GraphVizSpec extends Specification {
 
         expect: 'expected format is returned'
         'A [color="blue" label="blue node"]' == graphviz.getVertexDot(vertex)
+    }
+    
+    def 'dot for graph'() {
+        given: 'a graph with vertices and edges'
+        Graph graph = graph {
+            edge('A', 'B', [color:'blue'])
+            edge('A', 'C', [color:'red'])
+            vertex('Z', [color:'black'])
+        }
+        graphviz.apply(graph)
+        println(graphviz.dot())
+        
+        expect: 'expected format is returned'
+        graphviz.dot() == '''
+            strict graph {
+              A -- B [color="blue"]
+              A -- C [color="red"]
+              Z [color="black"]
+            }
+        '''.stripIndent().trim();
     }
 }

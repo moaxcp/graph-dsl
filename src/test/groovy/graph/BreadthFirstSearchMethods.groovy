@@ -1,6 +1,7 @@
 package graph
 
 import spock.lang.Specification
+import static TraversalState.*
 
 class BreadthFirstSearchMethods extends Specification {
 
@@ -14,16 +15,13 @@ class BreadthFirstSearchMethods extends Specification {
             vertex 'B', [connectsTo:['C', 'D']]
             vertex 'D', [connectsTo:['C', 'E']]
         }
-        graph.breadthFirstTraversal {
-            visit { vertex ->
-                defaultOrder << vertex.key
-            }
+        graph.breadthFirstTraversal { vertex ->
+            defaultOrder << vertex.key
+            CONTINUE
         }
-        graph.breadthFirstTraversal {
-            root = 'D'
-            visit { vertex ->
-                orderFromD << vertex.key
-            }
+        graph.breadthFirstTraversal('D') { vertex ->
+            orderFromD << vertex.key
+            CONTINUE
         }
     }
 

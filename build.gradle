@@ -1,19 +1,11 @@
-import static com.github.amkay.gradle.gitflow.version.VersionType.*
-
-buildscript {
-    dependencies {
-        classpath 'com.github.amkay:gradle-gitflow:0.2.0'
-    }
-}
-
 plugins {
-    id 'net.ossindex.audit' version '0.1.1'
-    id 'io.codearte.nexus-staging' version '0.8.0'
-    id "org.standardout.versioneye" version "1.4.0"
+    id 'io.codearte.nexus-staging' version '0.11.0'
+    id 'org.ajoberstar.grgit' version '2.2.0'
+    id 'org.ajoberstar.reckon' version '0.6.0'
+    id 'org.ajoberstar.git-publish' version '0.4.1'
 }
 
 apply plugin: 'idea'
-apply plugin: 'com.github.amkay.gitflow'
 apply plugin: 'jacoco'
 apply plugin: 'groovy'
 apply plugin: 'codenarc'
@@ -23,14 +15,14 @@ apply plugin: 'signing'
 group = 'com.github.moaxcp'
 description = 'A groovy dsl for creating and traversing graphs.'
 
+reckon {
+    normal = scopeFromProp()
+    preRelease = snapshotFromProp()
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-ext.groovyVersion = '2.4.12'
-
-versioneye {
-    includePlugins = true
-    exclude configurations.findAll { !it.canBeResolved }*.name as String[]
-}
+ext.groovyVersion = '2.4.15'
 
 jacocoTestReport {
     dependsOn test
@@ -131,6 +123,12 @@ task javaDocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
 }
 
+task createReadMeImages(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'groovy.ui.GroovyMain'
+    args 'MakeImages.groovy'
+}
+
 artifacts {
     archives jar
     archives sourceJar
@@ -143,10 +141,6 @@ signing {
     sign configurations.archives
 }
 
-if(!project.hasProperty('releaseType')) {
-    ext.releaseType = 'RELEASE'
-}
-
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -155,10 +149,10 @@ uploadArchives {
             }
 
             def publishUrl = ''
-            if(releaseType == 'RELEASE') {
-                publishUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
-            } else if(releaseType == 'SNAPSHOT') {
+            if(version =~ 'SNAPSHOT$') {
                 publishUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+            } else {
+                publishUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
             }
 
             repository(url: publishUrl) {
@@ -201,6 +195,16 @@ nexusStaging {
     delayBetweenRetriesInMillis = 10000
 }
 
+gitPublish {
+    repoUri = "https://github.com/moaxcp/graph-dsl.git"
+    branch = 'gh-pages'
+    contents {
+        from 'build/docs'
+        from 'build/reports'
+    }
+    commitMessage = 'Publishing from gradle.'
+}
+
 repositories {
     jcenter()
 }
@@ -215,17 +219,17 @@ dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
     compile 'org.groovyfx:groovyfx:8.0.0'
 
-    testCompile( 'com.athaydes:spock-reports:1.3.2' ) {
+    testCompile( 'com.athaydes:spock-reports:1.4.0' ) {
         transitive = false
     }
-    testCompile 'org.slf4j:slf4j-api:1.7.13'
-    testCompile 'org.slf4j:slf4j-simple:1.7.13'
+    testCompile 'org.slf4j:slf4j-api:1.7.25'
+    testCompile 'org.slf4j:slf4j-simple:1.7.25'
 
     testCompile ('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude group: 'org.codehaus.groovy', module:'groovy-all'
     }
     testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
-    testCompile 'cglib:cglib-nodep:3.2.5'
+    testCompile 'cglib:cglib-nodep:3.2.6'
 
     testCompile 'org.hamcrest:hamcrest-all:1.3'
 }
