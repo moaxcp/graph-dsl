@@ -1,8 +1,8 @@
 # graph-dsl
 
-A groovy dsl for creating and traversing graphs. Graphs can be extended
-with types and plugins which allows developers to create graphs with
-the desired behavior and values for their algorithm.
+A groovy dsl for creating and traversing graphs. Graphs can be extended with 
+types and plugins which allows developers to create the desired behavior and 
+values for their algorithm.
 
 [![GitHub top language](https://img.shields.io/github/languages/top/moaxcp/graph-dsl.svg)]()
 [![GitHub last commit](https://img.shields.io/github/last-commit/moaxcp/graph-dsl.svg)]()
@@ -18,52 +18,316 @@ There are two entry points into the dsl: The `graph` method, and `BaseScript`.
 
 ## BaseScript
 
-`BaseScript` is a transformation which allows developers to change the base script class for the current script. By
-changing the script to `DslScript` a new `Graph` becomes the delegate of the script.
+`BaseScript` is a transformation which allows developers to change the base 
+script class for the current script. By changing the script to `DslScript` a 
+new `Graph` becomes the delegate of the script.
 
 ```groovy
 #!/usr/bin/env groovy
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
 import graph.*
 @groovy.transform.BaseScript DslScript graph
-edge step1, step2
+edge 'A', 'B'
 assert graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
 assert graph.edges.size() == 1
 assert graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
 ```
 
-This example of a graph creates two vertices named 'step1' and 'step2' as well as an edge between them. The basic graph
-structure is held in a map of named Vertex objects and a set of Edge objects. Each Edge contains the names of the two
-vertices it connects.
+![Image](images/base-script-method.png?raw=true)
+
+This example of a graph creates two vertices named 'step1' and 'step2' as well 
+as an edge between them. The basic graph structure is held in a map of named 
+Vertex objects and a set of Edge objects. Each Edge contains the names of the 
+two vertices it connects.
 
 The same graph can be created using the `graph` method.
 
 ## graph method
 
-The entry-point to the dsl is the `Graph.graph(Closure)` method. This method applies the closure to a new Graph object 
-and returns it. 
+The entry-point to the dsl is the `Graph.graph(Closure)` method. This method 
+applies the closure to a new Graph object and returns it.
 
 ```groovy
 #!/usr/bin/env groovy
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
+import graph.*
 import static graph.Graph.*
 def graph = graph {
-    edge step1, step2
+    edge 'step1', 'step2'
 }
+
+assert graph.vertices.keySet() == ['step1', 'step2'] as Set
+assert graph.edges.size() == 1
+assert graph.edges.first() == new Edge(one:'step1', two:'step2')
 ```
 
-## dsl policy
+![Image](images/graph-method.png?raw=true)
 
-There are a few rules the dsl follows as it is being processed.
+# dsl policy
+
+There are a few rules the dsl follows:
 
 1. All referenced vertices are created if they don't exist.
-2. If an edge or vertex already exists it will be reused by and operation.
+2. If an edge or vertex already exists it will be reused by an operation.
+3. Type can be changed at any time if the type is compatible with the current graph structure.
+4. Plugins can be applied at any time.
+5. Vertices and edges are always Maps.
 
-## directed graphs
+# Traversals
 
-The Default behavior of a graph is undirected. These graphs have a set of edges where only one edge
-can connect any two vertices. An undirected graph can be changed to a directed graph at any time using 
-`DirectedGraphType`.
+All traversal methods start at a root vertex and traverse the graph. A closure is called on each "visit" which can
+modify the graph in some way. The following examples create a graph and perform a traversal.
+
+## Example: breadthFirstTraversal, label and color vertex
+
+```groovy
+type 'directed-graph'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo('C')
+        connectsTo('D')
+    }
+    connectsFrom('D') {
+        connectsTo('C')
+        connectsTo('E')
+    }
+    connectsTo('E')
+}
+def count = 1
+breadthFirstTraversal('A') { vertex ->
+    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.fillcolor = 'green'
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
+}
+plugin 'graphviz'
+image 'images/breadth-first-traversal.png'
+```
+
+![Image](images/breadth-first-traversal.png?raw=true)
+
+## Example: preOrder, label and color vertex
+
+```groovy
+type 'directed-graph'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo('C')
+        connectsTo('D')
+    }
+    connectsFrom('D') {
+        connectsTo('C')
+        connectsTo('E')
+    }
+    connectsTo('E')
+}
+def count = 1
+preOrder('A') { vertex ->
+    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.fillcolor = 'green'
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
+}
+plugin 'graphviz'
+image 'images/pre-order-traversal.png'
+```
+
+![Image](images/pre-order-traversal.png?raw=true)
+
+## Example: postOrder, label and color vertex
+
+```groovy
+type 'directed-graph'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo('C')
+        connectsTo('D')
+    }
+    connectsFrom('D') {
+        connectsTo('C')
+        connectsTo('E')
+    }
+    connectsTo('E')
+}
+def count = 1
+postOrder('A') { vertex ->
+    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.fillcolor = 'green'
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
+}
+plugin 'graphviz'
+image 'images/post-order-traversal.png'
+```
+
+![Image](images/post-order-traversal.png?raw=true)
+
+## Example: reversePostOrder, label and color vertex
+
+Note: This is the DAG created by the java gradle plugin
+
+```groovy
+type 'directed-graph'
+edge 'compileJava', 'classes'
+edge 'processResources', 'classes'
+vertex('classes') {
+    connectsTo 'javadoc'
+    connectsTo('compileTestJava') {
+        connectsTo('testClasses') {
+            connectsFrom('processTestResources')
+            connectsTo('test') {
+                connectsFrom 'classes'
+                connectsTo('check') {
+                    connectsTo 'build'
+                }
+            }
+        }
+    }
+    connectsTo('jar') {
+        connectsTo 'uploadArchives'
+        connectsTo('assemble') {
+            connectsTo 'build'
+        }
+    }
+}
+def count = 1
+reversePostOrder('build') { vertex ->
+    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.fillcolor = 'green'
+    vertex.style = 'filled'
+    CONTINUE
+}
+plugin 'graphviz'
+image 'images/reverse-post-order-traversal.png'
+```
+
+![Image](images/reverse-post-order-traversal.png?raw=true)
+
+## Example: classifyEdges, color edge by type
+
+This example classifies edges and colors them by type. The closure takes the arguments from, to, and type. These
+arguments can be used to modify the graph. In this example the edges are colored and labeled with the type.
+
+```groovy
+
+type 'directed-graph'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo 'C'
+        connectsTo('D') {
+            connectsTo 'A'
+            connectsFrom 'A'
+            connectsTo 'C'
+            connectsTo 'E'
+        }
+    }
+}
+vertex('F') {
+    connectsTo('G') {
+        connectsTo 'D'
+    }
+}
+classifyEdges('A') {Object from, Object to, EdgeType type ->
+    edge(from, to) {
+        switch(type) {
+            case EdgeType.TREE_EDGE:
+                color = 'black'
+                label = 'tree'
+                break
+            case EdgeType.BACK_EDGE:
+                color = 'red'
+                label = 'back'
+                break
+            case EdgeType.FORWARD_EDGE:
+                color = 'grey'
+                label = 'forward'
+                break
+            case EdgeType.CROSS_EDGE:
+                color = 'blue'
+                label = 'cross'
+                break
+        }
+    }
+    CONTINUE
+}
+plugin 'graphviz'
+image 'images/edge-classification.png'
+```
+
+![Image](images/edge-classification.png?raw=true)
+
+## Example: connectedComponent (undirected), label and color components
+
+Connected component visits each vertex supplying the root vertex for the component. The closure parameters are the
+root vertex key and the current vertex.
+
+```groovy
+vertex('A') {
+    connectsTo('B') {
+        connectsTo 'C'
+    }
+    connectsTo 'C'
+}
+
+vertex('Z') {
+    connectsTo('X') {
+        connectsTo('Y')
+    }
+    connectsTo('W') {
+        connectsTo 'X'
+    }
+}
+
+vertex 'J'
+def colors = ['A':'yellow', 'Z':'green', J:'blue']
+connectedComponent('A') { root, vertex ->
+    vertex.fillcolor = colors[(root)]
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
+}
+plugin 'graphviz'
+image 'images/connected-component-undirected.png'
+```
+
+![Image](images/connected-component-undirected.png?raw=true)
+
+## Example: connectedComponent (directed), label and color components
+
+```groovy
+type 'directed-graph'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo 'C'
+    }
+    connectsTo 'C'
+}
+
+vertex('Z') {
+    connectsTo('X') {
+        connectsTo('Y')
+    }
+    connectsTo('W') {
+        connectsTo 'X'
+    }
+}
+vertex 'J'
+def colors = ['A': 'yellow', 'Z': 'green', J: 'blue']
+connectedComponent('A') { root, vertex ->
+    vertex.fillcolor = colors[(root)]
+    vertex.style = 'filled'
+    TraversalState.CONTINUE
+}
+plugin 'graphviz'
+image 'images/connected-component-directed.png'
+```
+
+![Image](images/connected-component-directed.png?raw=true)
+
+# directed graphs
+
+The Default behavior of a graph is undirected. These graphs have a set of edges 
+where only one edge can connect any two vertices. An undirected graph can be 
+changed to a directed graph at any time using the `type` method.
 
 ```groovy
 //lots of code
@@ -71,41 +335,7 @@ type 'directed-graph'
 //lots of code
 ```
 
-## Traversing a graph
-
-Once a graph is created there is a dsl for depthFirstTraversal and breadthFirstTraversal.
-
-```groovy
-type 'directed-graph'
-vertex A {
-    connectsTo B, D, E
-    connectsFrom D
-}
-
-vertex D {
-    connectsTo C, E
-    connectsFrom B
-}
-
-edge B, C
-depthFirstTraversal {
-    root A
-    preorder { vertex ->
-        println vertex.name
-    }
-}
-
-breadthFirstTraversal {
-    root A
-    visit { vertex ->
-        println "bft $vertex.name"
-    }
-}
-```
-
-`depthFirstTraversal` provides preorder and postorder methods.
-
-## Functional search methods
+# Functional search methods
 
 There are functional search methods built on the depthFirstTraversal and breadthFirstTraversal method. These methods 
 follow the standard names in groovy: each, find, inject, findAll, collect. The methods can specify which type of 
@@ -128,33 +358,6 @@ def bfsOrder = collectBfs {
 Note: These methods are not yet implemented for depth first traversal. The depth first search methods will be the
 defaults when a search type is not specified.
 
-## Edge Classification
-
-Depth first traversal supports edge classification where an edge is classified as:
-
-* tree-edge - when the destination vertex is white
-* back-edge - when the destination vertex is grey
-* forward-edge - when the destination vertex is black
-* cross-edge - when the destination vertex is black and in a different tree
-
-To classify edges use the `classifyEdges(Closure)` method.
-
-```groovy
-//setup graph
-classifyEdges { from, to, edgeType ->
-    println "$from $to is $edgeType"
-}
-```
-
-`classifyEdges` returns an EdgeClassification object. This object contains lists of all back edges, tree-edges,
-forward edges, and cross edges. There is also a new Graph called forest that gets created. 
-`EdgeClassification.forrest` contains the forrest created by tree edges. It uses the vertex and edge objects
-from the original graph object.
-
-Calling `classifyEdges` on an undirected graph will result in two classifications for each edge. The first classification
-is what the edge would be in a directed graph. The second classification is always back-edge. This is because edges in 
-an undirected graph are considered bi-directional in `classifyEdges`.
-
 # Edge and Vertex
 
 ## Vertex keys
@@ -167,11 +370,11 @@ Since Edge and Vertex are maps, all of the syntax for maps apply to them. In a d
 and entry in the Edge or Vertex.
 
 ```groovy
-edge(A, B) {
-    key = 'value'
+edge('A', 'B') {
+    label = 'edge label'
 }
 
-vertex step1, {
+vertex('step1') {
     label = 'first step in process'
 }
 ```
@@ -179,9 +382,9 @@ vertex step1, {
 If non dsl entries are used in a dsl method they are added to the object.
 
 ```groovy
-edge(A, B, [weight:10]) //weight is a non dsl entry
+edge('A', 'B', [weight:10]) //weight is a non dsl entry
 
-vertex(step1, [connectsTo:step1, color:'red']) //color is a non dsl entry
+vertex('step1', [connectsTo:step1, color:'red']) //color is a non dsl entry
 ```
 
 # Types
@@ -233,9 +436,9 @@ Edges can be assigned weight within the dsl.
 ```groovy
 type 'weighted-graph'
 
-edge A, B, [weight:10]
+edge 'A', 'B', [weight:10]
 
-edge (A, B) { weight = 10 }
+edge ('A', 'B') { weight = 10 }
 ```
 
 ## WeightedDirectedGraphType
@@ -265,18 +468,18 @@ plugin provides methods to create dot strings, BufferedImages and to view the gr
 ```groovy
 type 'directed-graph'
 plugin 'graphviz'
-vertex A {
-    connectsTo B {
-        connectsTo C, D
+vertex('A') {
+    connectsTo('B') {
+        connectsTo 'C', 'D'
     }
-    connectsTo D {
-        connectsTo C
-        connectsTo E
+    connectsTo('D') {
+        connectsTo 'C'
+        connectsTo 'E'
     }
-    connectsFrom D
+    connectsFrom 'D'
 }
-vertex F, [connectsTo:G]
-edge G, D
+vertex 'F', [connectsTo:'G']
+edge 'G', 'D'
 image 'images/graphviz.png'
 ```
 ![Image of graph](/images/graphviz.png?raw=true "Grpah")
@@ -340,6 +543,13 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## 0.24.0
+
+* Switched to using reckon gradle plugin. This is an opinionated version similar to gradle-gitflow but there is no need
+to use gitflow
+* Stopped using gitflow and simply use master with tagged versions for releases
+
 
 ## 0.23.0
 

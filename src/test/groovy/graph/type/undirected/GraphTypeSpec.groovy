@@ -31,8 +31,8 @@ class GraphTypeSpec extends Specification {
         given: 'directed graph with edge(A, B) and edge(B, A)'
         Graph graph = graph {
             type 'directed-graph'
-            edge A, B
-            edge B, A
+            edge 'A', 'B'
+            edge 'B', 'A'
         }
 
         and: 'a GraphType for the graph'
@@ -46,8 +46,8 @@ class GraphTypeSpec extends Specification {
         given: 'directed graph with two edges between vertices'
         Graph graph = graph {
             type 'directed-graph'
-            edge A, B
-            edge B, A
+            edge 'A', 'B'
+            edge 'B', 'A'
         }
 
         and: 'a GraphType for the graph'
@@ -64,9 +64,9 @@ class GraphTypeSpec extends Specification {
     def 'traverse edges returns adjacent edges'() {
         given: 'graph with vertex that has adjacent edges'
         Graph graph = graph {
-            edge A, B
-            edge A, C
-            edge A, D
+            edge 'A', 'B'
+            edge 'A', 'C'
+            edge 'A', 'D'
         }
 
         and: 'a GraphType for the graph'

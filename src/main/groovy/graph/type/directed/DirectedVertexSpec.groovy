@@ -1,7 +1,6 @@
 package graph.type.directed
 
 import graph.Graph
-import graph.NameSpec
 import graph.Vertex
 import graph.type.undirected.UndirectedVertexSpec
 import graph.type.undirected.VertexSpecCodeRunner
@@ -20,8 +19,16 @@ class DirectedVertexSpec extends UndirectedVertexSpec {
     @PackageScope
     DirectedVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph, map, closure)
-        map.connectsFrom?.each {
-            connectsFromSet.addAll(it instanceof NameSpec ? it.name : it)
+
+        if(map.connectsFrom && (map.connectsFrom instanceof Collection || map.connectsFrom.class.isArray())) {
+            map.connectsFrom.each {
+                if(!it) {
+                    throw new IllegalArgumentException('Invalid connectsFrom item.')
+                }
+                connectsFromSet.add(it)
+            }
+        } else if(map.connectsFrom) {
+            connectsFromSet.add(map.connectsFrom)
         }
     }
 
@@ -47,7 +54,7 @@ class DirectedVertexSpec extends UndirectedVertexSpec {
     Vertex apply() {
         init()
         checkConditions()
-        applyRename()
+        applyChangeKey()
         applyConnectsTo()
         applyConnectsFrom()
         addVertex(vertex)

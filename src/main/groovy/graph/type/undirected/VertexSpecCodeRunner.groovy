@@ -2,7 +2,6 @@ package graph.type.undirected
 
 import graph.ConfigSpec
 import graph.Graph
-import graph.NameSpec
 import graph.Vertex
 
 /**
@@ -43,14 +42,6 @@ class VertexSpecCodeRunner {
     }
 
     /**
-     * Changes the key for the vertex to changeKey
-     * @param newKey
-     */
-    void changeKey(NameSpec newKey) {
-        graph.newVertexSpec([key:vertex.key, changeKey:newKey.name]).apply()
-    }
-
-    /**
      * Creates edges where the vertex is edge.one and each key in keys is edge.two.
      * @param vertices to connect to.
      */
@@ -58,23 +49,9 @@ class VertexSpecCodeRunner {
         graph.newVertexSpec([key:vertex.key, connectsTo:keys]).apply()
     }
 
-    /**
-     * Creates edges where the vertex is edge.one and each name in names is edge.two.
-     * @param names of vertices to connect to.
-     */
-    void connectsTo(NameSpec... names) {
-        graph.newVertexSpec([key:vertex.key, connectsTo:names*.name]).apply()
-    }
-
-    /**
-     * Applies the specs to graph and adds edges using {@link #connectsTo(String...)}.
-     * @param specs  specs to apply to graph and connectTo.
-     */
-    void connectsTo(ConfigSpec... specs) {
-        specs.each {
-            graph.newVertexSpec(it.map, it.closure).apply()
-        }
-        connectsTo(specs*.map.key as Object[])
+    void connectsTo(Object key, Closure closure) {
+        graph.newVertexSpec([key:vertex.key, connectsTo:key]).apply()
+        graph.newVertexSpec([key:key], closure).apply()
     }
 
     /**

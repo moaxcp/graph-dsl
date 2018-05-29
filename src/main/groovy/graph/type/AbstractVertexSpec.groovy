@@ -1,7 +1,6 @@
 package graph.type
 
 import graph.Graph
-import graph.NameSpec
 import graph.Vertex
 import graph.VertexSpec
 
@@ -28,11 +27,25 @@ abstract class AbstractVertexSpec extends VertexSpec {
 
         entries = map.findAll { !(it.key in dslProperties)}
 
+        if(map.containsKey('key') && !map.key) {
+            throw new IllegalArgumentException('Invalid key')
+        }
         key = map.key
-        changeKey = map.changeKey instanceof NameSpec ? map.changeKey.name : map.changeKey
 
-        map.connectsTo?.each {
-            connectsToSet.add(it instanceof NameSpec ? it.name : it)
+        if(map.containsKey('changeKey') && !map.changeKey) {
+            throw new IllegalArgumentException('Invalid containsKey')
+        }
+        changeKey = map.changeKey
+
+        if(map.connectsTo && (map.connectsTo instanceof Collection || map.connectsTo.class.isArray())) {
+            map.connectsTo.each {
+                if(!it) {
+                    throw new IllegalArgumentException('Invalid connectsTo item.')
+                }
+                connectsToSet.add(it)
+            }
+        } else if(map.connectsTo) {
+            connectsToSet.add(map.connectsTo)
         }
         runnerCodeClosure = closure
     }
@@ -69,7 +82,7 @@ abstract class AbstractVertexSpec extends VertexSpec {
         }
     }
 
-    protected void applyRename() {
+    protected void applyChangeKey() {
         if (changeKey) {
             graph.changeKey(key, changeKey)
         }
@@ -86,7 +99,7 @@ abstract class AbstractVertexSpec extends VertexSpec {
     Vertex apply() {
         init()
         checkConditions()
-        applyRename()
+        applyChangeKey()
         applyConnectsTo()
         initEntries()
         addVertex(vertex)

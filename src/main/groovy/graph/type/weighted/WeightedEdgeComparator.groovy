@@ -3,7 +3,6 @@ package graph.type.weighted
 import graph.Edge
 
 @SuppressWarnings('NoDef')
-@SuppressWarnings('EmptyCatchBlock')
 class WeightedEdgeComparator implements Comparator<Edge> {
 
     @Override

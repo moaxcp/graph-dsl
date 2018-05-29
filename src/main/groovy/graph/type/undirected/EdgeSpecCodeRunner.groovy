@@ -2,7 +2,6 @@ package graph.type.undirected
 
 import graph.Edge
 import graph.Graph
-import graph.NameSpec
 
 /**
  * Delegate of the runnerCode closure in {@link graph.EdgeSpec}. This provides methods and properties that can be used
@@ -44,27 +43,11 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * Changes edge.one to changeOne.name. This allows edge.one to point to a different {@link graph.Vertex}
-     * @param changeOne  the new key for edge.one
-     */
-    void changeOne(NameSpec changeOne) {
-        graph.newEdgeSpec([one:edge.one, two:edge.two, changeOne:changeOne.name]).apply()
-    }
-
-    /**
      * Changes edge.two to changeTwo. This allows edge.two to point to a different {@link graph.Vertex}.
      * @param changeTwo  the new key for edge.two
      */
     void changeTwo(Object changeTwo) {
         graph.newEdgeSpec([one:edge.one, two:edge.two, changeTwo:changeTwo]).apply()
-    }
-
-    /**
-     * Changes edge.two to changeTwo.name. This allows edge.two to point to a different {@link graph.Vertex}
-     * @param changeTwo  the new key for edge.two
-     */
-    void changeTwo(NameSpec changeTwo) {
-        graph.newEdgeSpec([one:edge.one, two:edge.two, changeTwo:changeTwo.name]).apply()
     }
 
     /**

@@ -23,6 +23,8 @@ interface Type {
 
     void setGraph(Graph graph)
 
+    Set<? extends Edge> traverseEdges(Object key)
+
     /**
      * Creates a new {@link graph.Edge}
      * @return the new {@link graph.Edge}

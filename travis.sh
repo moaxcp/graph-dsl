@@ -2,27 +2,30 @@
 set -euo pipefail
 
 git fetch --unshallow || true #get all commit history for exact blame info
-./gradlew audit
-./gradlew jacocoTestCoverageVerification
-
-if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-    echo "Build for master"
-
-    ./gradlew check
-    ./gradlew -Pversioneye.api_key=$VERSIONEYE_KEY versionEyeSecurityAndLicenseCheck
-
-    ./gradlew uploadArchives \
-    -Dnexus.username=moaxcp \
-    -Dnexus.password=$NEXUS_PASSWORD \
+./gradlew build \
     -Psigning.keyId=A9A4043B \
     -Psigning.secretKeyRingFile=signingkey.gpg \
     -Psigning.password=$SIGNING_PASSWORD
 
-    ./gradlew closeAndReleaseRepository --info --stacktrace \
-    -Dnexus.username=moaxcp \
-    -Dnexus.password=$NEXUS_PASSWORD
+if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+    echo "build for master branch"
+    ./gradlew uploadArchives \
+        -Dnexus.username=moaxcp \
+        -Dnexus.password=$NEXUS_PASSWORD
+fi
 
-    ./gradlew groovydoc
+./gradlew jacocoTestCoverageVerification
+
+if [ -n "$TRAVIS_TAG" ]; then
+    echo "release for $TRAVIS_TAG"
+    ./gradlew uploadArchives \
+        -Dnexus.username=moaxcp \
+        -Dnexus.password=$NEXUS_PASSWORD
+
+    ./gradlew closeAndReleaseRepository --info --stacktrace \
+        -Dnexus.username=moaxcp \
+        -Dnexus.password=$NEXUS_PASSWORD
+
     ./gradlew jacocoTestReport
 
     git config --global user.email "travis@travis-ci.org"
@@ -37,15 +40,4 @@ if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; th
     git commit -m "Lastest groovydoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
     git push -fq origin gh-pages
     cd ..
-
-elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-    echo "Build for internal pull request"
-    ./gradlew test #make sure build fails if tests fail
-
-else
-    echo "Build for develop, feature, release, or external pull request"
-    ./gradlew build \
-    -Psigning.keyId=A9A4043B \
-    -Psigning.secretKeyRingFile=signingkey.gpg \
-    -Psigning.password=$SIGNING_PASSWORD
 fi

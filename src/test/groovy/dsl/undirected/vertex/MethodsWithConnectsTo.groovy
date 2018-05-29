@@ -6,10 +6,11 @@ import spock.lang.Specification
 import static graph.Graph.graph
 
 class MethodsWithConnectsTo extends Specification {
-    def 'create edge using connectsTo in map with NameSpec'() {
+
+    def 'create edge using connectsTo in map'() {
         given:
         Graph graph = graph {
-            vertex A (connectsTo:B)
+            vertex('A', [connectsTo:'B'])
         }
 
         expect:
@@ -19,22 +20,10 @@ class MethodsWithConnectsTo extends Specification {
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
-    def 'create edge using connectsTo in map with string'() {
+    def 'create two edges using connectsTo in map'() {
         given:
         Graph graph = graph {
-            vertex A (connectsTo:'B')
-        }
-
-        expect:
-        graph.vertices.size() == 2
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-    }
-    def 'create two edges using connectsTo in map with NameSpec'() {
-        given:
-        Graph graph = graph {
-            vertex A (connectsTo:[B, C])
+            vertex('A', [connectsTo:['B', 'C']])
         }
 
         expect:
@@ -46,40 +35,10 @@ class MethodsWithConnectsTo extends Specification {
         graph.edges.find { it.one == 'A' && it.two == 'C' }
     }
 
-    def 'create two edges using connectsTo in map with string'() {
+    def 'use connectsTo in closure'() {
         given:
         Graph graph = graph {
-            vertex A (connectsTo:['B', 'C'])
-        }
-
-        expect:
-        graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'A' && it.two == 'C' }
-    }
-
-    def 'create edge using connectsTo in closure with NameSpec'() {
-        given:
-        Graph graph = graph {
-            vertex(A) {
-                connectsTo B
-            }
-        }
-
-        expect:
-        graph.vertices.size() == 2
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-    }
-
-    def 'create edge using connectsTo in closure with string'() {
-        given:
-        Graph graph = graph {
-            vertex(A) {
+            vertex ('A') {
                 connectsTo 'B'
             }
         }
@@ -90,27 +49,11 @@ class MethodsWithConnectsTo extends Specification {
         graph.vertices.B.key == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
-    def 'create two edges using connectsTo in closure with NameSpec'() {
+
+    def 'use connectsTo in closure with two vertices'() {
         given:
         Graph graph = graph {
-            vertex(A) {
-                connectsTo B, C
-            }
-        }
-
-        expect:
-        graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'A' && it.two == 'C' }
-    }
-
-    def 'create two edges using connectsTo in closure with string'() {
-        given:
-        Graph graph = graph {
-            vertex(A) {
+            vertex ('A') {
                 connectsTo 'B', 'C'
             }
         }
@@ -122,5 +65,38 @@ class MethodsWithConnectsTo extends Specification {
         graph.vertices.C.key == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'A' && it.two == 'C' }
+    }
+
+    def 'use nested connectsTo in closure'() {
+        given:
+        Graph graph = graph {
+            vertex ('A') {
+                connectsTo ('B') {
+                    connectsTo 'C'
+                }
+            }
+        }
+
+        expect:
+        graph.vertices.size() == 3
+        graph.vertices.A.key == 'A'
+        graph.vertices.B.key == 'B'
+        graph.vertices.C.key == 'C'
+        graph.edges.find { it.one == 'A' && it.two == 'B' }
+        graph.edges.find { it.one == 'B' && it.two == 'C' }
+    }
+    
+    def 'nested connectsTo in closure with multiple letters'() {
+        given:
+        Graph graph = graph {
+            vertex('first') {
+                connectsTo('second') {
+                    
+                }
+            }
+        }
+        
+        expect:
+        graph.vertices.size() == 2
     }
 }
