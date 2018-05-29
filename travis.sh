@@ -2,7 +2,7 @@
 set -euo pipefail
 
 git fetch --unshallow || true #get all commit history for exact blame info
-./gradlew build
+./gradlew build \
     -Psigning.keyId=A9A4043B \
     -Psigning.secretKeyRingFile=signingkey.gpg \
     -Psigning.password=$SIGNING_PASSWORD
