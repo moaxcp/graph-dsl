@@ -8,6 +8,7 @@ values for their algorithm.
 [![GitHub last commit](https://img.shields.io/github/last-commit/moaxcp/graph-dsl.svg)]()
 [![Build Status](https://travis-ci.org/moaxcp/graph-dsl.svg?branch=master)](https://travis-ci.org/moaxcp/graph-dsl)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.moaxcp/graph-dsl.svg)](https://mvnrepository.com/artifact/com.github.moaxcp/graph-dsl)
+[![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/com.github.maoxcp/graph-dsl.svg)](https://oss.sonatype.org/content/repositories/snapshots/com/github/moaxcp/graph-dsl/)
 [![Javadocs](https://www.javadoc.io/badge/com.github.moaxcp/graph-dsl.svg)](https://www.javadoc.io/doc/com.github.moaxcp/graph-dsl)
 [![Libraries.io for GitHub](https://img.shields.io/librariesio/github/moaxcp/graph-dsl.svg)](https://libraries.io/github/moaxcp/graph-dsl)
 [![license](https://img.shields.io/github/license/moaxcp/graph-dsl.svg)](LICENSE)
@@ -549,7 +550,9 @@ If there are any issues contact me moaxcp@gmail.com.
 * Switched to using reckon gradle plugin. This is an opinionated version similar to gradle-gitflow but there is no need
 to use gitflow
 * Stopped using gitflow and simply use master with tagged versions for releases
-
+* removed NameSpec for naming vertices and all associated methods.
+* Traversal methods are not in TraversalDsl trait
+* added new traversals `classifyEdges`, `connectedComponent`
 
 ## 0.23.0
 
