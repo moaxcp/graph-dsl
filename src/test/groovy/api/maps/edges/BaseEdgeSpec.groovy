@@ -53,4 +53,20 @@ abstract class BaseEdgeSpec extends BaseMapSpec {
         then:
         emptyMap['two'] == 'step2'
     }
+
+    def 'test getOne'() {
+        when:
+        emptyMap.one = 'step1'
+
+        then:
+        'step1' == emptyMap.getOne()
+    }
+
+    def 'test getTwo'() {
+        when:
+        emptyMap.two = 'step2'
+
+        then:
+        'step2' == emptyMap.getTwo()
+    }
 }

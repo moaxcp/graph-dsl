@@ -1,9 +1,7 @@
 package graph.type
 
 import graph.Edge
-import graph.EdgeSpec
 import graph.Graph
-import graph.type.undirected.UndirectedEdgeSpec
 import spock.lang.Specification
 
 class AbstractEdgeSpecSpec extends Specification {
@@ -74,7 +72,7 @@ class AbstractEdgeSpecSpec extends Specification {
 
     def 'cannot apply without two'() {
         when:
-        new TestEdgeSpec(graph, [two:null]).apply()
+        new TestEdgeSpec(graph, [one:'A', two:null]).apply()
 
         then:
         thrown IllegalStateException

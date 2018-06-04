@@ -43,42 +43,6 @@ jacocoTestCoverageVerification {
                 minimum = 0.88
             }
         }
-
-        rule {
-            element = 'CLASS'
-            includes = ['graph.Graph']
-            limit {
-                minimum = 0.96
-            }
-            limit {
-                counter = 'BRANCH'
-                minimum = 1.0
-            }
-        }
-
-        rule {
-            element = 'CLASS'
-            includes = ['graph.type.undirected.GraphEdgeSpec']
-            limit {
-                minimum = 0.93
-            }
-            limit {
-                counter = 'BRANCH'
-                minimum = 0.92
-            }
-        }
-
-        rule {
-            element = 'CLASS'
-            includes = ['graph.type.undirected.GraphVertexSpec']
-            limit {
-                minimum = 0.95
-            }
-            limit {
-                counter = 'BRANCH'
-                minimum = 0.96
-            }
-        }
     }
 }
 

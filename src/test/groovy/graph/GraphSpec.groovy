@@ -114,4 +114,15 @@ class GraphSpec extends Specification {
         then:
         thrown IllegalArgumentException
     }
+
+    def 'missing method throws MissingMethodException'() {
+        setup:
+        Graph graph = new Graph()
+
+        when:
+        graph.iAmMissing()
+
+        then:
+        thrown MissingMethodException
+    }
 }

@@ -75,7 +75,7 @@ class VertexSpecCodeRunner {
         if (vertex[name]) {
             vertex[name]
         } else {
-            throw new MissingPropertyException("Missing ${vertex[name]}")
+            throw new MissingPropertyException("Missing $name")
         }
     }
 
@@ -87,8 +87,8 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
-        if (name == 'name') {
-            throw new MissingPropertyException('Cannot set name in dsl. Consider using the changeKey method.')
+        if (name == 'key') {
+            graph.changeKey(vertex.key, value)
         }
         vertex[name] = value
     }

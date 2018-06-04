@@ -33,24 +33,4 @@ class GraphEdgeSpecCodeRunnerSpec extends Specification {
         then:
         edge.two == 'step3'
     }
-
-    def 'cannot setOne'() {
-        when:
-        runner.runCode {
-            one = 'step45'
-        }
-
-        then:
-        thrown MissingPropertyException
-    }
-
-    def 'cannot setTwo'() {
-        when:
-        runner.runCode {
-            two = 'step43'
-        }
-
-        then:
-        thrown MissingPropertyException
-    }
 }

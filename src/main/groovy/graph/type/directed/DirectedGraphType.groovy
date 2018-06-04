@@ -1,10 +1,8 @@
 package graph.type.directed
 
-import graph.ConfigSpec
 import graph.Edge
 import graph.Graph
 import graph.type.undirected.GraphType
-
 /**
  * This type changes the behavior of a {@link Graph} to that of a directed graph.
  * <p>
@@ -113,30 +111,5 @@ class DirectedGraphType extends GraphType {
      */
     Set<? extends Edge> traverseEdges(Object key) {
         graph.outEdges(key)
-    }
-
-    /**
-     * Returns the names of vertices sorted in reverse post order.
-     * @return
-     */
-    Deque<String> reversePostOrderSort() {
-        Deque<String> deque = [] as LinkedList<String>
-        graph.depthFirstTraversal {
-            postorder { vertex ->
-                deque.addFirst(vertex.key)
-            }
-        }
-        deque
-    }
-
-    /**
-     * Runs the given closure on each vertex in reverse post order.
-     * @param closure
-     */
-    void reversePostOrder(Closure closure) {
-        Deque<String> deque = graph.reversePostOrderSort()
-        deque.each {
-            closure(graph.vertices[it])
-        }
     }
 }

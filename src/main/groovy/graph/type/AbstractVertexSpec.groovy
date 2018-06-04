@@ -67,13 +67,13 @@ abstract class AbstractVertexSpec extends VertexSpec {
 
     protected void checkConditions() {
         if (!key) {
-            throw new IllegalStateException('!key failed. Name must be groovy truth.')
+            throw new IllegalStateException('key is not set.')
         }
         if (!graph) {
             throw new IllegalStateException('graph is not set.')
         }
         if (!vertex) {
-            throw new IllegalStateException('already ran spec')
+            throw new IllegalStateException('vertex is not set.')
         }
         if (changeKey) {
             if (graph.vertices[changeKey]) {

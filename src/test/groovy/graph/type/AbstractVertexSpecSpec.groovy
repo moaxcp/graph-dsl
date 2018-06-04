@@ -11,7 +11,7 @@ class AbstractVertexSpecSpec extends Specification {
 
     Graph graph = new Graph()
 
-    def 'apply throws exception on invalid name'() {
+    def 'apply throws exception on invalid key'() {
         when:
         new UndirectedVertexSpec(graph, [key:''])
 
@@ -28,6 +28,47 @@ class AbstractVertexSpecSpec extends Specification {
 
         then:
         graph.vertices[vertex.key] == vertex
+    }
+
+    def 'checkCondition throws IllegalStateException when key is null'() {
+        given:
+        AbstractVertexSpec spec = new UndirectedVertexSpec(graph, [:])
+        spec.key = null
+
+        when:
+        spec.checkConditions()
+
+        then:
+        IllegalStateException e = thrown()
+        e.message == 'key is not set.'
+    }
+
+    def 'checkCondition throws IllegalStateException when graph is null'() {
+        given:
+        AbstractVertexSpec spec = new UndirectedVertexSpec(graph, [:])
+        spec.key = 'key'
+        spec.graph = null
+
+        when:
+        spec.checkConditions()
+
+        then:
+        IllegalStateException e = thrown()
+        e.message == 'graph is not set.'
+    }
+
+    def 'checkCondition throws IllegalStateException when vertex is null'() {
+        given:
+        AbstractVertexSpec spec = new UndirectedVertexSpec(graph, [:])
+        spec.key = 'key'
+        spec.vertex = null
+
+        when:
+        spec.checkConditions()
+
+        then:
+        IllegalStateException e = thrown()
+        e.message == 'vertex is not set.'
     }
 
     def 'apply cannot be run twice'() {

@@ -21,4 +21,9 @@ class VertexTestSpec extends BaseMapSpec {
         expect:
         map['key'] == 'step1'
     }
+
+    def 'getKey'() {
+        expect:
+        'step1' == map.getKey()
+    }
 }

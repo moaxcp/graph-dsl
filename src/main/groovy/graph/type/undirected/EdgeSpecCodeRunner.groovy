@@ -71,7 +71,7 @@ class EdgeSpecCodeRunner {
         if (edge[name]) {
             edge[name]
         } else {
-            throw new MissingPropertyException("Missing ${edge[name]}")
+            throw new MissingPropertyException("Missing $name")
         }
     }
 
@@ -85,10 +85,10 @@ class EdgeSpecCodeRunner {
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
         if (name == 'one') {
-            throw new MissingPropertyException('Cannot set one in dsl. Consider using changeOne method')
+            changeOne(value)
         }
         if (name == 'two') {
-            throw new MissingPropertyException('Cannot set two in dsl. Consider using changeTwo method')
+            changeTwo(value)
         }
         edge[name] = value
     }

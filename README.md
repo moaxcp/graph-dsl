@@ -553,6 +553,8 @@ to use gitflow
 * removed NameSpec for naming vertices and all associated methods.
 * Traversal methods are not in TraversalDsl trait
 * added new traversals `classifyEdges`, `connectedComponent`
+* Can now change key of vertex by assigning property in vertex method closures
+* Can now change one or two of edge by assigning property in edge method closures
 
 ## 0.23.0
 
