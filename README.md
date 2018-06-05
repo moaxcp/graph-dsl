@@ -493,14 +493,6 @@ Follow this guide to install git.
 
 https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
-## install gitflow-avh
-
-This project uses gitflow-avh. It is a plugin for git that provides the `git flow` commands. These commands are used to
-follow the gitflow pattern for developing software. For more information see
-[Workflow](https://github.com/moaxcp/graph-dsl/wiki/Workflow) in the wiki.
-
-https://github.com/petervanderdoes/gitflow-avh/wiki/Installation
-
 ## clone the project
 
 clone the project from github.
@@ -533,9 +525,8 @@ If there are any issues contact me moaxcp@gmail.com.
 
 * [github](https://github.com/)
 * [git](https://git-scm.com/)
-* [gitflow-avh](https://github.com/petervanderdoes/gitflow-avh)
 * [gradle](https://gradle.org/) 
-    * [gradle-gitflow](https://github.com/amkay/gradle-gitflow)
+    * [reckon](https://github.com/ajoberstar/reckon)
 * [codenarc](http://codenarc.sourceforge.net/)
 * [groovy](http://www.groovy-lang.org/)
 * [spock](http://spockframework.org/)
@@ -551,7 +542,9 @@ If there are any issues contact me moaxcp@gmail.com.
 to use gitflow
 * Stopped using gitflow and simply use master with tagged versions for releases
 * removed NameSpec for naming vertices and all associated methods.
-* Traversal methods are not in TraversalDsl trait
+* Traversal methods are now in TraversalDsl trait
+* `depthFirstSearch` is now split into two methods `preOrder`, and `postOrder`
+* `breadthFirstSearch` has been simplified
 * added new traversals `classifyEdges`, `connectedComponent`
 * Can now change key of vertex by assigning property in vertex method closures
 * Can now change one or two of edge by assigning property in edge method closures
