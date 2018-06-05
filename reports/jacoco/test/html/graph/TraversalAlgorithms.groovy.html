@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TraversalAlgorithms.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">TraversalAlgorithms.groovy</span></div><h1>TraversalAlgorithms.groovy</h1><pre class="source lang-java linenums">package graph
+
+import static graph.TraversalColor.*
+import static graph.EdgeType.*
+import static graph.TraversalState.*
+
+/**
+ * Traversal algorithms which are expected to be called from
+ * {@link graph.Graph#traversal}.
+ */
+class TraversalAlgorithms {
+    private TraversalAlgorithms() {
+
+    }
+
+    /**
+     * Uses the specification {@code spec} to performs a pre-order depth first traversal on a component of
+     * {@code graph} returning the results. The traversals starts at {@code spec.root}. {@code action} must return a
+     * {@link TraversalState}. As the traversal runs, {@code action} is called with each vertex as a parameter. If
+     * {@code action} returns {@link TraversalState#STOP} the algorithm stops.
+     * &lt;p&gt;
+     * {@code spec} is the specification for the algorithm. {@code spec} is returned so it can be reused on other
+     * components of {@code graph}. {@code spec} must contain the following.
+     * &lt;dl&gt;
+     *     &lt;dt&gt;{@link Object} {@code root}&lt;/dt&gt;
+     *     &lt;dd&gt;root of traversal. root will change for each recursive call in this algorithm. (not null)&lt;/dd&gt;
+     *     &lt;dt&gt;{@link Map&lt;Object, TraversalColor&gt;} {@code colors}&lt;/dt&gt;
+     *     &lt;dd&gt;colors for each vertex. This is updated as the traversal runs. If the color of a vertex is not found it
+     *     is assumed to be {@link TraversalColor#WHITE}. (not null, can be empty)&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * &lt;p&gt;
+     *     The following will be added to {@code spec} by this algorithm.
+     * &lt;/p&gt;
+     * &lt;dl&gt;
+     *     &lt;dt&gt;{@link TraversalState} {@code state}&lt;/dt&gt;
+     *     &lt;dd&gt;state of traversal returned by action.&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * @param graph  to perform algorithm on
+     * @param spec  specification of algorithm
+     * @param action  taken on each vertex
+     * @return resulting specification. will always return the spec param.
+     */
+    static Map preOrderTraversal(Graph graph, Map spec, Closure action) {
+<span class="fc" id="L44">        Object root = spec.root</span>
+<span class="fc" id="L45">        Map&lt;Object, TraversalColor&gt; colors = spec.colors</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if(graph.getVertex(root)) {</span>
+<span class="fc" id="L47">            TraversalState state = action(graph.getVertex(root))</span>
+<span class="fc bfc" id="L48" title="All 4 branches covered.">            if(!state) {</span>
+<span class="fc" id="L49">                throw new NullPointerException('action cannot return null TraversalState.')</span>
+            }
+<span class="fc bfc" id="L51" title="All 2 branches covered.">            if(state == STOP) {</span>
+<span class="fc" id="L52">                colors[root] = GREY</span>
+<span class="fc" id="L53">                spec.state = STOP</span>
+<span class="fc" id="L54">                return spec</span>
+            }
+        }
+<span class="fc" id="L57">        colors[root] = GREY</span>
+
+<span class="fc" id="L59">        Set&lt;Edge&gt; edges = graph.traverseEdges(root)</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        for(int index = 0; index &lt; edges.size(); index++) {</span>
+<span class="fc" id="L61">            Edge edge = edges[index]</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            Object connectedKey = root == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L63" title="All 8 branches covered.">            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {</span>
+<span class="fc" id="L64">                colors[connectedKey] = WHITE</span>
+<span class="fc" id="L65">                spec.root = connectedKey</span>
+<span class="fc" id="L66">                preOrderTraversal(graph, spec, action)</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                if(spec.state == STOP) {</span>
+<span class="fc" id="L68">                    return spec</span>
+                }
+            }
+        }
+<span class="fc" id="L72">        colors[root] = BLACK</span>
+<span class="fc" id="L73">        spec.state = CONTINUE</span>
+<span class="pc" id="L74">        spec</span>
+    }
+
+    static Map postOrderTraversal(Graph graph, Map spec, Closure action) {
+<span class="fc" id="L78">        Object root = spec.root</span>
+<span class="fc" id="L79">        Map&lt;Object, TraversalColor&gt; colors = spec.colors</span>
+<span class="fc" id="L80">        colors[root] = GREY</span>
+<span class="fc" id="L81">        Set&lt;Edge&gt; adjacentEdges = graph.traverseEdges(root)</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        for(int index = 0; index &lt; adjacentEdges.size(); index++) {</span>
+<span class="fc" id="L83">            Edge edge = adjacentEdges[index]</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            Object connectedKey = root == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L85" title="All 8 branches covered.">            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {</span>
+<span class="fc" id="L86">                colors[connectedKey] = WHITE</span>
+<span class="fc" id="L87">                spec.root = connectedKey</span>
+<span class="fc" id="L88">                postOrderTraversal(graph, spec, action)</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">                if(spec.state == STOP) {</span>
+<span class="fc" id="L90">                    return spec</span>
+                }
+            }
+        }
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if(graph.getVertex(root)) {</span>
+<span class="fc" id="L95">            TraversalState state = action(graph.getVertex(root))</span>
+<span class="fc bfc" id="L96" title="All 4 branches covered.">            if(!state) {</span>
+<span class="fc" id="L97">                throw new NullPointerException('action cannot return null TraversalState.')</span>
+            }
+<span class="fc bfc" id="L99" title="All 2 branches covered.">            if(state == STOP) {</span>
+<span class="fc" id="L100">                colors[root] = BLACK</span>
+<span class="fc" id="L101">                spec.state = STOP</span>
+<span class="fc" id="L102">                return spec</span>
+            }
+        }
+<span class="fc" id="L105">        colors[root] = BLACK</span>
+<span class="fc" id="L106">        spec.state = CONTINUE</span>
+<span class="pc" id="L107">        spec</span>
+    }
+
+    static Map preOrderEdgesTraversal(Graph graph, Map spec, Closure action) {
+<span class="fc" id="L111">        Object root = spec.root</span>
+<span class="fc" id="L112">        Map&lt;Object, TraversalColor&gt; colors = spec.colors</span>
+<span class="fc" id="L113">        colors[root] = GREY</span>
+<span class="fc" id="L114">        Set&lt;Edge&gt; adjacentEdges = graph.traverseEdges(root)</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        for(int index = 0; index &lt; adjacentEdges.size(); index++) {</span>
+<span class="fc" id="L116">            Edge edge = adjacentEdges[index]</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">            Object connectedKey = root == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            TraversalColor toColor = colors[connectedKey] ?: WHITE</span>
+<span class="fc" id="L119">            TraversalState state = action(root, connectedKey, toColor)</span>
+<span class="fc bfc" id="L120" title="All 4 branches covered.">            if(!state) {</span>
+<span class="fc" id="L121">                throw new NullPointerException('action cannot return null TraversalState.')</span>
+            }
+<span class="fc bfc" id="L123" title="All 2 branches covered.">            if(state == STOP) {</span>
+<span class="fc" id="L124">                spec.state = STOP</span>
+<span class="fc" id="L125">                return spec</span>
+            }
+<span class="fc bfc" id="L127" title="All 8 branches covered.">            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {</span>
+<span class="fc" id="L128">                spec.root = connectedKey</span>
+<span class="fc" id="L129">                preOrderEdgesTraversal(graph, spec, action)</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                if(spec.state == STOP) {</span>
+<span class="fc" id="L131">                    return spec</span>
+                }
+            }
+        }
+<span class="fc" id="L135">        colors[root] = BLACK</span>
+<span class="fc" id="L136">        spec.state = CONTINUE</span>
+<span class="pc" id="L137">        spec</span>
+    }
+
+    static Map classifyEdgesTraversal(Graph graph, Map spec, Closure action) {
+<span class="fc bfc" id="L141" title="All 4 branches covered.">        if(!spec.forrest) {</span>
+<span class="fc" id="L142">            spec.forrest = new Graph()</span>
+        }
+<span class="fc" id="L144">        def edgesAction = { Object from, Object to, TraversalColor toColor -&gt;</span>
+<span class="fc" id="L145">            EdgeType edgeType = edgeType(spec, from, to, toColor)</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            if(edgeType == TREE_EDGE) {</span>
+<span class="fc" id="L147">                spec.forrest.vertex from, [component:spec.componentRoot]</span>
+<span class="fc" id="L148">                spec.forrest.vertex to, [component:spec.componentRoot]</span>
+<span class="fc" id="L149">                spec.forrest.edge(from, to)</span>
+            }
+<span class="pc" id="L151">            return action(from, to, edgeType)</span>
+        }
+<span class="pc" id="L153">        return preOrderEdgesTraversal(graph, spec, edgesAction)</span>
+    }
+
+    static EdgeType edgeType(Map map, Object from, Object to, TraversalColor color) {
+<span class="fc" id="L157">        EdgeType edgeType</span>
+<span class="fc" id="L158">        switch(color) {</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            case WHITE:</span>
+<span class="fc" id="L160">                edgeType = TREE_EDGE</span>
+<span class="pc" id="L161">                break</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            case GREY:</span>
+<span class="fc" id="L163">                edgeType = BACK_EDGE</span>
+<span class="pc" id="L164">                break</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">            case BLACK:</span>
+<span class="fc" id="L166">                def fromTree = map.forrest.vertices[from].component</span>
+<span class="fc" id="L167">                def toTree = map.forrest.vertices[to].component</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">                if(fromTree == toTree) {</span>
+<span class="fc" id="L169">                    edgeType = FORWARD_EDGE</span>
+                } else {
+<span class="fc" id="L171">                    edgeType = CROSS_EDGE</span>
+                }
+<span class="fc" id="L173">                break</span>
+        }
+<span class="pc" id="L175">        edgeType</span>
+    }
+
+    static Map breadthFirstTraversal(Graph graph, Map spec, Closure action) {
+<span class="fc bfc" id="L179" title="All 4 branches covered.">        if(!spec.root) {</span>
+<span class="fc" id="L180">            throw new NullPointerException('spec.root is null')</span>
+        }
+<span class="fc bfc" id="L182" title="All 4 branches covered.">        if(!action) {</span>
+<span class="fc" id="L183">            throw new NullPointerException('action is null')</span>
+        }
+<span class="fc" id="L185">        Object root = spec.root</span>
+<span class="fc" id="L186">        Map&lt;Object, TraversalColor&gt; colors = spec.colors</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        if(graph.getVertex(root)) {</span>
+<span class="fc" id="L188">            TraversalState traversal = action(graph.getVertex(root))</span>
+<span class="fc bfc" id="L189" title="All 4 branches covered.">            if(!traversal) {</span>
+<span class="fc" id="L190">                throw new NullPointerException('action cannot return null TraversalState.')</span>
+            }
+<span class="fc bfc" id="L192" title="All 2 branches covered.">            if(traversal == STOP) {</span>
+<span class="fc" id="L193">                colors[root] = GREY</span>
+<span class="fc" id="L194">                spec.state = STOP</span>
+<span class="fc" id="L195">                return spec</span>
+            }
+        }
+<span class="fc" id="L198">        colors[root] = GREY</span>
+<span class="fc" id="L199">        Queue&lt;Object&gt; queue = [] as Queue&lt;Object&gt;</span>
+<span class="fc" id="L200">        queue &lt;&lt; root</span>
+<span class="fc bfc" id="L201" title="All 4 branches covered.">        while(!queue.isEmpty()) {</span>
+<span class="fc" id="L202">            Object current = queue.poll()</span>
+<span class="fc" id="L203">            spec.root = current</span>
+<span class="fc" id="L204">            Set&lt;Edge&gt; adjacentEdges = graph.traverseEdges(current)</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">            for (int i = 0; i &lt; adjacentEdges.size(); i++) {</span>
+<span class="fc" id="L206">                Edge edge = adjacentEdges[i]</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">                Object connected = current == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L208" title="All 8 branches covered.">                if(!colors[connected] || colors[connected] == WHITE) {</span>
+<span class="fc" id="L209">                    TraversalState traversal = action(graph.getVertex(connected))</span>
+<span class="fc bfc" id="L210" title="All 4 branches covered.">                    if(!traversal) {</span>
+<span class="fc" id="L211">                        throw new NullPointerException('action cannot return null TraversalState.')</span>
+                    }
+<span class="fc" id="L213">                    colors[connected] = GREY</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                    if(traversal == STOP) {</span>
+<span class="fc" id="L215">                        spec.root = connected</span>
+<span class="fc" id="L216">                        spec.state = STOP</span>
+<span class="fc" id="L217">                        return spec</span>
+                    }
+<span class="fc" id="L219">                    queue &lt;&lt; connected</span>
+                }
+            }
+<span class="fc" id="L222">            colors[current] = BLACK</span>
+        }
+<span class="fc" id="L224">        spec.state = CONTINUE</span>
+<span class="pc" id="L225">        spec</span>
+    }
+
+    static Map connectedComponentTraversal(Graph graph, Map spec, Closure action) {
+<span class="fc" id="L229">        Object root = spec.root</span>
+<span class="fc" id="L230">        Map&lt;Object, TraversalColor&gt; colors = spec.colors</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">        if(graph.getVertex(root)) {</span>
+<span class="fc" id="L232">            TraversalState state = action(spec.componentRoot, graph.getVertex(root))</span>
+<span class="fc bfc" id="L233" title="All 4 branches covered.">            if(!state) {</span>
+<span class="fc" id="L234">                throw new NullPointerException('action cannot return null TraversalState.')</span>
+            }
+<span class="fc bfc" id="L236" title="All 2 branches covered.">            if(state == STOP) {</span>
+<span class="fc" id="L237">                colors[root] = GREY</span>
+<span class="fc" id="L238">                spec.state = STOP</span>
+<span class="fc" id="L239">                return spec</span>
+            }
+        }
+<span class="fc" id="L242">        colors[root] = GREY</span>
+
+<span class="fc" id="L244">        Set&lt;Edge&gt; edges = graph.adjacentEdges(root)</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">        for(int index = 0; index &lt; edges.size(); index++) {</span>
+<span class="fc" id="L246">            Edge edge = edges[index]</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            Object connectedKey = root == edge.one ? edge.two : edge.one</span>
+<span class="pc bpc" id="L248" title="1 of 8 branches missed.">            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {</span>
+<span class="fc" id="L249">                colors[connectedKey] = WHITE</span>
+<span class="fc" id="L250">                spec.root = connectedKey</span>
+<span class="fc" id="L251">                connectedComponentTraversal(graph, spec, action)</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">                if(spec.state == STOP) {</span>
+<span class="fc" id="L253">                    return spec</span>
+                }
+            }
+        }
+<span class="fc" id="L257">        colors[root] = BLACK</span>
+<span class="fc" id="L258">        spec.state = CONTINUE</span>
+<span class="pc" id="L259">        spec</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

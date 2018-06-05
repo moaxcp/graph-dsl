@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EdgeDsl.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">EdgeDsl.groovy</span></div><h1>EdgeDsl.groovy</h1><pre class="source lang-java linenums">package graph
+
+trait EdgeDsl {
+
+    abstract Edge edge(ConfigSpec spec)
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
+     * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
+     * will be created.
+     * @param one  the key of the first {@link Vertex}.
+     * @param two  the key of the second {@link Vertex}.
+     * @return the resulting {@link Edge}.
+     * @throws IllegalArgumentException when one or two are invalid
+     */
+    Edge edge(Object one, Object two) {
+<span class="fc bfc" id="L17" title="All 10 branches covered.">        if(!one || !two) {</span>
+<span class="fc" id="L18">            throw new IllegalArgumentException(&quot;Invalid one and two.&quot;)</span>
+        }
+<span class="fc" id="L20">        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two])</span>
+<span class="pc" id="L21">        edge(spec)</span>
+    }
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}.The map may
+     * contain configuration for the edge. Default configuration options are:
+     * &lt;dl&gt;
+     *     &lt;dt&gt;one&lt;/dt&gt;
+     *     &lt;dd&gt;key of the first {@link Vertex}&lt;/dd&gt;
+     *     &lt;dt&gt;two&lt;/dt&gt;
+     *     &lt;dd&gt;key of the second {@link Vertex}&lt;/dd&gt;
+     *     &lt;dt&gt;changeOne&lt;/dt&gt;
+     *     &lt;dd&gt;If the edge already exists edge.one will become changeOne. Otherwise edge.one is set to changeOne
+     *     instead of one when it is created.&lt;/dd&gt;
+     *     &lt;dt&gt;changeTwo&lt;/dt&gt;
+     *     &lt;dd&gt;If the edge already exists edge.two will become changeTwo. Otherwise edge.two is set to changeTwo
+     *     instead of two when it is created.&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * Additional entries may be added by the type of the graph.
+     * @param map  used to create an {@link Edge}.
+     * @return the resulting {@link Edge}.
+     * @see #edge(String one, String two, Closure closure)
+     * @throws IllegalArgumentException when one or two are invalid
+     */
+    Edge edge(Map&lt;String, ?&gt; map) {
+<span class="pc bpc" id="L46" title="5 of 10 branches missed.">        if(!map.one || !map.two) {</span>
+<span class="nc" id="L47">            throw new IllegalArgumentException(&quot;Invalid one and two.&quot;)</span>
+        }
+<span class="fc" id="L49">        ConfigSpec spec = new ConfigSpec(map:map)</span>
+<span class="pc" id="L50">        edge(spec)</span>
+    }
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map contains
+     * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
+     * instead of the parameters.
+     * @param one  the key of the first {@link Vertex}.
+     * @param two  the key of the second {@link Vertex}.
+     * @param map  used to create an {@link Edge}.
+     * @return the resulting {@link Edge}.
+     * @throws IllegalArgumentException when one or two are invalid
+     */
+    Edge edge(Object one, Object two, Map&lt;String, ?&gt; map) {
+<span class="pc bpc" id="L64" title="5 of 10 branches missed.">        if(!one || !two) {</span>
+<span class="nc" id="L65">            throw new IllegalArgumentException(&quot;Invalid one and two.&quot;)</span>
+        }
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        map.one = map.one ?: one</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        map.two = map.two ?: two</span>
+<span class="fc" id="L69">        ConfigSpec spec = new ConfigSpec(map:map)</span>
+<span class="pc" id="L70">        edge(spec)</span>
+    }
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. {@code Closure}
+     * is used to further customize the edge and graph. In the closure getting and setting properties delegates to the
+     * edge. Methods also delegate to the edge.
+     * &lt;p&gt;
+     * Variables accessible within the closure:
+     * &lt;dl&gt;
+     *     &lt;dt&gt;{@code graph}&lt;/dt&gt;
+     *     &lt;dd&gt;{@link Graph} edge was added to&lt;/dd&gt;
+     *     &lt;dt&gt;{@code edge}&lt;/dt&gt;
+     *     &lt;dd&gt;{@link Edge} added to graph&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * Attempting to set one or two will throw an exception. Use the {@code changeOne} and {@code changeTwo} methods.
+     * &lt;p&gt;
+     * By default there are several methods available in the closure.
+     * &lt;p&gt;
+     * &lt;dl&gt;
+     *     &lt;dt&gt;{@code void changeOne(String changeOne)}&lt;/dt&gt;
+     *     &lt;dd&gt;Changes edge.one&lt;/dd&gt;
+     *     &lt;dt&gt;{@code void changeOne(NameSpec changeOne)}&lt;/dt&gt;
+     *     &lt;dd&gt;Changes edge.one&lt;/dd&gt;
+     *     &lt;dt&gt;{@code void changeTwo(String changeTwo)}&lt;/dt&gt;
+     *     &lt;dd&gt;Changes edge.two&lt;/dd&gt;
+     *     &lt;dt&gt;{@code void changeTwo(NameSpec changeTwo)}&lt;/dt&gt;
+     *     &lt;dd&gt;Changes edge.two&lt;/dd&gt;
+     *     &lt;dt&gt;{@code void traits(Class... traits)}&lt;/dt&gt;
+     *     &lt;dd&gt;Applies a trait the edge's delegate&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * Plugins may add variables and methods to the passed in closure.
+     * @param one  the key of the first {@link Vertex}.
+     * @param two  the key of the second {@link Vertex}.
+     * @param closure  to run.
+     * @return the resulting {@link Edge}.
+     * @throws IllegalArgumentException when one or two are invalid
+     */
+    Edge edge(Object one, Object two, Closure closure) {
+<span class="pc bpc" id="L109" title="5 of 10 branches missed.">        if(!one || !two) {</span>
+<span class="nc" id="L110">            throw new IllegalArgumentException(&quot;Invalid one and two.&quot;)</span>
+        }
+<span class="fc" id="L112">        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two], closure:closure)</span>
+<span class="pc" id="L113">        edge(spec)</span>
+    }
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map contains
+     * configuration described in {@link #edge(Map)}. The configuration given by the closure is described in
+     * {@link #edge(String, String, Closure)}. If one or two are entries in map those values will be used
+     * instead of the parameters.
+     * @param map  used to create an {@link Edge}.
+     * @param closure  to run.
+     * @return the resulting {@link Edge}.
+     * @throws IllegalArgumentException when map.one or map.two are invalid
+     */
+    Edge edge(Map&lt;String, ?&gt; map, Closure closure) {
+<span class="pc bpc" id="L127" title="5 of 10 branches missed.">        if(!map.one || !map.two) {</span>
+<span class="nc" id="L128">            throw new IllegalArgumentException(&quot;Invalid one and two.&quot;)</span>
+        }
+<span class="fc" id="L130">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
+<span class="pc" id="L131">        edge(spec)</span>
+    }
+
+    /**
+     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map contains
+     * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
+     * instead of the parameters. The configuration given by the closure is described in
+     * {@link #edge(String, String, Closure)}.
+     * @param one  the key of the first {@link Vertex}.
+     * @param two  the key of the second {@link Vertex}.
+     * @param map  used to create an {@link Edge}.
+     * @param closure  to run.
+     * @return the resulting {@link Edge}.
+     * @throws IllegalArgumentException when one or two are invalid
+     */
+    Edge edge(Object one, Object two, Map&lt;String, ?&gt; map, Closure closure) {
+<span class="pc bpc" id="L147" title="5 of 10 branches missed.">        if(!one || !two) {</span>
+<span class="nc" id="L148">            throw new IllegalArgumentException(&quot;Invalid one and two.&quot;)</span>
+        }
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        map.one = map.one ?: one</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        map.two = map.two ?: two</span>
+<span class="fc" id="L152">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
+<span class="pc" id="L153">        edge(spec)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

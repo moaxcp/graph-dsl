@@ -2,7 +2,6 @@
 
 import graph.Edge
 import graph.Graph
-import graph.NameSpec
 
 /**
  * Delegate of the runnerCode closure in {@link graph.EdgeSpec}. This provides methods and properties that can be used
@@ -13,8 +12,8 @@ class EdgeSpecCodeRunner {
     private final Edge edge
 
     EdgeSpecCodeRunner(Graph graph, Edge edge) {
-<span class="fc" id="L16">        this.graph = graph</span>
-<span class="fc" id="L17">        this.edge = edge</span>
+<span class="fc" id="L15">        this.graph = graph</span>
+<span class="fc" id="L16">        this.edge = edge</span>
     }
 
     /**
@@ -22,7 +21,7 @@ class EdgeSpecCodeRunner {
      * @return the graph the {@link Edge} has been added to.
      */
     Graph getGraph() {
-<span class="nc" id="L25">        graph</span>
+<span class="nc" id="L24">        graph</span>
     }
 
     //todo edge returned should not be able to set one or two. A trait can be applied to prevent this.
@@ -32,7 +31,7 @@ class EdgeSpecCodeRunner {
      * @return the edge that has been added.
      */
     Edge getEdge() {
-<span class="nc" id="L35">        edge</span>
+<span class="nc" id="L34">        edge</span>
     }
 
     /**
@@ -40,15 +39,7 @@ class EdgeSpecCodeRunner {
      * @param changeOne the new key for edge.one
      */
     void changeOne(Object changeOne) {
-<span class="fc" id="L43">        graph.newEdgeSpec([one:edge.one, two:edge.two, changeOne:changeOne]).apply()</span>
-    }
-
-    /**
-     * Changes edge.one to changeOne.name. This allows edge.one to point to a different {@link graph.Vertex}
-     * @param changeOne  the new key for edge.one
-     */
-    void changeOne(NameSpec changeOne) {
-<span class="fc" id="L51">        graph.newEdgeSpec([one:edge.one, two:edge.two, changeOne:changeOne.name]).apply()</span>
+<span class="fc" id="L42">        graph.newEdgeSpec([one:edge.one, two:edge.two, changeOne:changeOne]).apply()</span>
     }
 
     /**
@@ -56,15 +47,7 @@ class EdgeSpecCodeRunner {
      * @param changeTwo  the new key for edge.two
      */
     void changeTwo(Object changeTwo) {
-<span class="fc" id="L59">        graph.newEdgeSpec([one:edge.one, two:edge.two, changeTwo:changeTwo]).apply()</span>
-    }
-
-    /**
-     * Changes edge.two to changeTwo.name. This allows edge.two to point to a different {@link graph.Vertex}
-     * @param changeTwo  the new key for edge.two
-     */
-    void changeTwo(NameSpec changeTwo) {
-<span class="fc" id="L67">        graph.newEdgeSpec([one:edge.one, two:edge.two, changeTwo:changeTwo.name]).apply()</span>
+<span class="fc" id="L50">        graph.newEdgeSpec([one:edge.one, two:edge.two, changeTwo:changeTwo]).apply()</span>
     }
 
     /**
@@ -75,7 +58,7 @@ class EdgeSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
-<span class="nc" id="L78">        edge.invokeMethod(name, args)</span>
+<span class="pc" id="L61">        edge.invokeMethod(name, args)</span>
     }
 
     /**
@@ -85,10 +68,10 @@ class EdgeSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if (edge[name]) {</span>
-<span class="nc" id="L89">            edge[name]</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (edge[name]) {</span>
+<span class="pc" id="L72">            edge[name]</span>
         } else {
-<span class="pc" id="L91">            throw new MissingPropertyException(&quot;Missing ${edge[name]}&quot;)</span>
+<span class="pc" id="L74">            throw new MissingPropertyException(&quot;Missing $name&quot;)</span>
         }
     }
 
@@ -101,13 +84,13 @@ class EdgeSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (name == 'one') {</span>
-<span class="fc" id="L105">            throw new MissingPropertyException('Cannot set one in dsl. Consider using changeOne method')</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (name == 'one') {</span>
+<span class="fc" id="L88">            changeOne(value)</span>
         }
-<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (name == 'two') {</span>
-<span class="fc" id="L108">            throw new MissingPropertyException('Cannot set two in dsl. Consider using changeTwo method')</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (name == 'two') {</span>
+<span class="fc" id="L91">            changeTwo(value)</span>
         }
-<span class="pc" id="L110">        edge[name] = value</span>
+<span class="pc" id="L93">        edge[name] = value</span>
     }
 
     /**
@@ -116,9 +99,9 @@ class EdgeSpecCodeRunner {
      * @param closure
      */
     void runCode(@DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
-<span class="fc" id="L119">        closure.delegate = this</span>
-<span class="fc" id="L120">        closure.resolveStrategy = Closure.DELEGATE_FIRST</span>
-<span class="fc" id="L121">        closure()</span>
+<span class="fc" id="L102">        closure.delegate = this</span>
+<span class="fc" id="L103">        closure.resolveStrategy = Closure.DELEGATE_FIRST</span>
+<span class="fc" id="L104">        closure()</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

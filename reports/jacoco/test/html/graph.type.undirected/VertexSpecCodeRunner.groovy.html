@@ -2,7 +2,6 @@
 
 import graph.ConfigSpec
 import graph.Graph
-import graph.NameSpec
 import graph.Vertex
 
 /**
@@ -14,8 +13,8 @@ class VertexSpecCodeRunner {
     private final Vertex vertex
 
     VertexSpecCodeRunner(Graph graph, Vertex vertex) {
-<span class="fc" id="L17">        this.graph = graph</span>
-<span class="fc" id="L18">        this.vertex = vertex</span>
+<span class="fc" id="L16">        this.graph = graph</span>
+<span class="fc" id="L17">        this.vertex = vertex</span>
     }
 
     /**
@@ -23,7 +22,7 @@ class VertexSpecCodeRunner {
      * @return the graph the {@link Vertex} has been added to.
      */
     Graph getGraph() {
-<span class="pc" id="L26">        graph</span>
+<span class="pc" id="L25">        graph</span>
     }
 
     /**
@@ -31,7 +30,7 @@ class VertexSpecCodeRunner {
      * @return the vertex that has been added.
      */
     Vertex getVertex() {
-<span class="pc" id="L34">        vertex</span>
+<span class="pc" id="L33">        vertex</span>
     }
 
     /**
@@ -39,15 +38,7 @@ class VertexSpecCodeRunner {
      * @param newKey
      */
     void changeKey(Object newKey) {
-<span class="fc" id="L42">        graph.newVertexSpec([key:vertex.key, changeKey:newKey]).apply()</span>
-    }
-
-    /**
-     * Changes the key for the vertex to changeKey
-     * @param newKey
-     */
-    void changeKey(NameSpec newKey) {
-<span class="fc" id="L50">        graph.newVertexSpec([key:vertex.key, changeKey:newKey.name]).apply()</span>
+<span class="fc" id="L41">        graph.newVertexSpec([key:vertex.key, changeKey:newKey]).apply()</span>
     }
 
     /**
@@ -55,26 +46,12 @@ class VertexSpecCodeRunner {
      * @param vertices to connect to.
      */
     void connectsTo(Object... keys) {
-<span class="fc" id="L58">        graph.newVertexSpec([key:vertex.key, connectsTo:keys]).apply()</span>
+<span class="fc" id="L49">        graph.newVertexSpec([key:vertex.key, connectsTo:keys]).apply()</span>
     }
 
-    /**
-     * Creates edges where the vertex is edge.one and each name in names is edge.two.
-     * @param names of vertices to connect to.
-     */
-    void connectsTo(NameSpec... names) {
-<span class="fc" id="L66">        graph.newVertexSpec([key:vertex.key, connectsTo:names*.name]).apply()</span>
-    }
-
-    /**
-     * Applies the specs to graph and adds edges using {@link #connectsTo(String...)}.
-     * @param specs  specs to apply to graph and connectTo.
-     */
-    void connectsTo(ConfigSpec... specs) {
-<span class="fc" id="L74">        specs.each {</span>
-<span class="pc" id="L75">            graph.newVertexSpec(it.map, it.closure).apply()</span>
-        }
-<span class="fc" id="L77">        connectsTo(specs*.map.key as Object[])</span>
+    void connectsTo(Object key, Closure closure) {
+<span class="fc" id="L53">        graph.newVertexSpec([key:vertex.key, connectsTo:key]).apply()</span>
+<span class="fc" id="L54">        graph.newVertexSpec([key:key], closure).apply()</span>
     }
 
     /**
@@ -85,7 +62,7 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def methodMissing(String name, args) {
-<span class="nc" id="L88">        vertex.invokeMethod(name, args)</span>
+<span class="pc" id="L65">        vertex.invokeMethod(name, args)</span>
     }
 
     /**
@@ -95,10 +72,10 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name) {
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (vertex[name]) {</span>
-<span class="nc" id="L99">            vertex[name]</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (vertex[name]) {</span>
+<span class="pc" id="L76">            vertex[name]</span>
         } else {
-<span class="pc" id="L101">            throw new MissingPropertyException(&quot;Missing ${vertex[name]}&quot;)</span>
+<span class="pc" id="L78">            throw new MissingPropertyException(&quot;Missing $name&quot;)</span>
         }
     }
 
@@ -110,10 +87,10 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
-<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (name == 'name') {</span>
-<span class="nc" id="L114">            throw new MissingPropertyException('Cannot set name in dsl. Consider using the changeKey method.')</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (name == 'key') {</span>
+<span class="fc" id="L91">            graph.changeKey(vertex.key, value)</span>
         }
-<span class="nc" id="L116">        vertex[name] = value</span>
+<span class="pc" id="L93">        vertex[name] = value</span>
     }
 
     /**
@@ -125,9 +102,9 @@ class VertexSpecCodeRunner {
      * @return
      */
     void runCode(@DelegatesTo(VertexSpecCodeRunner) Closure closure) {
-<span class="fc" id="L128">        closure.delegate = this</span>
-<span class="fc" id="L129">        closure.resolveStrategy = Closure.DELEGATE_FIRST</span>
-<span class="fc" id="L130">        closure()</span>
+<span class="fc" id="L105">        closure.delegate = this</span>
+<span class="fc" id="L106">        closure.resolveStrategy = Closure.DELEGATE_FIRST</span>
+<span class="fc" id="L107">        closure()</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

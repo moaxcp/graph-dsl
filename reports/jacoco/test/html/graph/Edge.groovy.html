@@ -12,7 +12,7 @@ class Edge {
     Map map = [:]
 
     Object getOne() {
-<span class="nc" id="L15">        get('one')</span>
+<span class="pc" id="L15">        get('one')</span>
     }
 
     Object setOne(Object value) {
@@ -20,7 +20,7 @@ class Edge {
     }
 
     Object getTwo() {
-<span class="nc" id="L23">        get('two')</span>
+<span class="pc" id="L23">        get('two')</span>
     }
 
     Object setTwo(Object value) {
@@ -47,8 +47,8 @@ class Edge {
 <span class="fc bfc" id="L47" title="All 4 branches covered.">        if (!(o instanceof Edge)) {</span>
 <span class="fc" id="L48">            return false</span>
         }
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (this.is(o)) {</span>
-<span class="fc" id="L51">            return true</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (this.is(o)) {</span>
+<span class="nc" id="L51">            return true</span>
         }
 <span class="fc" id="L53">        Edge rhs = (Edge) o</span>
 <span class="pc" id="L54">        equals(rhs)</span>
@@ -63,4 +63,4 @@ class Edge {
 <span class="pc" id="L63">        one.hashCode() + two.hashCode()</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

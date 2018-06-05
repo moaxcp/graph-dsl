@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TraversalDsl.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">TraversalDsl.groovy</span></div><h1>TraversalDsl.groovy</h1><pre class="source lang-java linenums">package graph
+
+import static graph.TraversalColor.WHITE
+import static graph.TraversalState.CONTINUE
+import static graph.TraversalState.STOP
+
+trait TraversalDsl {
+
+    /**
+     * Performs a pre-order depth first traversal of the graph calling action on each {@link Vertex} returning results.
+     * &lt;p&gt;
+     * Returned map contains:
+     * &lt;dl&gt;
+     *     &lt;dt&gt;root&lt;/dt&gt;
+     *     &lt;dd&gt;ending root of traversal&lt;/dd&gt;
+     *     &lt;dt&gt;colors&lt;/dt&gt;
+     *     &lt;dd&gt;ending colors of traversal&lt;/dd&gt;
+     *     &lt;dt&gt;state&lt;/dt&gt;
+     *     &lt;dd&gt;ending state of traversal&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * &lt;p&gt;
+     * Values returned can be used to restart traversal.
+     * @param root  starting {@Vertex} key
+     * @param colors  of graph
+     * @param action  action to perform on each {@link Vertex}
+     * @return results map
+     */
+    Map preOrder(Object root = null, Map&lt;Object, TraversalColor&gt; colors = null, Closure action) {
+<span class="pc" id="L29">        return traversal(TraversalAlgorithms.&amp;preOrderTraversal, root, colors, action).subMap(['root', 'state', 'colors'])</span>
+    }
+
+    /**
+     * Performs a full traversal with the given {@code algorithm} on all components of this {@link Graph}.
+     * {@code algorithm} must accept the following parameters.
+     * &lt;p&gt;
+     * {@code algorithm} must meet the following:
+     *     &lt;ul&gt;
+     *         &lt;li&gt;each call to {@code algorithm} must visit part of the graph by updating {@code spec.colors}. This
+     *         will eventually cause calls to {@link Graph#getUnvisitedVertexKey} to return null which signals the end
+     *         of the traversal.&lt;/li&gt;
+     *         &lt;li&gt;must call action on each vertex or edge&lt;/li&gt;
+     *         &lt;li&gt;must stop when action returns {@link TraversalState#STOP}&lt;/li&gt;
+     *         &lt;li&gt;must throw exception when action does not return a {@link TraversalState}&lt;/li&gt;
+     *     &lt;/ul&gt;
+     * &lt;/p&gt;
+     *
+     * @param algorithm  type of traversal to run on each component
+     * @param root  root of component to start traversal
+     * @param colors  starting set of colors. Will not be modified.
+     * @param action  action to perform by algorithm (on each edge or vertex)
+     * @return results containing current root, roots of all components, colors, and results added by algorithm
+     */
+    Map traversal(Closure algorithm, Object root, Map&lt;Object, TraversalColor&gt; colors, Closure action) {
+<span class="pc bpc" id="L54" title="3 of 8 branches missed.">        if(root &amp;&amp; !getVertex(root)) {</span>
+<span class="nc" id="L55">            throw new IllegalArgumentException(&quot;$root not found in vertices&quot;)</span>
+        }
+<span class="fc" id="L57">        Map spec = [:]</span>
+<span class="fc" id="L58">        spec.colors = [:]</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        spec.colors.putAll(colors ?: makeColorMap())</span>
+<span class="fc" id="L60">        spec.root = root</span>
+<span class="fc bfc" id="L61" title="All 4 branches covered.">        if(!spec.root) {</span>
+<span class="fc" id="L62">            spec.root = getUnvisitedVertexKey((Map) spec.colors)</span>
+        }
+<span class="fc" id="L64">        spec.roots = [] as Set</span>
+<span class="fc" id="L65">        spec.components = [] as Set</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        while (spec.root) {</span>
+<span class="fc" id="L67">            spec.roots &lt;&lt; spec.root</span>
+<span class="fc" id="L68">            spec.componentRoot = spec.root</span>
+<span class="fc" id="L69">            spec.components &lt;&lt; spec.root</span>
+<span class="fc" id="L70">            spec.state = algorithm.call(this, spec, action)</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            if (spec.state == STOP) {</span>
+<span class="nc" id="L72">                return spec</span>
+            }
+<span class="fc" id="L74">            spec.root = getUnvisitedVertexKey((Map) spec.colors)</span>
+        }
+<span class="pc" id="L76">        spec</span>
+    }
+
+    /**
+     * Returns edges to be traversed for a given {@link Vertex} key.
+     * @param key
+     * @return edges to traverse
+     */
+    Set&lt;? extends Edge&gt; traverseEdges(Object key) {
+<span class="pc" id="L85">        type.traverseEdges(key)</span>
+    }
+
+    /**
+     * Creates and returns a color map in the form of name:color where name is the vertex name and color is
+     * TraversalColor.WHITE.
+     * @return color map
+     */
+    Map&lt;Object, TraversalColor&gt; makeColorMap() {
+<span class="pc" id="L94">        vertices.collectEntries { key, vertex -&gt;</span>
+<span class="pc" id="L95">            [(key): WHITE]</span>
+        } as Map&lt;Object, TraversalColor&gt;
+    }
+
+    /**
+     * Performs a topological sort of the graph returning a list of keys of each {@link Vertex} in topological order.
+     * @param root  starting {@link Vertex}
+     * @return list of keys of each {@link Vertex} in topological order
+     */
+    List topologicalSort(Object root = null) {
+<span class="fc" id="L105">        List&lt;Object&gt; sorted = []</span>
+<span class="fc" id="L106">        postOrder(root) {</span>
+<span class="fc" id="L107">            sorted &lt;&lt; it.key</span>
+<span class="pc" id="L108">            CONTINUE</span>
+        }
+<span class="pc" id="L110">        sorted.reverse()</span>
+    }
+
+    /**
+     * Performs a post-order depth first traversal of the graph calling action on each {@link Vertex} returning results.
+     * &lt;p&gt;
+     * Returned map contains:
+     * &lt;dl&gt;
+     *     &lt;dt&gt;root&lt;/dt&gt;
+     *     &lt;dd&gt;ending root of traversal&lt;/dd&gt;
+     *     &lt;dt&gt;colors&lt;/dt&gt;
+     *     &lt;dd&gt;ending colors of traversal&lt;/dd&gt;
+     *     &lt;dt&gt;state&lt;/dt&gt;
+     *     &lt;dd&gt;ending state of traversal&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * &lt;p&gt;
+     * Values returned can be used to restart traversal.
+     * @param root  starting {@Vertex} key
+     * @param colors  of graph
+     * @param action  action to perform on each {@link Vertex}
+     * @return results map
+     */
+    Map postOrder(Object root = null, Map&lt;Object, TraversalColor&gt; colors = null, Closure action) {
+<span class="pc" id="L133">        return traversal(TraversalAlgorithms.&amp;postOrderTraversal, root, colors, action).subMap(['root', 'state', 'colors'])</span>
+    }
+
+    /**
+     * Performs a reverse post-order depth first traversal of the graph calling action on each {@link Vertex} returning
+     * results.
+     * &lt;p&gt;
+     * Returned map contains:
+     * &lt;dl&gt;
+     *     &lt;dt&gt;state&lt;/dt&gt;
+     *     &lt;dd&gt;ending state of traversal&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * @param root  starting {@Vertex} key
+     * @param action  action to perform on each {@link Vertex}
+     * @return results map
+     */
+    Map reversePostOrder(Object root = null, Closure action) {
+<span class="fc" id="L150">        List&lt;Vertex&gt; sorted = []</span>
+<span class="fc" id="L151">        Map result = postOrder(root) { Vertex it -&gt;</span>
+<span class="fc" id="L152">            sorted &lt;&lt; it</span>
+<span class="pc" id="L153">            CONTINUE</span>
+        }
+<span class="fc" id="L155">        sorted = sorted.reverse()</span>
+<span class="fc" id="L156">        sorted.find {</span>
+<span class="fc" id="L157">            result.state = action(it)</span>
+<span class="pc" id="L158">            result.state == STOP</span>
+        }
+<span class="pc" id="L160">        result.subMap(['state'])</span>
+    }
+
+    /**
+     * Performs a pre-order depth first traversal of the graph calling action for each edge returning results.
+     * &lt;p&gt;
+     * Returned map contains:
+     * &lt;dl&gt;
+     *     &lt;dt&gt;root&lt;/dt&gt;
+     *     &lt;dd&gt;ending root of traversal&lt;/dd&gt;
+     *     &lt;dt&gt;colors&lt;/dt&gt;
+     *     &lt;dd&gt;ending colors of traversal&lt;/dd&gt;
+     *     &lt;dt&gt;state&lt;/dt&gt;
+     *     &lt;dd&gt;ending state of traversal&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * &lt;p&gt;
+     * Values returned can be used to restart traversal.
+     * &lt;p&gt;
+     * {@code action} params are:
+     * &lt;dl&gt;
+     *     &lt;dt&gt;Object from&lt;/dt&gt;
+     *     &lt;dd&gt;from vertex key&lt;/dd&gt;
+     *     &lt;dt&gt;Object to&lt;/dt&gt;
+     *     &lt;dd&gt;to vertex key&lt;/dd&gt;
+     *     &lt;dt&gt;EdgeType type&lt;/dt&gt;
+     *     &lt;dd&gt;type of edge&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * @param root  starting {@Vertex} key
+     * @param colors  of graph
+     * @param action  action to perform
+     * @return results map
+     */
+    Map classifyEdges(Object root = null, Map&lt;Object, TraversalColor&gt; colors = null, Closure action) {
+<span class="nc" id="L193">        return traversal(TraversalAlgorithms.&amp;classifyEdgesTraversal, root, colors, action).subMap('root', 'colors', 'state')</span>
+    }
+
+    Map connectedComponent(Object root = null, Map&lt;Object, TraversalColor&gt; colors = null, Closure action) {
+<span class="nc" id="L197">        return traversal(TraversalAlgorithms.&amp;connectedComponentTraversal, root, colors, action).subMap('root', 'colors', 'state')</span>
+    }
+
+    /**
+     * executes closure on each {@link Vertex} in breadth first order starting at the given root {@link Vertex}. See
+     * {@link #breadthFirstTraversal} for details.
+     * @param root vertex to start breadth first traversal
+     * @param closure execute on each {@link Vertex}
+     */
+    void eachBfs(String root = null, Closure closure) {
+<span class="fc" id="L207">        breadthFirstTraversal(root) { vertex -&gt;</span>
+<span class="fc" id="L208">            closure(vertex)</span>
+<span class="pc" id="L209">            CONTINUE</span>
+        }
+    }
+
+    /**
+     * Performs a breadth first traversal on each component of the Graph calling action on each {@link Vertex}
+     * returning results.
+     * &lt;p&gt;
+     * Returned map contains:
+     * &lt;dl&gt;
+     *     &lt;dt&gt;root&lt;/dt&gt;
+     *     &lt;dd&gt;ending root of traversal&lt;/dd&gt;
+     *     &lt;dt&gt;colors&lt;/dt&gt;
+     *     &lt;dd&gt;ending colors of traversal&lt;/dd&gt;
+     *     &lt;dt&gt;state&lt;/dt&gt;
+     *     &lt;dd&gt;ending state of traversal&lt;/dd&gt;
+     * &lt;/dl&gt;
+     * &lt;p&gt;
+     * Values returned can be used to restart traversal.
+     * @param root  starting {@Vertex} key
+     * @param colors  of graph
+     * @param action  action to perform on each {@link Vertex}
+     * @return results map
+     */
+    Map breadthFirstTraversal(Object root = null, Map&lt;Object, TraversalColor&gt; colors = null, Closure action) {
+<span class="pc" id="L234">        traversal(TraversalAlgorithms.&amp;breadthFirstTraversal, root, colors, action)</span>
+    }
+
+    /**
+     * Executes closure on each {@link Vertex} in breadth first order starting at root. If the closure returns true the
+     * {@link Vertex} is returned.
+     * @param root vertex to start breadth first traversal
+     * @param closure execute on each {@link Vertex}
+     * @return first {@link Vertex} where closure returns true
+     */
+    Vertex findBfs(String root = null, Closure closure) {
+<span class="fc" id="L245">        Vertex result = null</span>
+<span class="fc" id="L246">        breadthFirstTraversal(root) { vertex -&gt;</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            if (closure(vertex)) {</span>
+<span class="fc" id="L248">                result = vertex</span>
+<span class="fc" id="L249">                return STOP</span>
+            }
+<span class="pc" id="L251">            CONTINUE</span>
+        }
+<span class="pc" id="L253">        result</span>
+    }
+
+    /**
+     * Executes closure on each vertex in breadth first order starting at root. object is the initial value passed to
+     * the closure. Each returned value from the closure is passed to the next call.
+     * @param root vertex to start breadth first traversal
+     * @param object initial value passed to the closure
+     * @param closure execute on each {@link Vertex}
+     * @return object returned from the final call to closure.
+     */
+    Object injectBfs(String root = null, Object object, Closure closure) {
+<span class="fc" id="L265">        Object result = object</span>
+<span class="fc" id="L266">        breadthFirstTraversal(root) { vertex -&gt;</span>
+<span class="fc" id="L267">            result = closure(result, vertex)</span>
+<span class="pc" id="L268">            CONTINUE</span>
+        }
+<span class="pc" id="L270">        result</span>
+    }
+
+    /**
+     * Runs closure on each vertex in breadth first order starting at root. The vertices where closure returns true are
+     * returned.
+     * @param root vertex to start breadth first traversal
+     * @param closure execute on each {@link Vertex}
+     * @return the vertices where closure returns true
+     */
+    List&lt;? extends Vertex&gt; findAllBfs(String root = null, Closure closure) {
+<span class="fc" id="L281">        Closure inject = null</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        if (root) {</span>
+<span class="fc" id="L283">            inject = this.&amp;injectBfs.curry(root)</span>
+        } else {
+<span class="fc" id="L285">            inject = this.&amp;injectBfs</span>
+        }
+<span class="pc" id="L287">        (List&lt;? extends Vertex&gt;) inject([]) { result, vertex -&gt;</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">            if (closure(vertex)) {</span>
+<span class="fc" id="L289">                result &lt;&lt; vertex</span>
+            }
+<span class="pc" id="L291">            result</span>
+        }
+    }
+
+    /**
+     * Runs closure on each vertex in breadth first order, starting at root, collecting returned values from the
+     * closure.
+     * @param root vertex to start breadth first traversal
+     * @param closure execute on each {@link Vertex}
+     * @return values returned from each execution of closure
+     */
+    List&lt;?&gt; collectBfs(String root = null, Closure closure) {
+<span class="fc" id="L303">        Closure inject</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        if (root) {</span>
+<span class="fc" id="L305">            inject = this.&amp;injectBfs.curry(root)</span>
+        } else {
+<span class="fc" id="L307">            inject = this.&amp;injectBfs</span>
+        }
+<span class="pc" id="L309">        inject.call([] as List&lt;? extends Vertex&gt;) { result, vertex -&gt;</span>
+<span class="pc" id="L310">            result &lt;&lt; closure(vertex)</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>
