@@ -15,7 +15,7 @@ class UnvisitedChild extends Specification {
                 connectsTo 'C'
             }
 
-            name = getUnvisitedChildKey('A', ['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
+            name = getUnvisitedChildId('A', ['A':TraversalColor.BLACK, 'B':TraversalColor.WHITE, 'C':TraversalColor.BLACK])
         }
 
         expect:

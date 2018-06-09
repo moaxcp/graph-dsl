@@ -26,12 +26,12 @@ class ReadMeSpec extends Specification {
         }
 
         graph.preOrder('A') { vertex ->
-            println "preorder $vertex.key"
+            println "preorder $vertex.getId"
             CONTINUE
         }
 
         graph.breadthFirstTraversal('A') { vertex ->
-            println "bft $vertex.key"
+            println "bft $vertex.getId"
             CONTINUE
         }
 

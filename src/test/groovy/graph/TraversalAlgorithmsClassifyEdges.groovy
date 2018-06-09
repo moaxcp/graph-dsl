@@ -2,12 +2,8 @@ package graph
 
 import spock.lang.Specification
 
-import static graph.EdgeType.BACK_EDGE
-import static graph.EdgeType.CROSS_EDGE
-import static graph.EdgeType.FORWARD_EDGE
-import static graph.EdgeType.TREE_EDGE
-import static graph.Graph.graph
 import static TraversalAlgorithms.classifyEdgesTraversal
+import static graph.EdgeType.*
 import static graph.TraversalColor.BLACK
 import static graph.TraversalColor.GREY
 import static graph.TraversalState.CONTINUE
@@ -15,7 +11,7 @@ import static graph.TraversalState.STOP
 
 class TraversalAlgorithmsClassifyEdges extends Specification {
 
-    Graph graph = graph {}
+    Graph graph = new Graph()
 
     def 'classify-edges null spec'() {
         when: 'classify-edges is called with a null spec'
@@ -116,8 +112,8 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
         and: 'forrest in returned map is correct'
         forrest.edges.size() == 1
         forrest.edges.first() == new Edge(one:'A', two:'B')
-        forrest.vertices.A.key == 'A'
-        forrest.vertices.B.key == 'B'
+        forrest.vertices.A.id == 'A'
+        forrest.vertices.B.id == 'B'
         forrest.vertices.size() == 2
     }
 
@@ -164,8 +160,8 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
         and: 'forrest in returned map is correct'
         forrest.edges.size() == 1
         forrest.edges.first() == new Edge(one:'A', two:'B')
-        forrest.vertices.A.key == 'A'
-        forrest.vertices.B.key == 'B'
+        forrest.vertices.A.id == 'A'
+        forrest.vertices.B.id == 'B'
         forrest.vertices.size() == 2
 
     }
@@ -205,8 +201,8 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
         and: 'forrest in returned map is correct'
         forrest.edges.size() == 1
         forrest.edges.first() == new Edge(one:'A', two:'B')
-        forrest.vertices.A.key == 'A'
-        forrest.vertices.B.key == 'B'
+        forrest.vertices.A.id == 'A'
+        forrest.vertices.B.id == 'B'
         forrest.vertices.size() == 2
     }
 

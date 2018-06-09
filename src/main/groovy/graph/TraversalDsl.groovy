@@ -20,7 +20,7 @@ trait TraversalDsl {
      * </dl>
      * <p>
      * Values returned can be used to restart traversal.
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param colors  of graph
      * @param action  action to perform on each {@link Vertex}
      * @return results map
@@ -36,7 +36,7 @@ trait TraversalDsl {
      * {@code algorithm} must meet the following:
      *     <ul>
      *         <li>each call to {@code algorithm} must visit part of the graph by updating {@code spec.colors}. This
-     *         will eventually cause calls to {@link Graph#getUnvisitedVertexKey} to return null which signals the end
+     *         will eventually cause calls to {@link Graph#getUnvisitedVertexId} to return null which signals the end
      *         of the traversal.</li>
      *         <li>must call action on each vertex or edge</li>
      *         <li>must stop when action returns {@link TraversalState#STOP}</li>
@@ -59,7 +59,7 @@ trait TraversalDsl {
         spec.colors.putAll(colors ?: makeColorMap())
         spec.root = root
         if(!spec.root) {
-            spec.root = getUnvisitedVertexKey((Map) spec.colors)
+            spec.root = getUnvisitedVertexId((Map) spec.colors)
         }
         spec.roots = [] as Set
         spec.components = [] as Set
@@ -71,13 +71,13 @@ trait TraversalDsl {
             if (spec.state == STOP) {
                 return spec
             }
-            spec.root = getUnvisitedVertexKey((Map) spec.colors)
+            spec.root = getUnvisitedVertexId((Map) spec.colors)
         }
         spec
     }
 
     /**
-     * Returns edges to be traversed for a given {@link Vertex} key.
+     * Returns edges to be traversed for a given {@link Vertex} id.
      * @param key
      * @return edges to traverse
      */
@@ -104,7 +104,7 @@ trait TraversalDsl {
     List topologicalSort(Object root = null) {
         List<Object> sorted = []
         postOrder(root) {
-            sorted << it.key
+            sorted << it.id
             CONTINUE
         }
         sorted.reverse()
@@ -124,7 +124,7 @@ trait TraversalDsl {
      * </dl>
      * <p>
      * Values returned can be used to restart traversal.
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param colors  of graph
      * @param action  action to perform on each {@link Vertex}
      * @return results map
@@ -142,7 +142,7 @@ trait TraversalDsl {
      *     <dt>state</dt>
      *     <dd>ending state of traversal</dd>
      * </dl>
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param action  action to perform on each {@link Vertex}
      * @return results map
      */
@@ -178,13 +178,13 @@ trait TraversalDsl {
      * {@code action} params are:
      * <dl>
      *     <dt>Object from</dt>
-     *     <dd>from vertex key</dd>
+     *     <dd>from vertex id</dd>
      *     <dt>Object to</dt>
-     *     <dd>to vertex key</dd>
+     *     <dd>to vertex id</dd>
      *     <dt>EdgeType type</dt>
      *     <dd>type of edge</dd>
      * </dl>
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param colors  of graph
      * @param action  action to perform
      * @return results map
@@ -225,7 +225,7 @@ trait TraversalDsl {
      * </dl>
      * <p>
      * Values returned can be used to restart traversal.
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param colors  of graph
      * @param action  action to perform on each {@link Vertex}
      * @return results map

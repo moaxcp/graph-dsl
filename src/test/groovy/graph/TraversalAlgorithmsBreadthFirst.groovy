@@ -2,20 +2,19 @@ package graph
 
 import spock.lang.Specification
 
-import static graph.Graph.graph
 import static graph.TraversalAlgorithms.breadthFirstTraversal
 import static graph.TraversalColor.BLACK
 import static graph.TraversalColor.GREY
 import static graph.TraversalState.CONTINUE
 import static graph.TraversalState.STOP
-
+import static graph.Graph.graph
 class TraversalAlgorithmsBreadthFirst extends Specification {
 
-    Graph graph = graph {}
+    Graph myGraph = graph {}
 
     def 'breadth-first-traversal null spec'() {
         when: 'breadth-first-traversal is called with a null spec'
-        breadthFirstTraversal(graph, null, null)
+        breadthFirstTraversal(myGraph, null, null)
 
         then: 'NullPointerException is thrown'
         thrown NullPointerException
@@ -23,7 +22,7 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
 
     def 'breadth-first-traversal empty spec'() {
         when: 'breadth-first-traversal is called with an empty spec'
-        breadthFirstTraversal(graph, [:], null)
+        breadthFirstTraversal(myGraph, [:], null)
 
         then: 'NullPointerException is thrown'
         thrown NullPointerException
@@ -31,7 +30,7 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
 
     def 'breadth-first-traversal missing colors'() {
         when: 'breadth-first-traversal is called with missing colors'
-        breadthFirstTraversal(graph, [root:'A'], null)
+        breadthFirstTraversal(myGraph, [root:'A'], null)
 
         then: 'NullPointerException is thrown'
         thrown NullPointerException
@@ -39,7 +38,7 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
 
     def 'breadth-first-traversal missing action'() {
         when: 'breadth-first-traversal is called with missing action'
-        breadthFirstTraversal(graph, [root:'A', colors:[:]], null)
+        breadthFirstTraversal(myGraph, [root:'A', colors:[:]], null)
 
         then: 'invalid results are returned'
         thrown NullPointerException
@@ -47,10 +46,10 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
 
     def 'breadth-first-traversal one vertex with missing action'() {
         given: 'graph has vertex A'
-        graph.vertex 'A'
+        myGraph.vertex 'A'
 
         when: 'breadth-first-traversal is called with missing action'
-        breadthFirstTraversal(graph, [root:'A', colors:[:]], null)
+        breadthFirstTraversal(myGraph, [root:'A', colors:[:]], null)
 
         then: 'NullPointerException is thrown'
         thrown NullPointerException
@@ -59,7 +58,7 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
     def 'breadth-first-traversal empty graph with valid action'() {
         when: 'breadth-first-traversal is called with empty graph and valid action'
         def actionNotCalled = true
-        breadthFirstTraversal(graph, [root:'A', colors:[:]]) {
+        breadthFirstTraversal(myGraph, [root:'A', colors:[:]]) {
             actionNotCalled = false
             CONTINUE
         }
@@ -73,7 +72,7 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
         Map spec = [root:'A', colors:[:]]
 
         when: 'breadth-first-traversal is called'
-        Map result = breadthFirstTraversal(graph, spec) { }
+        Map result = breadthFirstTraversal(myGraph, spec) { }
 
         then: 'result is original spec map'
         result.is(spec)
@@ -81,10 +80,10 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
 
     def 'breadth-first-traversal one vertex action returns null'() {
         given: 'graph containing vertex A'
-        graph.vertex 'A'
+        myGraph.vertex 'A'
 
         when: 'breadth-first-traversal is called with action returning null'
-        breadthFirstTraversal(graph, [root:'A', colors:[:]]) {
+        breadthFirstTraversal(myGraph, [root:'A', colors:[:]]) {
             null
         }
 
@@ -95,11 +94,11 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
 
     def 'breadth-first-traversal two vertices action returns null on second'() {
         given: 'graph containing edge A -- B'
-        graph.edge 'A', 'B'
+        myGraph.edge 'A', 'B'
 
         when: 'breadth-first-traversal is called with action returning null on B'
-        breadthFirstTraversal(graph, [root:'A', colors:[:]]) {
-            if(it.key == 'B') {
+        breadthFirstTraversal(myGraph, [root:'A', colors:[:]]) {
+            if(it.id == 'B') {
                 return null
             }
             CONTINUE
@@ -112,17 +111,17 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
 
     def 'breadth-first-traversal one vertex'() {
         given: 'graph containing vertex A'
-        graph.vertex 'A'
+        myGraph.vertex 'A'
 
         when: 'breadth-first-traversal is called with action returning CONTINUE'
         Vertex vertex = null
-        Map result = breadthFirstTraversal(graph, [root:'A', colors:[:]]) {
+        Map result = breadthFirstTraversal(myGraph, [root:'A', colors:[:]]) {
             vertex = it
             CONTINUE
         }
 
         then: 'vertex param in action was A'
-        vertex.key == 'A'
+        vertex.id == 'A'
         and: 'A was marked as visited'
         result.colors.A == BLACK
         and: 'state is CONTINUE'
@@ -135,17 +134,17 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
 
     def 'breadth-first-traversal one vertex stop'() {
         given: 'graph has vertex A'
-        graph.vertex 'A'
+        myGraph.vertex 'A'
 
         when:
         Vertex vertex = null
-        Map result = breadthFirstTraversal(graph, [root:'A', colors:[:]]) {
+        Map result = breadthFirstTraversal(myGraph, [root:'A', colors:[:]]) {
             vertex = it
             STOP
         }
 
         then: 'vertex param in action was A'
-        vertex.key == 'A'
+        vertex.id == 'A'
         and: 'A was marked as frontier'
         result.colors.A == GREY
         and: 'state is STOP'
@@ -158,11 +157,11 @@ class TraversalAlgorithmsBreadthFirst extends Specification {
 
     def 'breadth-first-traversal two vertex stop second'() {
         given: 'graph has edge A -- B'
-        graph.edge 'A', 'B'
+        myGraph.edge 'A', 'B'
 
         when:
-        def result = breadthFirstTraversal(graph, [root:'A', colors:[:]]) {
-            if(it.key == 'B') {
+        def result = breadthFirstTraversal(myGraph, [root:'A', colors:[:]]) {
+            if(it.id == 'B') {
                 return STOP
             }
             CONTINUE

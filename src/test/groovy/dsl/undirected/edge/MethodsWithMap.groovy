@@ -15,8 +15,8 @@ class MethodsWithMap extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -30,8 +30,8 @@ class MethodsWithMap extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }
@@ -44,8 +44,8 @@ class MethodsWithMap extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.first().one == 'C'
         graph.edges.first().two == 'B'
     }
@@ -60,9 +60,9 @@ class MethodsWithMap extends Specification {
         expect:
         graph.vertices.size() == 3
         graph.edges.size() == 1
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.first().one == 'C'
         graph.edges.first().two == 'B'
     }
@@ -76,8 +76,8 @@ class MethodsWithMap extends Specification {
         expect:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.key == 'A'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.C.id == 'C'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'C'
     }
@@ -92,9 +92,9 @@ class MethodsWithMap extends Specification {
         expect:
         graph.vertices.size() == 3
         graph.edges.size() == 1
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'C'
     }
@@ -109,8 +109,8 @@ class MethodsWithMap extends Specification {
         then:
         graph.vertices.size() == 2
         graph.edges.size() == 1
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
         graph.edges.first().one == 'A'
         graph.edges.first().two == 'B'
     }

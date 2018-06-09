@@ -13,8 +13,8 @@ import graph.VertexSpec
  */
 abstract class AbstractVertexSpec extends VertexSpec {
     Vertex vertex
-    Object key
-    Object changeKey
+    Object id
+    Object changeId
     final Set<Object> connectsToSet = [] as Set<Object>
     List dslProperties
     Map entries
@@ -23,19 +23,19 @@ abstract class AbstractVertexSpec extends VertexSpec {
     protected AbstractVertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph)
 
-        dslProperties = ['key', 'changeKey', 'connectsTo']
+        dslProperties = ['id', 'changeId', 'connectsTo']
 
         entries = map.findAll { !(it.key in dslProperties)}
 
-        if(map.containsKey('key') && !map.key) {
-            throw new IllegalArgumentException('Invalid key')
+        if(map.containsKey('id') && !map.id) {
+            throw new IllegalArgumentException('Invalid id')
         }
-        key = map.key
+        id = map.id
 
-        if(map.containsKey('changeKey') && !map.changeKey) {
+        if(map.containsKey('changeId') && !map.changeId) {
             throw new IllegalArgumentException('Invalid containsKey')
         }
-        changeKey = map.changeKey
+        changeId = map.changeId
 
         if(map.connectsTo && (map.connectsTo instanceof Collection || map.connectsTo.class.isArray())) {
             map.connectsTo.each {
@@ -54,11 +54,11 @@ abstract class AbstractVertexSpec extends VertexSpec {
         if (vertex) {
             throw new IllegalStateException('vertex already created.')
         }
-        if (!graph.vertices[key]) {
-            key = changeKey ?: key
-            changeKey = null
+        if (!graph.vertices[id]) {
+            id = changeId ?: id
+            changeId = null
         }
-        vertex = graph.vertices[key] ?: graph.newVertex(key:key)
+        vertex = graph.vertices[id] ?: graph.newVertex(id:id)
     }
 
     protected void initEntries() {
@@ -66,8 +66,8 @@ abstract class AbstractVertexSpec extends VertexSpec {
     }
 
     protected void checkConditions() {
-        if (!key) {
-            throw new IllegalStateException('key is not set.')
+        if (!id) {
+            throw new IllegalStateException('id is not set.')
         }
         if (!graph) {
             throw new IllegalStateException('graph is not set.')
@@ -75,22 +75,20 @@ abstract class AbstractVertexSpec extends VertexSpec {
         if (!vertex) {
             throw new IllegalStateException('vertex is not set.')
         }
-        if (changeKey) {
-            if (graph.vertices[changeKey]) {
-                throw new IllegalStateException('renamed vertex already exists')
-            }
+        if (changeId && graph.vertices[changeId]) {
+            throw new IllegalStateException('renamed vertex already exists')
         }
     }
 
     protected void applyChangeKey() {
-        if (changeKey) {
-            graph.changeKey(key, changeKey)
+        if (changeId) {
+            graph.changeId(id, changeId)
         }
     }
 
     protected void applyConnectsTo() {
         connectsToSet.each {
-            graph.edge vertex.key, it
+            graph.edge vertex.id, it
         }
     }
 

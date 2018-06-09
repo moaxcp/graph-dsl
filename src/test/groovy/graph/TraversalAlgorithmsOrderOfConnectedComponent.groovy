@@ -118,7 +118,7 @@ class TraversalAlgorithmsOrderOfConnectedComponent extends Specification {
         def order = []
         def componentRoots = []
         def result = connectedComponentTraversal((Graph) graph, [root:'A', componentRoot:'A', colors:[:]]) { component, it ->
-            order << it.key
+            order << it.id
             componentRoots << component
             CONTINUE
         }

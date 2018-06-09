@@ -5,29 +5,29 @@ trait VertexDsl {
     abstract Vertex vertex(ConfigSpec spec)
 
     /**
-     * Finds the {@link Vertex} with the given key or creates a new one.
-     * @param key  the key of the {@link Vertex} to find or create.
+     * Finds the {@link Vertex} with the given id or creates a new one.
+     * @param id  the id of the {@link Vertex} to find or create.
      * @return the resulting {@link Vertex}
-     * @throws {@link IllegalArgumentException} When key is null or empty.
+     * @throws {@link IllegalArgumentException} When id is null or empty.
      */
-    Vertex vertex(Object key) {
-        if(!key) {
-            throw new IllegalArgumentException("Invalid key.")
+    Vertex vertex(Object id) {
+        if(!id) {
+            throw new IllegalArgumentException("Invalid id.")
         }
-        ConfigSpec spec = new ConfigSpec(map:[key:key])
+        ConfigSpec spec = new ConfigSpec(map:[id:id])
         vertex(spec)
     }
 
     /**
      * Finds or creates all vertices returning them in a Set.
-     * @param key  key of first {@link Vertex} to find or create.
-     * @param keys  of other vertices to find or create.
+     * @param id  id of first {@link Vertex} to find or create.
+     * @param ids  of other vertices to find or create.
      * @return set of created vertices
      */
-    Set<Vertex> vertex(Object key, Object... keys) {
+    Set<Vertex> vertex(Object id, Object... ids) {
         Set<Vertex> set = new LinkedHashSet<>()
-        set << vertex(key)
-        keys.collect {
+        set << vertex(id)
+        ids.collect {
             vertex(it)
         }.each {
             set << it
@@ -39,29 +39,29 @@ trait VertexDsl {
      * Creates or updates a {@link Vertex} in this graph. The map may contain configuration for the vertex. Default
      * configuration can be:
      * <dl>
-     *     <dt>key</dt>
-     *     <dd>key of the vertex to create or update</dd>
-     *     <dt>changeKey</dt>
-     *     <dd>new key for the vertex</dd>
+     *     <dt>id</dt>
+     *     <dd>id of the vertex to create or update</dd>
+     *     <dt>changeId</dt>
+     *     <dd>new id for the vertex</dd>
      *     <dt>connectsTo</dt>
      *     <dd>list of vertex keys the vertex should connect to. Edges will be created with edge.one equal to the
-     *     vertex key and edge.two equals to the 'connectTo' key.</dd>
+     *     vertex id and edge.two equals to the 'connectTo' id.</dd>
      * </dl>
      * Additional entries may be added by type of the graph.
-     * The map must contain key for this method.
+     * The map must contain id for this method.
      * @param map  configuration of {@link Vertex}
      * @return the resulting {@link Vertex}
      */
     Vertex vertex(Map<String, ?> map) {
-        if(!map.key) {
-            throw new IllegalArgumentException("Invalid key.")
+        if(!map.id) {
+            throw new IllegalArgumentException("Invalid id.")
         }
         ConfigSpec spec = new ConfigSpec(map:map)
         vertex(spec)
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given key. {@code closure} is used to further
+     * Creates or updates a {@link Vertex} in this graph with the given id. {@code closure} is used to further
      * customize the vertex and graph. In the closure getting and setting properties delegates to the vertex. Methods
      * also delegate to the vertex.
      * <p>
@@ -76,9 +76,9 @@ trait VertexDsl {
      * By default there are several methods added in the closure.
      * <p>
      * <dl>
-     *     <dt>{@code void changeKey(Object key)}</dt>
-     *     <dd>Changes key of vertex</dd>
-     *     <dt>{@code void changeKey(NameSpec newName)}</dt>
+     *     <dt>{@code void changeId(Object id)}</dt>
+     *     <dd>Changes id of vertex</dd>
+     *     <dt>{@code void changeId(NameSpec newName)}</dt>
      *     <dd>renames the vertex using a NameSpec</dd>
      *     <dt>{@code void connectsTo(Object... keys)}</dt>
      *     <dd>Connects the vertex to other vertices. If they do not exist they are created.</dd>
@@ -88,30 +88,30 @@ trait VertexDsl {
      * </dl>
      * <p>
      * Types may add variables and methods to the passed in closure.
-     * @param key  the key of the {@link Vertex} to find or create.
+     * @param id  the id of the {@link Vertex} to find or create.
      * @param closure  configuration for graph and vertex
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(Object key, Closure closure) {
-        if(!key) {
-            throw new IllegalArgumentException("Invalid key.")
+    Vertex vertex(Object id, Closure closure) {
+        if(!id) {
+            throw new IllegalArgumentException("Invalid id.")
         }
-        ConfigSpec spec = new ConfigSpec(map:[key:key], closure:closure)
+        ConfigSpec spec = new ConfigSpec(map:[id:id], closure:closure)
         vertex(spec)
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given key. The map contains configuration described
+     * Creates or updates a {@link Vertex} in this graph with the given id. The map contains configuration described
      * in {@link #vertex(Map)}.
-     * @param key  the key of the {@link Vertex} to find or create.
+     * @param id  the id of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(Object key, Map<String, ?> map) {
-        if(!key) {
-            throw new IllegalArgumentException("Invalid key.")
+    Vertex vertex(Object id, Map<String, ?> map) {
+        if(!id) {
+            throw new IllegalArgumentException("Invalid id.")
         }
-        map.key = map.key ?: key
+        map.id = map.id ?: id
         ConfigSpec spec = new ConfigSpec(map:map)
         vertex(spec)
     }
@@ -124,8 +124,8 @@ trait VertexDsl {
      * @return  The resulting {@link Vertex}.
      */
     Vertex vertex(Map<String, ?> map, Closure closure) {
-        if(!map.key) {
-            throw new IllegalArgumentException("Invalid key.")
+        if(!map.id) {
+            throw new IllegalArgumentException("Invalid id.")
         }
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
         vertex(spec)
@@ -134,16 +134,16 @@ trait VertexDsl {
     /**
      * Creates or updates a {@link Vertex} in this graph. The map contains configuration described in
      * {@link #vertex(Map)}. The configuration given by the closure described in {@link #vertex(Object,Closure)}.
-     * @param key  the key of the {@link Vertex} to find or create.
+     * @param id  the id of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @param closure  configuration for graph and vertex
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(Object key, Map<String, ?> map, Closure closure) {
-        if(!key) {
-            throw new IllegalArgumentException("Invalid key.")
+    Vertex vertex(Object id, Map<String, ?> map, Closure closure) {
+        if(!id) {
+            throw new IllegalArgumentException("Invalid id.")
         }
-        map.key = map.key ?: key
+        map.id = map.id ?: id
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
         vertex(spec)
     }

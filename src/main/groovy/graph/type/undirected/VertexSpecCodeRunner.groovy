@@ -1,6 +1,5 @@
 package graph.type.undirected
 
-import graph.ConfigSpec
 import graph.Graph
 import graph.Vertex
 
@@ -34,24 +33,24 @@ class VertexSpecCodeRunner {
     }
 
     /**
-     * Changes the key for the vertex to changeKey
-     * @param newKey
+     * Changes the id for the vertex to changeId
+     * @param newId
      */
-    void changeKey(Object newKey) {
-        graph.newVertexSpec([key:vertex.key, changeKey:newKey]).apply()
+    void changeId(Object newId) {
+        graph.newVertexSpec([id:vertex.id, changeId:newId]).apply()
     }
 
     /**
-     * Creates edges where the vertex is edge.one and each key in keys is edge.two.
+     * Creates edges where the vertex is edge.one and each id in ids is edge.two.
      * @param vertices to connect to.
      */
-    void connectsTo(Object... keys) {
-        graph.newVertexSpec([key:vertex.key, connectsTo:keys]).apply()
+    void connectsTo(Object... ids) {
+        graph.newVertexSpec([id:vertex.id, connectsTo:ids]).apply()
     }
 
-    void connectsTo(Object key, Closure closure) {
-        graph.newVertexSpec([key:vertex.key, connectsTo:key]).apply()
-        graph.newVertexSpec([key:key], closure).apply()
+    void connectsTo(Object id, Closure closure) {
+        graph.newVertexSpec([id:vertex.id, connectsTo:id]).apply()
+        graph.newVertexSpec([id:id], closure).apply()
     }
 
     /**
@@ -87,8 +86,8 @@ class VertexSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
-        if (name == 'key') {
-            graph.changeKey(vertex.key, value)
+        if (name == 'id') {
+            graph.changeId(vertex.id, value)
         }
         vertex[name] = value
     }

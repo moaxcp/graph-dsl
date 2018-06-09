@@ -50,24 +50,24 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
         Collections.unmodifiableMap(vertices)
     }
 
-    Vertex getVertex(Object key) {
-        vertices[key]
+    Vertex getVertex(Object id) {
+        vertices[id]
     }
 
     /**
-     * Removes the {@link Vertex} from vertices with the matching key. If the Vertex has adjacentEdges it cannot be
+     * Removes the {@link Vertex} from vertices with the matching id. If the Vertex has adjacentEdges it cannot be
      * deleted an IllegalStateException will be thrown.
-     * @param key key of {@link Vertex} to delete from this graph
-     * @throws IllegalStateException if key vertex has adjacentEdges.
+     * @param id id of {@link Vertex} to delete from this graph
+     * @throws IllegalStateException if id vertex has adjacentEdges.
      * @see {@link Graph#adjacentEdges(Object)}
      */
-    void delete(Object key) {
-        if (adjacentEdges(key)) {
+    void delete(Object id) {
+        if (adjacentEdges(id)) {
             throw new IllegalStateException(
-                    "Cannot delete $key. There are edges that connect to it. Try deleting those first."
+                    "Cannot delete $id. There are edges that connect to it. Try deleting those first."
             )
         }
-        vertices.remove(key)
+        vertices.remove(id)
     }
 
     /**
@@ -137,8 +137,8 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
      * {@link graph.type.directed.DirectedEdge}, this method will still work as expected. It will remove the edge where
      * edge.one == one and edge.two == two. Keep in mind, in the case of the base {@link Edge} object edge.one can also
      * equal two and edge.two can also equal one.
-     * @param one key of first vertex
-     * @param two key of second vertex
+     * @param one id of first vertex
+     * @param two id of second vertex
      */
     void deleteEdge(Object one, Object two) {
         edges.remove(type.newEdge(one: one, two: two))
@@ -208,28 +208,28 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
      */
     @PackageScope
     boolean addVertex(Vertex vertex) {
-        vertices[vertex.key] = vertex
+        vertices[vertex.id] = vertex
     }
 
     /**
-     * Replaces the key of a {@link Vertex}. All edges connecting the {@link Vertex} are updated with the new key.
-     * @param key of original vertex
-     * @param newKey for updated vertex
+     * Replaces the id of a {@link Vertex}. All edges connecting the {@link Vertex} are updated with the new id.
+     * @param id of original vertex
+     * @param newId for updated vertex
      */
-    void changeKey(Object key, Object newKey) {
-        if (!key || !newKey) {
-            throw new IllegalArgumentException('key or newKey is null or empty.')
+    void changeId(Object id, Object newId) {
+        if (!id || !newId) {
+            throw new IllegalArgumentException('id or newId is null or empty.')
         }
-        Vertex vertex = vertex(key)
-        vertices.remove(vertex.key)
-        vertex.key = newKey
-        vertices[(Object) vertex.key] = vertex
-        adjacentEdges(key).each {
-            if (it.one == key) {
-                it.one = newKey
+        Vertex vertex = vertex(id)
+        vertices.remove(vertex.id)
+        vertex.id = newId
+        vertices[(Object) vertex.id] = vertex
+        adjacentEdges(id).each {
+            if (it.one == id) {
+                it.one = newId
             }
-            if (it.two == key) {
-                it.two = newKey
+            if (it.two == id) {
+                it.two = newId
             }
         }
     }
@@ -254,29 +254,29 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * Returns the first unvisited vertex key in vertices.
+     * Returns the first unvisited vertex id in vertices.
      *
-     * @param colors map of vertex key and TraversalColor entries.
-     * @return the first unvisited vertex key in vertices.
+     * @param colors map of vertex id and TraversalColor entries.
+     * @return the first unvisited vertex id in vertices.
      */
-    Object getUnvisitedVertexKey(Map colors) {
+    Object getUnvisitedVertexId(Map colors) {
         vertices.find { k, v ->
             colors[(k)] != BLACK && colors[(k)] != GREY
         }?.key
     }
 
     /**
-     * returns the first unvisited child key with a parent matching key.
+     * returns the first unvisited child id with a parent matching id.
      *
-     * @param key the key of the parent vertex to start searching from
-     * @param colors a map of vertex key and TraversalColor entries.
-     * @return the first unvisited child key with a parent matching key.
+     * @param id the id of the parent vertex to start searching from
+     * @param colors a map of vertex id and TraversalColor entries.
+     * @return the first unvisited child id with a parent matching id.
      */
-    Object getUnvisitedChildKey(Object key, Map<Object, TraversalColor> colors) {
-        Edge edge = traverseEdges(key).findAll {
+    Object getUnvisitedChildId(Object id, Map<Object, TraversalColor> colors) {
+        Edge edge = traverseEdges(id).findAll {
             it.one != it.two
         }.find {
-            Object childKey = key == it.one ? it.two : it.one
+            Object childKey = id == it.one ? it.two : it.one
             TraversalColor color = colors[childKey]
             color != GREY && color != BLACK
         }
@@ -284,17 +284,17 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
         if (!edge) {
             return null
         }
-        key == edge.one ? edge.two : edge.one
+        id == edge.one ? edge.two : edge.one
     }
 
     /**
-     * Finds adjacent edges for vertex with key.
-     * @param key
+     * Finds adjacent edges for vertex with id.
+     * @param id
      * @return set of adjacent edges.
      */
-    Set<? extends Edge> adjacentEdges(Object key) {
+    Set<? extends Edge> adjacentEdges(Object id) {
         edges.findAll { Edge edge ->
-            key == edge.one || key == edge.two
+            id == edge.one || id == edge.two
         }
     }
 

@@ -4,10 +4,6 @@ import graph.Graph
 import spock.lang.Specification
 
 import static graph.Graph.graph
-import static graph.Graph.graph
-import static graph.Graph.graph
-import static graph.Graph.graph
-import static graph.Graph.graph
 
 class MethodsWithConnectsFrom extends Specification {
 
@@ -20,8 +16,8 @@ class MethodsWithConnectsFrom extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
         graph.edges.find { it.one == 'B' && it.two == 'A' }
     }
 
@@ -34,9 +30,9 @@ class MethodsWithConnectsFrom extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.find { it.one == 'B' && it.two == 'A' }
         graph.edges.find { it.one == 'C' && it.two == 'A' }
     }
@@ -52,8 +48,8 @@ class MethodsWithConnectsFrom extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
         graph.edges.find { it.one == 'B' && it.two == 'A' }
     }
 
@@ -68,9 +64,9 @@ class MethodsWithConnectsFrom extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.find { it.one == 'B' && it.two == 'A' }
         graph.edges.find { it.one == 'C' && it.two == 'A' }
     }
@@ -88,9 +84,9 @@ class MethodsWithConnectsFrom extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.find { it.one == 'B' && it.two == 'A' }
         graph.edges.find { it.one == 'C' && it.two == 'B' }
     }

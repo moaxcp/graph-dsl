@@ -9,20 +9,20 @@ class Vertex {
     @Delegate
     Map map = [:]
 
-    Object getKey() {
-        get('key')
+    Object getId() {
+        get('id')
     }
 
-    Object setKey(Object value) {
-        put('key', value)
+    Object setId(Object id) {
+        put('id', id)
     }
 
     boolean asBoolean() {
-        key
+        id
     }
 
     boolean equals(Vertex vertex) {
-        key == vertex.key
+        id == vertex.id
     }
 
     @Override
@@ -34,6 +34,6 @@ class Vertex {
             return true
         }
         Vertex rhs = (Vertex) o
-        key == rhs.key
+        id == rhs.id
     }
 }

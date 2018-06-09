@@ -15,15 +15,15 @@ class DirectedVertexSpecCodeRunner extends VertexSpecCodeRunner {
     }
 
     /**
-     * Creates edges where the vertex is edge.two and each key in keys is edge.one.
-     * @param keys of vetices to connect to.
+     * Creates edges where the vertex is edge.two and each id in ids is edge.one.
+     * @param ids of vetices to connect to.
      */
-    void connectsFrom(Object... keys) {
-        graph.newVertexSpec([key:vertex.key, connectsFrom:keys]).apply()
+    void connectsFrom(Object... ids) {
+        graph.newVertexSpec([id:vertex.id, connectsFrom:ids]).apply()
     }
 
-    void connectsFrom(Object key, Closure closure) {
-        graph.newVertexSpec([key:vertex.key, connectsFrom:key]).apply()
-        graph.newVertexSpec([key:key], closure).apply()
+    void connectsFrom(Object id, Closure closure) {
+        graph.newVertexSpec([id:vertex.id, connectsFrom:id]).apply()
+        graph.newVertexSpec([id:id], closure).apply()
     }
 }

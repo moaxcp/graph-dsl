@@ -34,7 +34,7 @@ class DirectedVertexSpec extends UndirectedVertexSpec {
 
     protected void applyConnectsFrom() {
         connectsFromSet.each {
-            graph.edge it, vertex.key
+            graph.edge it, vertex.id
         }
     }
 

@@ -9,62 +9,62 @@ class MethodsWithMap extends Specification {
     def 'add a vertex with Map'() {
         given:
         Graph graph = graph {
-            vertex([key:'A'])
+            vertex([id:'A'])
         }
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.key == 'A'
+        graph.vertices.A.id == 'A'
     }
 
     def 'add a vertex with Map and closure'() {
         given:
         Graph graph = graph {
-            vertex([key:'A']) {}
+            vertex([id:'A']) {}
         }
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.key == 'A'
+        graph.vertices.A.id == 'A'
     }
 
-    def 'add with key param and key set in map'() {
+    def 'add with id param and id set in map'() {
         given:
         Graph graph = graph {
-            vertex('A', [key:'A'])
+            vertex('A', [id:'A'])
         }
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.key == 'A'
+        graph.vertices.A.id == 'A'
     }
 
-    def 'add with key param and key set in map with closure'() {
+    def 'add with id param and id set in map with closure'() {
         given:
         Graph graph = graph {
-            vertex('A', [key:'A']) {}
+            vertex('A', [id:'A']) {}
         }
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.A.key == 'A'
+        graph.vertices.A.id == 'A'
     }
 
-    def 'change key in map'() {
+    def 'change id in map'() {
         given:
         Graph graph = graph {
-            vertex('A', [changeKey:'B'])
+            vertex('A', [changeId:'B'])
         }
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.key == 'B'
+        graph.vertices.B.id == 'B'
     }
 
-    def 'change key in map null'() {
+    def 'change id in map null'() {
         when:
         Graph graph = graph {
-            vertex('A', [changeKey:null])
+            vertex('A', [changeId:null])
         }
 
         then:
@@ -79,8 +79,8 @@ class MethodsWithMap extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
@@ -92,9 +92,9 @@ class MethodsWithMap extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'A' && it.two == 'C' }
     }

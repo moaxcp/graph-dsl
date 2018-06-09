@@ -109,7 +109,7 @@ class GraphSpec extends Specification {
         Graph graph = new Graph()
 
         when:
-        graph.replaceVerticesMap([step1:new Vertex(key:'step1')])
+        graph.replaceVerticesMap([step1:new Vertex(setId:'step1')])
 
         then:
         thrown IllegalArgumentException

@@ -114,9 +114,9 @@ class TraversalAlgorithms {
         Set<Edge> adjacentEdges = graph.traverseEdges(root)
         for(int index = 0; index < adjacentEdges.size(); index++) {
             Edge edge = adjacentEdges[index]
-            Object connectedKey = root == edge.one ? edge.two : edge.one
-            TraversalColor toColor = colors[connectedKey] ?: WHITE
-            TraversalState state = action(root, connectedKey, toColor)
+            Object connectedId = root == edge.one ? edge.two : edge.one
+            TraversalColor toColor = colors[connectedId] ?: WHITE
+            TraversalState state = action(root, connectedId, toColor)
             if(!state) {
                 throw new NullPointerException('action cannot return null TraversalState.')
             }
@@ -124,8 +124,8 @@ class TraversalAlgorithms {
                 spec.state = STOP
                 return spec
             }
-            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
-                spec.root = connectedKey
+            if(!colors[connectedId] || colors[connectedId] == WHITE) {
+                spec.root = connectedId
                 preOrderEdgesTraversal(graph, spec, action)
                 if(spec.state == STOP) {
                     return spec

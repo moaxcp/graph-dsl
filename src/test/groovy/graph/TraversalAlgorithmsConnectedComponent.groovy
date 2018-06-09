@@ -108,7 +108,7 @@ class TraversalAlgorithmsConnectedComponent extends Specification {
         }
 
         then: 'vertex param in action was A'
-        vertex.key == 'A'
+        vertex.id == 'A'
         and: 'A was marked as visited'
         result.colors.A == BLACK
         and: 'state is CONTINUE'
@@ -131,7 +131,7 @@ class TraversalAlgorithmsConnectedComponent extends Specification {
         }
 
         then: 'vertex param in action was A'
-        vertex.key == 'A'
+        vertex.id == 'A'
         and: 'A was marked as frontier'
         result.colors.A == GREY
         and: 'state is STOP'
@@ -148,7 +148,7 @@ class TraversalAlgorithmsConnectedComponent extends Specification {
 
         when:
         def result = connectedComponentTraversal(graph, [root:'A', colors:[:]]) { component, it ->
-            if(it.key == 'B') {
+            if(it.id == 'B') {
                 return STOP
             }
             CONTINUE

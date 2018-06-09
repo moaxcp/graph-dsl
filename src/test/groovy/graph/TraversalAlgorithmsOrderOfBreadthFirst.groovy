@@ -103,7 +103,7 @@ class TraversalAlgorithmsOrderOfBreadthFirst extends Specification {
         when: 'breadth-first-traversal is called on "#name"'
         def order = []
         def result = breadthFirstTraversal((Graph) graph, [root:'A', colors:[:]]) {
-            order << it.key
+            order << it.id
             CONTINUE
         }
 

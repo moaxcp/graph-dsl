@@ -24,7 +24,7 @@ class BreadthFirstTraversalStateSpec extends Specification {
         given:
         def names = []
         graph.breadthFirstTraversal('A') { vertex ->
-            names << vertex.key
+            names << vertex.id
             CONTINUE
         }
 

@@ -36,7 +36,7 @@ class EdgeSpecCodeRunner {
 
     /**
      * Changes edge.one to changeOne. This allows edge.one to point to a different {@link graph.Vertex}
-     * @param changeOne the new key for edge.one
+     * @param changeOne the new id for edge.one
      */
     void changeOne(Object changeOne) {
         graph.newEdgeSpec([one:edge.one, two:edge.two, changeOne:changeOne]).apply()
@@ -44,7 +44,7 @@ class EdgeSpecCodeRunner {
 
     /**
      * Changes edge.two to changeTwo. This allows edge.two to point to a different {@link graph.Vertex}.
-     * @param changeTwo  the new key for edge.two
+     * @param changeTwo  the new id for edge.two
      */
     void changeTwo(Object changeTwo) {
         graph.newEdgeSpec([one:edge.one, two:edge.two, changeTwo:changeTwo]).apply()

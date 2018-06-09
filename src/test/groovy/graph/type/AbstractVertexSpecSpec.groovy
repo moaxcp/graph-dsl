@@ -11,9 +11,9 @@ class AbstractVertexSpecSpec extends Specification {
 
     Graph graph = new Graph()
 
-    def 'apply throws exception on invalid key'() {
+    def 'apply throws exception on invalid id'() {
         when:
-        new UndirectedVertexSpec(graph, [key:''])
+        new UndirectedVertexSpec(graph, [id:''])
 
         then:
         thrown IllegalArgumentException
@@ -21,32 +21,32 @@ class AbstractVertexSpecSpec extends Specification {
 
     def 'apply can add vertex'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [key:'step1'])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [id:'step1'])
 
         when:
         Vertex vertex = spec.apply()
 
         then:
-        graph.vertices[vertex.key] == vertex
+        graph.vertices[vertex.id] == vertex
     }
 
-    def 'checkCondition throws IllegalStateException when key is null'() {
+    def 'checkCondition throws IllegalStateException when id is null'() {
         given:
         AbstractVertexSpec spec = new UndirectedVertexSpec(graph, [:])
-        spec.key = null
+        spec.id = null
 
         when:
         spec.checkConditions()
 
         then:
         IllegalStateException e = thrown()
-        e.message == 'key is not set.'
+        e.message == 'id is not set.'
     }
 
     def 'checkCondition throws IllegalStateException when graph is null'() {
         given:
         AbstractVertexSpec spec = new UndirectedVertexSpec(graph, [:])
-        spec.key = 'key'
+        spec.id = 'id'
         spec.graph = null
 
         when:
@@ -60,7 +60,7 @@ class AbstractVertexSpecSpec extends Specification {
     def 'checkCondition throws IllegalStateException when vertex is null'() {
         given:
         AbstractVertexSpec spec = new UndirectedVertexSpec(graph, [:])
-        spec.key = 'key'
+        spec.id = 'id'
         spec.vertex = null
 
         when:
@@ -86,20 +86,20 @@ class AbstractVertexSpecSpec extends Specification {
     def 'apply can rename vertex'() {
         setup:
         graph.vertex 'step1'
-        VertexSpec spec = new UndirectedVertexSpec(graph, [key:'step1', changeKey:'step2'])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [id:'step1', changeId:'step2'])
 
         when:
         Vertex vertex = spec.apply()
 
         then:
         graph.vertices.size() == 1
-        vertex.key == 'step2'
-        graph.vertices[vertex.key] == vertex
+        vertex.id == 'step2'
+        graph.vertices[vertex.id] == vertex
     }
 
     def 'apply can add edges using edgesFirst'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [key:'step1', connectsTo:['step2', 'step3']])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [id:'step1', connectsTo:['step2', 'step3']])
 
         when:
         spec.apply()

@@ -21,8 +21,8 @@ class ScriptWithBaseScript extends Specification {
             @groovy.transform.BaseScript DslScript script
             edge 'a', 'b'
             assert vertices.size() == 2
-            assert vertices['a'].key == 'a'
-            assert vertices['b'].key == 'b'
+            assert vertices['a'].id == 'a'
+            assert vertices['b'].id == 'b'
         '''
     }
 }

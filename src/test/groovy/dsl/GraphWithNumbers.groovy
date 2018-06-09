@@ -12,7 +12,7 @@ class GraphWithNumbers extends Specification {
         }
 
         expect:
-        graph.vertices[1].key == 1
+        graph.vertices[1].id == 1
     }
 
     def 'create edge with number'() {
@@ -22,8 +22,8 @@ class GraphWithNumbers extends Specification {
         }
 
         expect:
-        graph.vertices[1].key == 1
-        graph.vertices[2].key == 2
+        graph.vertices[1].id == 1
+        graph.vertices[2].id == 2
         graph.edges.first() == new Edge(one:1, two:2)
     }
 }

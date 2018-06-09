@@ -16,8 +16,8 @@ class MethodsWithClosure extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
@@ -31,9 +31,9 @@ class MethodsWithClosure extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'A' && it.two == 'C' }
     }
@@ -50,9 +50,9 @@ class MethodsWithClosure extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'B' && it.two == 'C' }
     }
@@ -71,24 +71,24 @@ class MethodsWithClosure extends Specification {
         graph.vertices.size() == 2
     }
 
-    def 'changeKey in closure'() {
+    def 'changeId in closure'() {
         given:
         Graph graph = graph {
             vertex('A') {
-                changeKey 'B'
+                changeId 'B'
             }
         }
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.key == 'B'
+        graph.vertices.B.id == 'B'
     }
 
-    def 'changeKey in closure with null'() {
+    def 'changeId in closure with null'() {
         when:
         Graph graph = graph {
             vertex('A') {
-                changeKey null
+                changeId null
             }
         }
 
@@ -96,13 +96,13 @@ class MethodsWithClosure extends Specification {
         thrown IllegalArgumentException
     }
 
-    def 'changeKey in spec to vertex that already exists'() {
+    def 'changeId in spec to vertex that already exists'() {
         when:
         Graph graph = graph {
             vertex('A')
             vertex('B')
             vertex('B') {
-                changeKey 'A'
+                changeId 'A'
             }
         }
 
@@ -110,17 +110,17 @@ class MethodsWithClosure extends Specification {
         thrown IllegalStateException
     }
 
-    def 'changeKey by assigning key'() {
+    def 'changeId by assigning key'() {
         when:
         Graph graph = graph {
             vertex('A') {
-                key = 'B'
+                id = 'B'
             }
         }
 
         then:
         graph.vertices.size() == 1
-        graph.vertices.B.key == 'B'
+        graph.vertices.B.id == 'B'
     }
 
     def 'add property in closure'() {
@@ -165,7 +165,7 @@ class MethodsWithClosure extends Specification {
         given:
         Graph graph = graph {
             vertex('A') {
-                prop = getKey()
+                prop = getId()
             }
         }
 

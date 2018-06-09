@@ -103,7 +103,7 @@ class TraversalAlgorithmsOrderOfPreOrder extends Specification {
         when: 'pre-order is called on "#name"'
         def order = []
         def result = preOrderTraversal((Graph) graph, [root:'A', colors:[:]]) {
-            order << it.key
+            order << it.id
             CONTINUE
         }
 

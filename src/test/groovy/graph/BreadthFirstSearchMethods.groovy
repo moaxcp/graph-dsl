@@ -16,11 +16,11 @@ class BreadthFirstSearchMethods extends Specification {
             vertex 'D', [connectsTo:['C', 'E']]
         }
         graph.breadthFirstTraversal { vertex ->
-            defaultOrder << vertex.key
+            defaultOrder << vertex.id
             CONTINUE
         }
         graph.breadthFirstTraversal('D') { vertex ->
-            orderFromD << vertex.key
+            orderFromD << vertex.id
             CONTINUE
         }
     }
@@ -29,7 +29,7 @@ class BreadthFirstSearchMethods extends Specification {
         when:
         def result = []
         graph.eachBfs {
-            result << it.key
+            result << it.id
         }
 
         then:
@@ -40,7 +40,7 @@ class BreadthFirstSearchMethods extends Specification {
         when:
         def result = []
         graph.eachBfs('D') {
-            result << it.key
+            result << it.id
         }
 
         then:
@@ -51,7 +51,7 @@ class BreadthFirstSearchMethods extends Specification {
         when:
         def result = []
         graph.findBfs {
-            result << it.key
+            result << it.id
             false
         }
 
@@ -63,7 +63,7 @@ class BreadthFirstSearchMethods extends Specification {
         when:
         def result = []
         graph.findBfs('D') {
-            result << it.key
+            result << it.id
             false
         }
 
@@ -74,18 +74,18 @@ class BreadthFirstSearchMethods extends Specification {
     def 'findBfs can find vertex'() {
         when:
         Vertex vertex = graph.findBfs {
-            it.key == 'D'
+            it.id == 'D'
         }
 
         then:
-        vertex.key == 'D'
+        vertex.id == 'D'
     }
 
     def 'injectBfs is in breadth first order'() {
         when:
         def result = []
         graph.injectBfs(result) { list, vertex ->
-            list << vertex.key
+            list << vertex.id
             list
         }
 
@@ -97,7 +97,7 @@ class BreadthFirstSearchMethods extends Specification {
         when:
         def result = []
         graph.injectBfs('D', result) { list, vertex ->
-            list << vertex.key
+            list << vertex.id
             list
         }
 
@@ -110,7 +110,7 @@ class BreadthFirstSearchMethods extends Specification {
         def result = graph.findAllBfs{ true }
 
         then:
-        defaultOrder == result*.key
+        defaultOrder == result*.id
     }
 
     def 'findAllBfs can start at different root'() {
@@ -118,17 +118,17 @@ class BreadthFirstSearchMethods extends Specification {
         def result = graph.findAllBfs('D') { true }
 
         then:
-        orderFromD == result*.key
+        orderFromD == result*.id
     }
 
     def 'findAllBfs can find all'() {
         when:
         def result = graph.findAllBfs {
-            it.key in ['A', 'C', 'E']
+            it.id in ['A', 'C', 'E']
         }
 
         then:
-        result*.key == ['A', 'C', 'E']
+        result*.id == ['A', 'C', 'E']
     }
 
     def 'collectBfs is in breadth first order'() {
@@ -136,7 +136,7 @@ class BreadthFirstSearchMethods extends Specification {
         def result = graph.collectBfs { it }
 
         then:
-        defaultOrder == result*.key
+        defaultOrder == result*.id
     }
 
     def 'collectBfs can start at different root'() {
@@ -144,12 +144,12 @@ class BreadthFirstSearchMethods extends Specification {
         def result = graph.collectBfs('D') { it }
 
         then:
-        orderFromD == result*.key
+        orderFromD == result*.id
     }
 
     def 'collectBfs can get names'() {
         when:
-        def result = graph.collectBfs { it.key }
+        def result = graph.collectBfs { it.id }
 
         then:
         defaultOrder == result

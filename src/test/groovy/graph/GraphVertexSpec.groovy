@@ -28,7 +28,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.key == 'step1'
+        vertex.id == 'step1'
     }
 
     def 'can get with second call to vertex(String)'() {
@@ -44,20 +44,20 @@ class GraphVertexSpec extends Specification {
 
     def 'can add/get vertex with vertex(Map)'() {
         when:
-        def vertex = graph.vertex key:'step1'
+        def vertex = graph.vertex id:'step1'
 
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.key == 'step1'
+        vertex.id == 'step1'
     }
 
     def 'can get with second call to vertex(Map)'() {
         setup:
-        def expected = graph.vertex key:'step1'
+        def expected = graph.vertex id:'step1'
 
         when:
-        def result = graph.vertex key:'step1'
+        def result = graph.vertex id:'step1'
 
         then:
         result.is expected
@@ -65,7 +65,7 @@ class GraphVertexSpec extends Specification {
 
     def 'can add edges using connectsTo with vertex(Map)'() {
         when:
-        graph.vertex key:'step1', connectsTo:['step2', 'step3']
+        graph.vertex id:'step1', connectsTo:['step2', 'step3']
         def edgeOne = graph.edges.find {
             it.one == 'step1' && it.two == 'step2'
         }
@@ -86,7 +86,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.key == 'step1'
+        vertex.id == 'step1'
     }
 
     def 'can get with second call to vertex(Object, Closure)'() {
@@ -107,7 +107,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.key == 'step1'
+        vertex.id == 'step1'
     }
 
     def 'can get with second call to vertex(Object, Map)'() {
@@ -123,20 +123,20 @@ class GraphVertexSpec extends Specification {
 
     def 'can add/get vertex with vertex(Map, Closure)'() {
         when:
-        def vertex = graph.vertex(key:'step1') {}
+        def vertex = graph.vertex(id:'step1') {}
 
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.key == 'step1'
+        vertex.id == 'step1'
     }
 
     def 'can get with second call to vertex(Map, Closure)'() {
         setup:
-        def expected = graph.vertex(key:'step1') {}
+        def expected = graph.vertex(id:'step1') {}
 
         when:
-        def result = graph.vertex(key:'step1') {}
+        def result = graph.vertex(id:'step1') {}
 
         then:
         result.is expected
@@ -149,7 +149,7 @@ class GraphVertexSpec extends Specification {
         then:
         graph.vertices.size() == 1
         graph.vertices.step1.is vertex
-        vertex.key == 'step1'
+        vertex.id == 'step1'
     }
 
     def 'can get with second call to vertex(Object, Map, Closure)'() {
@@ -168,7 +168,7 @@ class GraphVertexSpec extends Specification {
         graph.vertex 'step1'
 
         when:
-        graph.vertices.step2 = new Vertex(key: 'step2')
+        graph.vertices.step2 = new Vertex(id: 'step2')
 
         then:
         thrown(UnsupportedOperationException)
@@ -185,7 +185,7 @@ class GraphVertexSpec extends Specification {
         graph.edge 'step4', 'step1'
 
         when:
-        graph.changeKey 'step1', 'step5'
+        graph.changeId 'step1', 'step5'
 
         then:
         graph.vertices['step1'] == null
@@ -199,10 +199,10 @@ class GraphVertexSpec extends Specification {
         graph.vertex 'step1'
 
         when:
-        graph.changeKey 'step1', ''
+        graph.changeId 'step1', ''
 
         and:
-        graph.changeKey 'step1', null
+        graph.changeId 'step1', null
 
         then:
         thrown IllegalArgumentException
@@ -214,10 +214,10 @@ class GraphVertexSpec extends Specification {
 
         then:
         vertices == [
-                new Vertex(key:'step1'),
-                new Vertex(key:'step2'),
-                new Vertex(key:'step3'),
-                new Vertex(key:'step4')
+                new Vertex(id:'step1'),
+                new Vertex(id:'step2'),
+                new Vertex(id:'step3'),
+                new Vertex(id:'step4')
         ] as Set<Vertex>
     }
 }

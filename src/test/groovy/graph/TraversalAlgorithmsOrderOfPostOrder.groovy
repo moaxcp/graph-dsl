@@ -76,7 +76,7 @@ class TraversalAlgorithmsOrderOfPostOrder extends Specification {
         when: 'post-order is called on "#name"'
         def order = []
         def result = postOrderTraversal((Graph) graph, [root:'A', colors:[:]]) {
-            order << it.key
+            order << it.id
             CONTINUE
         }
 

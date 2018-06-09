@@ -16,13 +16,13 @@ class BFSMethods extends Specification {
         }
         graph.breadthFirstTraversal {
             visit { vertex ->
-                defaultOrder << vertex.key
+                defaultOrder << vertex.getId
             }
         }
         graph.breadthFirstTraversal {
             root = 'D'
             visit { vertex ->
-                orderFromD << vertex.key
+                orderFromD << vertex.getId
             }
         }
     }

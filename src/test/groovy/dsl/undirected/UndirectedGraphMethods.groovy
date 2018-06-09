@@ -11,19 +11,19 @@ class UndirectedGraphMethods extends Specification {
         given:
         Graph graph = graph {
             vertex('A')
-            changeKey('A', 'B')
+            changeId('A', 'B')
         }
 
         expect:
         graph.vertices.size() == 1
-        graph.vertices.B.key == 'B'
+        graph.vertices.B.id == 'B'
     }
 
     def 'change key null key'() {
         when:
         Graph graph = graph {
             vertex 'A'
-            changeKey null, 'B'
+            changeId null, 'B'
         }
 
         then:
@@ -34,7 +34,7 @@ class UndirectedGraphMethods extends Specification {
         when:
         Graph graph = graph {
             vertex 'A'
-            changeKey 'A', null
+            changeId 'A', null
         }
 
         then:

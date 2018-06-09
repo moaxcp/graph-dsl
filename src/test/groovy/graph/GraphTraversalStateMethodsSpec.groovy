@@ -12,7 +12,7 @@ class GraphTraversalStateMethodsSpec extends Specification {
         def colors = [:]
 
         when:
-        def name = graph.getUnvisitedVertexKey(colors)
+        def name = graph.getUnvisitedVertexId(colors)
 
         then:
         name == 'step1'
@@ -25,7 +25,7 @@ class GraphTraversalStateMethodsSpec extends Specification {
         def colors = ['step1': WHITE]
 
         when:
-        def name = graph.getUnvisitedVertexKey(colors)
+        def name = graph.getUnvisitedVertexId(colors)
 
         then:
         name == 'step1'
@@ -41,7 +41,7 @@ class GraphTraversalStateMethodsSpec extends Specification {
         def colors = ['step1': GREY]
 
         when:
-        def name = graph.getUnvisitedVertexKey(colors)
+        def name = graph.getUnvisitedVertexId(colors)
 
         then:
         name == 'step2'
@@ -63,7 +63,7 @@ class GraphTraversalStateMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildKey('step1', colors)
+        def childName = graph.getUnvisitedChildId('step1', colors)
 
         then:
         childName == 'step3'
@@ -85,7 +85,7 @@ class GraphTraversalStateMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildKey('step1', colors)
+        def childName = graph.getUnvisitedChildId('step1', colors)
 
         then:
         childName == 'step3'
@@ -107,7 +107,7 @@ class GraphTraversalStateMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildKey('step1', colors)
+        def childName = graph.getUnvisitedChildId('step1', colors)
 
         then:
         childName == 'step3'
@@ -129,7 +129,7 @@ class GraphTraversalStateMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildKey('step1', colors)
+        def childName = graph.getUnvisitedChildId('step1', colors)
 
         then:
         childName == 'step3'
@@ -151,7 +151,7 @@ class GraphTraversalStateMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildKey('step1', colors)
+        def childName = graph.getUnvisitedChildId('step1', colors)
 
         then:
         childName == 'step2'
@@ -171,7 +171,7 @@ class GraphTraversalStateMethodsSpec extends Specification {
         ]
 
         when:
-        def childName = graph.getUnvisitedChildKey('step1', colors)
+        def childName = graph.getUnvisitedChildId('step1', colors)
 
         then:
         childName == null

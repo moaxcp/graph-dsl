@@ -27,11 +27,13 @@ new `Graph` becomes the delegate of the script.
 #!/usr/bin/env groovy
 @Grab(group='com.github.moaxcp', module='graph-dsl', version='latest.revision')
 import graph.*
-@groovy.transform.BaseScript DslScript graph
+@groovy.transform.BaseScript DslScript script
+plugin 'graphviz'
 edge 'A', 'B'
-assert graph.vertices.keySet() == ['step1', 'step2'] as Set //vertices were created!
+assert graph.vertices.keySet() == ['A', 'B'] as Set
 assert graph.edges.size() == 1
-assert graph.edges.first() == new Edge(one:'step1', two:'step2') //edge was created!
+assert graph.edges.first() == new Edge(one:'A', two:'B')
+image 'images/base-script-method.png'
 ```
 
 ![Image](images/base-script-method.png?raw=true)
@@ -54,12 +56,14 @@ applies the closure to a new Graph object and returns it.
 import graph.*
 import static graph.Graph.*
 def graph = graph {
-    edge 'step1', 'step2'
+    edge 'A', 'B'
 }
 
-assert graph.vertices.keySet() == ['step1', 'step2'] as Set
+assert graph.vertices.keySet() == ['A', 'B'] as Set
 assert graph.edges.size() == 1
-assert graph.edges.first() == new Edge(one:'step1', two:'step2')
+assert graph.edges.first() == new Edge(one:'A', two:'B')
+graph.plugin 'graphviz'
+graph.image 'images/graph-method.png'
 ```
 
 ![Image](images/graph-method.png?raw=true)
@@ -95,11 +99,10 @@ vertex('A') {
     connectsTo('E')
 }
 def count = 1
-breadthFirstTraversal('A') { vertex ->
+eachBfs('A') { vertex ->
     vertex.label = "${vertex.key}\\lorder:${count++}\\l"
     vertex.fillcolor = 'green'
     vertex.style = 'filled'
-    TraversalState.CONTINUE
 }
 plugin 'graphviz'
 image 'images/breadth-first-traversal.png'
@@ -124,7 +127,7 @@ vertex('A') {
 }
 def count = 1
 preOrder('A') { vertex ->
-    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.label = "${vertex.id}\\lorder:${count++}\\l"
     vertex.fillcolor = 'green'
     vertex.style = 'filled'
     TraversalState.CONTINUE
@@ -152,7 +155,7 @@ vertex('A') {
 }
 def count = 1
 postOrder('A') { vertex ->
-    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.label = "${vertex.id}\\lorder:${count++}\\l"
     vertex.fillcolor = 'green'
     vertex.style = 'filled'
     TraversalState.CONTINUE
@@ -193,7 +196,7 @@ vertex('classes') {
 }
 def count = 1
 reversePostOrder('build') { vertex ->
-    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+    vertex.label = "${vertex.id}\\lorder:${count++}\\l"
     vertex.fillcolor = 'green'
     vertex.style = 'filled'
     CONTINUE
@@ -535,6 +538,10 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## 0.25.0
+
+* vertex.key has been renamed to vertex.id
 
 ## 0.24.0
 

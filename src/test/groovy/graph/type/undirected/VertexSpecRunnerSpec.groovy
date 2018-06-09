@@ -16,12 +16,12 @@ class VertexSpecRunnerSpec extends Specification {
 
     def 'can rename'() {
         when:
-        runner.changeKey('step2')
+        runner.changeId('step2')
 
         then:
-        vertex.key == 'step2'
+        vertex.id == 'step2'
         graph.vertices.size() == 1
-        graph.vertices['step2'].key == 'step2'
+        graph.vertices['step2'].id == 'step2'
     }
 
     def 'can add with connectsTo'() {

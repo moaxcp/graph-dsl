@@ -114,7 +114,7 @@ class DirectedGraphSpec extends Specification {
 
         when:
         graph.preOrder { vertex ->
-            preOrderList << vertex.key
+            preOrderList << vertex.id
             CONTINUE
         }
 
@@ -143,7 +143,7 @@ class DirectedGraphSpec extends Specification {
 
         when:
         graph.postOrder {vertex ->
-            postOrderList << vertex.key
+            postOrderList << vertex.id
             CONTINUE
         }
 
@@ -181,7 +181,7 @@ class DirectedGraphSpec extends Specification {
 
         when:
         graph.reversePostOrder { vertex ->
-            rpo << vertex.key
+            rpo << vertex.id
         }
 
         then:

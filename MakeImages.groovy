@@ -63,15 +63,13 @@ def exampleBreadthFirstTraversal() {
             connectsTo('E')
         }
         def count = 1
-        breadthFirstTraversal('A') { vertex ->
-            vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+        eachBfs('A') { vertex ->
+            vertex.label = "${vertex.id}\\lorder:${count++}\\l"
             vertex.fillcolor = 'green'
             vertex.style = 'filled'
-            CONTINUE
         }
         plugin 'graphviz'
         image 'images/breadth-first-traversal.png'
-
     }
 }
 
@@ -91,7 +89,7 @@ def examplePreOrderTraversal() {
         }
         def count = 1
         preOrder('A') { vertex ->
-            vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+            vertex.label = "${vertex.id}\\lorder:${count++}\\l"
             vertex.fillcolor = 'green'
             vertex.style = 'filled'
             CONTINUE
@@ -117,7 +115,7 @@ def examplePostOrderTraversal() {
         }
         def count = 1
         postOrder('A') { vertex ->
-            vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+            vertex.label = "${vertex.id}\\lorder:${count++}\\l"
             vertex.fillcolor = 'green'
             vertex.style = 'filled'
             CONTINUE
@@ -154,7 +152,7 @@ def exampleReversePostOrderTraversal() {
         }
         def count = 1
         reversePostOrder('build') { vertex ->
-            vertex.label = "${vertex.key}\\lorder:${count++}\\l"
+            vertex.label = "${vertex.id}\\lorder:${count++}\\l"
             vertex.fillcolor = 'green'
             vertex.style = 'filled'
             CONTINUE

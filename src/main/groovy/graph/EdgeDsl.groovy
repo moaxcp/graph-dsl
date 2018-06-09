@@ -8,8 +8,8 @@ trait EdgeDsl {
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
      * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
      * will be created.
-     * @param one  the key of the first {@link Vertex}.
-     * @param two  the key of the second {@link Vertex}.
+     * @param one  the id of the first {@link Vertex}.
+     * @param two  the id of the second {@link Vertex}.
      * @return the resulting {@link Edge}.
      * @throws IllegalArgumentException when one or two are invalid
      */
@@ -26,9 +26,9 @@ trait EdgeDsl {
      * contain configuration for the edge. Default configuration options are:
      * <dl>
      *     <dt>one</dt>
-     *     <dd>key of the first {@link Vertex}</dd>
+     *     <dd>id of the first {@link Vertex}</dd>
      *     <dt>two</dt>
-     *     <dd>key of the second {@link Vertex}</dd>
+     *     <dd>id of the second {@link Vertex}</dd>
      *     <dt>changeOne</dt>
      *     <dd>If the edge already exists edge.one will become changeOne. Otherwise edge.one is set to changeOne
      *     instead of one when it is created.</dd>
@@ -54,8 +54,8 @@ trait EdgeDsl {
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map contains
      * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
      * instead of the parameters.
-     * @param one  the key of the first {@link Vertex}.
-     * @param two  the key of the second {@link Vertex}.
+     * @param one  the id of the first {@link Vertex}.
+     * @param two  the id of the second {@link Vertex}.
      * @param map  used to create an {@link Edge}.
      * @return the resulting {@link Edge}.
      * @throws IllegalArgumentException when one or two are invalid
@@ -99,8 +99,8 @@ trait EdgeDsl {
      *     <dd>Applies a trait the edge's delegate</dd>
      * </dl>
      * Plugins may add variables and methods to the passed in closure.
-     * @param one  the key of the first {@link Vertex}.
-     * @param two  the key of the second {@link Vertex}.
+     * @param one  the id of the first {@link Vertex}.
+     * @param two  the id of the second {@link Vertex}.
      * @param closure  to run.
      * @return the resulting {@link Edge}.
      * @throws IllegalArgumentException when one or two are invalid
@@ -136,8 +136,8 @@ trait EdgeDsl {
      * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
      * instead of the parameters. The configuration given by the closure is described in
      * {@link #edge(String, String, Closure)}.
-     * @param one  the key of the first {@link Vertex}.
-     * @param two  the key of the second {@link Vertex}.
+     * @param one  the id of the first {@link Vertex}.
+     * @param two  the id of the second {@link Vertex}.
      * @param map  used to create an {@link Edge}.
      * @param closure  to run.
      * @return the resulting {@link Edge}.

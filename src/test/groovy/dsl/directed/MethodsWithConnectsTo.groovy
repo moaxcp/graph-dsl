@@ -16,8 +16,8 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
@@ -30,9 +30,9 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'A' && it.two == 'C' }
     }
@@ -48,8 +48,8 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 2
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
     }
 
@@ -64,9 +64,9 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'A' && it.two == 'C' }
     }
@@ -84,9 +84,9 @@ class MethodsWithConnectsTo extends Specification {
 
         expect:
         graph.vertices.size() == 3
-        graph.vertices.A.key == 'A'
-        graph.vertices.B.key == 'B'
-        graph.vertices.C.key == 'C'
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
         graph.edges.find { it.one == 'A' && it.two == 'B' }
         graph.edges.find { it.one == 'B' && it.two == 'C' }
     }

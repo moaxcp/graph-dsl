@@ -2,7 +2,6 @@ package graph
 
 import spock.lang.Specification
 
-import static graph.Graph.graph
 import static TraversalAlgorithms.preOrderTraversal
 import static graph.TraversalColor.BLACK
 import static graph.TraversalColor.GREY
@@ -11,7 +10,7 @@ import static graph.TraversalState.STOP
 
 class TraversalAlgorithmsPreOrder extends Specification {
 
-    Graph graph = graph {}
+    Graph graph = new Graph()
 
     def 'pre-order null spec'() {
         when: 'pre-order is called with a null spec'
@@ -105,7 +104,7 @@ class TraversalAlgorithmsPreOrder extends Specification {
         }
 
         then: 'vertex param in action was A'
-        vertex.key == 'A'
+        vertex.id == 'A'
         and: 'A was marked as visited'
         result.colors.A == BLACK
         and: 'state is CONTINUE'
@@ -128,7 +127,7 @@ class TraversalAlgorithmsPreOrder extends Specification {
         }
 
         then: 'vertex param in action was A'
-        vertex.key == 'A'
+        vertex.id == 'A'
         and: 'A was marked as frontier'
         result.colors.A == GREY
         and: 'state is STOP'
@@ -145,7 +144,7 @@ class TraversalAlgorithmsPreOrder extends Specification {
 
         when:
         def result = preOrderTraversal(graph, [root:'A', colors:[:]]) {
-            if(it.key == 'B') {
+            if(it.id == 'B') {
                 return STOP
             }
             CONTINUE

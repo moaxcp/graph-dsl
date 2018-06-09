@@ -57,9 +57,9 @@ class GraphViz implements Plugin {
 
     @PackageScope
     String getVertexDot(Vertex vertex) {
-        String string =getId(vertex.key.toString())
+        String string =getId(vertex.id.toString())
         String attributes = vertex.findAll {
-            it.key != 'key'
+            it.key != 'id'
         }.collect {
             /$it.key="$it.value"/
         }.join(' ')

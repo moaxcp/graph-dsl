@@ -78,71 +78,71 @@ abstract class BaseMapSpec extends Specification {
 
     def 'can get value with index entry'() {
         when:
-        emptyMap.key = 'value'
+        emptyMap.id = 'value'
 
         then:
-        emptyMap['key'] == 'value'
+        emptyMap['id'] == 'value'
     }
 
     def 'can replace value in map'() {
-        given: 'key:value entry added to emptyMap'
-        emptyMap.put('key', 'value')
+        given: 'id:value entry added to emptyMap'
+        emptyMap.put('id', 'value')
 
         when: '"value" is replaced with "value2"'
-        String value = emptyMap.replace('key', 'value2')
+        String value = emptyMap.replace('id', 'value2')
 
-        then: '"value" is returned and key maps to "value2"'
+        then: '"value" is returned and id maps to "value2"'
         value == 'value'
-        emptyMap.get('key') == 'value2'
+        emptyMap.get('id') == 'value2'
     }
 
     def 'can replace value in map if value exists'() {
-        given: 'key:value entry added to emptyMap'
-        emptyMap.put('key', 'value')
+        given: 'id:value entry added to emptyMap'
+        emptyMap.put('id', 'value')
 
         when: '"value" is replace with "value2"'
-        boolean replaced = emptyMap.replace('key', 'value', 'value2')
+        boolean replaced = emptyMap.replace('id', 'value', 'value2')
 
         then: 'true is returned'
         replaced
 
         and: '"value" is replaced with "value2"'
-        emptyMap.get('key') == 'value2'
+        emptyMap.get('id') == 'value2'
     }
 
     def 'can remove entry'() {
-        given: 'key:value entry added to emptyMap'
-        emptyMap.put('key', 'value')
+        given: 'id:value entry added to emptyMap'
+        emptyMap.put('id', 'value')
 
         when: 'entry is removed'
-        String value = emptyMap.remove('key')
+        String value = emptyMap.remove('id')
 
         then: '"value" is returned'
         value == 'value'
 
         and: 'entry is removed'
         emptyMap.size() == 0
-        emptyMap.get('key') == null
+        emptyMap.get('id') == null
     }
 
     def 'can remove entry if value exists'() {
-        given: 'key:value entry added to emptyMap'
-        emptyMap.put('key', 'value')
+        given: 'id:value entry added to emptyMap'
+        emptyMap.put('id', 'value')
 
         when: 'entry with value is removed'
-        boolean removed = emptyMap.remove('key', 'value')
+        boolean removed = emptyMap.remove('id', 'value')
 
         then: 'true is returned'
         removed
 
         and: 'entry is removed'
         emptyMap.size() == 0
-        emptyMap.get('key') == null
+        emptyMap.get('id') == null
     }
 
     def 'containsValue can return true'() {
-        given: 'key:value entry added to emptyMap'
-        emptyMap.put('key', 'value')
+        given: 'id:value entry added to emptyMap'
+        emptyMap.put('id', 'value')
 
         expect: 'containsValue is true'
         emptyMap.containsValue('value')
