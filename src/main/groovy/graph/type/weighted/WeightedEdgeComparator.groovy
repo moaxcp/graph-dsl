@@ -18,13 +18,13 @@ class WeightedEdgeComparator implements Comparator<Edge> {
         } else if (weightA > weightB) {
             return 1
         }
-        int compareOne = a.one <=> b.one
-        int compareTwo = a.two <=> b.two
-        if (compareOne != 0) {
-            return compareOne
-        } else if (compareTwo != 0) {
-            return compareTwo
+        int compareFrom = a.from <=> b.from
+        int compareTo = a.to <=> b.to
+        if (compareFrom != 0) {
+            return compareFrom
+        } else if (compareTo != 0) {
+            return compareTo
         }
-        throw new IllegalStateException('a and be are not equals but one and two are not comparable')
+        throw new IllegalStateException('a and be are not equals but from and to are not comparable')
     }
 }

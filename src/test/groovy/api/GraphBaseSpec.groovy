@@ -134,7 +134,7 @@ abstract class GraphBaseSpec extends Specification {
         graph.vertices.size() == 2
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
     }
 
     def 'create two edges using connectsTo in map'() {
@@ -146,7 +146,7 @@ abstract class GraphBaseSpec extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'A' && it.two == 'C' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
+        graph.edges.find { it.from == 'A' && it.to == 'C' }
     }
 }

@@ -13,10 +13,10 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     Edge edge
     boolean edgePresentInGraph
 
-    Object one
-    Object two
-    Object changeOne
-    Object changeTwo
+    Object from
+    Object to
+    Object changeFrom
+    Object changeTo
     List dslProperties
     Map entries
     Closure runnerCodeClosure
@@ -24,14 +24,14 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     protected AbstractEdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         super(graph)
 
-        dslProperties = ['one', 'two', 'changeOne', 'changeTwo']
+        dslProperties = ['from', 'to', 'changeFrom', 'changeTo']
 
         entries = map.findAll { !(it.key in dslProperties) }
 
-        one = map.one
-        two = map.two
-        changeOne = map.changeOne
-        changeTwo = map.changeTwo
+        from = map.from
+        to = map.to
+        changeFrom = map.changeFrom
+        changeTo = map.changeTo
 
         runnerCodeClosure = closure
     }
@@ -40,17 +40,17 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
         if (edge) {
             throw new IllegalStateException('Edge already created.')
         }
-        Edge created = graph.newEdge(one:one, two:two)
+        Edge created = graph.newEdge(from:from, to:to)
         Edge existing = graph.edges.find { it == created }
         edgePresentInGraph = existing != null
 
         if (!edgePresentInGraph) {
-            one = changeOne ?: one
-            two = changeTwo ?: two
-            changeOne = null
-            changeTwo = null
-            created.one = one
-            created.two = two
+            from = changeFrom ?: from
+            to = changeTo ?: to
+            changeFrom = null
+            changeTo = null
+            created.from = from
+            created.to = to
             existing = graph.edges.find { it == created }
             edgePresentInGraph = existing != null
         }
@@ -59,11 +59,11 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     }
 
     protected void checkConditions() {
-        if (!one) {
-            throw new IllegalStateException('!one failed. one must be groovy truth.')
+        if (!from) {
+            throw new IllegalStateException('!from failed. from must be groovy truth.')
         }
-        if (!two) {
-            throw new IllegalStateException('!two failed. two must be groovy truth.')
+        if (!to) {
+            throw new IllegalStateException('!to failed. to must be groovy truth.')
         }
         if (!graph) {
             throw new IllegalStateException('graph is not set.')
@@ -71,8 +71,8 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
         if (!edge) {
             throw new IllegalStateException('edge is not set.')
         }
-        if (changeOne || changeTwo) {
-            Edge renamed = graph.newEdge(one:changeOne ?: one, two:changeTwo ?: two)
+        if (changeFrom || changeTo) {
+            Edge renamed = graph.newEdge(from:changeFrom ?: from, to:changeTo ?: to)
             if (graph.edges.find { it == renamed }) {
                 throw new IllegalStateException('renamed edge already exists.')
             }
@@ -80,26 +80,26 @@ abstract class AbstractEdgeSpec extends EdgeSpec {
     }
 
     protected void setupGraph() {
-        if (edgePresentInGraph && (changeOne || changeTwo)) {
+        if (edgePresentInGraph && (changeFrom || changeTo)) {
             //need to delete and re-add edge to reset hashcode in LinkedHashSet.
-            graph.deleteEdge(edge.one, edge.two)
+            graph.deleteEdge(edge.from, edge.to)
         }
 
-        graph.vertex(one)
-        graph.vertex(two)
+        graph.vertex(from)
+        graph.vertex(to)
     }
 
     protected void initRenameOne() {
-        if (changeOne) {
-            graph.vertex(changeOne)
-            edge.one = changeOne
+        if (changeFrom) {
+            graph.vertex(changeFrom)
+            edge.from = changeFrom
         }
     }
 
     protected void initRenameTwo() {
-        if (changeTwo) {
-            graph.vertex(changeTwo)
-            edge.two = changeTwo
+        if (changeTo) {
+            graph.vertex(changeTo)
+            edge.to = changeTo
         }
     }
 

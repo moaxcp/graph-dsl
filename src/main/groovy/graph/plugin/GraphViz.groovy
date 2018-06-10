@@ -43,9 +43,9 @@ class GraphViz implements Plugin {
 
     @PackageScope
     String getEdgeDot(Edge edge) {
-        String string = "${getId(edge.one.toString())} $edgeString ${getId(edge.two.toString())}"
+        String string = "${getId(edge.from.toString())} $edgeString ${getId(edge.to.toString())}"
         String attributes = edge.findAll {
-            it.key != 'one' && it.key != 'two'
+            it.key != 'from' && it.key != 'to'
         }.collect {
             /$it.key="$it.value"/
         }.join(' ')

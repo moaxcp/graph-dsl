@@ -11,28 +11,28 @@ class Edge {
     @Delegate
     Map map = [:]
 
-    Object getOne() {
-        get('one')
+    Object getFrom() {
+        get('from')
     }
 
-    Object setOne(Object value) {
-        put('one', value)
+    Object setFrom(Object value) {
+        put('from', value)
     }
 
-    Object getTwo() {
-        get('two')
+    Object getTo() {
+        get('to')
     }
 
-    Object setTwo(Object value) {
-        put('two', value)
+    Object setTo(Object value) {
+        put('to', value)
     }
 
     boolean asBoolean() {
-        one && two
+        from && to
     }
 
     boolean equals(Edge edge) {
-        (one == edge.one || one == edge.two) && (two == edge.two || two == edge.one)
+        (from == edge.from || from == edge.to) && (to == edge.to || to == edge.from)
     }
 
     /**
@@ -60,6 +60,6 @@ class Edge {
      */
     @Override
     int hashCode() {
-        one.hashCode() + two.hashCode()
+        from.hashCode() + to.hashCode()
     }
 }

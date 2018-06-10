@@ -14,8 +14,8 @@ import graph.type.undirected.GraphType
  *     <dt>{@code edges}</dt>
  *     <dd>All edges are converted to {@link DirectedEdge}s and all future edges will be {@link DirectedEdge}s. Any two
  *     vertices may be connected by one or two {@link DirectedEdge}s. Two {@link DirectedEdge}s connecting any two
- *     vertices cannot have the same direction. Direction is determined by the values of {@link DirectedEdge#getOne()}
- *     and {@link DirectedEdge#getTwo()}. The values of one and two cannot be the same in any two {@link DirectedEdge}s.
+ *     vertices cannot have the same direction. Direction is determined by the values of {@link DirectedEdge#getFrom()}
+ *     and {@link DirectedEdge#getTo()}. The values of one and two cannot be the same in any two {@link DirectedEdge}s.
  *     </dd>
  * </dl>
  */
@@ -62,54 +62,54 @@ class DirectedGraphType extends GraphType {
     /**
      * Returns in-edges of vertex
      * @param graph
-     * @param key  for vertex
+     * @param id  for vertex
      * @return
      */
-    Set<? extends Edge> inEdges(Object key) {
+    Set<? extends Edge> inEdges(Object id) {
         graph.edges.findAll {
-            key == it.two
+            id == it.to
         }
     }
 
     /**
      * returns number of in edges from vertex
      * @param graph
-     * @param key
+     * @param id
      * @return
      */
-    int inDegree(Object key) {
-        graph.inEdges(key).size()
+    int inDegree(Object id) {
+        graph.inEdges(id).size()
     }
 
     /**
      * returns out edges of vertex.
      * @param graph
-     * @param key
+     * @param id
      * @return
      */
-    Set<? extends Edge> outEdges(Object key) {
+    Set<? extends Edge> outEdges(Object id) {
         graph.edges.findAll {
-            key == it.one
+            id == it.from
         }
     }
 
     /**
      * returns number of out edges of vertex
      * @param graph
-     * @param key
+     * @param id
      * @return
      */
-    int outDegree(Object key) {
-        graph.outEdges(key).size()
+    int outDegree(Object id) {
+        graph.outEdges(id).size()
     }
 
     /**
      * Returns out edges of graph.
      * @param graph
-     * @param key
+     * @param id
      * @return
      */
-    Set<? extends Edge> traverseEdges(Object key) {
-        graph.outEdges(key)
+    Set<? extends Edge> traverseEdges(Object id) {
+        graph.outEdges(id)
     }
 }

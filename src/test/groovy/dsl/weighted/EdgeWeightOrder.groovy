@@ -19,8 +19,8 @@ class EdgeWeightOrder extends Specification {
         then:
         graph.edges.size() == 2
         edges.size() == 2
-        edges.find { it.one == 'A' && it.two == 'B' }
-        edges.find { it.one == 'C' && it.two == 'A' }
+        edges.find { it.from == 'A' && it.to == 'B' }
+        edges.find { it.from == 'C' && it.to == 'A' }
     }
     def 'null weight is ok'() {
         given:
@@ -36,8 +36,8 @@ class EdgeWeightOrder extends Specification {
         then:
         graph.edges.size() == 2
         edges.size() == 2
-        edges.find { it.one == 'A' && it.two == 'B' }
-        edges.find { it.one == 'C' && it.two == 'A' }
+        edges.find { it.from == 'A' && it.to == 'B' }
+        edges.find { it.from == 'C' && it.to == 'A' }
     }
 
     def 'adding weight of zero is ok'() {
@@ -54,8 +54,8 @@ class EdgeWeightOrder extends Specification {
         then:
         graph.edges.size() == 2
         edges.size() == 2
-        edges.find { it.one == 'A' && it.two == 'B' }
-        edges.find { it.one == 'C' && it.two == 'A' }
+        edges.find { it.from == 'A' && it.to == 'B' }
+        edges.find { it.from == 'C' && it.to == 'A' }
     }
 
     def 'weight is equal and one is equal'() {
@@ -72,8 +72,8 @@ class EdgeWeightOrder extends Specification {
         then:
         graph.edges.size() == 2
         edges.size() == 2
-        edges.find { it.one == 'A' && it.two == 'B' }
-        edges.find { it.one == 'A' && it.two == 'C' }
+        edges.find { it.from == 'A' && it.to == 'B' }
+        edges.find { it.from == 'A' && it.to == 'C' }
     }
 
     def 'traverseEdges sorts edges by weight'() {
@@ -89,9 +89,9 @@ class EdgeWeightOrder extends Specification {
         def edges = graph.traverseEdges('A')
 
         then:
-        edges[0].two == 'C'
-        edges[1].two == 'D'
-        edges[2].two == 'B'
+        edges[0].to == 'C'
+        edges[1].to == 'D'
+        edges[2].to == 'B'
     }
 
     def 'traverseEdges sorts edges by weight after type set'() {
@@ -107,8 +107,8 @@ class EdgeWeightOrder extends Specification {
         def edges = graph.traverseEdges('A')
 
         then:
-        edges[0].two == 'C'
-        edges[1].two == 'D'
-        edges[2].two == 'B'
+        edges[0].to == 'C'
+        edges[1].to == 'D'
+        edges[2].to == 'B'
     }
 }

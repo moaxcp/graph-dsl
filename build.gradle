@@ -181,7 +181,6 @@ configurations {
 
 dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
-    compile 'org.groovyfx:groovyfx:8.0.0'
 
     testCompile( 'com.athaydes:spock-reports:1.4.0' ) {
         transitive = false

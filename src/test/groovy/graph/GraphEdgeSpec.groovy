@@ -13,8 +13,8 @@ class GraphEdgeSpec extends Specification {
         then:
         graph.edges.size() == 1
         graph.edges.first().is edge
-        edge.one == 'step1'
-        edge.two == 'step2'
+        edge.from == 'step1'
+        edge.to == 'step2'
     }
 
     def 'can get with second call to edge(String, String)'() {
@@ -30,21 +30,21 @@ class GraphEdgeSpec extends Specification {
 
     def 'can add/get edge with edge(Map)'() {
         when:
-        Edge edge = graph.edge one:'step1', two:'step2'
+        Edge edge = graph.edge from:'step1', to:'step2'
 
         then:
         graph.edges.size() == 1
         graph.edges.first().is edge
-        edge.one == 'step1'
-        edge.two == 'step2'
+        edge.from == 'step1'
+        edge.to == 'step2'
     }
 
     def 'can get with second call to edge(Map)'() {
         setup:
-        Edge expected = graph.edge one:'step1', two:'step2'
+        Edge expected = graph.edge from:'step1', to:'step2'
 
         when:
-        Edge result = graph.edge one:'step1', two:'step2'
+        Edge result = graph.edge from:'step1', to:'step2'
 
         then:
         result.is expected
@@ -57,8 +57,8 @@ class GraphEdgeSpec extends Specification {
         then:
         graph.edges.size() == 1
         graph.edges.first().is edge
-        edge.one == 'step1'
-        edge.two == 'step2'
+        edge.from == 'step1'
+        edge.to == 'step2'
     }
 
     def 'can get with second call to edge(String, String, Closure)'() {
@@ -79,8 +79,8 @@ class GraphEdgeSpec extends Specification {
         then:
         graph.edges.size() == 1
         graph.edges.first().is edge
-        edge.one == 'step1'
-        edge.two == 'step2'
+        edge.from == 'step1'
+        edge.to == 'step2'
     }
 
     def 'can get with second call to edge(String, String, Map)'() {
@@ -96,7 +96,7 @@ class GraphEdgeSpec extends Specification {
 
     def 'can add/get edge with edge(Map, Closure)'() {
         when:
-        Edge edge = graph.edge(one:'step1', two:'step2') {}
+        Edge edge = graph.edge(from:'step1', to:'step2') {}
 
         then:
         graph.edges.size() == 1
@@ -105,10 +105,10 @@ class GraphEdgeSpec extends Specification {
 
     def 'can get with second call to edge(Map, Closure)'() {
         setup:
-        Edge expected = graph.edge(one:'step1', two:'step2') {}
+        Edge expected = graph.edge(from:'step1', to:'step2') {}
 
         when:
-        Edge result = graph.edge(one:'step1', two:'step2') {}
+        Edge result = graph.edge(from:'step1', to:'step2') {}
 
         then:
         result.is expected
@@ -121,8 +121,8 @@ class GraphEdgeSpec extends Specification {
         then:
         graph.edges.size() == 1
         graph.edges.first().is edge
-        edge.one == 'step1'
-        edge.two == 'step2'
+        edge.from == 'step1'
+        edge.to == 'step2'
     }
 
     def 'can get with second call to edge(String, String, Map, Closure)'() {
@@ -156,7 +156,7 @@ class GraphEdgeSpec extends Specification {
 
         then:
         graph.edges.size() == 1
-        graph.edges.first().one == 'step1'
-        graph.edges.first().two == 'step2'
+        graph.edges.first().from == 'step1'
+        graph.edges.first().to == 'step2'
     }
 }

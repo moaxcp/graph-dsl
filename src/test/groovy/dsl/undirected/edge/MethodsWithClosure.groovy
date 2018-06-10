@@ -10,7 +10,7 @@ class MethodsWithClosure extends Specification {
     def 'can add edge with closure'() {
         given:
         Graph graph = graph {
-            edge([one:'A', two:'B']) {}
+            edge([from:'A', to:'B']) {}
         }
 
         expect:
@@ -18,14 +18,14 @@ class MethodsWithClosure extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
     }
 
-    def 'add edge with one and two params and one and two set in map with closure'() {
+    def 'add edge with from and to params and from and to set in map with closure'() {
         given:
         Graph graph = graph {
-            edge('A', 'B', [one:'A', two:'B']) {}
+            edge('A', 'B', [from:'A', to:'B']) {}
         }
 
         expect:
@@ -33,15 +33,15 @@ class MethodsWithClosure extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
     }
 
-    def 'changeOne in closure'() {
+    def 'changeFrom in closure'() {
         given:
         Graph graph = graph {
             edge('A', 'B') {
-                changeOne 'C'
+                changeFrom 'C'
             }
         }
 
@@ -51,15 +51,15 @@ class MethodsWithClosure extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.first().one == 'C'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'C'
+        graph.edges.first().to == 'B'
     }
 
-    def 'changeTwo in closure'() {
+    def 'changeTo in closure'() {
         given:
         Graph graph = graph {
             edge('A', 'B') {
-                changeTwo 'C'
+                changeTo 'C'
             }
         }
 
@@ -69,15 +69,15 @@ class MethodsWithClosure extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'C'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'C'
     }
 
-    def 'changeOne by assigning one'() {
+    def 'changeFrom by assigning from'() {
         given:
         Graph graph = graph {
             edge('A', 'B') {
-                one = 'C'
+                from = 'C'
             }
         }
 
@@ -87,15 +87,15 @@ class MethodsWithClosure extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.first().one == 'C'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'C'
+        graph.edges.first().to == 'B'
     }
 
-    def 'changeTwo by assigning two'() {
+    def 'changeTo by assigning to'() {
         given:
         Graph graph = graph {
             edge('A', 'B') {
-                two = 'C'
+                to = 'C'
             }
         }
 
@@ -105,8 +105,8 @@ class MethodsWithClosure extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'C'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'C'
     }
 
     def 'add property in closure'() {
@@ -122,8 +122,8 @@ class MethodsWithClosure extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
         graph.edges.first().prop == 'value'
     }
 
@@ -140,8 +140,8 @@ class MethodsWithClosure extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
         graph.edges.first().prop == 'value'
     }
 
@@ -161,7 +161,7 @@ class MethodsWithClosure extends Specification {
         given:
         Graph graph = graph {
             edge('A', 'B') {
-                prop = getOne()
+                prop = getFrom()
             }
         }
 
@@ -170,8 +170,8 @@ class MethodsWithClosure extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
         graph.edges.first().prop == 'A'
     }
 }

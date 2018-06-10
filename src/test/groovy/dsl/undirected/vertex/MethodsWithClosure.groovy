@@ -18,7 +18,7 @@ class MethodsWithClosure extends Specification {
         graph.vertices.size() == 2
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
     }
 
     def 'use connectsTo in closure with two vertices'() {
@@ -34,8 +34,8 @@ class MethodsWithClosure extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'A' && it.two == 'C' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
+        graph.edges.find { it.from == 'A' && it.to == 'C' }
     }
 
     def 'use nested connectsTo in closure'() {
@@ -53,8 +53,8 @@ class MethodsWithClosure extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'B' && it.two == 'C' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
+        graph.edges.find { it.from == 'B' && it.to == 'C' }
     }
 
     def 'nested connectsTo in closure with multiple letters'() {

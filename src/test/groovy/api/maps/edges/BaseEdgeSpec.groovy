@@ -11,10 +11,10 @@ abstract class BaseEdgeSpec extends BaseMapSpec {
     Edge switched
     @Shared List falseEdges
 
-    def 'constructor sets one and two entries'() {
+    def 'constructor sets from and to entries'() {
         expect:
-        map.one == 'step1'
-        map.two == 'step2'
+        map.from == 'step1'
+        map.to == 'step2'
     }
 
     def 'equals with first vertex different'() {
@@ -30,7 +30,7 @@ abstract class BaseEdgeSpec extends BaseMapSpec {
     }
 
     @Unroll
-    def 'edge with one="#e.one" and two="#e.two" is false'() {
+    def 'edge with from="#e.from" and to="#e.to" is false'() {
         expect:
         !e
 
@@ -40,33 +40,33 @@ abstract class BaseEdgeSpec extends BaseMapSpec {
 
     def 'getAt with one'() {
         when:
-        emptyMap.one = 'step1'
+        emptyMap.from = 'step1'
 
         then:
-        emptyMap['one'] == 'step1'
+        emptyMap['from'] == 'step1'
     }
 
-    def 'getAt with two'() {
+    def 'getAt with to'() {
         when:
-        emptyMap.two = 'step2'
+        emptyMap.to = 'step2'
 
         then:
-        emptyMap['two'] == 'step2'
+        emptyMap['to'] == 'step2'
     }
 
-    def 'test getOne'() {
+    def 'test from'() {
         when:
-        emptyMap.one = 'step1'
+        emptyMap.from = 'step1'
 
         then:
-        'step1' == emptyMap.getOne()
+        'step1' == emptyMap.getFrom()
     }
 
-    def 'test getTwo'() {
+    def 'test to'() {
         when:
-        emptyMap.two = 'step2'
+        emptyMap.to = 'step2'
 
         then:
-        'step2' == emptyMap.getTwo()
+        'step2' == emptyMap.getTo()
     }
 }

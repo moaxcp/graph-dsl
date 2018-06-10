@@ -35,19 +35,19 @@ class EdgeSpecCodeRunner {
     }
 
     /**
-     * Changes edge.one to changeOne. This allows edge.one to point to a different {@link graph.Vertex}
-     * @param changeOne the new id for edge.one
+     * Changes edge.from to changeFrom. This allows edge.from to point to a different {@link graph.Vertex}
+     * @param changeFrom the new id for edge.from
      */
-    void changeOne(Object changeOne) {
-        graph.newEdgeSpec([one:edge.one, two:edge.two, changeOne:changeOne]).apply()
+    void changeFrom(Object changeFrom) {
+        graph.newEdgeSpec([from:edge.from, to:edge.to, changeFrom:changeFrom]).apply()
     }
 
     /**
-     * Changes edge.two to changeTwo. This allows edge.two to point to a different {@link graph.Vertex}.
-     * @param changeTwo  the new id for edge.two
+     * Changes edge.to to changeTo. This allows edge.two to point to a different {@link graph.Vertex}.
+     * @param changeTo  the new id for edge.to
      */
-    void changeTwo(Object changeTwo) {
-        graph.newEdgeSpec([one:edge.one, two:edge.two, changeTwo:changeTwo]).apply()
+    void changeTo(Object changeTo) {
+        graph.newEdgeSpec([from:edge.from, to:edge.to, changeTo:changeTo]).apply()
     }
 
     /**
@@ -84,11 +84,11 @@ class EdgeSpecCodeRunner {
      */
     @SuppressWarnings('NoDef')
     def propertyMissing(String name, value) {
-        if (name == 'one') {
-            changeOne(value)
+        if (name == 'from') {
+            changeFrom(value)
         }
-        if (name == 'two') {
-            changeTwo(value)
+        if (name == 'to') {
+            changeTo(value)
         }
         edge[name] = value
     }

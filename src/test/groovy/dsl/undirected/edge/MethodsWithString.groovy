@@ -16,8 +16,8 @@ class MethodsWithString extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
     }
 
     def 'can add edge with map'() {
@@ -31,8 +31,8 @@ class MethodsWithString extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
     }
 
     def 'can add edge with closure'() {
@@ -46,8 +46,8 @@ class MethodsWithString extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
     }
 
     def 'can add edge with map and closure'() {
@@ -61,8 +61,8 @@ class MethodsWithString extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
     }
 
     def 'cannot add edge when one is null'() {

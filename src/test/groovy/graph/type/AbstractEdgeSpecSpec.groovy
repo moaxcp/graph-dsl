@@ -22,7 +22,7 @@ class AbstractEdgeSpecSpec extends Specification {
     def 'init throws IllegalStateException if edge is set'() {
         given: 'an AbstractEdgeSpec with edge set'
         AbstractEdgeSpec spec = new TestEdgeSpec(graph, [:])
-        spec.edge = new Edge(one:'one', two:'two')
+        spec.edge = new Edge(from:'one', to:'two')
 
         when: 'init is called'
         spec.init()
@@ -35,8 +35,8 @@ class AbstractEdgeSpecSpec extends Specification {
     def 'checkCondition throws IllegalStateException when edge is null'() {
         given: 'an AbstractEdgeSpec without edge set'
         AbstractEdgeSpec spec = new TestEdgeSpec(graph, [:])
-        spec.one = 'one'
-        spec.two = 'two'
+        spec.from = 'one'
+        spec.to = 'two'
 
         when: 'checkCondition is called'
         spec.checkConditions()
@@ -49,8 +49,8 @@ class AbstractEdgeSpecSpec extends Specification {
     def 'checkCondition throws IllegalStateException when graph is null'() {
         given: 'an AbstractEdgeSpec without graph set'
         AbstractEdgeSpec spec = new TestEdgeSpec(graph, [:])
-        spec.one = 'one'
-        spec.two = 'two'
+        spec.from = 'one'
+        spec.to = 'two'
         spec.graph = null
 
         when: 'checkCondition is called'
@@ -62,9 +62,9 @@ class AbstractEdgeSpecSpec extends Specification {
     }
 
 
-    def 'cannot apply without one'() {
+    def 'cannot apply without from'() {
         when:
-        new TestEdgeSpec(graph, [one:null]).apply()
+        new TestEdgeSpec(graph, [from:null]).apply()
 
         then:
         thrown IllegalStateException
@@ -72,7 +72,7 @@ class AbstractEdgeSpecSpec extends Specification {
 
     def 'cannot apply without two'() {
         when:
-        new TestEdgeSpec(graph, [one:'A', two:null]).apply()
+        new TestEdgeSpec(graph, [from:'A', to:null]).apply()
 
         then:
         thrown IllegalStateException
@@ -84,54 +84,54 @@ class AbstractEdgeSpecSpec extends Specification {
         graph.vertex('step2')
 
         when:
-        new TestEdgeSpec(graph, [one:'step1', two:'step2']).apply()
+        new TestEdgeSpec(graph, [from:'step1', to:'step2']).apply()
 
         then:
         graph.edges.size() == 1
         Edge edge = graph.edges.first()
-        edge.one == 'step1'
-        edge.two == 'step2'
+        edge.from == 'step1'
+        edge.to == 'step2'
     }
 
     def 'can add vertices and edge'() {
         when:
-        new TestEdgeSpec(graph, [one:'step1', two:'step2']).apply()
+        new TestEdgeSpec(graph, [from:'step1', to:'step2']).apply()
 
         then:
         graph.vertices.size() == 2
         graph.edges.size() == 1
         Edge edge = graph.edges.first()
-        edge.one == 'step1'
-        edge.two == 'step2'
+        edge.from == 'step1'
+        edge.to == 'step2'
     }
 
-    def 'can changeOne'() {
+    def 'can changeFrom'() {
         setup:
         graph.edge('step1', 'step2')
 
         when:
-        new TestEdgeSpec(graph, [one:'step1', two:'step2', changeOne:'step4']).apply()
+        new TestEdgeSpec(graph, [from:'step1', to:'step2', changeFrom:'step4']).apply()
 
         then:
         graph.vertices.size() == 3
         graph.vertices.step4.id == 'step4'
         graph.edges.size() == 1
-        graph.edges.first().one == 'step4'
-        graph.edges.first().two == 'step2'
+        graph.edges.first().from == 'step4'
+        graph.edges.first().to == 'step2'
     }
 
-    def 'can changeTwo'() {
+    def 'can changeTo'() {
         setup:
         graph.edge('step1', 'step2')
 
         when:
-        new TestEdgeSpec(graph, [one:'step1', two:'step2', changeTwo:'step4']).apply()
+        new TestEdgeSpec(graph, [from:'step1', to:'step2', changeTo:'step4']).apply()
 
         then:
         graph.vertices.size() == 3
         graph.vertices.step4.id == 'step4'
         graph.edges.size() == 1
-        graph.edges.first().one == 'step1'
-        graph.edges.first().two == 'step4'
+        graph.edges.first().from == 'step1'
+        graph.edges.first().to == 'step4'
     }
 }

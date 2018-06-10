@@ -59,7 +59,7 @@ class TraversalAlgorithms {
         Set<Edge> edges = graph.traverseEdges(root)
         for(int index = 0; index < edges.size(); index++) {
             Edge edge = edges[index]
-            Object connectedKey = root == edge.one ? edge.two : edge.one
+            Object connectedKey = root == edge.from ? edge.to : edge.from
             if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
                 colors[connectedKey] = WHITE
                 spec.root = connectedKey
@@ -81,7 +81,7 @@ class TraversalAlgorithms {
         Set<Edge> adjacentEdges = graph.traverseEdges(root)
         for(int index = 0; index < adjacentEdges.size(); index++) {
             Edge edge = adjacentEdges[index]
-            Object connectedKey = root == edge.one ? edge.two : edge.one
+            Object connectedKey = root == edge.from ? edge.to : edge.from
             if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
                 colors[connectedKey] = WHITE
                 spec.root = connectedKey
@@ -114,7 +114,7 @@ class TraversalAlgorithms {
         Set<Edge> adjacentEdges = graph.traverseEdges(root)
         for(int index = 0; index < adjacentEdges.size(); index++) {
             Edge edge = adjacentEdges[index]
-            Object connectedId = root == edge.one ? edge.two : edge.one
+            Object connectedId = root == edge.from ? edge.to : edge.from
             TraversalColor toColor = colors[connectedId] ?: WHITE
             TraversalState state = action(root, connectedId, toColor)
             if(!state) {
@@ -204,7 +204,7 @@ class TraversalAlgorithms {
             Set<Edge> adjacentEdges = graph.traverseEdges(current)
             for (int i = 0; i < adjacentEdges.size(); i++) {
                 Edge edge = adjacentEdges[i]
-                Object connected = current == edge.one ? edge.two : edge.one
+                Object connected = current == edge.from ? edge.to : edge.from
                 if(!colors[connected] || colors[connected] == WHITE) {
                     TraversalState traversal = action(graph.getVertex(connected))
                     if(!traversal) {
@@ -244,7 +244,7 @@ class TraversalAlgorithms {
         Set<Edge> edges = graph.adjacentEdges(root)
         for(int index = 0; index < edges.size(); index++) {
             Edge edge = edges[index]
-            Object connectedKey = root == edge.one ? edge.two : edge.one
+            Object connectedKey = root == edge.from ? edge.to : edge.from
             if(!colors[connectedKey] || colors[connectedKey] == WHITE) {
                 colors[connectedKey] = WHITE
                 spec.root = connectedKey

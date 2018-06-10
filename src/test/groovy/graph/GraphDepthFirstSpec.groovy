@@ -2,7 +2,6 @@ package graph
 
 import spock.lang.Specification
 import static TraversalColor.*
-import static TraversalState.*
 
 class GraphDepthFirstSpec extends Specification {
 
@@ -23,8 +22,8 @@ class GraphDepthFirstSpec extends Specification {
 
         then:
         edges.size() == 2
-        edges.contains(new Edge(one: 'step1', two: 'step2'))
-        edges.contains(new Edge(one: 'step1', two: 'step3'))
+        edges.contains(new Edge(from: 'step1', to: 'step2'))
+        edges.contains(new Edge(from: 'step1', to: 'step3'))
     }
 
     def 'can make color map'() {

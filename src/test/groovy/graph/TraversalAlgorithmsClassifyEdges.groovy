@@ -111,7 +111,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
 
         and: 'forrest in returned map is correct'
         forrest.edges.size() == 1
-        forrest.edges.first() == new Edge(one:'A', two:'B')
+        forrest.edges.first() == new Edge(from:'A', to:'B')
         forrest.vertices.A.id == 'A'
         forrest.vertices.B.id == 'B'
         forrest.vertices.size() == 2
@@ -159,7 +159,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
 
         and: 'forrest in returned map is correct'
         forrest.edges.size() == 1
-        forrest.edges.first() == new Edge(one:'A', two:'B')
+        forrest.edges.first() == new Edge(from:'A', to:'B')
         forrest.vertices.A.id == 'A'
         forrest.vertices.B.id == 'B'
         forrest.vertices.size() == 2
@@ -200,7 +200,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
 
         and: 'forrest in returned map is correct'
         forrest.edges.size() == 1
-        forrest.edges.first() == new Edge(one:'A', two:'B')
+        forrest.edges.first() == new Edge(from:'A', to:'B')
         forrest.vertices.A.id == 'A'
         forrest.vertices.B.id == 'B'
         forrest.vertices.size() == 2
@@ -285,7 +285,7 @@ class TraversalAlgorithmsClassifyEdges extends Specification {
 
         and: 'forrest in results are correct'
         forrest.edges.size() == 5
-        forrest.edges.first() == new Edge(one:'A', two:'B')
+        forrest.edges.first() == new Edge(from:'A', to:'B')
         forrest.vertices.keySet() == ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as Set
         forrest.vertices.size() == 7
     }

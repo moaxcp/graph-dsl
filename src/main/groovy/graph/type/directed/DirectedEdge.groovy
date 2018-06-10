@@ -1,7 +1,6 @@
 package graph.type.directed
 
 import graph.Edge
-import groovy.transform.ToString
 
 /**
  * Represents a directed edge in a graph. Since these should be sorted in a
@@ -12,7 +11,7 @@ import groovy.transform.ToString
 class DirectedEdge extends Edge {
 
     boolean equals(DirectedEdge edge) {
-        one == edge.one && two == edge.two
+        from == edge.from && to == edge.to
     }
 
     /**

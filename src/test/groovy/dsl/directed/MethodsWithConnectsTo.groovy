@@ -18,7 +18,7 @@ class MethodsWithConnectsTo extends Specification {
         graph.vertices.size() == 2
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
     }
 
     def 'create two edges using connectsTo in map'() {
@@ -33,8 +33,8 @@ class MethodsWithConnectsTo extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'A' && it.two == 'C' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
+        graph.edges.find { it.from == 'A' && it.to == 'C' }
     }
 
     def 'use connectsTo in closure'() {
@@ -50,7 +50,7 @@ class MethodsWithConnectsTo extends Specification {
         graph.vertices.size() == 2
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
     }
 
     def 'use connectsTo in closure with two vertices'() {
@@ -67,8 +67,8 @@ class MethodsWithConnectsTo extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'A' && it.two == 'C' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
+        graph.edges.find { it.from == 'A' && it.to == 'C' }
     }
 
     def 'use nested connectsTo in closure'() {
@@ -87,7 +87,7 @@ class MethodsWithConnectsTo extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.find { it.one == 'A' && it.two == 'B' }
-        graph.edges.find { it.one == 'B' && it.two == 'C' }
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
+        graph.edges.find { it.from == 'B' && it.to == 'C' }
     }
 }

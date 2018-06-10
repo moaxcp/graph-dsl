@@ -14,23 +14,23 @@ class GraphEdgeSpecCodeRunnerSpec extends Specification {
         runner = new EdgeSpecCodeRunner(graph, edge)
     }
 
-    def 'can renameOne'() {
+    def 'can changeFrom'() {
         when:
         runner.runCode {
-            changeOne 'step3'
+            changeFrom 'step3'
         }
 
         then:
-        edge.one == 'step3'
+        edge.from == 'step3'
     }
 
-    def 'can renameTwo'() {
+    def 'can changeTo'() {
         when:
         runner.runCode {
-            changeTwo 'step3'
+            changeTo 'step3'
         }
 
         then:
-        edge.two == 'step3'
+        edge.to == 'step3'
     }
 }

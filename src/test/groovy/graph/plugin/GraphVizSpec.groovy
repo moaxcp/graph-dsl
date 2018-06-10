@@ -5,10 +5,9 @@ import graph.Graph
 import graph.Vertex
 import spock.lang.Specification
 import spock.lang.Unroll
-import static graph.Graph.graph
 
 class GraphVizSpec extends Specification {
-    Graph graph = graph {}
+    Graph graph = new Graph()
     GraphViz graphviz = new GraphViz()
 
     def setup() {
@@ -60,7 +59,7 @@ class GraphVizSpec extends Specification {
 
     def 'dot for edge with no attributes for undirected graph'() {
         given: 'an edge with no attributes'
-        Edge edge = new Edge(one:'A', two:'B')
+        Edge edge = new Edge(from:'A', to:'B')
 
         expect: 'expected format is returned'
         'A -- B' == graphviz.getEdgeDot(edge)
@@ -71,7 +70,7 @@ class GraphVizSpec extends Specification {
         graph.type 'directed-graph'
 
         and: 'an edge with no attributes'
-        Edge edge = new Edge(one:'A', two:'B')
+        Edge edge = new Edge(from:'A', to:'B')
 
         expect: 'expected format is returned'
         'A -> B' == graphviz.getEdgeDot(edge)
@@ -79,7 +78,7 @@ class GraphVizSpec extends Specification {
 
     def 'dot for edge with attributes for undirected graph'() {
         given: 'an edge with attributes'
-        Edge edge = new Edge(one:'A', two:'B', weight:10, label:'connects to')
+        Edge edge = new Edge(from:'A', to:'B', weight:10, label:'connects to')
 
         expect: 'expected format is returned'
         'A -- B [weight="10" label="connects to"]' == graphviz.getEdgeDot(edge)

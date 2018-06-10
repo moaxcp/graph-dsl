@@ -82,10 +82,10 @@ class GraphType implements Type {
 
     /**
      * Returns edges from vertex that should be traversed.
-     * @param key
+     * @param id
      * @return
      */
-    Set<? extends Edge> traverseEdges(Object key) {
-        graph.adjacentEdges(key)
+    Set<? extends Edge> traverseEdges(Object id) {
+        graph.adjacentEdges(id)
     }
 }

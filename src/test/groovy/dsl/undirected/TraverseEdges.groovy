@@ -15,7 +15,7 @@ class TraverseEdges extends Specification {
         }
 
         expect:
-        edges.find { it.one == 'A' && it.two == 'B' }
-        edges.find { it.one == 'C' && it.two == 'A' }
+        edges.find { it.from == 'A' && it.to == 'B' }
+        edges.find { it.from == 'C' && it.to == 'A' }
     }
 }

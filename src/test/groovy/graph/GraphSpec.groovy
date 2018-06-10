@@ -81,7 +81,7 @@ class GraphSpec extends Specification {
         graph.edge 'step2', 'step4'
 
         when:
-        graph.replaceEdgesSet(new TreeSet<>(new OrderBy([{ it.one }, { it.two }])))
+        graph.replaceEdgesSet(new TreeSet<>(new OrderBy([{ it.from }, { it.to }])))
 
         then:
         graph.edges.size() == 4
@@ -96,8 +96,8 @@ class GraphSpec extends Specification {
         graph.edge 'step2', 'step4'
 
         when:
-        def set = new TreeSet<>(new OrderBy([{ it.one }, { it.two }]))
-        set.add(new Edge(one:'step5', two:'step6'))
+        def set = new TreeSet<>(new OrderBy([{ it.from }, { it.to }]))
+        set.add(new Edge(from:'step5', to:'step6'))
         graph.replaceEdgesSet(set)
 
         then:
@@ -109,7 +109,7 @@ class GraphSpec extends Specification {
         Graph graph = new Graph()
 
         when:
-        graph.replaceVerticesMap([step1:new Vertex(setId:'step1')])
+        graph.replaceVerticesMap([step1:new Vertex(id:'step1')])
 
         then:
         thrown IllegalArgumentException

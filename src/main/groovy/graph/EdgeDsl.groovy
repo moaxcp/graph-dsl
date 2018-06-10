@@ -5,19 +5,19 @@ trait EdgeDsl {
     abstract Edge edge(ConfigSpec spec)
 
     /**
-     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The
-     * {@link Vertex} objects are identified by the params one and two. If the {@link Vertex} objects do not exist they
+     * Creates or finds an {@link Edge} between to {@link Vertex} objects returning the {@link Edge}. The
+     * {@link Vertex} objects are identified by the params from and to. If the {@link Vertex} objects do not exist they
      * will be created.
-     * @param one  the id of the first {@link Vertex}.
-     * @param two  the id of the second {@link Vertex}.
+     * @param from  the id of the first {@link Vertex}.
+     * @param to  the id of the second {@link Vertex}.
      * @return the resulting {@link Edge}.
-     * @throws IllegalArgumentException when one or two are invalid
+     * @throws IllegalArgumentException when from or to are invalid
      */
-    Edge edge(Object one, Object two) {
-        if(!one || !two) {
-            throw new IllegalArgumentException("Invalid one and two.")
+    Edge edge(Object from, Object to) {
+        if(!from || !to) {
+            throw new IllegalArgumentException("Invalid from and to.")
         }
-        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two])
+        ConfigSpec spec = new ConfigSpec(map:[from:from, to:to])
         edge(spec)
     }
 
@@ -25,16 +25,16 @@ trait EdgeDsl {
      * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}.The map may
      * contain configuration for the edge. Default configuration options are:
      * <dl>
-     *     <dt>one</dt>
+     *     <dt>from</dt>
      *     <dd>id of the first {@link Vertex}</dd>
-     *     <dt>two</dt>
+     *     <dt>to</dt>
      *     <dd>id of the second {@link Vertex}</dd>
-     *     <dt>changeOne</dt>
-     *     <dd>If the edge already exists edge.one will become changeOne. Otherwise edge.one is set to changeOne
-     *     instead of one when it is created.</dd>
-     *     <dt>changeTwo</dt>
-     *     <dd>If the edge already exists edge.two will become changeTwo. Otherwise edge.two is set to changeTwo
-     *     instead of two when it is created.</dd>
+     *     <dt>changeFrom</dt>
+     *     <dd>If the edge already exists edge.from will become changeFrom. Otherwise edge.from is set to changeFrom
+     *     instead of 'from' when it is created.</dd>
+     *     <dt>changeTo</dt>
+     *     <dd>If the edge already exists edge.to will become changeTo. Otherwise edge.to is set to changeTo
+     *     instead of 'to' when it is created.</dd>
      * </dl>
      * Additional entries may be added by the type of the graph.
      * @param map  used to create an {@link Edge}.
@@ -43,35 +43,35 @@ trait EdgeDsl {
      * @throws IllegalArgumentException when one or two are invalid
      */
     Edge edge(Map<String, ?> map) {
-        if(!map.one || !map.two) {
-            throw new IllegalArgumentException("Invalid one and two.")
+        if(!map.from || !map.to) {
+            throw new IllegalArgumentException("Invalid from and to.")
         }
         ConfigSpec spec = new ConfigSpec(map:map)
         edge(spec)
     }
 
     /**
-     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map contains
-     * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
+     * Creates or finds an {@link Edge} between to {@link Vertex} objects returning the {@link Edge}. The map contains
+     * configuration described in {@link #edge(Map)}. If 'from' or 'to' are entries in map those values will be used
      * instead of the parameters.
-     * @param one  the id of the first {@link Vertex}.
-     * @param two  the id of the second {@link Vertex}.
+     * @param from  the id of the first {@link Vertex}.
+     * @param to  the id of the second {@link Vertex}.
      * @param map  used to create an {@link Edge}.
      * @return the resulting {@link Edge}.
-     * @throws IllegalArgumentException when one or two are invalid
+     * @throws IllegalArgumentException when from or to are invalid
      */
-    Edge edge(Object one, Object two, Map<String, ?> map) {
-        if(!one || !two) {
-            throw new IllegalArgumentException("Invalid one and two.")
+    Edge edge(Object from, Object to, Map<String, ?> map) {
+        if(!from || !to) {
+            throw new IllegalArgumentException("Invalid from and to.")
         }
-        map.one = map.one ?: one
-        map.two = map.two ?: two
+        map.from = map.from ?: from
+        map.to = map.to ?: to
         ConfigSpec spec = new ConfigSpec(map:map)
         edge(spec)
     }
 
     /**
-     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. {@code Closure}
+     * Creates or finds an {@link Edge} between to {@link Vertex} objects returning the {@link Edge}. {@code Closure}
      * is used to further customize the edge and graph. In the closure getting and setting properties delegates to the
      * edge. Methods also delegate to the edge.
      * <p>
@@ -82,34 +82,30 @@ trait EdgeDsl {
      *     <dt>{@code edge}</dt>
      *     <dd>{@link Edge} added to graph</dd>
      * </dl>
-     * Attempting to set one or two will throw an exception. Use the {@code changeOne} and {@code changeTwo} methods.
+     * Attempting to set 'from' or 'to' will throw an exception. Use the {@code changeFrom} and {@code changeTo} methods.
      * <p>
      * By default there are several methods available in the closure.
      * <p>
      * <dl>
-     *     <dt>{@code void changeOne(String changeOne)}</dt>
-     *     <dd>Changes edge.one</dd>
-     *     <dt>{@code void changeOne(NameSpec changeOne)}</dt>
-     *     <dd>Changes edge.one</dd>
-     *     <dt>{@code void changeTwo(String changeTwo)}</dt>
-     *     <dd>Changes edge.two</dd>
-     *     <dt>{@code void changeTwo(NameSpec changeTwo)}</dt>
-     *     <dd>Changes edge.two</dd>
+     *     <dt>{@code void changeFrom(String changeFrom)}</dt>
+     *     <dd>Changes edge.from</dd>
+     *     <dt>{@code void changeTo(String changeTo)}</dt>
+     *     <dd>Changes edge.to</dd>
      *     <dt>{@code void traits(Class... traits)}</dt>
      *     <dd>Applies a trait the edge's delegate</dd>
      * </dl>
      * Plugins may add variables and methods to the passed in closure.
-     * @param one  the id of the first {@link Vertex}.
-     * @param two  the id of the second {@link Vertex}.
+     * @param from  the id of the first {@link Vertex}.
+     * @param to  the id of the second {@link Vertex}.
      * @param closure  to run.
      * @return the resulting {@link Edge}.
-     * @throws IllegalArgumentException when one or two are invalid
+     * @throws IllegalArgumentException when from or to are invalid
      */
-    Edge edge(Object one, Object two, Closure closure) {
-        if(!one || !two) {
-            throw new IllegalArgumentException("Invalid one and two.")
+    Edge edge(Object from, Object to, Closure closure) {
+        if(!from || !to) {
+            throw new IllegalArgumentException("Invalid from and to.")
         }
-        ConfigSpec spec = new ConfigSpec(map:[one:one, two:two], closure:closure)
+        ConfigSpec spec = new ConfigSpec(map:[from:from, to:to], closure:closure)
         edge(spec)
     }
 
@@ -121,34 +117,34 @@ trait EdgeDsl {
      * @param map  used to create an {@link Edge}.
      * @param closure  to run.
      * @return the resulting {@link Edge}.
-     * @throws IllegalArgumentException when map.one or map.two are invalid
+     * @throws IllegalArgumentException when map.from or map.to are invalid
      */
     Edge edge(Map<String, ?> map, Closure closure) {
-        if(!map.one || !map.two) {
-            throw new IllegalArgumentException("Invalid one and two.")
+        if(!map.from || !map.to) {
+            throw new IllegalArgumentException("Invalid from and to.")
         }
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
         edge(spec)
     }
 
     /**
-     * Creates or finds an {@link Edge} between two {@link Vertex} objects returning the {@link Edge}. The map contains
-     * configuration described in {@link #edge(Map)}. If one or two are entries in map those values will be used
+     * Creates or finds an {@link Edge} between to {@link Vertex} objects returning the {@link Edge}. The map contains
+     * configuration described in {@link #edge(Map)}. If from or to are entries in map those values will be used
      * instead of the parameters. The configuration given by the closure is described in
      * {@link #edge(String, String, Closure)}.
-     * @param one  the id of the first {@link Vertex}.
-     * @param two  the id of the second {@link Vertex}.
+     * @param from  the id of the first {@link Vertex}.
+     * @param to  the id of the second {@link Vertex}.
      * @param map  used to create an {@link Edge}.
      * @param closure  to run.
      * @return the resulting {@link Edge}.
-     * @throws IllegalArgumentException when one or two are invalid
+     * @throws IllegalArgumentException when from or to are invalid
      */
-    Edge edge(Object one, Object two, Map<String, ?> map, Closure closure) {
-        if(!one || !two) {
-            throw new IllegalArgumentException("Invalid one and two.")
+    Edge edge(Object from, Object to, Map<String, ?> map, Closure closure) {
+        if(!from || !to) {
+            throw new IllegalArgumentException("Invalid from and to.")
         }
-        map.one = map.one ?: one
-        map.two = map.two ?: two
+        map.from = map.from ?: from
+        map.to = map.to ?: to
         ConfigSpec spec = new ConfigSpec(map:map, closure:closure)
         edge(spec)
     }

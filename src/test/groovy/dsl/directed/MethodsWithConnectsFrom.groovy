@@ -18,7 +18,7 @@ class MethodsWithConnectsFrom extends Specification {
         graph.vertices.size() == 2
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
+        graph.edges.find { it.from == 'B' && it.to == 'A' }
     }
 
     def 'create two edges using connectsFrom in map'() {
@@ -33,8 +33,8 @@ class MethodsWithConnectsFrom extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
-        graph.edges.find { it.one == 'C' && it.two == 'A' }
+        graph.edges.find { it.from == 'B' && it.to == 'A' }
+        graph.edges.find { it.from == 'C' && it.to == 'A' }
     }
 
     def 'use connectsFrom'() {
@@ -50,7 +50,7 @@ class MethodsWithConnectsFrom extends Specification {
         graph.vertices.size() == 2
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
+        graph.edges.find { it.from == 'B' && it.to == 'A' }
     }
 
     def 'use connectsFrom with two vertices'() {
@@ -67,8 +67,8 @@ class MethodsWithConnectsFrom extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
-        graph.edges.find { it.one == 'C' && it.two == 'A' }
+        graph.edges.find { it.from == 'B' && it.to == 'A' }
+        graph.edges.find { it.from == 'C' && it.to == 'A' }
     }
 
     def 'use nested connectsFrom'() {
@@ -87,8 +87,8 @@ class MethodsWithConnectsFrom extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.find { it.one == 'B' && it.two == 'A' }
-        graph.edges.find { it.one == 'C' && it.two == 'B' }
+        graph.edges.find { it.from == 'B' && it.to == 'A' }
+        graph.edges.find { it.from == 'C' && it.to == 'B' }
     }
 
 }

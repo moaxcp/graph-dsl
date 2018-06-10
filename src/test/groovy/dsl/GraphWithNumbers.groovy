@@ -24,6 +24,6 @@ class GraphWithNumbers extends Specification {
         expect:
         graph.vertices[1].id == 1
         graph.vertices[2].id == 2
-        graph.edges.first() == new Edge(one:1, two:2)
+        graph.edges.first() == new Edge(from:1, to:2)
     }
 }

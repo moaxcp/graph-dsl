@@ -54,7 +54,7 @@ class DirectedGraphEdgeSpec extends Specification {
 
         then:
         graph.edges.any {
-            it.one == 'step2' && it.two == 'step3'
+            it.from == 'step2' && it.to == 'step3'
         }
     }
 }

@@ -9,7 +9,7 @@ class MethodsWithMap extends Specification {
     def 'can add edge'() {
         given:
         Graph graph = graph {
-            edge([one:'A', two:'B'])
+            edge([from:'A', to:'B'])
         }
 
         expect:
@@ -17,14 +17,14 @@ class MethodsWithMap extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
     }
 
-    def 'add edge with one and two params and one and two set in map'() {
+    def 'add edge with from and to params and from and to set in map'() {
         given:
         Graph graph = graph {
-            edge('A', 'B', [one:'A', two:'B'])
+            edge('A', 'B', [from:'A', to:'B'])
         }
 
         expect:
@@ -32,13 +32,13 @@ class MethodsWithMap extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
     }
-    def 'changeOne in map'() {
+    def 'changeFrom in map'() {
         given:
         Graph graph = graph {
-            edge('A', 'B', [changeOne:'C'])
+            edge('A', 'B', [changeFrom:'C'])
         }
 
         expect:
@@ -46,15 +46,15 @@ class MethodsWithMap extends Specification {
         graph.edges.size() == 1
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.first().one == 'C'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'C'
+        graph.edges.first().to == 'B'
     }
 
-    def 'created edge then changeOne in map'() {
+    def 'created edge then changeFrom in map'() {
         given:
         Graph graph = graph {
             edge('A', 'B')
-            edge('A', 'B', [changeOne:'C'])
+            edge('A', 'B', [changeFrom:'C'])
         }
 
         expect:
@@ -63,14 +63,14 @@ class MethodsWithMap extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.first().one == 'C'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'C'
+        graph.edges.first().to == 'B'
     }
 
-    def 'can changeTwo in map'() {
+    def 'can changeTo in map'() {
         given:
         Graph graph = graph {
-            edge('A', 'B', [changeTwo:'C'])
+            edge('A', 'B', [changeTo:'C'])
         }
 
         expect:
@@ -78,15 +78,15 @@ class MethodsWithMap extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.C.id == 'C'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'C'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'C'
     }
 
-    def 'created edge then changeTwo in map'() {
+    def 'created edge then changeTo in map'() {
         given:
         Graph graph = graph {
             edge('A', 'B')
-            edge('A', 'B', [changeTwo:'C'])
+            edge('A', 'B', [changeTo:'C'])
         }
 
         expect:
@@ -95,15 +95,15 @@ class MethodsWithMap extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.vertices.C.id == 'C'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'C'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'C'
     }
 
     def 'create edge and change new edge to overlap'() {
         when:
         Graph graph = graph {
             edge('A', 'B')
-            edge('A', 'C', [changeTwo:'B'])
+            edge('A', 'C', [changeTo:'B'])
         }
 
         then:
@@ -111,8 +111,8 @@ class MethodsWithMap extends Specification {
         graph.edges.size() == 1
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
-        graph.edges.first().one == 'A'
-        graph.edges.first().two == 'B'
+        graph.edges.first().from == 'A'
+        graph.edges.first().to == 'B'
     }
 
     def 'create edge and change existing edge to overlap'() {
@@ -120,7 +120,7 @@ class MethodsWithMap extends Specification {
         Graph graph = graph {
             edge('A', 'B')
             edge('A', 'C')
-            edge('A', 'C', [changeTwo:'B'])
+            edge('A', 'C', [changeTo:'B'])
         }
 
         then:

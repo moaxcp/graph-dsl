@@ -67,10 +67,10 @@ class GraphVertexSpec extends Specification {
         when:
         graph.vertex id:'step1', connectsTo:['step2', 'step3']
         def edgeOne = graph.edges.find {
-            it.one == 'step1' && it.two == 'step2'
+            it.from == 'step1' && it.to == 'step2'
         }
         def edgeTwo = graph.edges.find {
-            it.one == 'step1' && it.two == 'step3'
+            it.from == 'step1' && it.to == 'step3'
         }
 
         then:

@@ -32,7 +32,7 @@ class VertexSpecRunnerSpec extends Specification {
         then:
         graph.edges.size() == 2
         edges.size() == 2
-        edges[0].one == 'step1'
-        edges[1].one == 'step1'
+        edges[0].from == 'step1'
+        edges[1].from == 'step1'
     }
 }

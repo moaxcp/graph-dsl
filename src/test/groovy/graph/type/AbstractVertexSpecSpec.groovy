@@ -73,7 +73,7 @@ class AbstractVertexSpecSpec extends Specification {
 
     def 'apply cannot be run twice'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [key:'step1'])
+        VertexSpec spec = new UndirectedVertexSpec(graph, [id:'step1'])
 
         when:
         Vertex vertex = spec.apply()
@@ -106,7 +106,7 @@ class AbstractVertexSpecSpec extends Specification {
 
         then:
         graph.vertices.size() == 3
-        graph.edges.find { new Edge(one:'step1', two:'step2') }
-        graph.edges.find { new Edge(one:'step1', two:'step3') }
+        graph.edges.find { new Edge(from:'step1', to:'step2') }
+        graph.edges.find { new Edge(from:'step1', to:'step3') }
     }
 }

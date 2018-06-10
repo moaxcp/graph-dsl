@@ -135,13 +135,13 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
     /**
      * Removes an {@link Edge} from edges If a type changes the definition of an edge, for example to
      * {@link graph.type.directed.DirectedEdge}, this method will still work as expected. It will remove the edge where
-     * edge.one == one and edge.two == two. Keep in mind, in the case of the base {@link Edge} object edge.one can also
-     * equal two and edge.two can also equal one.
-     * @param one id of first vertex
-     * @param two id of second vertex
+     * edge.from == from and edge.to == to. Keep in mind, in the case of the base {@link Edge} object edge.from can also
+     * equal to and edge.to can also equal from.
+     * @param from id of first vertex
+     * @param to id of second vertex
      */
-    void deleteEdge(Object one, Object two) {
-        edges.remove(type.newEdge(one: one, two: two))
+    void deleteEdge(Object from, Object to) {
+        edges.remove(type.newEdge(from: from, to: to))
     }
 
     /**
@@ -225,11 +225,11 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
         vertex.id = newId
         vertices[(Object) vertex.id] = vertex
         adjacentEdges(id).each {
-            if (it.one == id) {
-                it.one = newId
+            if (it.from == id) {
+                it.from = newId
             }
-            if (it.two == id) {
-                it.two = newId
+            if (it.to == id) {
+                it.to = newId
             }
         }
     }
@@ -274,9 +274,9 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
      */
     Object getUnvisitedChildId(Object id, Map<Object, TraversalColor> colors) {
         Edge edge = traverseEdges(id).findAll {
-            it.one != it.two
+            it.from != it.to
         }.find {
-            Object childKey = id == it.one ? it.two : it.one
+            Object childKey = id == it.from ? it.to : it.from
             TraversalColor color = colors[childKey]
             color != GREY && color != BLACK
         }
@@ -284,7 +284,7 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
         if (!edge) {
             return null
         }
-        id == edge.one ? edge.two : edge.one
+        id == edge.from ? edge.to : edge.from
     }
 
     /**
@@ -294,7 +294,7 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
      */
     Set<? extends Edge> adjacentEdges(Object id) {
         edges.findAll { Edge edge ->
-            id == edge.one || id == edge.two
+            id == edge.from || id == edge.to
         }
     }
 
