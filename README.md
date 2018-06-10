@@ -32,7 +32,7 @@ plugin 'graphviz'
 edge 'A', 'B'
 assert graph.vertices.keySet() == ['A', 'B'] as Set
 assert graph.edges.size() == 1
-assert graph.edges.first() == new Edge(one:'A', two:'B')
+assert graph.edges.first() == new Edge(from:'A', to:'B')
 image 'images/base-script-method.png'
 ```
 
@@ -61,7 +61,7 @@ def graph = graph {
 
 assert graph.vertices.keySet() == ['A', 'B'] as Set
 assert graph.edges.size() == 1
-assert graph.edges.first() == new Edge(one:'A', two:'B')
+assert graph.edges.first() == new Edge(from:'A', to:'B')
 graph.plugin 'graphviz'
 graph.image 'images/graph-method.png'
 ```
@@ -542,6 +542,8 @@ If there are any issues contact me moaxcp@gmail.com.
 ## 0.25.0
 
 * vertex.key has been renamed to vertex.id
+* edge.one has been renamed to edge.from
+* edge.two has been renamed to edge.to
 
 ## 0.24.0
 

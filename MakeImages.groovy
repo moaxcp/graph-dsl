@@ -27,7 +27,7 @@ def usageBaseScriptMethod() {
             edge 'A', 'B'
             assert graph.vertices.keySet() == ['A', 'B'] as Set
             assert graph.edges.size() == 1
-            assert graph.edges.first() == new Edge(one:'A', two:'B')
+            assert graph.edges.first() == new Edge(from:'A', to:'B')
             image 'images/base-script-method.png'
         '''
 }
@@ -42,7 +42,7 @@ def usageGraphMethod() {
 
             assert graph.vertices.keySet() == ['A', 'B'] as Set
             assert graph.edges.size() == 1
-            assert graph.edges.first() == new Edge(one:'A', two:'B')
+            assert graph.edges.first() == new Edge(from:'A', to:'B')
             graph.plugin 'graphviz'
             graph.image 'images/graph-method.png'
         '''

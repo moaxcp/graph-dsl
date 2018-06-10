@@ -182,7 +182,7 @@ configurations {
 dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
 
-    testCompile( 'com.athaydes:spock-reports:1.4.0' ) {
+    testCompile( 'com.athaydes:spock-reports:1.6.0' ) {
         transitive = false
     }
     testCompile 'org.slf4j:slf4j-api:1.7.25'

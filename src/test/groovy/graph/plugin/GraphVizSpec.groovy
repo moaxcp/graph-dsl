@@ -102,11 +102,10 @@ class GraphVizSpec extends Specification {
     
     def 'dot for graph'() {
         given: 'a graph with vertices and edges'
-        Graph graph = graph {
-            edge('A', 'B', [color:'blue'])
-            edge('A', 'C', [color:'red'])
-            vertex('Z', [color:'black'])
-        }
+        graph.edge('A', 'B', [color:'blue'])
+        graph.edge('A', 'C', [color:'red'])
+        graph.vertex('Z', [color:'black'])
+
         graphviz.apply(graph)
         println(graphviz.dot())
         
