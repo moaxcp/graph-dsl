@@ -29,47 +29,6 @@ class VertexSpecSpecImpl extends Specification {
         graph.vertices[vertex.id] == vertex
     }
 
-    def 'checkCondition throws IllegalStateException when id is null'() {
-        given:
-        VertexSpec spec = new VertexSpec(graph, [:])
-        spec.id = null
-
-        when:
-        spec.checkConditions()
-
-        then:
-        IllegalStateException e = thrown()
-        e.message == 'id is not set.'
-    }
-
-    def 'checkCondition throws IllegalStateException when graph is null'() {
-        given:
-        VertexSpec spec = new VertexSpec(graph, [:])
-        spec.id = 'id'
-        spec.graph = null
-
-        when:
-        spec.checkConditions()
-
-        then:
-        IllegalStateException e = thrown()
-        e.message == 'graph is not set.'
-    }
-
-    def 'checkCondition throws IllegalStateException when vertex is null'() {
-        given:
-        VertexSpec spec = new VertexSpec(graph, [:])
-        spec.id = 'id'
-        spec.vertex = null
-
-        when:
-        spec.checkConditions()
-
-        then:
-        IllegalStateException e = thrown()
-        e.message == 'vertex is not set.'
-    }
-
     def 'apply cannot be run twice'() {
         setup:
         VertexSpec spec = new VertexSpec(graph, [id:'step1'])

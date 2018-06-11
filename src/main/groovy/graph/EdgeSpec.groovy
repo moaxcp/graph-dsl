@@ -6,8 +6,6 @@ package graph
  * Add new dsl properties for the Edge dsl to dslProperties. This will prevent them from being added to the Edge.
  */
 class EdgeSpec {
-    @Delegate
-    Map map
     private Graph graph
     private Edge edge
     private boolean edgePresentInGraph
@@ -49,7 +47,6 @@ class EdgeSpec {
 
     EdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
         this.graph = graph
-        this.map = [:]
 
         dslProperties = ['from', 'to', 'changeFrom', 'changeTo']
 
