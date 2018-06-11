@@ -539,6 +539,11 @@ If there are any issues contact me moaxcp@gmail.com.
 
 # Releases
 
+## 0.26.0
+
+* connectsFrom now works for undirected graphs
+* closure in vertex and edge methods now delegate to objects for code completion
+
 ## 0.25.0
 
 * vertex.key has been renamed to vertex.id
@@ -552,7 +557,10 @@ to use gitflow
 * Stopped using gitflow and simply use master with tagged versions for releases
 * removed NameSpec for naming vertices and all associated methods.
 * Traversal methods are now in TraversalDsl trait
-* `depthFirstSearch` is now split into two methods `preOrder`, and `postOrder`
+* `depthFirstSearch` is now split in
+
+    protected void addVertex(Vertex vertex) {
+    }to two methods `preOrder`, and `postOrder`
 * `breadthFirstSearch` has been simplified
 * added new traversals `classifyEdges`, `connectedComponent`
 * Can now change key of vertex by assigning property in vertex method closures

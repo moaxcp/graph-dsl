@@ -2,6 +2,7 @@ package graph.type.undirected
 
 import graph.Graph
 import graph.Vertex
+import graph.VertexSpecCodeRunner
 import spock.lang.Specification
 
 class VertexSpecRunnerSpec extends Specification {

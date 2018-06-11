@@ -2,6 +2,7 @@ package graph.type.undirected
 
 import graph.Edge
 import graph.Graph
+import graph.EdgeSpecCodeRunner
 import spock.lang.Specification
 
 class GraphEdgeSpecCodeRunnerSpec extends Specification {

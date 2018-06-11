@@ -92,7 +92,7 @@ trait VertexDsl {
      * @param closure  configuration for graph and vertex
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(Object id, Closure closure) {
+    Vertex vertex(Object id, @DelegatesTo(VertexSpecCodeRunner) Closure closure) {
         if(!id) {
             throw new IllegalArgumentException("Invalid id.")
         }
@@ -123,7 +123,7 @@ trait VertexDsl {
      * @param closure  configuration for graph and vertex
      * @return  The resulting {@link Vertex}.
      */
-    Vertex vertex(Map<String, ?> map, Closure closure) {
+    Vertex vertex(Map<String, ?> map, @DelegatesTo(VertexSpecCodeRunner) Closure closure) {
         if(!map.id) {
             throw new IllegalArgumentException("Invalid id.")
         }
@@ -139,7 +139,7 @@ trait VertexDsl {
      * @param closure  configuration for graph and vertex
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(Object id, Map<String, ?> map, Closure closure) {
+    Vertex vertex(Object id, Map<String, ?> map, @DelegatesTo(VertexSpecCodeRunner) Closure closure) {
         if(!id) {
             throw new IllegalArgumentException("Invalid id.")
         }

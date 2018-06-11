@@ -149,4 +149,76 @@ abstract class GraphBaseSpec extends Specification {
         graph.edges.find { it.from == 'A' && it.to == 'B' }
         graph.edges.find { it.from == 'A' && it.to == 'C' }
     }
+
+    def 'create edge using connectsFrom in map'() {
+        given:
+        graph.vertex('A', [connectsFrom:'B'])
+
+        expect:
+        graph.vertices.size() == 2
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.edges.find { it.from == 'B' && it.to == 'A' }
+    }
+
+    def 'create two edges using connectsFrom in map'() {
+        given:
+        graph.vertex('A', [connectsFrom:['B', 'C']])
+
+        expect:
+        graph.vertices.size() == 3
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
+        graph.edges.find { it.from == 'B' && it.to == 'A' }
+        graph.edges.find { it.from == 'C' && it.to == 'A' }
+    }
+
+    def 'create edge using connectsTo in closure'() {
+        given:
+        graph.vertex('A') { connectsTo 'B' }
+
+        expect:
+        graph.vertices.size() == 2
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
+    }
+
+    def 'create two edges using connectsTo in closure'() {
+        given:
+        graph.vertex('A') { connectsTo 'B', 'C' }
+
+        expect:
+        graph.vertices.size() == 3
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
+        graph.edges.find { it.from == 'A' && it.to == 'B' }
+        graph.edges.find { it.from == 'A' && it.to == 'C' }
+    }
+
+    def 'create edge using connectsFrom in closure'() {
+        given:
+        graph.vertex('A') { connectsFrom 'B' }
+
+        expect:
+        graph.vertices.size() == 2
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.edges.find { it.from == 'B' && it.to == 'A' }
+    }
+
+    def 'create two edges using connectsFrom in closure'() {
+        given:
+        graph.vertex('A') { connectsFrom 'B', 'C' }
+
+        expect:
+        graph.vertices.size() == 3
+        graph.vertices.A.id == 'A'
+        graph.vertices.B.id == 'B'
+        graph.vertices.C.id == 'C'
+        graph.edges.find { it.from == 'B' && it.to == 'A' }
+        graph.edges.find { it.from == 'C' && it.to == 'A' }
+    }
 }

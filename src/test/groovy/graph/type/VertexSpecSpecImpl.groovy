@@ -4,16 +4,15 @@ import graph.Edge
 import graph.Graph
 import graph.Vertex
 import graph.VertexSpec
-import graph.type.undirected.UndirectedVertexSpec
 import spock.lang.Specification
 
-class AbstractVertexSpecSpec extends Specification {
+class VertexSpecSpecImpl extends Specification {
 
     Graph graph = new Graph()
 
     def 'apply throws exception on invalid id'() {
         when:
-        new UndirectedVertexSpec(graph, [id:''])
+        new VertexSpec(graph, [id:''])
 
         then:
         thrown IllegalArgumentException
@@ -21,7 +20,7 @@ class AbstractVertexSpecSpec extends Specification {
 
     def 'apply can add vertex'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [id:'step1'])
+        VertexSpec spec = new VertexSpec(graph, [id:'step1'])
 
         when:
         Vertex vertex = spec.apply()
@@ -32,7 +31,7 @@ class AbstractVertexSpecSpec extends Specification {
 
     def 'checkCondition throws IllegalStateException when id is null'() {
         given:
-        AbstractVertexSpec spec = new UndirectedVertexSpec(graph, [:])
+        VertexSpec spec = new VertexSpec(graph, [:])
         spec.id = null
 
         when:
@@ -45,7 +44,7 @@ class AbstractVertexSpecSpec extends Specification {
 
     def 'checkCondition throws IllegalStateException when graph is null'() {
         given:
-        AbstractVertexSpec spec = new UndirectedVertexSpec(graph, [:])
+        VertexSpec spec = new VertexSpec(graph, [:])
         spec.id = 'id'
         spec.graph = null
 
@@ -59,7 +58,7 @@ class AbstractVertexSpecSpec extends Specification {
 
     def 'checkCondition throws IllegalStateException when vertex is null'() {
         given:
-        AbstractVertexSpec spec = new UndirectedVertexSpec(graph, [:])
+        VertexSpec spec = new VertexSpec(graph, [:])
         spec.id = 'id'
         spec.vertex = null
 
@@ -73,7 +72,7 @@ class AbstractVertexSpecSpec extends Specification {
 
     def 'apply cannot be run twice'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [id:'step1'])
+        VertexSpec spec = new VertexSpec(graph, [id:'step1'])
 
         when:
         Vertex vertex = spec.apply()
@@ -86,7 +85,7 @@ class AbstractVertexSpecSpec extends Specification {
     def 'apply can rename vertex'() {
         setup:
         graph.vertex 'step1'
-        VertexSpec spec = new UndirectedVertexSpec(graph, [id:'step1', changeId:'step2'])
+        VertexSpec spec = new VertexSpec(graph, [id:'step1', changeId:'step2'])
 
         when:
         Vertex vertex = spec.apply()
@@ -99,7 +98,7 @@ class AbstractVertexSpecSpec extends Specification {
 
     def 'apply can add edges using edgesFirst'() {
         setup:
-        VertexSpec spec = new UndirectedVertexSpec(graph, [id:'step1', connectsTo:['step2', 'step3']])
+        VertexSpec spec = new VertexSpec(graph, [id:'step1', connectsTo:['step2', 'step3']])
 
         when:
         spec.apply()

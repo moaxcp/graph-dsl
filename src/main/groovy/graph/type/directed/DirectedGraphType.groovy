@@ -32,16 +32,6 @@ class DirectedGraphType extends GraphType {
         new DirectedEdge(map)
     }
 
-    /**
-     * Creates a new {@link graph.type.directed.DirectedVertexSpec} from map.
-     * @param map
-     * @return
-     */
-    @Override
-    DirectedVertexSpec newVertexSpec(Map<String, ?> map, Closure closure = null) {
-        new DirectedVertexSpec(graph, map, closure)
-    }
-
     @Override
     boolean canConvert() {
         if (graph.edges.size() == 0) {

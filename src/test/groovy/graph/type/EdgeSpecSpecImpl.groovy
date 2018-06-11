@@ -1,27 +1,17 @@
 package graph.type
 
 import graph.Edge
+import graph.EdgeSpec
 import graph.Graph
 import spock.lang.Specification
 
-class AbstractEdgeSpecSpec extends Specification {
+class EdgeSpecSpecImpl extends Specification {
     Graph graph = new Graph()
 
-    class TestEdgeSpec extends AbstractEdgeSpec {
-
-        protected TestEdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
-            super(graph, map, closure)
-        }
-
-        @Override
-        protected void applyClosure() {
-
-        }
-    }
 
     def 'init throws IllegalStateException if edge is set'() {
-        given: 'an AbstractEdgeSpec with edge set'
-        AbstractEdgeSpec spec = new TestEdgeSpec(graph, [:])
+        given: 'an EdgeSpecImpl with edge set'
+        EdgeSpec spec = new EdgeSpec(graph, [:])
         spec.edge = new Edge(from:'one', to:'two')
 
         when: 'init is called'
@@ -33,8 +23,8 @@ class AbstractEdgeSpecSpec extends Specification {
     }
 
     def 'checkCondition throws IllegalStateException when edge is null'() {
-        given: 'an AbstractEdgeSpec without edge set'
-        AbstractEdgeSpec spec = new TestEdgeSpec(graph, [:])
+        given: 'an EdgeSpec without edge set'
+        EdgeSpec spec = new EdgeSpec(graph, [:])
         spec.from = 'one'
         spec.to = 'two'
 
@@ -47,8 +37,8 @@ class AbstractEdgeSpecSpec extends Specification {
     }
 
     def 'checkCondition throws IllegalStateException when graph is null'() {
-        given: 'an AbstractEdgeSpec without graph set'
-        AbstractEdgeSpec spec = new TestEdgeSpec(graph, [:])
+        given: 'an EdgeSpec without graph set'
+        EdgeSpec spec = new EdgeSpec(graph, [:])
         spec.from = 'one'
         spec.to = 'two'
         spec.graph = null
@@ -64,7 +54,7 @@ class AbstractEdgeSpecSpec extends Specification {
 
     def 'cannot apply without from'() {
         when:
-        new TestEdgeSpec(graph, [from:null]).apply()
+        new EdgeSpec(graph, [from:null]).apply()
 
         then:
         thrown IllegalStateException
@@ -72,7 +62,7 @@ class AbstractEdgeSpecSpec extends Specification {
 
     def 'cannot apply without two'() {
         when:
-        new TestEdgeSpec(graph, [from:'A', to:null]).apply()
+        new EdgeSpec(graph, [from:'A', to:null]).apply()
 
         then:
         thrown IllegalStateException
@@ -84,7 +74,7 @@ class AbstractEdgeSpecSpec extends Specification {
         graph.vertex('step2')
 
         when:
-        new TestEdgeSpec(graph, [from:'step1', to:'step2']).apply()
+        new EdgeSpec(graph, [from:'step1', to:'step2']).apply()
 
         then:
         graph.edges.size() == 1
@@ -95,7 +85,7 @@ class AbstractEdgeSpecSpec extends Specification {
 
     def 'can add vertices and edge'() {
         when:
-        new TestEdgeSpec(graph, [from:'step1', to:'step2']).apply()
+        new EdgeSpec(graph, [from:'step1', to:'step2']).apply()
 
         then:
         graph.vertices.size() == 2
@@ -110,7 +100,7 @@ class AbstractEdgeSpecSpec extends Specification {
         graph.edge('step1', 'step2')
 
         when:
-        new TestEdgeSpec(graph, [from:'step1', to:'step2', changeFrom:'step4']).apply()
+        new EdgeSpec(graph, [from:'step1', to:'step2', changeFrom:'step4']).apply()
 
         then:
         graph.vertices.size() == 3
@@ -125,7 +115,7 @@ class AbstractEdgeSpecSpec extends Specification {
         graph.edge('step1', 'step2')
 
         when:
-        new TestEdgeSpec(graph, [from:'step1', to:'step2', changeTo:'step4']).apply()
+        new EdgeSpec(graph, [from:'step1', to:'step2', changeTo:'step4']).apply()
 
         then:
         graph.vertices.size() == 3

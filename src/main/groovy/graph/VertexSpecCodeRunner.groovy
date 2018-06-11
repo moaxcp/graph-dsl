@@ -1,8 +1,4 @@
-package graph.type.undirected
-
-import graph.Graph
-import graph.Vertex
-
+package graph
 /**
  * Delegate of the runnerCode closure in {@link GraphVertexSpec}. This provides methods and properties that can be used
  * in the closure. Method and property missing is delegated to the {@link Vertex}.
@@ -50,6 +46,19 @@ class VertexSpecCodeRunner {
 
     void connectsTo(Object id, Closure closure) {
         graph.newVertexSpec([id:vertex.id, connectsTo:id]).apply()
+        graph.newVertexSpec([id:id], closure).apply()
+    }
+
+    /**
+     * Creates edges where the vertex is edge.two and each id in ids is edge.one.
+     * @param ids of vetices to connect to.
+     */
+    void connectsFrom(Object... ids) {
+        graph.newVertexSpec([id:vertex.id, connectsFrom:ids]).apply()
+    }
+
+    void connectsFrom(Object id, Closure closure) {
+        graph.newVertexSpec([id:vertex.id, connectsFrom:id]).apply()
         graph.newVertexSpec([id:id], closure).apply()
     }
 
