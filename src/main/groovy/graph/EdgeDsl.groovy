@@ -101,7 +101,7 @@ trait EdgeDsl {
      * @return the resulting {@link Edge}.
      * @throws IllegalArgumentException when from or to are invalid
      */
-    Edge edge(Object from, Object to, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(Object from, Object to, @DelegatesTo(EdgeSpec) Closure closure) {
         if(!from || !to) {
             throw new IllegalArgumentException("Invalid from and to.")
         }
@@ -119,7 +119,7 @@ trait EdgeDsl {
      * @return the resulting {@link Edge}.
      * @throws IllegalArgumentException when map.from or map.to are invalid
      */
-    Edge edge(Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(Map<String, ?> map, @DelegatesTo(EdgeSpec) Closure closure) {
         if(!map.from || !map.to) {
             throw new IllegalArgumentException("Invalid from and to.")
         }
@@ -139,7 +139,7 @@ trait EdgeDsl {
      * @return the resulting {@link Edge}.
      * @throws IllegalArgumentException when from or to are invalid
      */
-    Edge edge(Object from, Object to, Map<String, ?> map, @DelegatesTo(EdgeSpecCodeRunner) Closure closure) {
+    Edge edge(Object from, Object to, Map<String, ?> map, @DelegatesTo(EdgeSpec) Closure closure) {
         if(!from || !to) {
             throw new IllegalArgumentException("Invalid from and to.")
         }

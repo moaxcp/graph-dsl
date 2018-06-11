@@ -22,35 +22,6 @@ class EdgeSpecSpecImpl extends Specification {
         e.message == 'Edge already created.'
     }
 
-    def 'checkCondition throws IllegalStateException when edge is null'() {
-        given: 'an EdgeSpec without edge set'
-        EdgeSpec spec = new EdgeSpec(graph, [:])
-        spec.from = 'one'
-        spec.to = 'two'
-
-        when: 'checkCondition is called'
-        spec.checkConditions()
-
-        then: 'IllegalStateException is thrown'
-        IllegalStateException e = thrown()
-        e.message == 'edge is not set.'
-    }
-
-    def 'checkCondition throws IllegalStateException when graph is null'() {
-        given: 'an EdgeSpec without graph set'
-        EdgeSpec spec = new EdgeSpec(graph, [:])
-        spec.from = 'one'
-        spec.to = 'two'
-        spec.graph = null
-
-        when: 'checkCondition is called'
-        spec.checkConditions()
-
-        then: 'IllegalStateException is thrown'
-        IllegalStateException e = thrown()
-        e.message == 'graph is not set.'
-    }
-
 
     def 'cannot apply without from'() {
         when:
