@@ -87,6 +87,7 @@ modify the graph in some way. The following examples create a graph and perform 
 
 ```groovy
 type 'directed-graph'
+plugin 'graphviz'
 vertex('A') {
     connectsTo('B') {
         connectsTo('C')
@@ -98,22 +99,22 @@ vertex('A') {
     }
     connectsTo('E')
 }
-def count = 1
+snapshot()
 eachBfs('A') { vertex ->
-    vertex.label = "${vertex.key}\\lorder:${count++}\\l"
     vertex.fillcolor = 'green'
     vertex.style = 'filled'
+    snapshot()
 }
-plugin 'graphviz'
-image 'images/breadth-first-traversal.png'
+gif 'images/breadth-first-traversal.gif'
 ```
 
-![Image](images/breadth-first-traversal.png?raw=true)
+![Image](images/breadth-first-traversal.gif?raw=true)
 
 ## Example: preOrder, label and color vertex
 
 ```groovy
 type 'directed-graph'
+plugin 'graphviz'
 vertex('A') {
     connectsTo('B') {
         connectsTo('C')
@@ -125,23 +126,23 @@ vertex('A') {
     }
     connectsTo('E')
 }
-def count = 1
+snapshot()
 preOrder('A') { vertex ->
-    vertex.label = "${vertex.id}\\lorder:${count++}\\l"
     vertex.fillcolor = 'green'
     vertex.style = 'filled'
-    TraversalState.CONTINUE
+    snapshot()
+    CONTINUE
 }
-plugin 'graphviz'
-image 'images/pre-order-traversal.png'
+gif 'images/pre-order-traversal.gif'
 ```
 
-![Image](images/pre-order-traversal.png?raw=true)
+![Image](images/pre-order-traversal.gif?raw=true)
 
 ## Example: postOrder, label and color vertex
 
 ```groovy
 type 'directed-graph'
+plugin 'graphviz'
 vertex('A') {
     connectsTo('B') {
         connectsTo('C')
@@ -153,18 +154,17 @@ vertex('A') {
     }
     connectsTo('E')
 }
-def count = 1
+snapshot()
 postOrder('A') { vertex ->
-    vertex.label = "${vertex.id}\\lorder:${count++}\\l"
     vertex.fillcolor = 'green'
     vertex.style = 'filled'
-    TraversalState.CONTINUE
+    snapshot()
+    CONTINUE
 }
-plugin 'graphviz'
-image 'images/post-order-traversal.png'
+gif 'images/post-order-traversal.gif'
 ```
 
-![Image](images/post-order-traversal.png?raw=true)
+![Image](images/post-order-traversal.gif?raw=true)
 
 ## Example: reversePostOrder, label and color vertex
 
@@ -172,6 +172,7 @@ Note: This is the DAG created by the java gradle plugin
 
 ```groovy
 type 'directed-graph'
+plugin 'graphviz'
 edge 'compileJava', 'classes'
 edge 'processResources', 'classes'
 vertex('classes') {
@@ -194,18 +195,17 @@ vertex('classes') {
         }
     }
 }
-def count = 1
+snapshot()
 reversePostOrder('build') { vertex ->
-    vertex.label = "${vertex.id}\\lorder:${count++}\\l"
     vertex.fillcolor = 'green'
     vertex.style = 'filled'
+    snapshot()
     CONTINUE
 }
-plugin 'graphviz'
-image 'images/reverse-post-order-traversal.png'
+gif 'images/reverse-post-order-traversal.gif'
 ```
 
-![Image](images/reverse-post-order-traversal.png?raw=true)
+![Image](images/reverse-post-order-traversal.gif?raw=true)
 
 ## Example: classifyEdges, color edge by type
 
@@ -538,6 +538,10 @@ If there are any issues contact me moaxcp@gmail.com.
 * [oss sonatype](https://oss.sonatype.org/#welcome)
 
 # Releases
+
+## 0.27.0
+
+* graphviz pluging can now create gifs
 
 ## 0.26.0
 

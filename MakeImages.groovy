@@ -15,10 +15,6 @@ exampleClassifyEdges()
 exampleConnectedComponentUndirected()
 exampleConnectedComponentDirected()
 
-
-
-
-
 def usageBaseScriptMethod() {
     shell.evaluate '''
             import graph.*
@@ -51,6 +47,7 @@ def usageGraphMethod() {
 def exampleBreadthFirstTraversal() {
     graph {
         type 'directed-graph'
+        plugin 'graphviz'
         vertex('A') {
             connectsTo('B') {
                 connectsTo('C')
@@ -62,20 +59,20 @@ def exampleBreadthFirstTraversal() {
             }
             connectsTo('E')
         }
-        def count = 1
+        snapshot()
         eachBfs('A') { vertex ->
-            vertex.label = "${vertex.id}\\lorder:${count++}\\l"
             vertex.fillcolor = 'green'
             vertex.style = 'filled'
+            snapshot()
         }
-        plugin 'graphviz'
-        image 'images/breadth-first-traversal.png'
+        gif 'images/breadth-first-traversal.gif'
     }
 }
 
 def examplePreOrderTraversal() {
     graph {
         type 'directed-graph'
+        plugin 'graphviz'
         vertex('A') {
             connectsTo('B') {
                 connectsTo('C')
@@ -87,21 +84,21 @@ def examplePreOrderTraversal() {
             }
             connectsTo('E')
         }
-        def count = 1
+        snapshot()
         preOrder('A') { vertex ->
-            vertex.label = "${vertex.id}\\lorder:${count++}\\l"
             vertex.fillcolor = 'green'
             vertex.style = 'filled'
+            snapshot()
             CONTINUE
         }
-        plugin 'graphviz'
-        image 'images/pre-order-traversal.png'
+        gif 'images/pre-order-traversal.gif'
     }
 }
 
 def examplePostOrderTraversal() {
     graph {
         type 'directed-graph'
+        plugin 'graphviz'
         vertex('A') {
             connectsTo('B') {
                 connectsTo('C')
@@ -113,21 +110,21 @@ def examplePostOrderTraversal() {
             }
             connectsTo('E')
         }
-        def count = 1
+        snapshot()
         postOrder('A') { vertex ->
-            vertex.label = "${vertex.id}\\lorder:${count++}\\l"
             vertex.fillcolor = 'green'
             vertex.style = 'filled'
+            snapshot()
             CONTINUE
         }
-        plugin 'graphviz'
-        image 'images/post-order-traversal.png'
+        gif 'images/post-order-traversal.gif'
     }
 }
 
 def exampleReversePostOrderTraversal() {
     graph {
         type 'directed-graph'
+        plugin 'graphviz'
         edge 'compileJava', 'classes'
         edge 'processResources', 'classes'
         vertex('classes') {
@@ -150,22 +147,21 @@ def exampleReversePostOrderTraversal() {
                 }
             }
         }
-        def count = 1
+        snapshot()
         reversePostOrder('build') { vertex ->
-            vertex.label = "${vertex.id}\\lorder:${count++}\\l"
             vertex.fillcolor = 'green'
             vertex.style = 'filled'
+            snapshot()
             CONTINUE
         }
-
-        plugin 'graphviz'
-        image 'images/reverse-post-order-traversal.png'
+        gif 'images/reverse-post-order-traversal.gif'
     }
 }
 
 def exampleClassifyEdges() {
     graph {
         type 'directed-graph'
+        plugin 'graphviz'
         vertex('A') {
             connectsTo('B') {
                 connectsTo 'C'
@@ -182,6 +178,7 @@ def exampleClassifyEdges() {
                 connectsTo 'D'
             }
         }
+        snapshot()
         classifyEdges('A') {Object from, Object to, EdgeType type ->
             edge(from, to) {
                 switch(type) {
@@ -203,15 +200,16 @@ def exampleClassifyEdges() {
                         break
                 }
             }
+            snapshot()
             CONTINUE
         }
-        plugin 'graphviz'
-        image 'images/edge-classification.png'
+        gif 'images/edge-classification.gif'
     }
 }
 
 def exampleConnectedComponentUndirected() {
     graph {
+        plugin 'graphviz'
         vertex('A') {
             connectsTo('B') {
                 connectsTo 'C'
@@ -230,19 +228,21 @@ def exampleConnectedComponentUndirected() {
 
         vertex 'J'
         def colors = ['A':'yellow', 'Z':'green', J:'blue']
+        snapshot()
         connectedComponent('A') { root, vertex ->
             vertex.fillcolor = colors[(root)]
             vertex.style = 'filled'
+            snapshot()
             CONTINUE
         }
-        plugin 'graphviz'
-        image 'images/connected-component-undirected.png'
+        gif 'images/connected-component-undirected.gif'
     }
 }
 
 def exampleConnectedComponentDirected() {
     graph {
         type 'directed-graph'
+        plugin 'graphviz'
         vertex('A') {
             connectsTo('B') {
                 connectsTo 'C'
@@ -260,13 +260,14 @@ def exampleConnectedComponentDirected() {
         }
         vertex 'J'
         def colors = ['A': 'yellow', 'Z': 'green', J: 'blue']
+        snapshot()
         connectedComponent('A') { root, vertex ->
             vertex.fillcolor = colors[(root)]
             vertex.style = 'filled'
+            snapshot()
             CONTINUE
         }
-        plugin 'graphviz'
-        image 'images/connected-component-directed.png'
+        gif 'images/connected-component-directed.gif'
     }
 }
 

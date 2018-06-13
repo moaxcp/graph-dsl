@@ -7,12 +7,14 @@ import groovy.transform.Memoized
 import groovy.transform.PackageScope
 
 import javax.imageio.ImageIO
+import javax.imageio.stream.FileImageOutputStream
 import java.awt.image.BufferedImage
 import java.nio.file.Files
 import java.nio.file.Path
 
 class GraphViz implements Plugin {
     Graph graph
+    List<BufferedImage> snapshots = []
 
     @Override
     void apply(Graph graph) {
@@ -109,6 +111,20 @@ class GraphViz implements Plugin {
         execute.waitFor()
 
         return [image:image, error:err.toString()]
+    }
+
+    void snapshot() {
+        snapshots.add(image().image)
+    }
+
+    void gif(String file, int delay = 1000, boolean loop = true) {
+        new FileImageOutputStream(new File(file)).withCloseable { out ->
+            GifSequenceWriter writer = new GifSequenceWriter(out, BufferedImage.TYPE_3BYTE_BGR, delay, loop)
+            snapshots.each {
+                writer.writeToSequence(it)
+            }
+            writer.close()
+        }
     }
 
     void image(String file) {
