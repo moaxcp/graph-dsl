@@ -1,4 +1,4 @@
-package graph.type
+package graph
 
 import graph.Edge
 import graph.Graph
@@ -6,7 +6,7 @@ import graph.Vertex
 import graph.VertexSpec
 import spock.lang.Specification
 
-class VertexSpecSpecImpl extends Specification {
+class VertexSpecSpec extends Specification {
 
     Graph graph = new Graph()
 
@@ -41,6 +41,24 @@ class VertexSpecSpecImpl extends Specification {
         thrown IllegalStateException
     }
 
+    def 'VertexSpec must have graph'() {
+        when:
+        VertexSpec spec = new VertexSpec(null, [:])
+
+        then:
+        IllegalArgumentException e = thrown()
+        e.message == 'invalid graph.'
+    }
+
+    def 'VertexSpec must have map'() {
+        when:
+        new VertexSpec(graph, null)
+
+        then:
+        IllegalArgumentException e = thrown()
+        e.message == 'invalid map.'
+    }
+
     def 'apply can rename vertex'() {
         setup:
         graph.vertex 'step1'
@@ -55,7 +73,7 @@ class VertexSpecSpecImpl extends Specification {
         graph.vertices[vertex.id] == vertex
     }
 
-    def 'apply can add edges using edgesFirst'() {
+    def 'apply can add edges using connectsTo'() {
         setup:
         VertexSpec spec = new VertexSpec(graph, [id:'step1', connectsTo:['step2', 'step3']])
 
@@ -66,5 +84,18 @@ class VertexSpecSpecImpl extends Specification {
         graph.vertices.size() == 3
         graph.edges.find { new Edge(from:'step1', to:'step2') }
         graph.edges.find { new Edge(from:'step1', to:'step3') }
+    }
+
+    def 'missing method calls method on vertex'() {
+        setup:
+        VertexSpec spec = new VertexSpec(graph, [id:'A'])
+        spec.apply()
+
+        when:
+        spec.put('prop', 'value')
+
+        then:
+        graph.vertices.size() == 1
+        graph.vertices.A.prop == 'value'
     }
 }

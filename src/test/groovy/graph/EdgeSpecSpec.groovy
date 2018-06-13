@@ -1,25 +1,29 @@
-package graph.type
+package graph
 
 import graph.Edge
 import graph.EdgeSpec
 import graph.Graph
 import spock.lang.Specification
 
-class EdgeSpecSpecImpl extends Specification {
+class EdgeSpecSpec extends Specification {
     Graph graph = new Graph()
 
+    def 'cannot create with null graph'() {
+        when:
+        new EdgeSpec(null, null)
 
-    def 'init throws IllegalStateException if edge is set'() {
-        given: 'an EdgeSpecImpl with edge set'
-        EdgeSpec spec = new EdgeSpec(graph, [:])
-        spec.edge = new Edge(from:'one', to:'two')
+        then:
+        IllegalArgumentException e = thrown()
+        e.message == 'graph must be set.'
+    }
 
-        when: 'init is called'
-        spec.init()
+    def 'cannot create with null map'() {
+        when:
+        new EdgeSpec(graph, null)
 
-        then: 'IllegalStateException is thrown'
-        IllegalStateException e = thrown()
-        e.message == 'Edge already created.'
+        then:
+        IllegalArgumentException e = thrown()
+        e.message == 'map must be set.'
     }
 
 
@@ -94,5 +98,30 @@ class EdgeSpecSpecImpl extends Specification {
         graph.edges.size() == 1
         graph.edges.first().from == 'step1'
         graph.edges.first().to == 'step4'
+    }
+
+    def 'cannot apply spec twice'() {
+        when:
+        EdgeSpec spec = new EdgeSpec(graph, [from:'A', to:'B'])
+        spec.apply()
+
+        and:
+        spec.apply()
+
+        then:
+        IllegalStateException e = thrown()
+        e.message == 'spec has already been applied.'
+    }
+
+    def 'missing method calls method on edge'() {
+        given:
+        EdgeSpec spec = new EdgeSpec(graph, [from:'A', to:'B'])
+        spec.apply()
+
+        when:
+        spec.put('prop', 'value')
+
+        then:
+        graph.edges.first().prop == 'value'
     }
 }

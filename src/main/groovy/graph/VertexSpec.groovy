@@ -7,15 +7,16 @@ package graph
  * Vertex.
  */
 class VertexSpec {
-    Graph graph
-    Vertex vertex
+    private Graph graph
+    private Vertex vertex
     Object id
-    Object changeId
-    final Set<Object> connectsToSet = [] as Set<Object>
-    final Set<Object> connectsFromSet = [] as Set<Object>
-    List dslProperties
-    Map entries
-    Closure runnerCodeClosure
+    private Object changeId
+    private final Set<Object> connectsToSet = [] as Set<Object>
+    private final Set<Object> connectsFromSet = [] as Set<Object>
+    private List dslProperties
+    private Map entries
+    private Closure runnerCodeClosure
+    private boolean applied
 
     /**
      * Gets the graph the {@link Vertex} has been added to. This can be used inside the runnerCode to access the graph.
@@ -39,6 +40,12 @@ class VertexSpec {
     }
 
     protected VertexSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
+        if (!graph) {
+            throw new IllegalArgumentException('invalid graph.')
+        }
+        if(!map) {
+            throw new IllegalArgumentException('invalid map.')
+        }
         this.graph = graph
 
         dslProperties = ['id', 'changeId', 'connectsTo', 'connectsFrom']
@@ -77,6 +84,16 @@ class VertexSpec {
             connectsFromSet.add(map.connectsFrom)
         }
         runnerCodeClosure = closure
+
+        if (!graph.vertices[id]) {
+            id = changeId ?: id
+            changeId = null
+        }
+        vertex = graph.vertices[id] ?: graph.newVertex(id:id)
+
+        if (changeId && graph.vertices[changeId]) {
+            throw new IllegalStateException('renamed vertex already exists')
+        }
     }
 
     /**
@@ -113,34 +130,8 @@ class VertexSpec {
         graph.newVertexSpec([id:id], closure).apply()
     }
 
-    protected void init() {
-        if (vertex) {
-            throw new IllegalStateException('vertex already created.')
-        }
-        if (!graph.vertices[id]) {
-            id = changeId ?: id
-            changeId = null
-        }
-        vertex = graph.vertices[id] ?: graph.newVertex(id:id)
-    }
-
-    protected void initEntries() {
+    protected void addEntries() {
         vertex.putAll(entries)
-    }
-
-    protected void checkConditions() {
-        if (!id) {
-            throw new IllegalStateException('id is not set.')
-        }
-        if (!graph) {
-            throw new IllegalStateException('graph is not set.')
-        }
-        if (!vertex) {
-            throw new IllegalStateException('vertex is not set.')
-        }
-        if (changeId && graph.vertices[changeId]) {
-            throw new IllegalStateException('renamed vertex already exists')
-        }
     }
 
     protected void applyChangeKey() {
@@ -170,12 +161,14 @@ class VertexSpec {
     }
 
     Vertex apply() {
-        init()
-        checkConditions()
+        if(applied) {
+            throw new IllegalStateException('spec has already been applied.')
+        }
+        applied = true
         applyChangeKey()
         applyConnectsTo()
         applyConnectsFrom()
-        initEntries()
+        addEntries()
         graph.addVertex(vertex)
         applyClosure()
         vertex

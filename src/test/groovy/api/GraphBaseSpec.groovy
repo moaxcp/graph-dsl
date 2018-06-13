@@ -150,6 +150,15 @@ abstract class GraphBaseSpec extends Specification {
         graph.edges.find { it.from == 'A' && it.to == 'C' }
     }
 
+    def 'cannot create edge with null in connectsTo collection'() {
+        when:
+        graph.vertex('A', [connectsTo:[null]])
+
+        then:
+        IllegalArgumentException e = thrown()
+        e.message == 'Invalid connectsTo item.'
+    }
+
     def 'create edge using connectsFrom in map'() {
         given:
         graph.vertex('A', [connectsFrom:'B'])
@@ -159,6 +168,15 @@ abstract class GraphBaseSpec extends Specification {
         graph.vertices.A.id == 'A'
         graph.vertices.B.id == 'B'
         graph.edges.find { it.from == 'B' && it.to == 'A' }
+    }
+
+    def 'cannot create edge with null in connectsFrom collection'() {
+        when:
+        graph.vertex('A', [connectsFrom:[null]])
+
+        then:
+        IllegalArgumentException e = thrown()
+        e.message == 'Invalid connectsFrom item.'
     }
 
     def 'create two edges using connectsFrom in map'() {

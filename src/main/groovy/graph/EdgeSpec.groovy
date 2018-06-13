@@ -9,13 +9,14 @@ class EdgeSpec {
     private Graph graph
     private Edge edge
     private boolean edgePresentInGraph
-    private Object from
-    private Object to
+    Object from
+    Object to
     private Object changeFrom
     private Object changeTo
     private List dslProperties
     private Map entries
     private Closure runnerCodeClosure
+    private boolean applied
 
     /**
      * Gets the graph the {@link Edge} has been added to. This can be used inside the runnerCode to access the graph.
@@ -46,6 +47,12 @@ class EdgeSpec {
     }
 
     EdgeSpec(Graph graph, Map<String, ?> map, Closure closure = null) {
+        if(!graph) {
+            throw new IllegalArgumentException('graph must be set.')
+        }
+        if(!map) {
+            throw new IllegalArgumentException('map must be set.')
+        }
         this.graph = graph
 
         dslProperties = ['from', 'to', 'changeFrom', 'changeTo']
@@ -58,6 +65,35 @@ class EdgeSpec {
         changeTo = map.changeTo
 
         runnerCodeClosure = closure
+
+        Edge created = graph.newEdge(from:from, to:to)
+        Edge existing = graph.edges.find { it == created }
+        edgePresentInGraph = existing != null
+
+        if (!edgePresentInGraph) {
+            from = changeFrom ?: from
+            to = changeTo ?: to
+            changeFrom = null
+            changeTo = null
+            created.from = from
+            created.to = to
+            existing = graph.edges.find { it == created }
+            edgePresentInGraph = existing != null
+        }
+
+        edge = existing ?: created
+        if (!from) {
+            throw new IllegalStateException('!from failed. from must be groovy truth.')
+        }
+        if (!to) {
+            throw new IllegalStateException('!to failed. to must be groovy truth.')
+        }
+        if (changeFrom || changeTo) {
+            Edge renamed = graph.newEdge(from:changeFrom ?: from, to:changeTo ?: to)
+            if (graph.edges.find { it == renamed }) {
+                throw new IllegalStateException('renamed edge already exists.')
+            }
+        }
     }
 
     /**
@@ -76,50 +112,7 @@ class EdgeSpec {
         graph.newEdgeSpec([from:edge.from, to:edge.to, changeTo:changeTo]).apply()
     }
 
-    protected init() {
-        if (edge) {
-            throw new IllegalStateException('Edge already created.')
-        }
-        Edge created = graph.newEdge(from:from, to:to)
-        Edge existing = graph.edges.find { it == created }
-        edgePresentInGraph = existing != null
-
-        if (!edgePresentInGraph) {
-            from = changeFrom ?: from
-            to = changeTo ?: to
-            changeFrom = null
-            changeTo = null
-            created.from = from
-            created.to = to
-            existing = graph.edges.find { it == created }
-            edgePresentInGraph = existing != null
-        }
-
-        edge = existing ?: created
-    }
-
-    protected void checkConditions() {
-        if (!from) {
-            throw new IllegalStateException('!from failed. from must be groovy truth.')
-        }
-        if (!to) {
-            throw new IllegalStateException('!to failed. to must be groovy truth.')
-        }
-        if (!graph) {
-            throw new IllegalStateException('graph is not set.')
-        }
-        if (!edge) {
-            throw new IllegalStateException('edge is not set.')
-        }
-        if (changeFrom || changeTo) {
-            Edge renamed = graph.newEdge(from:changeFrom ?: from, to:changeTo ?: to)
-            if (graph.edges.find { it == renamed }) {
-                throw new IllegalStateException('renamed edge already exists.')
-            }
-        }
-    }
-
-    protected void setupGraph() {
+    private void setupGraph() {
         if (edgePresentInGraph && (changeFrom || changeTo)) {
             //need to delete and re-add edge to reset hashcode in LinkedHashSet.
             graph.deleteEdge(edge.from, edge.to)
@@ -129,25 +122,25 @@ class EdgeSpec {
         graph.vertex(to)
     }
 
-    protected void initRenameOne() {
+    private void initRenameOne() {
         if (changeFrom) {
             graph.vertex(changeFrom)
             edge.from = changeFrom
         }
     }
 
-    protected void initRenameTwo() {
+    private void initRenameTwo() {
         if (changeTo) {
             graph.vertex(changeTo)
             edge.to = changeTo
         }
     }
 
-    protected void initEntries() {
+    private void initEntries() {
         edge.putAll(entries)
     }
 
-    protected void applyClosure() {
+    private void applyClosure() {
         if (!runnerCodeClosure) {
             return
         }
@@ -157,8 +150,10 @@ class EdgeSpec {
     }
 
     Edge apply() {
-        init()
-        checkConditions()
+        if(applied) {
+            throw new IllegalStateException('spec has already been applied.')
+        }
+        applied = true
         setupGraph()
         initRenameOne()
         initRenameTwo()
