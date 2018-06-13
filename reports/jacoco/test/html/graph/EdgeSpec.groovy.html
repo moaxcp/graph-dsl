@@ -1,19 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EdgeSpec.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">EdgeSpec.groovy</span></div><h1>EdgeSpec.groovy</h1><pre class="source lang-java linenums">package graph
 
 /**
- * Base class for all EdgeSpec objects. This class provides access for {@link Type} to add new edges.
+ * Base implementation of an EdgeSpec.
+ *
+ * Add new dsl properties for the Edge dsl to dslProperties. This will prevent them from being added to the Edge.
  */
-abstract class EdgeSpec {
-    Graph graph
+class EdgeSpec {
+    private Graph graph
+    private Edge edge
+    private boolean edgePresentInGraph
+    Object from
+    Object to
+    private Object changeFrom
+    private Object changeTo
+    private List dslProperties
+    private Map entries
+    private Closure runnerCodeClosure
+    private boolean applied
 
-    protected EdgeSpec(Graph graph) {
-<span class="fc" id="L10">        this.graph = graph</span>
+    /**
+     * Gets the graph the {@link Edge} has been added to. This can be used inside the runnerCode to access the graph.
+     * @return the graph the {@link Edge} has been added to.
+     */
+    Graph getGraph() {
+<span class="nc" id="L26">        graph</span>
     }
 
-    protected void addEdge(Edge edge) {
-<span class="fc" id="L14">        graph.addEdge(edge)</span>
+    //todo edge returned should not be able to set one or two. A trait can be applied to prevent this.
+    // This is an issue on all edge methods.
+    /**
+     * Gets the {@link Edge} that has been added. This can be used inside the runnerCode to access the edge.
+     * @return the edge that has been added.
+     */
+    Edge getEdge() {
+<span class="nc" id="L36">        edge</span>
     }
 
-    abstract Edge apply()
+    void setFrom(Object from) {
+<span class="fc" id="L40">        changeFrom(from)</span>
+<span class="fc" id="L41">        this.from = from</span>
+    }
+
+    void setTo(Object to) {
+<span class="fc" id="L45">        changeTo(to)</span>
+<span class="fc" id="L46">        this.to = to</span>
+    }
+
+    EdgeSpec(Graph graph, Map&lt;String, ?&gt; map, Closure closure = null) {
+<span class="fc bfc" id="L50" title="All 4 branches covered.">        if(!graph) {</span>
+<span class="fc" id="L51">            throw new IllegalArgumentException('graph must be set.')</span>
+        }
+<span class="fc bfc" id="L53" title="All 4 branches covered.">        if(!map) {</span>
+<span class="fc" id="L54">            throw new IllegalArgumentException('map must be set.')</span>
+        }
+<span class="fc" id="L56">        this.graph = graph</span>
+
+<span class="fc" id="L58">        dslProperties = ['from', 'to', 'changeFrom', 'changeTo']</span>
+
+<span class="pc bfc" id="L60" title="All 2 branches covered.">        entries = map.findAll { !(it.key in dslProperties) }</span>
+
+<span class="fc" id="L62">        from = map.from</span>
+<span class="fc" id="L63">        to = map.to</span>
+<span class="fc" id="L64">        changeFrom = map.changeFrom</span>
+<span class="fc" id="L65">        changeTo = map.changeTo</span>
+
+<span class="fc" id="L67">        runnerCodeClosure = closure</span>
+
+<span class="fc" id="L69">        Edge created = graph.newEdge(from:from, to:to)</span>
+<span class="pc" id="L70">        Edge existing = graph.edges.find { it == created }</span>
+<span class="fc" id="L71">        edgePresentInGraph = existing != null</span>
+
+<span class="fc bfc" id="L73" title="All 4 branches covered.">        if (!edgePresentInGraph) {</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            from = changeFrom ?: from</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            to = changeTo ?: to</span>
+<span class="fc" id="L76">            changeFrom = null</span>
+<span class="fc" id="L77">            changeTo = null</span>
+<span class="fc" id="L78">            created.from = from</span>
+<span class="fc" id="L79">            created.to = to</span>
+<span class="pc" id="L80">            existing = graph.edges.find { it == created }</span>
+<span class="fc" id="L81">            edgePresentInGraph = existing != null</span>
+        }
+
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        edge = existing ?: created</span>
+<span class="fc bfc" id="L85" title="All 4 branches covered.">        if (!from) {</span>
+<span class="fc" id="L86">            throw new IllegalStateException('!from failed. from must be groovy truth.')</span>
+        }
+<span class="fc bfc" id="L88" title="All 4 branches covered.">        if (!to) {</span>
+<span class="fc" id="L89">            throw new IllegalStateException('!to failed. to must be groovy truth.')</span>
+        }
+<span class="fc bfc" id="L91" title="All 6 branches covered.">        if (changeFrom || changeTo) {</span>
+<span class="fc bfc" id="L92" title="All 4 branches covered.">            Edge renamed = graph.newEdge(from:changeFrom ?: from, to:changeTo ?: to)</span>
+<span class="pc bfc" id="L93" title="All 2 branches covered.">            if (graph.edges.find { it == renamed }) {</span>
+<span class="fc" id="L94">                throw new IllegalStateException('renamed edge already exists.')</span>
+            }
+        }
+    }
+
+    /**
+     * Changes edge.from to changeFrom. This allows edge.from to point to a different {@link graph.Vertex}
+     * @param changeFrom the new id for edge.from
+     */
+    void changeFrom(Object changeFrom) {
+<span class="fc" id="L104">        graph.newEdgeSpec([from:edge.from, to:edge.to, changeFrom:changeFrom]).apply()</span>
+    }
+
+    /**
+     * Changes edge.to to changeTo. This allows edge.two to point to a different {@link graph.Vertex}.
+     * @param changeTo  the new id for edge.to
+     */
+    void changeTo(Object changeTo) {
+<span class="fc" id="L112">        graph.newEdgeSpec([from:edge.from, to:edge.to, changeTo:changeTo]).apply()</span>
+    }
+
+    private void setupGraph() {
+<span class="fc bfc" id="L116" title="All 10 branches covered.">        if (edgePresentInGraph &amp;&amp; (changeFrom || changeTo)) {</span>
+            //need to delete and re-add edge to reset hashcode in LinkedHashSet.
+<span class="fc" id="L118">            graph.deleteEdge(edge.from, edge.to)</span>
+        }
+
+<span class="fc" id="L121">        graph.vertex(from)</span>
+<span class="fc" id="L122">        graph.vertex(to)</span>
+    }
+
+    private void initRenameOne() {
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        if (changeFrom) {</span>
+<span class="fc" id="L127">            graph.vertex(changeFrom)</span>
+<span class="fc" id="L128">            edge.from = changeFrom</span>
+        }
+    }
+
+    private void initRenameTwo() {
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (changeTo) {</span>
+<span class="fc" id="L134">            graph.vertex(changeTo)</span>
+<span class="fc" id="L135">            edge.to = changeTo</span>
+        }
+    }
+
+    private void initEntries() {
+<span class="fc" id="L140">        edge.putAll(entries)</span>
+    }
+
+    private void applyClosure() {
+<span class="fc bfc" id="L144" title="All 4 branches covered.">        if (!runnerCodeClosure) {</span>
+<span class="fc" id="L145">            return</span>
+        }
+<span class="fc" id="L147">        runnerCodeClosure.delegate = this</span>
+<span class="fc" id="L148">        runnerCodeClosure.resolveStrategy = Closure.DELEGATE_FIRST</span>
+<span class="fc" id="L149">        runnerCodeClosure()</span>
+    }
+
+    Edge apply() {
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        if(applied) {</span>
+<span class="fc" id="L154">            throw new IllegalStateException('spec has already been applied.')</span>
+        }
+<span class="fc" id="L156">        applied = true</span>
+<span class="fc" id="L157">        setupGraph()</span>
+<span class="fc" id="L158">        initRenameOne()</span>
+<span class="fc" id="L159">        initRenameTwo()</span>
+<span class="fc" id="L160">        initEntries()</span>
+<span class="fc" id="L161">        graph.addEdge(edge)</span>
+<span class="fc" id="L162">        applyClosure()</span>
+<span class="pc" id="L163">        edge</span>
+    }
+
+    /**
+     * Calls the missing method on the {@link Edge}.
+     * @param name
+     * @param args
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def methodMissing(String name, args) {
+<span class="pc" id="L174">        edge.invokeMethod(name, args)</span>
+    }
+
+    /**
+     * Gets the property from the {@link Edge}.
+     * @param name
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def propertyMissing(String name) {
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        if (edge[name]) {</span>
+<span class="pc" id="L185">            edge[name]</span>
+        } else {
+<span class="pc" id="L187">            throw new MissingPropertyException(&quot;Missing $name&quot;)</span>
+        }
+    }
+
+    /**
+     * Sets the property on the {@link Edge}.
+     * @throws MissingPropertyException when attempting to set one or two.
+     * @param name
+     * @param value
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def propertyMissing(String name, value) {
+<span class="pc" id="L200">        edge[name] = value</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

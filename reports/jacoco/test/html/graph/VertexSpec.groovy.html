@@ -1,20 +1,213 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VertexSpec.groovy</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">graph-dsl</a> &gt; <a href="index.source.html" class="el_package">graph</a> &gt; <span class="el_source">VertexSpec.groovy</span></div><h1>VertexSpec.groovy</h1><pre class="source lang-java linenums">package graph
 
 /**
- * Specification class that helps vertex methods in {@link Graph} objects. GraphVertexSpec is used to collect the
- * details of an update or create.
+ * Base implementation of a VertexSpec.
+ *
+ * Add new dsl properties for Vertex dsl to dslProperties. This will prevent them from being added as entries to the
+ * Vertex.
  */
-abstract class VertexSpec {
-    Graph graph
+class VertexSpec {
+    private Graph graph
+    private Vertex vertex
+    Object id
+    private Object changeId
+<span class="fc" id="L14">    private final Set&lt;Object&gt; connectsToSet = [] as Set&lt;Object&gt;</span>
+<span class="fc" id="L15">    private final Set&lt;Object&gt; connectsFromSet = [] as Set&lt;Object&gt;</span>
+    private List dslProperties
+    private Map entries
+    private Closure runnerCodeClosure
+    private boolean applied
 
-    protected VertexSpec(Graph graph) {
-<span class="fc" id="L11">        this.graph = graph</span>
+    /**
+     * Gets the graph the {@link Vertex} has been added to. This can be used inside the runnerCode to access the graph.
+     * @return the graph the {@link Vertex} has been added to.
+     */
+    Graph getGraph() {
+<span class="pc" id="L26">        graph</span>
     }
 
-    protected void addVertex(Vertex vertex) {
-<span class="fc" id="L15">        graph.addVertex(vertex)</span>
+    /**
+     * Gets the {@link Vertex} that has been added. This can be used inside the runnerCode to access the vertex.
+     * @return the vertex that has been added.
+     */
+    Vertex getVertex() {
+<span class="pc" id="L34">        vertex</span>
     }
 
-    abstract Vertex apply()
+    void setId(Object id) {
+<span class="fc" id="L38">        changeId(id)</span>
+<span class="fc" id="L39">        this.id = id</span>
+    }
+
+    protected VertexSpec(Graph graph, Map&lt;String, ?&gt; map, Closure closure = null) {
+<span class="fc bfc" id="L43" title="All 4 branches covered.">        if (!graph) {</span>
+<span class="fc" id="L44">            throw new IllegalArgumentException('invalid graph.')</span>
+        }
+<span class="fc bfc" id="L46" title="All 4 branches covered.">        if(!map) {</span>
+<span class="fc" id="L47">            throw new IllegalArgumentException('invalid map.')</span>
+        }
+<span class="fc" id="L49">        this.graph = graph</span>
+
+<span class="fc" id="L51">        dslProperties = ['id', 'changeId', 'connectsTo', 'connectsFrom']</span>
+
+<span class="pc bfc" id="L53" title="All 2 branches covered.">        entries = map.findAll { !(it.key in dslProperties)}</span>
+
+<span class="pc bpc" id="L55" title="1 of 8 branches missed.">        if(map.containsKey('id') &amp;&amp; !map.id) {</span>
+<span class="fc" id="L56">            throw new IllegalArgumentException('Invalid id')</span>
+        }
+<span class="fc" id="L58">        id = map.id</span>
+
+<span class="fc bfc" id="L60" title="All 8 branches covered.">        if(map.containsKey('changeId') &amp;&amp; !map.changeId) {</span>
+<span class="fc" id="L61">            throw new IllegalArgumentException('Invalid containsKey')</span>
+        }
+<span class="fc" id="L63">        changeId = map.changeId</span>
+
+<span class="fc bfc" id="L65" title="All 10 branches covered.">        if(map.connectsTo &amp;&amp; (map.connectsTo instanceof Collection || map.connectsTo.class.isArray())) {</span>
+<span class="fc" id="L66">            map.connectsTo.each {</span>
+<span class="fc bfc" id="L67" title="All 4 branches covered.">                if(!it) {</span>
+<span class="fc" id="L68">                    throw new IllegalArgumentException('Invalid connectsTo item.')</span>
+                }
+<span class="pc" id="L70">                connectsToSet.add(it)</span>
+            }
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        } else if(map.connectsTo) {</span>
+<span class="fc" id="L73">            connectsToSet.add(map.connectsTo)</span>
+        }
+
+<span class="fc bfc" id="L76" title="All 10 branches covered.">        if(map.connectsFrom &amp;&amp; (map.connectsFrom instanceof Collection || map.connectsFrom.class.isArray())) {</span>
+<span class="fc" id="L77">            map.connectsFrom.each {</span>
+<span class="fc bfc" id="L78" title="All 4 branches covered.">                if(!it) {</span>
+<span class="fc" id="L79">                    throw new IllegalArgumentException('Invalid connectsFrom item.')</span>
+                }
+<span class="pc" id="L81">                connectsFromSet.add(it)</span>
+            }
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        } else if(map.connectsFrom) {</span>
+<span class="fc" id="L84">            connectsFromSet.add(map.connectsFrom)</span>
+        }
+<span class="fc" id="L86">        runnerCodeClosure = closure</span>
+
+<span class="fc bfc" id="L88" title="All 4 branches covered.">        if (!graph.vertices[id]) {</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            id = changeId ?: id</span>
+<span class="fc" id="L90">            changeId = null</span>
+        }
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        vertex = graph.vertices[id] ?: graph.newVertex(id:id)</span>
+
+<span class="fc bfc" id="L94" title="All 6 branches covered.">        if (changeId &amp;&amp; graph.vertices[changeId]) {</span>
+<span class="fc" id="L95">            throw new IllegalStateException('renamed vertex already exists')</span>
+        }
+    }
+
+    /**
+     * Changes the id for the vertex to changeId
+     * @param newId
+     */
+    void changeId(Object newId) {
+<span class="fc" id="L104">        graph.newVertexSpec([id:vertex.id, changeId:newId]).apply()</span>
+    }
+
+    /**
+     * Creates edges where the vertex is edge.one and each id in ids is edge.two.
+     * @param vertices to connect to.
+     */
+    void connectsTo(Object... ids) {
+<span class="fc" id="L112">        graph.newVertexSpec([id:vertex.id, connectsTo:ids]).apply()</span>
+    }
+
+    void connectsTo(Object id, Closure closure) {
+<span class="fc" id="L116">        graph.newVertexSpec([id:vertex.id, connectsTo:id]).apply()</span>
+<span class="fc" id="L117">        graph.newVertexSpec([id:id], closure).apply()</span>
+    }
+
+    /**
+     * Creates edges where the vertex is edge.two and each id in ids is edge.one.
+     * @param ids of vetices to connect to.
+     */
+    void connectsFrom(Object... ids) {
+<span class="fc" id="L125">        graph.newVertexSpec([id:vertex.id, connectsFrom:ids]).apply()</span>
+    }
+
+    void connectsFrom(Object id, Closure closure) {
+<span class="fc" id="L129">        graph.newVertexSpec([id:vertex.id, connectsFrom:id]).apply()</span>
+<span class="fc" id="L130">        graph.newVertexSpec([id:id], closure).apply()</span>
+    }
+
+    protected void addEntries() {
+<span class="fc" id="L134">        vertex.putAll(entries)</span>
+    }
+
+    protected void applyChangeKey() {
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        if (changeId) {</span>
+<span class="fc" id="L139">            graph.changeId(id, changeId)</span>
+        }
+    }
+
+    protected void applyConnectsTo() {
+<span class="fc" id="L144">        connectsToSet.each {</span>
+<span class="pc" id="L145">            graph.edge vertex.id, it</span>
+        }
+    }
+
+    protected void applyConnectsFrom() {
+<span class="fc" id="L150">        connectsFromSet.each {</span>
+<span class="pc" id="L151">            graph.edge it, vertex.id</span>
+        }
+    }
+
+    protected void applyClosure() {
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        if (runnerCodeClosure) {</span>
+<span class="fc" id="L157">            runnerCodeClosure.delegate = this</span>
+<span class="fc" id="L158">            runnerCodeClosure.resolveStrategy = Closure.DELEGATE_FIRST</span>
+<span class="fc" id="L159">            runnerCodeClosure()</span>
+        }
+    }
+
+    Vertex apply() {
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        if(applied) {</span>
+<span class="fc" id="L165">            throw new IllegalStateException('spec has already been applied.')</span>
+        }
+<span class="fc" id="L167">        applied = true</span>
+<span class="fc" id="L168">        applyChangeKey()</span>
+<span class="fc" id="L169">        applyConnectsTo()</span>
+<span class="fc" id="L170">        applyConnectsFrom()</span>
+<span class="fc" id="L171">        addEntries()</span>
+<span class="fc" id="L172">        graph.addVertex(vertex)</span>
+<span class="fc" id="L173">        applyClosure()</span>
+<span class="pc" id="L174">        vertex</span>
+    }
+
+    /**
+     * calls method on vertex.
+     * @param name
+     * @param args
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def methodMissing(String name, args) {
+<span class="pc" id="L185">        vertex.invokeMethod(name, args)</span>
+    }
+
+    /**
+     * returns property from vertex.
+     * @param name
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def propertyMissing(String name) {
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        if (vertex[name]) {</span>
+<span class="pc" id="L196">            vertex[name]</span>
+        } else {
+<span class="pc" id="L198">            throw new MissingPropertyException(&quot;Missing $name&quot;)</span>
+        }
+    }
+
+    /**
+     * sets property on vertex.
+     * @param name
+     * @param value
+     * @return
+     */
+    @SuppressWarnings('NoDef')
+    def propertyMissing(String name, value) {
+<span class="pc" id="L210">        vertex[name] = value</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

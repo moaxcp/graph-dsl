@@ -14,8 +14,8 @@ import graph.type.undirected.GraphType
  *     &lt;dt&gt;{@code edges}&lt;/dt&gt;
  *     &lt;dd&gt;All edges are converted to {@link DirectedEdge}s and all future edges will be {@link DirectedEdge}s. Any two
  *     vertices may be connected by one or two {@link DirectedEdge}s. Two {@link DirectedEdge}s connecting any two
- *     vertices cannot have the same direction. Direction is determined by the values of {@link DirectedEdge#getOne()}
- *     and {@link DirectedEdge#getTwo()}. The values of one and two cannot be the same in any two {@link DirectedEdge}s.
+ *     vertices cannot have the same direction. Direction is determined by the values of {@link DirectedEdge#getFrom()}
+ *     and {@link DirectedEdge#getTo()}. The values of one and two cannot be the same in any two {@link DirectedEdge}s.
  *     &lt;/dd&gt;
  * &lt;/dl&gt;
  */
@@ -32,85 +32,75 @@ class DirectedGraphType extends GraphType {
 <span class="pc" id="L32">        new DirectedEdge(map)</span>
     }
 
-    /**
-     * Creates a new {@link graph.type.directed.DirectedVertexSpec} from map.
-     * @param map
-     * @return
-     */
-    @Override
-    DirectedVertexSpec newVertexSpec(Map&lt;String, ?&gt; map, Closure closure = null) {
-<span class="pc" id="L42">        new DirectedVertexSpec(graph, map, closure)</span>
-    }
-
     @Override
     boolean canConvert() {
-<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (graph.edges.size() == 0) {</span>
-<span class="fc" id="L48">            return true</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (graph.edges.size() == 0) {</span>
+<span class="fc" id="L38">            return true</span>
         }
-<span class="fc" id="L50">        Set edges = [] as Set</span>
-<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        !graph.edges.find { Edge current -&gt;</span>
-<span class="fc" id="L52">            Edge edge = new DirectedEdge(current)</span>
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            !edges.add(edge)</span>
+<span class="fc" id="L40">        Set edges = [] as Set</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        !graph.edges.find { Edge current -&gt;</span>
+<span class="fc" id="L42">            Edge edge = new DirectedEdge(current)</span>
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            !edges.add(edge)</span>
         }
     }
 
     @Override
     boolean isDirected() {
-<span class="pc" id="L59">        true</span>
+<span class="pc" id="L49">        true</span>
     }
 
     /**
      * Returns in-edges of vertex
      * @param graph
-     * @param key  for vertex
+     * @param id  for vertex
      * @return
      */
-    Set&lt;? extends Edge&gt; inEdges(Object key) {
-<span class="pc" id="L69">        graph.edges.findAll {</span>
-<span class="pc" id="L70">            key == it.two</span>
+    Set&lt;? extends Edge&gt; inEdges(Object id) {
+<span class="pc" id="L59">        graph.edges.findAll {</span>
+<span class="pc" id="L60">            id == it.to</span>
         }
     }
 
     /**
      * returns number of in edges from vertex
      * @param graph
-     * @param key
+     * @param id
      * @return
      */
-    int inDegree(Object key) {
-<span class="pc" id="L81">        graph.inEdges(key).size()</span>
+    int inDegree(Object id) {
+<span class="pc" id="L71">        graph.inEdges(id).size()</span>
     }
 
     /**
      * returns out edges of vertex.
      * @param graph
-     * @param key
+     * @param id
      * @return
      */
-    Set&lt;? extends Edge&gt; outEdges(Object key) {
-<span class="pc" id="L91">        graph.edges.findAll {</span>
-<span class="pc" id="L92">            key == it.one</span>
+    Set&lt;? extends Edge&gt; outEdges(Object id) {
+<span class="pc" id="L81">        graph.edges.findAll {</span>
+<span class="pc" id="L82">            id == it.from</span>
         }
     }
 
     /**
      * returns number of out edges of vertex
      * @param graph
-     * @param key
+     * @param id
      * @return
      */
-    int outDegree(Object key) {
-<span class="pc" id="L103">        graph.outEdges(key).size()</span>
+    int outDegree(Object id) {
+<span class="pc" id="L93">        graph.outEdges(id).size()</span>
     }
 
     /**
      * Returns out edges of graph.
      * @param graph
-     * @param key
+     * @param id
      * @return
      */
-    Set&lt;? extends Edge&gt; traverseEdges(Object key) {
-<span class="pc" id="L113">        graph.outEdges(key)</span>
+    Set&lt;? extends Edge&gt; traverseEdges(Object id) {
+<span class="pc" id="L103">        graph.outEdges(id)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

@@ -5,29 +5,29 @@ trait VertexDsl {
     abstract Vertex vertex(ConfigSpec spec)
 
     /**
-     * Finds the {@link Vertex} with the given key or creates a new one.
-     * @param key  the key of the {@link Vertex} to find or create.
+     * Finds the {@link Vertex} with the given id or creates a new one.
+     * @param id  the id of the {@link Vertex} to find or create.
      * @return the resulting {@link Vertex}
-     * @throws {@link IllegalArgumentException} When key is null or empty.
+     * @throws {@link IllegalArgumentException} When id is null or empty.
      */
-    Vertex vertex(Object key) {
-<span class="fc bfc" id="L14" title="All 4 branches covered.">        if(!key) {</span>
-<span class="fc" id="L15">            throw new IllegalArgumentException(&quot;Invalid key.&quot;)</span>
+    Vertex vertex(Object id) {
+<span class="fc bfc" id="L14" title="All 4 branches covered.">        if(!id) {</span>
+<span class="fc" id="L15">            throw new IllegalArgumentException(&quot;Invalid id.&quot;)</span>
         }
-<span class="fc" id="L17">        ConfigSpec spec = new ConfigSpec(map:[key:key])</span>
+<span class="fc" id="L17">        ConfigSpec spec = new ConfigSpec(map:[id:id])</span>
 <span class="pc" id="L18">        vertex(spec)</span>
     }
 
     /**
      * Finds or creates all vertices returning them in a Set.
-     * @param key  key of first {@link Vertex} to find or create.
-     * @param keys  of other vertices to find or create.
+     * @param id  id of first {@link Vertex} to find or create.
+     * @param ids  of other vertices to find or create.
      * @return set of created vertices
      */
-    Set&lt;Vertex&gt; vertex(Object key, Object... keys) {
+    Set&lt;Vertex&gt; vertex(Object id, Object... ids) {
 <span class="fc" id="L28">        Set&lt;Vertex&gt; set = new LinkedHashSet&lt;&gt;()</span>
-<span class="fc" id="L29">        set &lt;&lt; vertex(key)</span>
-<span class="fc" id="L30">        keys.collect {</span>
+<span class="fc" id="L29">        set &lt;&lt; vertex(id)</span>
+<span class="fc" id="L30">        ids.collect {</span>
 <span class="pc" id="L31">            vertex(it)</span>
 <span class="fc" id="L32">        }.each {</span>
 <span class="pc" id="L33">            set &lt;&lt; it</span>
@@ -39,29 +39,29 @@ trait VertexDsl {
      * Creates or updates a {@link Vertex} in this graph. The map may contain configuration for the vertex. Default
      * configuration can be:
      * &lt;dl&gt;
-     *     &lt;dt&gt;key&lt;/dt&gt;
-     *     &lt;dd&gt;key of the vertex to create or update&lt;/dd&gt;
-     *     &lt;dt&gt;changeKey&lt;/dt&gt;
-     *     &lt;dd&gt;new key for the vertex&lt;/dd&gt;
+     *     &lt;dt&gt;id&lt;/dt&gt;
+     *     &lt;dd&gt;id of the vertex to create or update&lt;/dd&gt;
+     *     &lt;dt&gt;changeId&lt;/dt&gt;
+     *     &lt;dd&gt;new id for the vertex&lt;/dd&gt;
      *     &lt;dt&gt;connectsTo&lt;/dt&gt;
      *     &lt;dd&gt;list of vertex keys the vertex should connect to. Edges will be created with edge.one equal to the
-     *     vertex key and edge.two equals to the 'connectTo' key.&lt;/dd&gt;
+     *     vertex id and edge.two equals to the 'connectTo' id.&lt;/dd&gt;
      * &lt;/dl&gt;
      * Additional entries may be added by type of the graph.
-     * The map must contain key for this method.
+     * The map must contain id for this method.
      * @param map  configuration of {@link Vertex}
      * @return the resulting {@link Vertex}
      */
     Vertex vertex(Map&lt;String, ?&gt; map) {
-<span class="pc bpc" id="L56" title="2 of 4 branches missed.">        if(!map.key) {</span>
-<span class="nc" id="L57">            throw new IllegalArgumentException(&quot;Invalid key.&quot;)</span>
+<span class="pc bpc" id="L56" title="2 of 4 branches missed.">        if(!map.id) {</span>
+<span class="nc" id="L57">            throw new IllegalArgumentException(&quot;Invalid id.&quot;)</span>
         }
 <span class="fc" id="L59">        ConfigSpec spec = new ConfigSpec(map:map)</span>
 <span class="pc" id="L60">        vertex(spec)</span>
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given key. {@code closure} is used to further
+     * Creates or updates a {@link Vertex} in this graph with the given id. {@code closure} is used to further
      * customize the vertex and graph. In the closure getting and setting properties delegates to the vertex. Methods
      * also delegate to the vertex.
      * &lt;p&gt;
@@ -76,9 +76,9 @@ trait VertexDsl {
      * By default there are several methods added in the closure.
      * &lt;p&gt;
      * &lt;dl&gt;
-     *     &lt;dt&gt;{@code void changeKey(Object key)}&lt;/dt&gt;
-     *     &lt;dd&gt;Changes key of vertex&lt;/dd&gt;
-     *     &lt;dt&gt;{@code void changeKey(NameSpec newName)}&lt;/dt&gt;
+     *     &lt;dt&gt;{@code void changeId(Object id)}&lt;/dt&gt;
+     *     &lt;dd&gt;Changes id of vertex&lt;/dd&gt;
+     *     &lt;dt&gt;{@code void changeId(NameSpec newName)}&lt;/dt&gt;
      *     &lt;dd&gt;renames the vertex using a NameSpec&lt;/dd&gt;
      *     &lt;dt&gt;{@code void connectsTo(Object... keys)}&lt;/dt&gt;
      *     &lt;dd&gt;Connects the vertex to other vertices. If they do not exist they are created.&lt;/dd&gt;
@@ -88,30 +88,30 @@ trait VertexDsl {
      * &lt;/dl&gt;
      * &lt;p&gt;
      * Types may add variables and methods to the passed in closure.
-     * @param key  the key of the {@link Vertex} to find or create.
+     * @param id  the id of the {@link Vertex} to find or create.
      * @param closure  configuration for graph and vertex
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(Object key, Closure closure) {
-<span class="pc bpc" id="L96" title="2 of 4 branches missed.">        if(!key) {</span>
-<span class="nc" id="L97">            throw new IllegalArgumentException(&quot;Invalid key.&quot;)</span>
+    Vertex vertex(Object id, @DelegatesTo(VertexSpec) Closure closure) {
+<span class="pc bpc" id="L96" title="2 of 4 branches missed.">        if(!id) {</span>
+<span class="nc" id="L97">            throw new IllegalArgumentException(&quot;Invalid id.&quot;)</span>
         }
-<span class="fc" id="L99">        ConfigSpec spec = new ConfigSpec(map:[key:key], closure:closure)</span>
+<span class="fc" id="L99">        ConfigSpec spec = new ConfigSpec(map:[id:id], closure:closure)</span>
 <span class="pc" id="L100">        vertex(spec)</span>
     }
 
     /**
-     * Creates or updates a {@link Vertex} in this graph with the given key. The map contains configuration described
+     * Creates or updates a {@link Vertex} in this graph with the given id. The map contains configuration described
      * in {@link #vertex(Map)}.
-     * @param key  the key of the {@link Vertex} to find or create.
+     * @param id  the id of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(Object key, Map&lt;String, ?&gt; map) {
-<span class="pc bpc" id="L111" title="2 of 4 branches missed.">        if(!key) {</span>
-<span class="nc" id="L112">            throw new IllegalArgumentException(&quot;Invalid key.&quot;)</span>
+    Vertex vertex(Object id, Map&lt;String, ?&gt; map) {
+<span class="pc bpc" id="L111" title="2 of 4 branches missed.">        if(!id) {</span>
+<span class="nc" id="L112">            throw new IllegalArgumentException(&quot;Invalid id.&quot;)</span>
         }
-<span class="fc bfc" id="L114" title="All 2 branches covered.">        map.key = map.key ?: key</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        map.id = map.id ?: id</span>
 <span class="fc" id="L115">        ConfigSpec spec = new ConfigSpec(map:map)</span>
 <span class="pc" id="L116">        vertex(spec)</span>
     }
@@ -123,9 +123,9 @@ trait VertexDsl {
      * @param closure  configuration for graph and vertex
      * @return  The resulting {@link Vertex}.
      */
-    Vertex vertex(Map&lt;String, ?&gt; map, Closure closure) {
-<span class="pc bpc" id="L127" title="2 of 4 branches missed.">        if(!map.key) {</span>
-<span class="nc" id="L128">            throw new IllegalArgumentException(&quot;Invalid key.&quot;)</span>
+    Vertex vertex(Map&lt;String, ?&gt; map, @DelegatesTo(VertexSpec) Closure closure) {
+<span class="pc bpc" id="L127" title="2 of 4 branches missed.">        if(!map.id) {</span>
+<span class="nc" id="L128">            throw new IllegalArgumentException(&quot;Invalid id.&quot;)</span>
         }
 <span class="fc" id="L130">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
 <span class="pc" id="L131">        vertex(spec)</span>
@@ -134,16 +134,16 @@ trait VertexDsl {
     /**
      * Creates or updates a {@link Vertex} in this graph. The map contains configuration described in
      * {@link #vertex(Map)}. The configuration given by the closure described in {@link #vertex(Object,Closure)}.
-     * @param key  the key of the {@link Vertex} to find or create.
+     * @param id  the id of the {@link Vertex} to find or create.
      * @param map  configuration of {@link Vertex}
      * @param closure  configuration for graph and vertex
      * @return The resulting {@link Vertex}.
      */
-    Vertex vertex(Object key, Map&lt;String, ?&gt; map, Closure closure) {
-<span class="pc bpc" id="L143" title="2 of 4 branches missed.">        if(!key) {</span>
-<span class="nc" id="L144">            throw new IllegalArgumentException(&quot;Invalid key.&quot;)</span>
+    Vertex vertex(Object id, Map&lt;String, ?&gt; map, @DelegatesTo(VertexSpec) Closure closure) {
+<span class="pc bpc" id="L143" title="2 of 4 branches missed.">        if(!id) {</span>
+<span class="nc" id="L144">            throw new IllegalArgumentException(&quot;Invalid id.&quot;)</span>
         }
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        map.key = map.key ?: key</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        map.id = map.id ?: id</span>
 <span class="fc" id="L147">        ConfigSpec spec = new ConfigSpec(map:map, closure:closure)</span>
 <span class="pc" id="L148">        vertex(spec)</span>
     }

@@ -50,24 +50,24 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
 <span class="pc" id="L50">        Collections.unmodifiableMap(vertices)</span>
     }
 
-    Vertex getVertex(Object key) {
-<span class="pc" id="L54">        vertices[key]</span>
+    Vertex getVertex(Object id) {
+<span class="pc" id="L54">        vertices[id]</span>
     }
 
     /**
-     * Removes the {@link Vertex} from vertices with the matching key. If the Vertex has adjacentEdges it cannot be
+     * Removes the {@link Vertex} from vertices with the matching id. If the Vertex has adjacentEdges it cannot be
      * deleted an IllegalStateException will be thrown.
-     * @param key key of {@link Vertex} to delete from this graph
-     * @throws IllegalStateException if key vertex has adjacentEdges.
+     * @param id id of {@link Vertex} to delete from this graph
+     * @throws IllegalStateException if id vertex has adjacentEdges.
      * @see {@link Graph#adjacentEdges(Object)}
      */
-    void delete(Object key) {
-<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (adjacentEdges(key)) {</span>
+    void delete(Object id) {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (adjacentEdges(id)) {</span>
 <span class="fc" id="L66">            throw new IllegalStateException(</span>
-                    &quot;Cannot delete $key. There are edges that connect to it. Try deleting those first.&quot;
+                    &quot;Cannot delete $id. There are edges that connect to it. Try deleting those first.&quot;
             )
         }
-<span class="fc" id="L70">        vertices.remove(key)</span>
+<span class="fc" id="L70">        vertices.remove(id)</span>
     }
 
     /**
@@ -135,13 +135,13 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
     /**
      * Removes an {@link Edge} from edges If a type changes the definition of an edge, for example to
      * {@link graph.type.directed.DirectedEdge}, this method will still work as expected. It will remove the edge where
-     * edge.one == one and edge.two == two. Keep in mind, in the case of the base {@link Edge} object edge.one can also
-     * equal two and edge.two can also equal one.
-     * @param one key of first vertex
-     * @param two key of second vertex
+     * edge.from == from and edge.to == to. Keep in mind, in the case of the base {@link Edge} object edge.from can also
+     * equal to and edge.to can also equal from.
+     * @param from id of first vertex
+     * @param to id of second vertex
      */
-    void deleteEdge(Object one, Object two) {
-<span class="fc" id="L144">        edges.remove(type.newEdge(one: one, two: two))</span>
+    void deleteEdge(Object from, Object to) {
+<span class="fc" id="L144">        edges.remove(type.newEdge(from: from, to: to))</span>
     }
 
     /**
@@ -208,28 +208,28 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
      */
     @PackageScope
     boolean addVertex(Vertex vertex) {
-<span class="pc" id="L211">        vertices[vertex.key] = vertex</span>
+<span class="pc" id="L211">        vertices[vertex.id] = vertex</span>
     }
 
     /**
-     * Replaces the key of a {@link Vertex}. All edges connecting the {@link Vertex} are updated with the new key.
-     * @param key of original vertex
-     * @param newKey for updated vertex
+     * Replaces the id of a {@link Vertex}. All edges connecting the {@link Vertex} are updated with the new id.
+     * @param id of original vertex
+     * @param newId for updated vertex
      */
-    void changeKey(Object key, Object newKey) {
-<span class="fc bfc" id="L220" title="All 10 branches covered.">        if (!key || !newKey) {</span>
-<span class="fc" id="L221">            throw new IllegalArgumentException('key or newKey is null or empty.')</span>
+    void changeId(Object id, Object newId) {
+<span class="fc bfc" id="L220" title="All 10 branches covered.">        if (!id || !newId) {</span>
+<span class="fc" id="L221">            throw new IllegalArgumentException('id or newId is null or empty.')</span>
         }
-<span class="fc" id="L223">        Vertex vertex = vertex(key)</span>
-<span class="fc" id="L224">        vertices.remove(vertex.key)</span>
-<span class="fc" id="L225">        vertex.key = newKey</span>
-<span class="fc" id="L226">        vertices[(Object) vertex.key] = vertex</span>
-<span class="fc" id="L227">        adjacentEdges(key).each {</span>
-<span class="fc bfc" id="L228" title="All 2 branches covered.">            if (it.one == key) {</span>
-<span class="fc" id="L229">                it.one = newKey</span>
+<span class="fc" id="L223">        Vertex vertex = vertex(id)</span>
+<span class="fc" id="L224">        vertices.remove(vertex.id)</span>
+<span class="fc" id="L225">        vertex.id = newId</span>
+<span class="fc" id="L226">        vertices[(Object) vertex.id] = vertex</span>
+<span class="fc" id="L227">        adjacentEdges(id).each {</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">            if (it.from == id) {</span>
+<span class="fc" id="L229">                it.from = newId</span>
             }
-<span class="fc bfc" id="L231" title="All 2 branches covered.">            if (it.two == key) {</span>
-<span class="pc" id="L232">                it.two = newKey</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">            if (it.to == id) {</span>
+<span class="pc" id="L232">                it.to = newId</span>
             }
         }
     }
@@ -254,29 +254,29 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
     }
 
     /**
-     * Returns the first unvisited vertex key in vertices.
+     * Returns the first unvisited vertex id in vertices.
      *
-     * @param colors map of vertex key and TraversalColor entries.
-     * @return the first unvisited vertex key in vertices.
+     * @param colors map of vertex id and TraversalColor entries.
+     * @return the first unvisited vertex id in vertices.
      */
-    Object getUnvisitedVertexKey(Map colors) {
+    Object getUnvisitedVertexId(Map colors) {
 <span class="pc" id="L263">        vertices.find { k, v -&gt;</span>
 <span class="pc bfc" id="L264" title="All 4 branches covered.">            colors[(k)] != BLACK &amp;&amp; colors[(k)] != GREY</span>
         }?.key
     }
 
     /**
-     * returns the first unvisited child key with a parent matching key.
+     * returns the first unvisited child id with a parent matching id.
      *
-     * @param key the key of the parent vertex to start searching from
-     * @param colors a map of vertex key and TraversalColor entries.
-     * @return the first unvisited child key with a parent matching key.
+     * @param id the id of the parent vertex to start searching from
+     * @param colors a map of vertex id and TraversalColor entries.
+     * @return the first unvisited child id with a parent matching id.
      */
-    Object getUnvisitedChildKey(Object key, Map&lt;Object, TraversalColor&gt; colors) {
-<span class="fc" id="L276">        Edge edge = traverseEdges(key).findAll {</span>
-<span class="pc" id="L277">            it.one != it.two</span>
+    Object getUnvisitedChildId(Object id, Map&lt;Object, TraversalColor&gt; colors) {
+<span class="fc" id="L276">        Edge edge = traverseEdges(id).findAll {</span>
+<span class="pc" id="L277">            it.from != it.to</span>
         }.find {
-<span class="fc bfc" id="L279" title="All 2 branches covered.">            Object childKey = key == it.one ? it.two : it.one</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">            Object childKey = id == it.from ? it.to : it.from</span>
 <span class="fc" id="L280">            TraversalColor color = colors[childKey]</span>
 <span class="pc bfc" id="L281" title="All 4 branches covered.">            color != GREY &amp;&amp; color != BLACK</span>
         }
@@ -284,17 +284,17 @@ class Graph implements VertexDsl, EdgeDsl, TraversalDsl {
 <span class="fc bfc" id="L284" title="All 4 branches covered.">        if (!edge) {</span>
 <span class="fc" id="L285">            return null</span>
         }
-<span class="pc bfc" id="L287" title="All 2 branches covered.">        key == edge.one ? edge.two : edge.one</span>
+<span class="pc bfc" id="L287" title="All 2 branches covered.">        id == edge.from ? edge.to : edge.from</span>
     }
 
     /**
-     * Finds adjacent edges for vertex with key.
-     * @param key
+     * Finds adjacent edges for vertex with id.
+     * @param id
      * @return set of adjacent edges.
      */
-    Set&lt;? extends Edge&gt; adjacentEdges(Object key) {
+    Set&lt;? extends Edge&gt; adjacentEdges(Object id) {
 <span class="pc" id="L296">        edges.findAll { Edge edge -&gt;</span>
-<span class="pc bfc" id="L297" title="All 4 branches covered.">            key == edge.one || key == edge.two</span>
+<span class="pc bfc" id="L297" title="All 4 branches covered.">            id == edge.from || id == edge.to</span>
         }
     }
 

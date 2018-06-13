@@ -43,9 +43,9 @@ class GraphViz implements Plugin {
 
     @PackageScope
     String getEdgeDot(Edge edge) {
-<span class="fc" id="L46">        String string = &quot;${getId(edge.one.toString())} $edgeString ${getId(edge.two.toString())}&quot;</span>
+<span class="fc" id="L46">        String string = &quot;${getId(edge.from.toString())} $edgeString ${getId(edge.to.toString())}&quot;</span>
 <span class="fc" id="L47">        String attributes = edge.findAll {</span>
-<span class="pc bfc" id="L48" title="All 4 branches covered.">            it.key != 'one' &amp;&amp; it.key != 'two'</span>
+<span class="pc bfc" id="L48" title="All 4 branches covered.">            it.key != 'from' &amp;&amp; it.key != 'to'</span>
         }.collect {
 <span class="pc" id="L50">            /$it.key=&quot;$it.value&quot;/</span>
         }.join(' ')
@@ -57,9 +57,9 @@ class GraphViz implements Plugin {
 
     @PackageScope
     String getVertexDot(Vertex vertex) {
-<span class="fc" id="L60">        String string =getId(vertex.key.toString())</span>
+<span class="fc" id="L60">        String string =getId(vertex.id.toString())</span>
 <span class="fc" id="L61">        String attributes = vertex.findAll {</span>
-<span class="pc" id="L62">            it.key != 'key'</span>
+<span class="pc" id="L62">            it.key != 'id'</span>
         }.collect {
 <span class="pc" id="L64">            /$it.key=&quot;$it.value&quot;/</span>
         }.join(' ')

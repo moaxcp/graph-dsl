@@ -27,12 +27,12 @@ class GraphType implements Type {
 
     @Override
     EdgeSpec newEdgeSpec(Map&lt;String, ?&gt; map, Closure closure = null) {
-<span class="pc" id="L30">        new UndirectedEdgeSpec(graph, map, closure)</span>
+<span class="pc" id="L30">        new EdgeSpec(graph, map, closure)</span>
     }
 
     @Override
     VertexSpec newVertexSpec(Map&lt;String, ?&gt; map, Closure closure = null) {
-<span class="pc" id="L35">        new UndirectedVertexSpec(graph, map, closure)</span>
+<span class="pc" id="L35">        new VertexSpec(graph, map, closure)</span>
     }
 
     @Override
@@ -59,7 +59,7 @@ class GraphType implements Type {
 <span class="fc" id="L59">        graph.replaceEdgesSet(new LinkedHashSet&lt;? extends Edge&gt;())</span>
 
 <span class="fc" id="L61">        graph.replaceVertices { String name, Vertex vertex -&gt;</span>
-<span class="pc" id="L62">            [vertex.key, newVertex(vertex)]</span>
+<span class="pc" id="L62">            [vertex.id, newVertex(vertex)]</span>
         }
 
 <span class="fc" id="L65">        graph.replaceVerticesMap([:])</span>
@@ -82,11 +82,11 @@ class GraphType implements Type {
 
     /**
      * Returns edges from vertex that should be traversed.
-     * @param key
+     * @param id
      * @return
      */
-    Set&lt;? extends Edge&gt; traverseEdges(Object key) {
-<span class="pc" id="L89">        graph.adjacentEdges(key)</span>
+    Set&lt;? extends Edge&gt; traverseEdges(Object id) {
+<span class="pc" id="L89">        graph.adjacentEdges(id)</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

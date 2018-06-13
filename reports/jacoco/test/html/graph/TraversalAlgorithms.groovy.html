@@ -59,7 +59,7 @@ class TraversalAlgorithms {
 <span class="fc" id="L59">        Set&lt;Edge&gt; edges = graph.traverseEdges(root)</span>
 <span class="fc bfc" id="L60" title="All 2 branches covered.">        for(int index = 0; index &lt; edges.size(); index++) {</span>
 <span class="fc" id="L61">            Edge edge = edges[index]</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">            Object connectedKey = root == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            Object connectedKey = root == edge.from ? edge.to : edge.from</span>
 <span class="fc bfc" id="L63" title="All 8 branches covered.">            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {</span>
 <span class="fc" id="L64">                colors[connectedKey] = WHITE</span>
 <span class="fc" id="L65">                spec.root = connectedKey</span>
@@ -81,7 +81,7 @@ class TraversalAlgorithms {
 <span class="fc" id="L81">        Set&lt;Edge&gt; adjacentEdges = graph.traverseEdges(root)</span>
 <span class="fc bfc" id="L82" title="All 2 branches covered.">        for(int index = 0; index &lt; adjacentEdges.size(); index++) {</span>
 <span class="fc" id="L83">            Edge edge = adjacentEdges[index]</span>
-<span class="fc bfc" id="L84" title="All 2 branches covered.">            Object connectedKey = root == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            Object connectedKey = root == edge.from ? edge.to : edge.from</span>
 <span class="fc bfc" id="L85" title="All 8 branches covered.">            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {</span>
 <span class="fc" id="L86">                colors[connectedKey] = WHITE</span>
 <span class="fc" id="L87">                spec.root = connectedKey</span>
@@ -114,9 +114,9 @@ class TraversalAlgorithms {
 <span class="fc" id="L114">        Set&lt;Edge&gt; adjacentEdges = graph.traverseEdges(root)</span>
 <span class="fc bfc" id="L115" title="All 2 branches covered.">        for(int index = 0; index &lt; adjacentEdges.size(); index++) {</span>
 <span class="fc" id="L116">            Edge edge = adjacentEdges[index]</span>
-<span class="fc bfc" id="L117" title="All 2 branches covered.">            Object connectedKey = root == edge.one ? edge.two : edge.one</span>
-<span class="fc bfc" id="L118" title="All 2 branches covered.">            TraversalColor toColor = colors[connectedKey] ?: WHITE</span>
-<span class="fc" id="L119">            TraversalState state = action(root, connectedKey, toColor)</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">            Object connectedId = root == edge.from ? edge.to : edge.from</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            TraversalColor toColor = colors[connectedId] ?: WHITE</span>
+<span class="fc" id="L119">            TraversalState state = action(root, connectedId, toColor)</span>
 <span class="fc bfc" id="L120" title="All 4 branches covered.">            if(!state) {</span>
 <span class="fc" id="L121">                throw new NullPointerException('action cannot return null TraversalState.')</span>
             }
@@ -124,8 +124,8 @@ class TraversalAlgorithms {
 <span class="fc" id="L124">                spec.state = STOP</span>
 <span class="fc" id="L125">                return spec</span>
             }
-<span class="fc bfc" id="L127" title="All 8 branches covered.">            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {</span>
-<span class="fc" id="L128">                spec.root = connectedKey</span>
+<span class="fc bfc" id="L127" title="All 8 branches covered.">            if(!colors[connectedId] || colors[connectedId] == WHITE) {</span>
+<span class="fc" id="L128">                spec.root = connectedId</span>
 <span class="fc" id="L129">                preOrderEdgesTraversal(graph, spec, action)</span>
 <span class="fc bfc" id="L130" title="All 2 branches covered.">                if(spec.state == STOP) {</span>
 <span class="fc" id="L131">                    return spec</span>
@@ -204,7 +204,7 @@ class TraversalAlgorithms {
 <span class="fc" id="L204">            Set&lt;Edge&gt; adjacentEdges = graph.traverseEdges(current)</span>
 <span class="fc bfc" id="L205" title="All 2 branches covered.">            for (int i = 0; i &lt; adjacentEdges.size(); i++) {</span>
 <span class="fc" id="L206">                Edge edge = adjacentEdges[i]</span>
-<span class="fc bfc" id="L207" title="All 2 branches covered.">                Object connected = current == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">                Object connected = current == edge.from ? edge.to : edge.from</span>
 <span class="fc bfc" id="L208" title="All 8 branches covered.">                if(!colors[connected] || colors[connected] == WHITE) {</span>
 <span class="fc" id="L209">                    TraversalState traversal = action(graph.getVertex(connected))</span>
 <span class="fc bfc" id="L210" title="All 4 branches covered.">                    if(!traversal) {</span>
@@ -244,7 +244,7 @@ class TraversalAlgorithms {
 <span class="fc" id="L244">        Set&lt;Edge&gt; edges = graph.adjacentEdges(root)</span>
 <span class="fc bfc" id="L245" title="All 2 branches covered.">        for(int index = 0; index &lt; edges.size(); index++) {</span>
 <span class="fc" id="L246">            Edge edge = edges[index]</span>
-<span class="fc bfc" id="L247" title="All 2 branches covered.">            Object connectedKey = root == edge.one ? edge.two : edge.one</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            Object connectedKey = root == edge.from ? edge.to : edge.from</span>
 <span class="pc bpc" id="L248" title="1 of 8 branches missed.">            if(!colors[connectedKey] || colors[connectedKey] == WHITE) {</span>
 <span class="fc" id="L249">                colors[connectedKey] = WHITE</span>
 <span class="fc" id="L250">                spec.root = connectedKey</span>

@@ -9,20 +9,20 @@ class Vertex {
 <span class="pc" id="L9">    @Delegate</span>
     Map map = [:]
 
-    Object getKey() {
-<span class="pc" id="L13">        get('key')</span>
+    Object getId() {
+<span class="pc" id="L13">        get('id')</span>
     }
 
-    Object setKey(Object value) {
-<span class="pc" id="L17">        put('key', value)</span>
+    Object setId(Object id) {
+<span class="pc" id="L17">        put('id', id)</span>
     }
 
     boolean asBoolean() {
-<span class="pc" id="L21">        key</span>
+<span class="pc" id="L21">        id</span>
     }
 
     boolean equals(Vertex vertex) {
-<span class="pc" id="L25">        key == vertex.key</span>
+<span class="pc" id="L25">        id == vertex.id</span>
     }
 
     @Override
@@ -34,7 +34,7 @@ class Vertex {
 <span class="nc" id="L34">            return true</span>
         }
 <span class="nc" id="L36">        Vertex rhs = (Vertex) o</span>
-<span class="nc" id="L37">        key == rhs.key</span>
+<span class="nc" id="L37">        id == rhs.id</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

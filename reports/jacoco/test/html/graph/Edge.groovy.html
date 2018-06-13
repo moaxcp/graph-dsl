@@ -11,28 +11,28 @@ class Edge {
 <span class="pc" id="L11">    @Delegate</span>
     Map map = [:]
 
-    Object getOne() {
-<span class="pc" id="L15">        get('one')</span>
+    Object getFrom() {
+<span class="pc" id="L15">        get('from')</span>
     }
 
-    Object setOne(Object value) {
-<span class="pc" id="L19">        put('one', value)</span>
+    Object setFrom(Object value) {
+<span class="pc" id="L19">        put('from', value)</span>
     }
 
-    Object getTwo() {
-<span class="pc" id="L23">        get('two')</span>
+    Object getTo() {
+<span class="pc" id="L23">        get('to')</span>
     }
 
-    Object setTwo(Object value) {
-<span class="pc" id="L27">        put('two', value)</span>
+    Object setTo(Object value) {
+<span class="pc" id="L27">        put('to', value)</span>
     }
 
     boolean asBoolean() {
-<span class="pc bfc" id="L31" title="All 4 branches covered.">        one &amp;&amp; two</span>
+<span class="pc bfc" id="L31" title="All 4 branches covered.">        from &amp;&amp; to</span>
     }
 
     boolean equals(Edge edge) {
-<span class="pc bfc" id="L35" title="All 12 branches covered.">        (one == edge.one || one == edge.two) &amp;&amp; (two == edge.two || two == edge.one)</span>
+<span class="pc bfc" id="L35" title="All 12 branches covered.">        (from == edge.from || from == edge.to) &amp;&amp; (to == edge.to || to == edge.from)</span>
     }
 
     /**
@@ -60,7 +60,7 @@ class Edge {
      */
     @Override
     int hashCode() {
-<span class="pc" id="L63">        one.hashCode() + two.hashCode()</span>
+<span class="pc" id="L63">        from.hashCode() + to.hashCode()</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.9.201702052155</span></div></body></html>

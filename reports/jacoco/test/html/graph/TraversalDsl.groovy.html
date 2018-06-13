@@ -20,7 +20,7 @@ trait TraversalDsl {
      * &lt;/dl&gt;
      * &lt;p&gt;
      * Values returned can be used to restart traversal.
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param colors  of graph
      * @param action  action to perform on each {@link Vertex}
      * @return results map
@@ -36,7 +36,7 @@ trait TraversalDsl {
      * {@code algorithm} must meet the following:
      *     &lt;ul&gt;
      *         &lt;li&gt;each call to {@code algorithm} must visit part of the graph by updating {@code spec.colors}. This
-     *         will eventually cause calls to {@link Graph#getUnvisitedVertexKey} to return null which signals the end
+     *         will eventually cause calls to {@link Graph#getUnvisitedVertexId} to return null which signals the end
      *         of the traversal.&lt;/li&gt;
      *         &lt;li&gt;must call action on each vertex or edge&lt;/li&gt;
      *         &lt;li&gt;must stop when action returns {@link TraversalState#STOP}&lt;/li&gt;
@@ -59,7 +59,7 @@ trait TraversalDsl {
 <span class="pc bpc" id="L59" title="1 of 2 branches missed.">        spec.colors.putAll(colors ?: makeColorMap())</span>
 <span class="fc" id="L60">        spec.root = root</span>
 <span class="fc bfc" id="L61" title="All 4 branches covered.">        if(!spec.root) {</span>
-<span class="fc" id="L62">            spec.root = getUnvisitedVertexKey((Map) spec.colors)</span>
+<span class="fc" id="L62">            spec.root = getUnvisitedVertexId((Map) spec.colors)</span>
         }
 <span class="fc" id="L64">        spec.roots = [] as Set</span>
 <span class="fc" id="L65">        spec.components = [] as Set</span>
@@ -71,13 +71,13 @@ trait TraversalDsl {
 <span class="pc bpc" id="L71" title="1 of 2 branches missed.">            if (spec.state == STOP) {</span>
 <span class="nc" id="L72">                return spec</span>
             }
-<span class="fc" id="L74">            spec.root = getUnvisitedVertexKey((Map) spec.colors)</span>
+<span class="fc" id="L74">            spec.root = getUnvisitedVertexId((Map) spec.colors)</span>
         }
 <span class="pc" id="L76">        spec</span>
     }
 
     /**
-     * Returns edges to be traversed for a given {@link Vertex} key.
+     * Returns edges to be traversed for a given {@link Vertex} id.
      * @param key
      * @return edges to traverse
      */
@@ -104,7 +104,7 @@ trait TraversalDsl {
     List topologicalSort(Object root = null) {
 <span class="fc" id="L105">        List&lt;Object&gt; sorted = []</span>
 <span class="fc" id="L106">        postOrder(root) {</span>
-<span class="fc" id="L107">            sorted &lt;&lt; it.key</span>
+<span class="fc" id="L107">            sorted &lt;&lt; it.id</span>
 <span class="pc" id="L108">            CONTINUE</span>
         }
 <span class="pc" id="L110">        sorted.reverse()</span>
@@ -124,7 +124,7 @@ trait TraversalDsl {
      * &lt;/dl&gt;
      * &lt;p&gt;
      * Values returned can be used to restart traversal.
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param colors  of graph
      * @param action  action to perform on each {@link Vertex}
      * @return results map
@@ -142,7 +142,7 @@ trait TraversalDsl {
      *     &lt;dt&gt;state&lt;/dt&gt;
      *     &lt;dd&gt;ending state of traversal&lt;/dd&gt;
      * &lt;/dl&gt;
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param action  action to perform on each {@link Vertex}
      * @return results map
      */
@@ -178,13 +178,13 @@ trait TraversalDsl {
      * {@code action} params are:
      * &lt;dl&gt;
      *     &lt;dt&gt;Object from&lt;/dt&gt;
-     *     &lt;dd&gt;from vertex key&lt;/dd&gt;
+     *     &lt;dd&gt;from vertex id&lt;/dd&gt;
      *     &lt;dt&gt;Object to&lt;/dt&gt;
-     *     &lt;dd&gt;to vertex key&lt;/dd&gt;
+     *     &lt;dd&gt;to vertex id&lt;/dd&gt;
      *     &lt;dt&gt;EdgeType type&lt;/dt&gt;
      *     &lt;dd&gt;type of edge&lt;/dd&gt;
      * &lt;/dl&gt;
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param colors  of graph
      * @param action  action to perform
      * @return results map
@@ -225,7 +225,7 @@ trait TraversalDsl {
      * &lt;/dl&gt;
      * &lt;p&gt;
      * Values returned can be used to restart traversal.
-     * @param root  starting {@Vertex} key
+     * @param root  starting {@Vertex} id
      * @param colors  of graph
      * @param action  action to perform on each {@link Vertex}
      * @return results map
