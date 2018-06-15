@@ -300,7 +300,7 @@ plugin 'graphviz'
 image 'images/connected-component-undirected.png'
 ```
 
-![Image](images/connected-component-undirected.png?raw=true)
+![Image](images/connected-component-undirected.gif?raw=true)
 
 ## Example: connectedComponent (directed), label and color components
 
@@ -332,7 +332,7 @@ plugin 'graphviz'
 image 'images/connected-component-directed.png'
 ```
 
-![Image](images/connected-component-directed.png?raw=true)
+![Image](images/connected-component-directed.gif?raw=true)
 
 # directed graphs
 

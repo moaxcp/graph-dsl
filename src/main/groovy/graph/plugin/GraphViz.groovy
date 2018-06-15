@@ -84,7 +84,7 @@ class GraphViz implements Plugin {
                 p.println(getEdgeDot(it))
             }
             graph.vertices.each { Object id, Vertex v ->
-                if(v.size() > 1) {
+                if(v.size() > 1 || graph.adjacentEdges(id).size() == 0) {
                     p.println(getVertexDot(v))
                 }
             }

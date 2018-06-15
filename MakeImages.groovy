@@ -240,7 +240,6 @@ def exampleConnectedComponentUndirected() {
             CONTINUE
         }
         gif 'images/connected-component-undirected.gif'
-        image 'images/connected-component-undirected.png'
     }
 }
 
@@ -273,7 +272,6 @@ def exampleConnectedComponentDirected() {
             CONTINUE
         }
         gif 'images/connected-component-directed.gif'
-        image 'images/connected-component-directed.png'
     }
 }
 
