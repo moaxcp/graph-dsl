@@ -18,7 +18,7 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.Iterator;
 
-public class GifSequenceWriter {
+public class GifSequenceWriter implements AutoCloseable {
     protected ImageWriter gifWriter;
     protected ImageWriteParam imageWriteParam;
     protected IIOMetadata imageMetaData;
@@ -108,6 +108,7 @@ public class GifSequenceWriter {
      * Close this GifSequenceWriter object. This does not close the underlying
      * stream, just finishes off the GIF.
      */
+    @Override
     public void close() throws IOException {
         gifWriter.endWriteSequence();
     }

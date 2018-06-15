@@ -215,50 +215,57 @@ arguments can be used to modify the graph. In this example the edges are colored
 ```groovy
 
 type 'directed-graph'
-vertex('A') {
-    connectsTo('B') {
-        connectsTo 'C'
-        connectsTo('D') {
-            connectsTo 'A'
-            connectsFrom 'A'
-            connectsTo 'C'
-            connectsTo 'E'
+        type 'directed-graph'
+        plugin 'graphviz'
+        vertex('A') {
+            connectsTo('B') {
+                connectsTo 'C'
+                connectsTo('D') {
+                    connectsTo 'A'
+                    connectsFrom 'A'
+                    connectsTo 'C'
+                    connectsTo 'E'
+                }
+            }
         }
-    }
-}
-vertex('F') {
-    connectsTo('G') {
-        connectsTo 'D'
-    }
-}
-classifyEdges('A') {Object from, Object to, EdgeType type ->
-    edge(from, to) {
-        switch(type) {
-            case EdgeType.TREE_EDGE:
-                color = 'black'
-                label = 'tree'
-                break
-            case EdgeType.BACK_EDGE:
-                color = 'red'
-                label = 'back'
-                break
-            case EdgeType.FORWARD_EDGE:
-                color = 'grey'
-                label = 'forward'
-                break
-            case EdgeType.CROSS_EDGE:
-                color = 'blue'
-                label = 'cross'
-                break
+        vertex('F') {
+            connectsTo('G') {
+                connectsTo 'D'
+            }
         }
-    }
-    CONTINUE
-}
-plugin 'graphviz'
-image 'images/edge-classification.png'
+        snapshot()
+        classifyEdges('A') {Object from, Object to, EdgeType type ->
+            vertex(from).fillcolor = 'green'
+            vertex(from).style = 'filled'
+            vertex(to).fillcolor = 'green'
+            vertex(to).style = 'filled'
+            edge(from, to) {
+                switch(type) {
+                    case EdgeType.TREE_EDGE:
+                        color = 'black'
+                        label = 'tree'
+                        break
+                    case EdgeType.BACK_EDGE:
+                        color = 'red'
+                        label = 'back'
+                        break
+                    case EdgeType.FORWARD_EDGE:
+                        color = 'grey'
+                        label = 'forward'
+                        break
+                    case EdgeType.CROSS_EDGE:
+                        color = 'blue'
+                        label = 'cross'
+                        break
+                }
+            }
+            snapshot()
+            CONTINUE
+        }
+        gif 'images/edge-classification.gif'
 ```
 
-![Image](images/edge-classification.png?raw=true)
+![Image](images/edge-classification.gif?raw=true)
 
 ## Example: connectedComponent (undirected), label and color components
 

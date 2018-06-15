@@ -8,6 +8,8 @@ import groovy.transform.PackageScope
 
 import javax.imageio.ImageIO
 import javax.imageio.stream.FileImageOutputStream
+import java.awt.Color
+import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.nio.file.Files
 import java.nio.file.Path
@@ -117,10 +119,28 @@ class GraphViz implements Plugin {
         snapshots.add(image().image)
     }
 
-    void gif(String file, int delay = 1000, boolean loop = true) {
+    void gif(String file, int delay = 1000, boolean loop = true) throws IOException {
+        int width = 0
+        int height = 0
+        snapshots.each {
+            width = it.width > width ? it.width : width
+            height = it.height > height ? it.height : height
+        }
+        List<BufferedImage> resized = snapshots.collect {
+            int x = (width - it.width) / 2
+            int y = (height - it.height) / 2
+            BufferedImage out = new BufferedImage(width, height, it.type)
+            Graphics2D g2d = out.createGraphics()
+            def b = it.getRGB(0, 0)
+            g2d.setBackground(new Color(b))
+            g2d.clearRect(0, 0, width, height)
+            g2d.drawImage(it, x, y, it.width, it.height, null)
+            g2d.dispose()
+            out
+        }
         new FileImageOutputStream(new File(file)).withCloseable { out ->
             GifSequenceWriter writer = new GifSequenceWriter(out, BufferedImage.TYPE_3BYTE_BGR, delay, loop)
-            snapshots.each {
+            resized.each {
                 writer.writeToSequence(it)
             }
             writer.close()
@@ -140,7 +160,7 @@ class GraphViz implements Plugin {
         StringBuilder err = new StringBuilder()
         execute.consumeProcessErrorStream(err)
         execute.waitFor()
-        print err
+        println err
         Files.delete(file)
     }
 }

@@ -180,6 +180,10 @@ def exampleClassifyEdges() {
         }
         snapshot()
         classifyEdges('A') {Object from, Object to, EdgeType type ->
+            vertex(from).fillcolor = 'green'
+            vertex(from).style = 'filled'
+            vertex(to).fillcolor = 'green'
+            vertex(to).style = 'filled'
             edge(from, to) {
                 switch(type) {
                     case EdgeType.TREE_EDGE:
@@ -204,7 +208,6 @@ def exampleClassifyEdges() {
             CONTINUE
         }
         gif 'images/edge-classification.gif'
-        image 'images/edge-classification.png'
     }
 }
 
