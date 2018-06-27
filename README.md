@@ -215,54 +215,54 @@ arguments can be used to modify the graph. In this example the edges are colored
 ```groovy
 
 type 'directed-graph'
-        type 'directed-graph'
-        plugin 'graphviz'
-        vertex('A') {
-            connectsTo('B') {
-                connectsTo 'C'
-                connectsTo('D') {
-                    connectsTo 'A'
-                    connectsFrom 'A'
-                    connectsTo 'C'
-                    connectsTo 'E'
-                }
-            }
+plugin 'graphviz'
+vertex('A') {
+    connectsTo('B') {
+        connectsTo 'C'
+        connectsTo('D') {
+            connectsTo 'A'
+            connectsFrom 'A'
+            connectsTo 'C'
+            connectsTo 'E'
         }
-        vertex('F') {
-            connectsTo('G') {
-                connectsTo 'D'
-            }
+    }
+}
+vertex('F') {
+    connectsTo('G') {
+        connectsTo 'D'
+    }
+}
+snapshot()
+classifyEdges('A') {Object from, Object to, EdgeType type ->
+    edge(from, to) {
+        switch(type) {
+            case EdgeType.TREE_EDGE:
+                color = 'green'
+                snapshot()
+                label = 'tree'
+                break
+            case EdgeType.BACK_EDGE:
+                color = 'red'
+                snapshot()
+                label = 'back'
+                break
+            case EdgeType.FORWARD_EDGE:
+                color = 'grey'
+                snapshot()
+                label = 'forward'
+                break
+            case EdgeType.CROSS_EDGE:
+                color = 'blue'
+                snapshot()
+                label = 'cross'
+                break
         }
-        snapshot()
-        classifyEdges('A') {Object from, Object to, EdgeType type ->
-            vertex(from).fillcolor = 'green'
-            vertex(from).style = 'filled'
-            vertex(to).fillcolor = 'green'
-            vertex(to).style = 'filled'
-            edge(from, to) {
-                switch(type) {
-                    case EdgeType.TREE_EDGE:
-                        color = 'black'
-                        label = 'tree'
-                        break
-                    case EdgeType.BACK_EDGE:
-                        color = 'red'
-                        label = 'back'
-                        break
-                    case EdgeType.FORWARD_EDGE:
-                        color = 'grey'
-                        label = 'forward'
-                        break
-                    case EdgeType.CROSS_EDGE:
-                        color = 'blue'
-                        label = 'cross'
-                        break
-                }
-            }
-            snapshot()
-            CONTINUE
-        }
-        gif 'images/edge-classification.gif'
+    }
+    snapshot()
+    CONTINUE
+}
+snapshot(4)
+gif 'images/edge-classification.gif', 500
 ```
 
 ![Image](images/edge-classification.gif?raw=true)
@@ -273,6 +273,7 @@ Connected component visits each vertex supplying the root vertex for the compone
 root vertex key and the current vertex.
 
 ```groovy
+plugin 'graphviz'
 vertex('A') {
     connectsTo('B') {
         connectsTo 'C'
@@ -291,13 +292,14 @@ vertex('Z') {
 
 vertex 'J'
 def colors = ['A':'yellow', 'Z':'green', J:'blue']
+snapshot()
 connectedComponent('A') { root, vertex ->
     vertex.fillcolor = colors[(root)]
     vertex.style = 'filled'
-    TraversalState.CONTINUE
+    snapshot()
+    CONTINUE
 }
-plugin 'graphviz'
-image 'images/connected-component-undirected.png'
+gif 'images/connected-component-undirected.gif'
 ```
 
 ![Image](images/connected-component-undirected.gif?raw=true)
@@ -306,6 +308,7 @@ image 'images/connected-component-undirected.png'
 
 ```groovy
 type 'directed-graph'
+plugin 'graphviz'
 vertex('A') {
     connectsTo('B') {
         connectsTo 'C'
@@ -323,13 +326,14 @@ vertex('Z') {
 }
 vertex 'J'
 def colors = ['A': 'yellow', 'Z': 'green', J: 'blue']
+snapshot()
 connectedComponent('A') { root, vertex ->
     vertex.fillcolor = colors[(root)]
     vertex.style = 'filled'
-    TraversalState.CONTINUE
+    snapshot()
+    CONTINUE
 }
-plugin 'graphviz'
-image 'images/connected-component-directed.png'
+gif 'images/connected-component-directed.gif'
 ```
 
 ![Image](images/connected-component-directed.gif?raw=true)

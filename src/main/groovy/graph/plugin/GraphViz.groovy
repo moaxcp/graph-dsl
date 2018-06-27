@@ -115,36 +115,64 @@ class GraphViz implements Plugin {
         return [image:image, error:err.toString()]
     }
 
-    void snapshot() {
-        snapshots.add(image().image)
+    void snapshot(int count = 1) {
+        (0..count).each {
+            snapshots.add(image().image)
+        }
     }
 
     void gif(String file, int delay = 1000, boolean loop = true) throws IOException {
-        int width = 0
-        int height = 0
-        snapshots.each {
-            width = it.width > width ? it.width : width
-            height = it.height > height ? it.height : height
-        }
+        Map<String, Integer> max = findMaxWidthHeight()
         List<BufferedImage> resized = snapshots.collect {
-            int x = (width - it.width) / 2
-            int y = (height - it.height) / 2
-            BufferedImage out = new BufferedImage(width, height, it.type)
-            Graphics2D g2d = out.createGraphics()
-            def b = it.getRGB(0, 0)
-            g2d.setBackground(new Color(b))
-            g2d.clearRect(0, 0, width, height)
-            g2d.drawImage(it, x, y, it.width, it.height, null)
-            g2d.dispose()
-            out
+            int b = guessBackgroundColor(it)
+            BufferedImage out = createOutputImage(b, max.width, max.height, it.type)
+            centerOnOutput(out, it)
         }
-        new FileImageOutputStream(new File(file)).withCloseable { out ->
+        writeImagesToFileAsGif(new File(file), resized, delay, loop)
+    }
+
+    void writeImagesToFileAsGif(File file, List<BufferedImage> images, int delay, boolean loop) {
+        new FileImageOutputStream(file).withCloseable { out ->
             GifSequenceWriter writer = new GifSequenceWriter(out, BufferedImage.TYPE_3BYTE_BGR, delay, loop)
-            resized.each {
+            images.each {
                 writer.writeToSequence(it)
             }
             writer.close()
         }
+    }
+
+    BufferedImage centerOnOutput(BufferedImage output, BufferedImage image) {
+        int x = (output.width - image.width) / 2
+        int y = (output.height - image.height) / 2
+        Graphics2D g2d = output.createGraphics()
+        g2d.drawImage(image, x, y, image.width, image.height, null)
+        g2d.dispose()
+        output
+    }
+
+    BufferedImage createOutputImage(int background, int width, int height, int type) {
+        BufferedImage out = new BufferedImage(width, height, type)
+        Graphics2D g2d = out.createGraphics()
+        g2d.setBackground(new Color(background))
+        g2d.clearRect(0, 0, width, height)
+        g2d.dispose()
+        out
+
+    }
+
+    int guessBackgroundColor(BufferedImage image) {
+        image.getRGB(0, 0)
+    }
+
+    Map<String, Integer> findMaxWidthHeight() {
+        Map<String, Integer> max = [:]
+        max.width = 0
+        max.height = 0
+        snapshots.each {
+            max.width = it.width > max.width ? it.width : max.width
+            max.height = it.height > max.height ? it.height : max.height
+        }
+        max
     }
 
     void image(String file) {
