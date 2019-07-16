@@ -357,15 +357,15 @@ search to perform such as `eachBfs` or `eachDfs`.
 
 ```groovy
 eachBfs {
-    println it.name
+    println it.id
 }
     
 def vertex = findBfs {
-    it.name == 'A'
+    it.id == 'A'
 }
     
 def bfsOrder = collectBfs {
-    it.name
+    it.id
 }
 ```
 
